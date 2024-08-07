@@ -10,19 +10,16 @@
 
     <script>
         document.getElementById('quickExitButton').addEventListener('click', function() {
-            // Push a new state to the history stack
-            window.history.pushState({}, document.title, window.location.pathname);
-            // Replace the current state with another new state
-            window.history.replaceState({}, document.title, window.location.pathname);
-            
-            // Navigate to a different page
-            window.location.href = 'https://www.example.com';
-        });
+            // Open a new tab with the desired URL
+            let newTab = window.open('https://www.example.com', '_blank');
 
-        // Handle the back button to prevent navigating back
-        window.addEventListener('popstate', function(event) {
-            // Redirect to the safe page
-            window.location.href = 'https://www.example.com';
+            // Close the current tab
+            window.close();
+
+            // If the current tab couldn't be closed (e.g., due to browser restrictions), focus on the new tab
+            if (window) {
+                newTab.focus();
+            }
         });
     </script>
 </body>
