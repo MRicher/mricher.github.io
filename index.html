@@ -1,39 +1,139 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quick Exit Button</title>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f0f0f0;
-        }
-        .exit-button {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #ff0000;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Title Form</title>
+  <style>
+    .item-pair { margin-bottom: 10px; }
+  </style>
 </head>
 <body>
-    <button class="exit-button" onclick="quickExit()">Quick Exit</button>
+  <h1>Title Form</h1>
+  <form id="titleForm">
+    <label for="englishTitle">English Title:</label>
+    <input type="text" id="englishTitle" name="englishTitle" required><br><br>
 
-    <script>
-        function quickExit() {
-            const newTab = window.open('https://www.example.com', '_blank');
-            if (newTab) {
-                newTab.focus();
-                window.close();
-            }
+    <label for="frenchTitle">French Title:</label>
+    <input type="text" id="frenchTitle" name="frenchTitle" required><br><br>
+
+    <label for="titleDate">Date:</label>
+    <input type="date" id="titleDate" name="titleDate" required><br><br>
+
+    <fieldset>
+      <legend>Items</legend>
+      <div id="itemsContainer"></div>
+      <button type="button" onclick="addItem()">Add Item</button>
+    </fieldset><br>
+
+    <button type="submit">Save as JSON</button>
+  </form>
+
+  <h2>Load JSON</h2>
+  <input type="file" id="fileInput" accept="application/json">
+
+  <script>
+    const form = document.getElementById('titleForm');
+    const fileInput = document.getElementById('fileInput');
+    const itemsContainer = document.getElementById('itemsContainer');
+
+    function formatDate(inputDate) {
+      const date = new Date(inputDate);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}/${month}/${day}`;
+    }
+
+    function addItem(english = '', french = '') {
+      const div = document.createElement('div');
+      div.className = 'item-pair';
+
+      const enInput = document.createElement('input');
+      enInput.type = 'text';
+      enInput.placeholder = 'Item 1 English';
+      enInput.name = 'itemEnglish';
+      enInput.value = english;
+
+      const frInput = document.createElement('input');
+      frInput.type = 'text';
+      frInput.placeholder = 'Item 1 French';
+      frInput.name = 'itemFrench';
+      frInput.value = french;
+
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.textContent = 'Remove';
+      removeBtn.onclick = () => div.remove();
+
+      div.appendChild(enInput);
+      div.appendChild(frInput);
+      div.appendChild(removeBtn);
+
+      itemsContainer.appendChild(div);
+    }
+
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const rawDate = document.getElementById('titleDate').value;
+      const formattedDate = formatDate(rawDate);
+
+      const items = [];
+      const enInputs = document.querySelectorAll('input[name="itemEnglish"]');
+      const frInputs = document.querySelectorAll('input[name="itemFrench"]');
+
+      enInputs.forEach((enInput, index) => {
+        const frInput = frInputs[index];
+        if (enInput.value || frInput.value) {
+          items.push({ english: enInput.value, french: frInput.value });
         }
-    </script>
+      });
+
+      const data = {
+        englishTitle: document.getElementById('englishTitle').value,
+        frenchTitle: document.getElementById('frenchTitle').value,
+        date: formattedDate,
+        items: items
+      };
+
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'titles.json';
+      link.click();
+
+      URL.revokeObjectURL(url);
+    });
+
+    fileInput.addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const data = JSON.parse(e.target.result);
+          document.getElementById('englishTitle').value = data.englishTitle || '';
+          document.getElementById('frenchTitle').value = data.frenchTitle || '';
+
+          if (data.date) {
+            const [year, month, day] = data.date.split('/');
+            document.getElementById('titleDate').value = `${year}-${month}-${day}`;
+          }
+
+          itemsContainer.innerHTML = '';
+          if (Array.isArray(data.items)) {
+            data.items.forEach(item => addItem(item.english, item.french));
+          }
+        } catch (err) {
+          alert('Invalid JSON file.');
+        }
+      };
+      reader.readAsText(file);
+    });
+  </script>
 </body>
 </html>
