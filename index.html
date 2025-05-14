@@ -1,11 +1,18 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Title Form</title>
   <style>
-    .item-pair { margin-bottom: 10px; }
+    .item-pair {
+      margin-bottom: 5px;
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+    .item-pair input {
+      width: 200px;
+    }
   </style>
 </head>
 <body>
@@ -17,14 +24,15 @@
     <label for="frenchTitle">French Title:</label>
     <input type="text" id="frenchTitle" name="frenchTitle" required><br><br>
 
-    <label for="titleDate">Date:</label>
-    <input type="date" id="titleDate" name="titleDate" required><br><br>
+    <label for="version">Version:</label>
+    <input type="text" id="version" name="version" placeholder="e.g., 1.0" required><br><br>
 
-    <fieldset>
-      <legend>Items</legend>
-      <div id="itemsContainer"></div>
-      <button type="button" onclick="addItem()">Add Item</button>
-    </fieldset><br>
+    <label for="date">Date:</label>
+    <input type="date" id="date" name="date" required><br><br>
+
+    <h3>Items</h3>
+    <div id="itemsContainer"></div>
+    <button type="button" onclick="addItem()">Add Root Item</button><br><br>
 
     <button type="submit">Save as JSON</button>
   </form>
@@ -37,64 +45,66 @@
     const fileInput = document.getElementById('fileInput');
     const itemsContainer = document.getElementById('itemsContainer');
 
-    function formatDate(inputDate) {
-      const date = new Date(inputDate);
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      return `${year}/${month}/${day}`;
-    }
-
-    function addItem(english = '', french = '') {
-      const div = document.createElement('div');
-      div.className = 'item-pair';
+    function addItem(english = '', french = '', level = 0, parent = null) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'item-pair';
+      wrapper.style.paddingLeft = `${level * 30}px`;
+      wrapper.dataset.level = level;
 
       const enInput = document.createElement('input');
       enInput.type = 'text';
-      enInput.placeholder = 'Item 1 English';
-      enInput.name = 'itemEnglish';
+      enInput.placeholder = 'Item in English';
       enInput.value = english;
+      enInput.required = true;
 
       const frInput = document.createElement('input');
       frInput.type = 'text';
-      frInput.placeholder = 'Item 1 French';
-      frInput.name = 'itemFrench';
+      frInput.placeholder = 'Item in French';
       frInput.value = french;
+      frInput.required = true;
+
+      const addChildBtn = document.createElement('button');
+      addChildBtn.type = 'button';
+      addChildBtn.textContent = '+ Child';
+      addChildBtn.onclick = () => {
+        const index = [...itemsContainer.children].indexOf(wrapper);
+        const newItem = addItem('', '', level + 1);
+        itemsContainer.insertBefore(newItem, itemsContainer.children[index + 1]);
+      };
 
       const removeBtn = document.createElement('button');
       removeBtn.type = 'button';
       removeBtn.textContent = 'Remove';
-      removeBtn.onclick = () => div.remove();
+      removeBtn.onclick = () => wrapper.remove();
 
-      div.appendChild(enInput);
-      div.appendChild(frInput);
-      div.appendChild(removeBtn);
+      wrapper.appendChild(enInput);
+      wrapper.appendChild(frInput);
+      wrapper.appendChild(addChildBtn);
+      wrapper.appendChild(removeBtn);
+      itemsContainer.appendChild(wrapper);
 
-      itemsContainer.appendChild(div);
+      return wrapper;
     }
 
     form.addEventListener('submit', function(event) {
       event.preventDefault();
 
-      const rawDate = document.getElementById('titleDate').value;
-      const formattedDate = formatDate(rawDate);
-
       const items = [];
-      const enInputs = document.querySelectorAll('input[name="itemEnglish"]');
-      const frInputs = document.querySelectorAll('input[name="itemFrench"]');
-
-      enInputs.forEach((enInput, index) => {
-        const frInput = frInputs[index];
-        if (enInput.value || frInput.value) {
-          items.push({ english: enInput.value, french: frInput.value });
-        }
+      itemsContainer.querySelectorAll('.item-pair').forEach(pair => {
+        const [en, fr] = pair.querySelectorAll('input');
+        items.push({
+          english: en.value,
+          french: fr.value,
+          level: parseInt(pair.dataset.level)
+        });
       });
 
       const data = {
         englishTitle: document.getElementById('englishTitle').value,
         frenchTitle: document.getElementById('frenchTitle').value,
-        date: formattedDate,
-        items: items
+        version: document.getElementById('version').value,
+        date: document.getElementById('date').value,
+        items
       };
 
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -118,15 +128,14 @@
           const data = JSON.parse(e.target.result);
           document.getElementById('englishTitle').value = data.englishTitle || '';
           document.getElementById('frenchTitle').value = data.frenchTitle || '';
-
-          if (data.date) {
-            const [year, month, day] = data.date.split('/');
-            document.getElementById('titleDate').value = `${year}-${month}-${day}`;
-          }
+          document.getElementById('version').value = data.version || '';
+          document.getElementById('date').value = data.date || '';
 
           itemsContainer.innerHTML = '';
           if (Array.isArray(data.items)) {
-            data.items.forEach(item => addItem(item.english, item.french));
+            data.items.forEach(item =>
+              addItem(item.english, item.french, item.level || 0)
+            );
           }
         } catch (err) {
           alert('Invalid JSON file.');
@@ -134,6 +143,9 @@
       };
       reader.readAsText(file);
     });
+
+    // Start with one root item
+    addItem();
   </script>
 </body>
 </html>
