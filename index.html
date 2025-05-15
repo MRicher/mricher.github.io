@@ -39,8 +39,10 @@
         <gcds-input label="French Title" name="frenchTitle" required></gcds-input>
 
         <gcds-fieldset legend="Visibility">
-          <gcds-radio label="Public" name="visibility" value="public" checked></gcds-radio>
-          <gcds-radio label="Internal" name="visibility" value="internal"></gcds-radio>
+          <div role="radiogroup">
+            <gcds-radio label="Public" name="visibility" value="public" checked></gcds-radio>
+            <gcds-radio label="Internal" name="visibility" value="internal"></gcds-radio>
+          </div>
         </gcds-fieldset>
 
         <gcds-input label="Version" name="version" required></gcds-input>
@@ -100,8 +102,23 @@
     function addChild(button) {
       const parent = button.closest('.item-wrapper');
       const level = parseInt(parent.dataset.level) + 1;
-      const newItem = addItem('', '', level);
-      itemsContainer.insertBefore(newItem, parent.nextSibling);
+      const wrapper = document.createElement('div');
+      wrapper.className = 'item-wrapper';
+      wrapper.style.setProperty('--level-indent', `${level * 2}rem`);
+      wrapper.dataset.level = level;
+
+      wrapper.innerHTML = `
+        <gcds-input label="Item in English"></gcds-input>
+        <gcds-input label="Item in French"></gcds-input>
+        <div class="task-actions">
+          <gcds-button type="button" onclick="addChild(this)">+ Child</gcds-button>
+          <gcds-button type="button" onclick="toggleNotes(this)">+ Note</gcds-button>
+          <gcds-button type="button" onclick="moveUp(this)">↑</gcds-button>
+          <gcds-button type="button" onclick="moveDown(this)">↓</gcds-button>
+          <gcds-button type="button" onclick="removeItem(this)">Remove</gcds-button>
+        </div>
+      `;
+      itemsContainer.insertBefore(wrapper, parent.nextSibling);
     }
 
     function toggleNotes(button) {
@@ -182,7 +199,9 @@
           form.querySelector('gcds-input[name="frenchTitle"]').value = data.frenchTitle || '';
           form.querySelector('gcds-input[name="version"]').value = data.version || '';
           form.querySelector('gcds-date[name="date"]').value = data.date || '';
-          form.querySelector(`gcds-radio[name="visibility"][value="${data.visibility || 'public'}"]`).checked = true;
+          form.querySelectorAll(`gcds-radio[name="visibility"]`).forEach(radio => {
+            radio.checked = radio.value === data.visibility;
+          });
 
           itemsContainer.innerHTML = '';
           (data.items || []).forEach(item => {
@@ -195,7 +214,7 @@
       reader.readAsText(file);
     });
 
-    // Add initial root item
+    // Initial root item
     addItem();
   </script>
 </body>
