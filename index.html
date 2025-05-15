@@ -5,13 +5,29 @@
   <title>Title Form</title>
   <style>
     .item-pair {
-      margin-bottom: 5px;
+      margin-bottom: 10px;
+      padding: 5px;
       display: flex;
-      gap: 5px;
-      align-items: center;
+      flex-direction: column;
+      border: 1px solid #ccc;
     }
-    .item-pair input {
+    .item-header {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .item-header input {
       width: 200px;
+    }
+    .item-notes {
+      margin-left: 10px;
+      margin-top: 5px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .item-notes input {
+      width: 95%;
     }
   </style>
 </head>
@@ -51,11 +67,15 @@
     const fileInput = document.getElementById('fileInput');
     const itemsContainer = document.getElementById('itemsContainer');
 
-    function addItem(english = '', french = '', level = 0) {
+    function addItem(english = '', french = '', level = 0, enNote = '', frNote = '') {
       const wrapper = document.createElement('div');
       wrapper.className = 'item-pair';
-      wrapper.style.paddingLeft = `${level * 30}px`;
+      wrapper.style.marginLeft = `${level * 30}px`;
       wrapper.dataset.level = level;
+
+      // Header row with title fields
+      const header = document.createElement('div');
+      header.className = 'item-header';
 
       const enInput = document.createElement('input');
       enInput.type = 'text';
@@ -78,15 +98,53 @@
         itemsContainer.insertBefore(newItem, itemsContainer.children[index + 1]);
       };
 
+      const upBtn = document.createElement('button');
+      upBtn.type = 'button';
+      upBtn.textContent = '↑';
+      upBtn.onclick = () => {
+        const prev = wrapper.previousElementSibling;
+        if (prev) itemsContainer.insertBefore(wrapper, prev);
+      };
+
+      const downBtn = document.createElement('button');
+      downBtn.type = 'button';
+      downBtn.textContent = '↓';
+      downBtn.onclick = () => {
+        const next = wrapper.nextElementSibling;
+        if (next) itemsContainer.insertBefore(next, wrapper);
+      };
+
       const removeBtn = document.createElement('button');
       removeBtn.type = 'button';
       removeBtn.textContent = 'Remove';
       removeBtn.onclick = () => wrapper.remove();
 
-      wrapper.appendChild(enInput);
-      wrapper.appendChild(frInput);
-      wrapper.appendChild(addChildBtn);
-      wrapper.appendChild(removeBtn);
+      header.appendChild(enInput);
+      header.appendChild(frInput);
+      header.appendChild(addChildBtn);
+      header.appendChild(upBtn);
+      header.appendChild(downBtn);
+      header.appendChild(removeBtn);
+
+      // Notes section
+      const notes = document.createElement('div');
+      notes.className = 'item-notes';
+
+      const enNoteInput = document.createElement('input');
+      enNoteInput.type = 'text';
+      enNoteInput.placeholder = 'English note';
+      enNoteInput.value = enNote;
+
+      const frNoteInput = document.createElement('input');
+      frNoteInput.type = 'text';
+      frNoteInput.placeholder = 'French note';
+      frNoteInput.value = frNote;
+
+      notes.appendChild(enNoteInput);
+      notes.appendChild(frNoteInput);
+
+      wrapper.appendChild(header);
+      wrapper.appendChild(notes);
       itemsContainer.appendChild(wrapper);
 
       return wrapper;
@@ -99,11 +157,17 @@
 
       const items = [];
       itemsContainer.querySelectorAll('.item-pair').forEach(pair => {
-        const [en, fr] = pair.querySelectorAll('input');
+        const level = parseInt(pair.dataset.level);
+        const enInput = pair.querySelector('.item-header input[placeholder="Item in English"]');
+        const frInput = pair.querySelector('.item-header input[placeholder="Item in French"]');
+        const enNoteInput = pair.querySelector('.item-notes input[placeholder="English note"]');
+        const frNoteInput = pair.querySelector('.item-notes input[placeholder="French note"]');
         items.push({
-          english: en.value,
-          french: fr.value,
-          level: parseInt(pair.dataset.level)
+          english: enInput.value,
+          french: frInput.value,
+          level,
+          noteEnglish: enNoteInput.value,
+          noteFrench: frNoteInput.value
         });
       });
 
@@ -148,7 +212,7 @@
           itemsContainer.innerHTML = '';
           if (Array.isArray(data.items)) {
             data.items.forEach(item =>
-              addItem(item.english, item.french, item.level || 0)
+              addItem(item.english, item.french, item.level || 0, item.noteEnglish || '', item.noteFrench || '')
             );
           }
         } catch (err) {
