@@ -1,238 +1,197 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Title Form</title>
+  <meta charset="UTF-8" />
+  <title>GC Styled Title Form</title>
+
+  <!-- GC Design System -->
+  <link rel="stylesheet" href="https://cdn.design-system.alpha.canada.ca/@cdssnc/gcds-components@latest/dist/gcds/gcds.css" />
+  <script type="module" src="https://cdn.design-system.alpha.canada.ca/@cdssnc/gcds-components@latest/dist/gcds/gcds.esm.js"></script>
+  <script nomodule src="https://cdn.design-system.alpha.canada.ca/@cdssnc/gcds-components@latest/dist/gcds/gcds.js"></script>
+
   <style>
-    .item-pair {
-      margin-bottom: 10px;
-      padding: 5px;
-      display: flex;
-      flex-direction: column;
+    .item-wrapper {
+      margin-bottom: 1rem;
       border: 1px solid #ccc;
+      padding: 1rem;
+      margin-left: var(--level-indent, 0);
     }
-    .item-header {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .item-header input {
-      width: 200px;
-    }
+
     .item-notes {
-      margin-left: 10px;
-      margin-top: 5px;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
+      margin-top: 0.5rem;
     }
-    .item-notes input {
-      width: 95%;
+
+    .task-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .form-section {
+      margin-bottom: 2rem;
     }
   </style>
 </head>
 <body>
-  <h1>Title Form</h1>
-  <form id="titleForm">
-    <label for="englishTitle">English Title:</label>
-    <input type="text" id="englishTitle" name="englishTitle" required><br><br>
+  <main>
+    <gcds-heading tag="h1" text="Title Form (GC Design System)" level="1"></gcds-heading>
 
-    <label for="frenchTitle">French Title:</label>
-    <input type="text" id="frenchTitle" name="frenchTitle" required><br><br>
+    <form id="titleForm">
+      <div class="form-section">
+        <gcds-input label="English Title" name="englishTitle" required></gcds-input>
+        <gcds-input label="French Title" name="frenchTitle" required></gcds-input>
 
-    <label>Visibility:</label><br>
-    <input type="radio" id="public" name="visibility" value="public" checked>
-    <label for="public">Public</label><br>
-    <input type="radio" id="internal" name="visibility" value="internal">
-    <label for="internal">Internal</label><br><br>
+        <gcds-fieldset legend="Visibility">
+          <gcds-radio label="Public" name="visibility" value="public" checked></gcds-radio>
+          <gcds-radio label="Internal" name="visibility" value="internal"></gcds-radio>
+        </gcds-fieldset>
 
-    <label for="version">Version:</label>
-    <input type="text" id="version" name="version" placeholder="e.g., 1.0" required><br><br>
+        <gcds-input label="Version" name="version" required></gcds-input>
+        <gcds-date label="Date" name="date" required></gcds-date>
+      </div>
 
-    <label for="date">Date:</label>
-    <input type="date" id="date" name="date" required><br><br>
+      <gcds-heading tag="h3" text="Items" level="3"></gcds-heading>
+      <div id="itemsContainer"></div>
 
-    <h3>Items</h3>
-    <div id="itemsContainer"></div>
-    <button type="button" onclick="addItem()">Add Root Item</button><br><br>
+      <gcds-button type="button" onClick="addItem()">Add Root Item</gcds-button>
 
-    <button type="submit">Save as JSON</button>
-  </form>
+      <div style="margin-top: 2rem;">
+        <gcds-button type="submit">Save as JSON</gcds-button>
+      </div>
+    </form>
 
-  <h2>Load JSON</h2>
-  <input type="file" id="fileInput" accept="application/json">
+    <gcds-heading tag="h2" text="Load JSON" level="2"></gcds-heading>
+    <input type="file" id="fileInput" accept="application/json">
+  </main>
 
   <script>
     const form = document.getElementById('titleForm');
-    const fileInput = document.getElementById('fileInput');
     const itemsContainer = document.getElementById('itemsContainer');
+    const fileInput = document.getElementById('fileInput');
 
     function addItem(english = '', french = '', level = 0, enNote = '', frNote = '') {
       const wrapper = document.createElement('div');
-      wrapper.className = 'item-pair';
-      wrapper.style.marginLeft = `${level * 30}px`;
+      wrapper.className = 'item-wrapper';
+      wrapper.style.setProperty('--level-indent', `${level * 2}rem`);
       wrapper.dataset.level = level;
 
-      const header = document.createElement('div');
-      header.className = 'item-header';
+      wrapper.innerHTML = `
+        <gcds-input label="Item in English" value="${english}"></gcds-input>
+        <gcds-input label="Item in French" value="${french}"></gcds-input>
+        <div class="task-actions">
+          <gcds-button type="button" onclick="addChild(this)">+ Child</gcds-button>
+          <gcds-button type="button" onclick="toggleNotes(this)">+ Note</gcds-button>
+          <gcds-button type="button" onclick="moveUp(this)">↑</gcds-button>
+          <gcds-button type="button" onclick="moveDown(this)">↓</gcds-button>
+          <gcds-button type="button" onclick="removeItem(this)">Remove</gcds-button>
+        </div>
+      `;
 
-      const enInput = document.createElement('input');
-      enInput.type = 'text';
-      enInput.placeholder = 'Item in English';
-      enInput.value = english;
-      enInput.required = true;
-
-      const frInput = document.createElement('input');
-      frInput.type = 'text';
-      frInput.placeholder = 'Item in French';
-      frInput.value = french;
-      frInput.required = true;
-
-      const addChildBtn = document.createElement('button');
-      addChildBtn.type = 'button';
-      addChildBtn.textContent = '+ Child';
-      addChildBtn.onclick = () => {
-        const index = [...itemsContainer.children].indexOf(wrapper);
-        const newItem = addItem('', '', level + 1);
-        itemsContainer.insertBefore(newItem, itemsContainer.children[index + 1]);
-      };
-
-      const toggleNoteBtn = document.createElement('button');
-      toggleNoteBtn.type = 'button';
-      toggleNoteBtn.textContent = '+ Note';
-
-      const upBtn = document.createElement('button');
-      upBtn.type = 'button';
-      upBtn.textContent = '↑';
-      upBtn.onclick = () => {
-        const prev = wrapper.previousElementSibling;
-        if (prev) itemsContainer.insertBefore(wrapper, prev);
-      };
-
-      const downBtn = document.createElement('button');
-      downBtn.type = 'button';
-      downBtn.textContent = '↓';
-      downBtn.onclick = () => {
-        const next = wrapper.nextElementSibling;
-        if (next) itemsContainer.insertBefore(next, wrapper);
-      };
-
-      const removeBtn = document.createElement('button');
-      removeBtn.type = 'button';
-      removeBtn.textContent = 'Remove';
-      removeBtn.onclick = () => wrapper.remove();
-
-      header.appendChild(enInput);
-      header.appendChild(frInput);
-      header.appendChild(addChildBtn);
-      header.appendChild(toggleNoteBtn);
-      header.appendChild(upBtn);
-      header.appendChild(downBtn);
-      header.appendChild(removeBtn);
-
-      let notes = null;
-
-      toggleNoteBtn.onclick = () => {
-        if (!notes) {
-          notes = document.createElement('div');
-          notes.className = 'item-notes';
-          notes.style.display = 'flex';
-
-          const enNoteInput = document.createElement('input');
-          enNoteInput.type = 'text';
-          enNoteInput.placeholder = 'English note';
-          enNoteInput.value = enNote;
-
-          const frNoteInput = document.createElement('input');
-          frNoteInput.type = 'text';
-          frNoteInput.placeholder = 'French note';
-          frNoteInput.value = frNote;
-
-          notes.appendChild(enNoteInput);
-          notes.appendChild(frNoteInput);
-          wrapper.appendChild(notes);
-
-          toggleNoteBtn.textContent = 'Remove Note';
-        } else {
-          notes.remove();
-          notes = null;
-          toggleNoteBtn.textContent = '+ Note';
-        }
-      };
-
-      wrapper.appendChild(header);
       itemsContainer.appendChild(wrapper);
 
-      if (enNote || frNote) toggleNoteBtn.click();
-
-      return wrapper;
+      if (enNote || frNote) {
+        const notes = document.createElement('div');
+        notes.className = 'item-notes';
+        notes.innerHTML = `
+          <gcds-input label="English note" value="${enNote}"></gcds-input>
+          <gcds-input label="French note" value="${frNote}"></gcds-input>
+        `;
+        wrapper.appendChild(notes);
+      }
     }
 
-    form.addEventListener('submit', function(event) {
+    function addChild(button) {
+      const parent = button.closest('.item-wrapper');
+      const level = parseInt(parent.dataset.level) + 1;
+      const newItem = addItem('', '', level);
+      itemsContainer.insertBefore(newItem, parent.nextSibling);
+    }
+
+    function toggleNotes(button) {
+      const wrapper = button.closest('.item-wrapper');
+      const existing = wrapper.querySelector('.item-notes');
+      if (existing) {
+        existing.remove();
+        button.textContent = '+ Note';
+      } else {
+        const notes = document.createElement('div');
+        notes.className = 'item-notes';
+        notes.innerHTML = `
+          <gcds-input label="English note"></gcds-input>
+          <gcds-input label="French note"></gcds-input>
+        `;
+        wrapper.appendChild(notes);
+        button.textContent = 'Remove Note';
+      }
+    }
+
+    function moveUp(button) {
+      const wrapper = button.closest('.item-wrapper');
+      const prev = wrapper.previousElementSibling;
+      if (prev) itemsContainer.insertBefore(wrapper, prev);
+    }
+
+    function moveDown(button) {
+      const wrapper = button.closest('.item-wrapper');
+      const next = wrapper.nextElementSibling;
+      if (next) itemsContainer.insertBefore(next, wrapper);
+    }
+
+    function removeItem(button) {
+      const wrapper = button.closest('.item-wrapper');
+      wrapper.remove();
+    }
+
+    form.addEventListener('submit', function (event) {
       event.preventDefault();
-
-      const visibility = document.querySelector('input[name="visibility"]:checked').value;
-
-      const items = [];
-      itemsContainer.querySelectorAll('.item-pair').forEach(pair => {
-        const level = parseInt(pair.dataset.level);
-        const enInput = pair.querySelector('.item-header input[placeholder="Item in English"]');
-        const frInput = pair.querySelector('.item-header input[placeholder="Item in French"]');
-        const enNoteInput = pair.querySelector('.item-notes input[placeholder="English note"]');
-        const frNoteInput = pair.querySelector('.item-notes input[placeholder="French note"]');
-        items.push({
-          english: enInput.value,
-          french: frInput.value,
-          level,
-          noteEnglish: enNoteInput ? enNoteInput.value : '',
-          noteFrench: frNoteInput ? frNoteInput.value : ''
-        });
-      });
-
       const data = {
-        englishTitle: document.getElementById('englishTitle').value,
-        frenchTitle: document.getElementById('frenchTitle').value,
-        visibility,
-        version: document.getElementById('version').value,
-        date: document.getElementById('date').value,
-        items
+        englishTitle: form.querySelector('gcds-input[name="englishTitle"]').value,
+        frenchTitle: form.querySelector('gcds-input[name="frenchTitle"]').value,
+        visibility: form.querySelector('gcds-radio[name="visibility"]:checked')?.value || 'public',
+        version: form.querySelector('gcds-input[name="version"]').value,
+        date: form.querySelector('gcds-date[name="date"]').value,
+        items: []
       };
+
+      itemsContainer.querySelectorAll('.item-wrapper').forEach(wrapper => {
+        const item = {
+          english: wrapper.querySelector('gcds-input[label="Item in English"]').value,
+          french: wrapper.querySelector('gcds-input[label="Item in French"]').value,
+          level: parseInt(wrapper.dataset.level),
+          noteEnglish: wrapper.querySelector('gcds-input[label="English note"]')?.value || '',
+          noteFrench: wrapper.querySelector('gcds-input[label="French note"]')?.value || ''
+        };
+        data.items.push(item);
+      });
 
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
-
       const link = document.createElement('a');
       link.href = url;
       link.download = 'titles.json';
       link.click();
-
       URL.revokeObjectURL(url);
     });
 
-    fileInput.addEventListener('change', function(event) {
+    fileInput.addEventListener('change', function (event) {
       const file = event.target.files[0];
       if (!file) return;
 
       const reader = new FileReader();
-      reader.onload = function(e) {
+      reader.onload = function (e) {
         try {
           const data = JSON.parse(e.target.result);
-          document.getElementById('englishTitle').value = data.englishTitle || '';
-          document.getElementById('frenchTitle').value = data.frenchTitle || '';
-          document.getElementById('version').value = data.version || '';
-          document.getElementById('date').value = data.date || '';
-          if (data.visibility === 'internal') {
-            document.getElementById('internal').checked = true;
-          } else {
-            document.getElementById('public').checked = true;
-          }
+          form.querySelector('gcds-input[name="englishTitle"]').value = data.englishTitle || '';
+          form.querySelector('gcds-input[name="frenchTitle"]').value = data.frenchTitle || '';
+          form.querySelector('gcds-input[name="version"]').value = data.version || '';
+          form.querySelector('gcds-date[name="date"]').value = data.date || '';
+
+          form.querySelector(`gcds-radio[name="visibility"][value="${data.visibility || 'public'}"]`).checked = true;
 
           itemsContainer.innerHTML = '';
-          if (Array.isArray(data.items)) {
-            data.items.forEach(item =>
-              addItem(item.english, item.french, item.level || 0, item.noteEnglish || '', item.noteFrench || '')
-            );
-          }
+          (data.items || []).forEach(item => {
+            addItem(item.english, item.french, item.level || 0, item.noteEnglish || '', item.noteFrench || '');
+          });
         } catch (err) {
           alert('Invalid JSON file.');
         }
@@ -240,7 +199,7 @@
       reader.readAsText(file);
     });
 
-    // Start with one root item
+    // Initial root item
     addItem();
   </script>
 </body>
