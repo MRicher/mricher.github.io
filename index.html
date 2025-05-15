@@ -88,12 +88,14 @@
           label="Public"
           name="visibility"
           value="public"
+          id="public"
           checked
         ></gcds-radio>
         <gcds-radio
           label="Internal"
           name="visibility"
           value="internal"
+          id="internal"
         ></gcds-radio>
       </gcds-fieldset>
 
@@ -134,11 +136,14 @@
     function createGcdsInput(label, name, value = '', placeholder = '', required = false, type = 'text') {
       const input = document.createElement('gcds-input');
       input.setAttribute('label', label);
-      input.setAttribute('name', name);
+      if (name) input.setAttribute('name', name);
       if (placeholder) input.setAttribute('placeholder', placeholder);
       if (required) input.setAttribute('required', '');
       if (type !== 'text') input.setAttribute('type', type);
-      input.value = value;
+      // Set initial value after next microtask, since direct value might not work immediately
+      setTimeout(() => {
+        input.shadowRoot.querySelector('input').value = value;
+      }, 0);
       return input;
     }
 
@@ -238,19 +243,22 @@
     form.addEventListener('submit', (event) => {
       event.preventDefault();
 
-      const englishTitle = document.querySelector('gcds-input[name="englishTitle"]').value;
-      const frenchTitle = document.querySelector('gcds-input[name="frenchTitle"]').value;
-      const version = document.querySelector('gcds-input[name="version"]').value;
-      const date = document.querySelector('gcds-input[name="date"]').value;
+      const englishTitle = document.querySelector('gcds-input[name="englishTitle"]').shadowRoot.querySelector('input').value;
+      const frenchTitle = document.querySelector('gcds-input[name="frenchTitle"]').shadowRoot.querySelector('input').value;
+      const version = document.querySelector('gcds-input[name="version"]').shadowRoot.querySelector('input').value;
+      const date = document.querySelector('gcds-input[name="date"]').shadowRoot.querySelector('input').value;
       const visibility = document.querySelector('gcds-radio[name="visibility"]:checked').value;
 
       const items = [];
       itemsContainer.querySelectorAll('.item-pair').forEach(pair => {
         const level = parseInt(pair.dataset.level);
-        const enInput = pair.querySelector('gcds-input[label="Item in English"]');
-        const frInput = pair.querySelector('gcds-input[label="Item in French"]');
-        const enNoteInput = pair.querySelector('gcds-input[label="English note"]');
-        const frNoteInput = pair.querySelector('gcds-input[label="French note"]');
+        const enInput = pair.querySelector('gcds-input[label="Item in English"]').shadowRoot.querySelector('input');
+        const frInput = pair.querySelector('gcds-input[label="Item in French"]').shadowRoot.querySelector('input');
+        const enNoteInputElem = pair.querySelector('gcds-input[label="English note"]');
+        const frNoteInputElem = pair.querySelector('gcds-input[label="French note"]');
+
+        const enNoteInput = enNoteInputElem ? enNoteInputElem.shadowRoot.querySelector('input') : null;
+        const frNoteInput = frNoteInputElem ? frNoteInputElem.shadowRoot.querySelector('input') : null;
 
         items.push({
           english: enInput ? enInput.value : '',
@@ -289,15 +297,15 @@
       reader.onload = (e) => {
         try {
           const data = JSON.parse(e.target.result);
-          document.querySelector('gcds-input[name="englishTitle"]').value = data.englishTitle || '';
-          document.querySelector('gcds-input[name="frenchTitle"]').value = data.frenchTitle || '';
-          document.querySelector('gcds-input[name="version"]').value = data.version || '';
-          document.querySelector('gcds-input[name="date"]').value = data.date || '';
-          if (data.visibility === 'internal') {
-            document.getElementById('internal').checked = true;
-          } else {
-            document.getElementById('public').checked = true;
-          }
+          document.querySelector('gcds-input[name="englishTitle"]').shadowRoot.querySelector('input').value = data.englishTitle || '';
+          document.querySelector('gcds-input[name="frenchTitle"]').shadowRoot.querySelector('input').value = data.frenchTitle || '';
+          document.querySelector('gcds-input[name="version"]').shadowRoot.querySelector('input').value = data.version || '';
+          document.querySelector('gcds-input[name="date"]').shadowRoot.querySelector('input').value = data.date || '';
+
+          // Update visibility radios
+          document.querySelectorAll('gcds-radio[name="visibility"]').forEach(radio => {
+            radio.checked = radio.value === data.visibility;
+          });
 
           itemsContainer.innerHTML = '';
           if (Array.isArray(data.items)) {
@@ -311,9 +319,6 @@
       };
       reader.readAsText(file);
     });
-
-    // Start with one root item on page load
-    addItem();
   </script>
 </body>
 </html>
