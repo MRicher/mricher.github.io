@@ -73,7 +73,6 @@
       wrapper.style.marginLeft = `${level * 30}px`;
       wrapper.dataset.level = level;
 
-      // Header row with title fields
       const header = document.createElement('div');
       header.className = 'item-header';
 
@@ -97,6 +96,10 @@
         const newItem = addItem('', '', level + 1);
         itemsContainer.insertBefore(newItem, itemsContainer.children[index + 1]);
       };
+
+      const toggleNoteBtn = document.createElement('button');
+      toggleNoteBtn.type = 'button';
+      toggleNoteBtn.textContent = '+ Note';
 
       const upBtn = document.createElement('button');
       upBtn.type = 'button';
@@ -122,30 +125,45 @@
       header.appendChild(enInput);
       header.appendChild(frInput);
       header.appendChild(addChildBtn);
+      header.appendChild(toggleNoteBtn);
       header.appendChild(upBtn);
       header.appendChild(downBtn);
       header.appendChild(removeBtn);
 
-      // Notes section
-      const notes = document.createElement('div');
-      notes.className = 'item-notes';
+      let notes = null;
 
-      const enNoteInput = document.createElement('input');
-      enNoteInput.type = 'text';
-      enNoteInput.placeholder = 'English note';
-      enNoteInput.value = enNote;
+      toggleNoteBtn.onclick = () => {
+        if (!notes) {
+          notes = document.createElement('div');
+          notes.className = 'item-notes';
+          notes.style.display = 'flex';
 
-      const frNoteInput = document.createElement('input');
-      frNoteInput.type = 'text';
-      frNoteInput.placeholder = 'French note';
-      frNoteInput.value = frNote;
+          const enNoteInput = document.createElement('input');
+          enNoteInput.type = 'text';
+          enNoteInput.placeholder = 'English note';
+          enNoteInput.value = enNote;
 
-      notes.appendChild(enNoteInput);
-      notes.appendChild(frNoteInput);
+          const frNoteInput = document.createElement('input');
+          frNoteInput.type = 'text';
+          frNoteInput.placeholder = 'French note';
+          frNoteInput.value = frNote;
+
+          notes.appendChild(enNoteInput);
+          notes.appendChild(frNoteInput);
+          wrapper.appendChild(notes);
+
+          toggleNoteBtn.textContent = 'Remove Note';
+        } else {
+          notes.remove();
+          notes = null;
+          toggleNoteBtn.textContent = '+ Note';
+        }
+      };
 
       wrapper.appendChild(header);
-      wrapper.appendChild(notes);
       itemsContainer.appendChild(wrapper);
+
+      if (enNote || frNote) toggleNoteBtn.click();
 
       return wrapper;
     }
@@ -166,8 +184,8 @@
           english: enInput.value,
           french: frInput.value,
           level,
-          noteEnglish: enNoteInput.value,
-          noteFrench: frNoteInput.value
+          noteEnglish: enNoteInput ? enNoteInput.value : '',
+          noteFrench: frNoteInput ? frNoteInput.value : ''
         });
       });
 
