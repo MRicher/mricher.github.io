@@ -24,6 +24,12 @@
     <label for="frenchTitle">French Title:</label>
     <input type="text" id="frenchTitle" name="frenchTitle" required><br><br>
 
+    <label>Visibility:</label><br>
+    <input type="radio" id="public" name="visibility" value="public" checked>
+    <label for="public">Public</label><br>
+    <input type="radio" id="internal" name="visibility" value="internal">
+    <label for="internal">Internal</label><br><br>
+
     <label for="version">Version:</label>
     <input type="text" id="version" name="version" placeholder="e.g., 1.0" required><br><br>
 
@@ -45,7 +51,7 @@
     const fileInput = document.getElementById('fileInput');
     const itemsContainer = document.getElementById('itemsContainer');
 
-    function addItem(english = '', french = '', level = 0, parent = null) {
+    function addItem(english = '', french = '', level = 0) {
       const wrapper = document.createElement('div');
       wrapper.className = 'item-pair';
       wrapper.style.paddingLeft = `${level * 30}px`;
@@ -89,6 +95,8 @@
     form.addEventListener('submit', function(event) {
       event.preventDefault();
 
+      const visibility = document.querySelector('input[name="visibility"]:checked').value;
+
       const items = [];
       itemsContainer.querySelectorAll('.item-pair').forEach(pair => {
         const [en, fr] = pair.querySelectorAll('input');
@@ -102,6 +110,7 @@
       const data = {
         englishTitle: document.getElementById('englishTitle').value,
         frenchTitle: document.getElementById('frenchTitle').value,
+        visibility,
         version: document.getElementById('version').value,
         date: document.getElementById('date').value,
         items
@@ -130,6 +139,11 @@
           document.getElementById('frenchTitle').value = data.frenchTitle || '';
           document.getElementById('version').value = data.version || '';
           document.getElementById('date').value = data.date || '';
+          if (data.visibility === 'internal') {
+            document.getElementById('internal').checked = true;
+          } else {
+            document.getElementById('public').checked = true;
+          }
 
           itemsContainer.innerHTML = '';
           if (Array.isArray(data.items)) {
