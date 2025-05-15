@@ -16,17 +16,14 @@
       padding: 1rem;
       margin-left: var(--level-indent, 0);
     }
-
     .item-notes {
       margin-top: 0.5rem;
     }
-
     .task-actions {
       display: flex;
       gap: 0.5rem;
       margin-top: 0.5rem;
     }
-
     .form-section {
       margin-bottom: 2rem;
     }
@@ -185,7 +182,6 @@
           form.querySelector('gcds-input[name="frenchTitle"]').value = data.frenchTitle || '';
           form.querySelector('gcds-input[name="version"]').value = data.version || '';
           form.querySelector('gcds-date[name="date"]').value = data.date || '';
-
           form.querySelector(`gcds-radio[name="visibility"][value="${data.visibility || 'public'}"]`).checked = true;
 
           itemsContainer.innerHTML = '';
@@ -199,7 +195,7 @@
       reader.readAsText(file);
     });
 
-    // Initial root item
+    // Add initial root item
     addItem();
   </script>
 </body>
