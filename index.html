@@ -91,9 +91,45 @@
       name="file-uploader"
       hint="Select a JSON file to load data from."
     ></gcds-file-uploader>
+    <gcds-button id="loadJsonBtn" type="button" style="display:none; margin-top: 1rem;">Load JSON Data</gcds-button>
   </gcds-container>
 
-  <script>
+<script>
+  // JSON Load handler
+  uploader.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file || !file.name.endsWith('.json')) {
+      alert('Please upload a valid JSON file.');
+      return;
+    }
+    document.getElementById('loadJsonBtn').style.display = 'inline-block';
+    uploader.dataset.filename = file.name; // Store for later use
+  });
+
+  document.getElementById('loadJsonBtn').addEventListener('click', async () => {
+    const file = uploader.shadowRoot.querySelector('input[type="file"]').files[0];
+    if (!file) return;
+
+    const text = await file.text();
+    try {
+      const data = JSON.parse(text);
+
+      setGcdsValue('#englishTitle', data.title || '');
+      setGcdsValue('#frenchTitle', data.title_fr || '');
+      setGcdsValue('#version', data.version || '');
+      setGcdsRadioValue('visibility', data.visibility || '');
+      setGcdsDateValue('#publish-date', data.date || '');
+
+      // Clear current items
+      itemsContainer.innerHTML = '';
+      (data.items || []).forEach(item => {
+        addItem(item.text || '', item.text_fr || '', item.level || 0, item.note || '', item.note_fr || '');
+      });
+    } catch (err) {
+      alert('Error parsing JSON: ' + err.message);
+    }
+  });
+  
   const form = document.getElementById('titleForm');
   const uploader = document.querySelector('gcds-file-uploader');
   const itemsContainer = document.getElementById('itemsContainer');
