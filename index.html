@@ -60,20 +60,20 @@
       legend="Visibility"
       required
       options='[
-        { "id": "public", "label": "Public", "value": "public", "hint": "Visible to everyone.", "checked": "" },
+        { "id": "public", "label": "Public", "value": "public", "hint": "Visible to everyone." },
         { "id": "internal", "label": "Internal", "value": "internal", "hint": "Visible only internally." }
       ]'>
     </gcds-radio-group>
 
     <gcds-input label="Version (1.0.0)" name="version" required></gcds-input>
 
+    <!-- Updated date input -->
     <gcds-date-input
-      legend="Date input"
+      legend="Date"
       name="date"
       format="full"
-      value="YYYY-MM-DD"
-      required
-    ></gcds-date-input>
+      required>
+    </gcds-date-input>
 
     <h2>Items</h2>
     <div id="itemsContainer"></div>
@@ -90,6 +90,7 @@
     name="file-uploader"
     hint="Select a JSON file to load data from."
   ></gcds-file-uploader>
+
 </gcds-container>
 
 <script>
@@ -201,7 +202,7 @@
       return;
     }
 
-    if (!/\d+\.\d+\.\d+/.test(version)) {
+    if (!/^\d+\.\d+\.\d+$/.test(version)) {
       alert('Version must follow the format number.number.number, e.g., 1.0.0');
       return;
     }
@@ -242,8 +243,8 @@
     URL.revokeObjectURL(url);
   });
 
-  uploader.addEventListener('gcdsFileUploaderChange', (event) => {
-    const files = event.detail?.files;
+  uploader.addEventListener('change', (event) => {
+    const files = event.detail.files;
     if (!files || files.length === 0) return;
 
     const file = files[0];
@@ -251,22 +252,16 @@
     reader.onload = (e) => {
       try {
         const data = JSON.parse(e.target.result);
-
         const setInput = (selector, value) => {
           const input = document.querySelector(selector);
           if (input?.shadowRoot) {
             input.shadowRoot.querySelector('input').value = value || '';
           }
         };
-
         setInput('gcds-input[name="englishTitle"]', data.englishTitle);
         setInput('gcds-input[name="frenchTitle"]', data.frenchTitle);
         setInput('gcds-input[name="version"]', data.version);
-
-        const dateInput = document.querySelector('gcds-date-input[name="date"]');
-        if (dateInput?.shadowRoot) {
-          dateInput.shadowRoot.querySelector('input').value = data.date || '';
-        }
+        setInput('gcds-date-input[name="date"]', data.date);
 
         const visibilityGroup = document.querySelector('gcds-radio-group[name="visibility"]');
         if (visibilityGroup?.shadowRoot) {
