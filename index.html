@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GC Design System Form</title>
+  <title>Title Form - GC Design System</title>
 
   <!-- GC Design System CSS -->
   <link rel="stylesheet" href="https://cdn.design-system.alpha.canada.ca/@cdssnc/gcds-utility@1.8.0/dist/gcds-utility.min.css" />
@@ -24,19 +24,29 @@
       border-radius: 0.25rem;
       background: #f9f9f9;
     }
-    .item-header, .item-controls, .item-notes {
+    .item-header {
       display: flex;
       flex-wrap: wrap;
       gap: 0.5rem;
       align-items: center;
     }
+    .item-controls {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+      flex-wrap: wrap;
+    }
     .item-notes {
       margin-top: 0.5rem;
       border-top: 1px solid #ccc;
       padding-top: 0.5rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
     }
   </style>
 </head>
+
 <body>
 <gcds-container main-container size="xl" centered tag="main">
   <gcds-heading tag="h1">Form</gcds-heading>
@@ -50,13 +60,20 @@
       legend="Visibility"
       required
       options='[
-        { "id": "public", "label": "Public", "value": "public", "hint": "Visible to everyone." },
-        { "id": "internal", "label": "Internal", "value": "internal", "hint": "Visible only internally." }
+        { "id": "public", "label": "Public", "value": "public", "checked": "" },
+        { "id": "internal", "label": "Internal", "value": "internal" }
       ]'>
     </gcds-radio-group>
 
     <gcds-input label="Version (1.0.0)" name="version" required></gcds-input>
-    <gcds-date-input legend="Date (yyyy-mm-dd)" name="date" format="full" required></gcds-date-input>
+
+    <!-- Updated to use gcds-date-input -->
+    <gcds-date-input
+      legend="Date input"
+      name="date"
+      format="full"
+      required
+    ></gcds-date-input>
 
     <h2>Items</h2>
     <div id="itemsContainer"></div>
@@ -73,6 +90,7 @@
     name="file-uploader"
     hint="Select a JSON file to load data from."
   ></gcds-file-uploader>
+
 </gcds-container>
 
 <script>
@@ -80,22 +98,16 @@
   const uploader = document.querySelector('gcds-file-uploader');
   const itemsContainer = document.getElementById('itemsContainer');
 
-  function getValueFromInput(selector) {
-    const el = document.querySelector(selector);
-    if (!el || !el.shadowRoot) return '';
-
-    if (el.tagName.toLowerCase() === 'gcds-date-input') {
-      const selects = el.shadowRoot.querySelectorAll('select');
-      if (selects.length === 3) {
-        const [year, month, day] = Array.from(selects).map(s => s.value.padStart(2, '0'));
-        if (!year || !month || !day) return '';
-        return `${year}-${month}-${day}`;
+  function createGcdsInput(label, value = '', type = 'text') {
+    const input = document.createElement('gcds-input');
+    input.setAttribute('label', label);
+    if (type !== 'text') input.setAttribute('type', type);
+    setTimeout(() => {
+      if(input.shadowRoot) {
+        input.shadowRoot.querySelector('input').value = value;
       }
-      return '';
-    } else {
-      const input = el.shadowRoot.querySelector('input');
-      return input?.value?.trim() || '';
-    }
+    });
+    return input;
   }
 
   function addItem(en = '', fr = '', level = 0, noteEn = '', noteFr = '') {
@@ -113,6 +125,7 @@
 
     const controls = document.createElement('div');
     controls.className = 'item-controls';
+
     const addChildBtn = document.createElement('gcds-button');
     addChildBtn.setAttribute('type', 'button');
     addChildBtn.textContent = '+ Child';
@@ -172,42 +185,73 @@
     return wrapper;
   }
 
-  function createGcdsInput(label, value = '', type = 'text') {
-    const input = document.createElement('gcds-input');
-    input.setAttribute('label', label);
-    if (type !== 'text') input.setAttribute('type', type);
-    setTimeout(() => {
-      input.shadowRoot.querySelector('input').value = value;
-    });
-    return input;
-  }
-
   form.addEventListener('submit', (event) => {
     event.preventDefault();
 
-    const englishTitle = getValueFromInput('gcds-input[name="englishTitle"]');
-    const frenchTitle = getValueFromInput('gcds-input[name="frenchTitle"]');
-    const version = getValueFromInput('gcds-input[name="version"]');
-    const date = getValueFromInput('gcds-date-input[name="date"]');
+    // Utility to get value from gcds-input and gcds-date-input
+    function getInputValue(selector) {
+      const el = document.querySelector(selector);
+      if (!el) return '';
+
+      // Handle gcds-date-input (it uses shadowRoot input)
+      if (el.tagName.toLowerCase() === 'gcds-date-input') {
+        const input = el.shadowRoot?.querySelector('input');
+        return input ? input.value.trim() : '';
+      }
+
+      // Handle gcds-input
+      if (el.tagName.toLowerCase() === 'gcds-input') {
+        const input = el.shadowRoot?.querySelector('input');
+        return input ? input.value.trim() : '';
+      }
+
+      return '';
+    }
+
+    const englishTitle = getInputValue('gcds-input[name="englishTitle"]');
+    const frenchTitle = getInputValue('gcds-input[name="frenchTitle"]');
+    const version = getInputValue('gcds-input[name="version"]');
+    const date = getInputValue('gcds-date-input[name="date"]');
 
     const visibilityGroup = document.querySelector('gcds-radio-group[name="visibility"]');
-    const visibility = visibilityGroup?.shadowRoot.querySelector('input[type="radio"]:checked')?.value || '';
+    const checkedRadio = visibilityGroup?.shadowRoot.querySelector('input[type="radio"]:checked');
+    const visibility = checkedRadio ? checkedRadio.value : '';
 
-    if (!englishTitle || !frenchTitle || !version || !date || !visibility) {
-      alert('Please complete all required fields before saving.');
+    // Debug alerts to identify empty/invalid fields
+    if (!englishTitle) {
+      alert('English Title is empty');
+      return;
+    }
+    if (!frenchTitle) {
+      alert('French Title is empty');
+      return;
+    }
+    if (!version) {
+      alert('Version is empty');
+      return;
+    }
+    if (!date) {
+      alert('Date is empty');
+      return;
+    }
+    if (!visibility) {
+      alert('Visibility is not selected');
       return;
     }
 
-    if (!/\d+\.\d+\.\d+/.test(version)) {
+    // Validate version format
+    if (!/^\d+\.\d+\.\d+$/.test(version)) {
       alert('Version must follow the format number.number.number, e.g., 1.0.0');
       return;
     }
 
-    if (!/\d{4}-\d{2}-\d{2}/.test(date)) {
+    // Validate date format YYYY-MM-DD
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
       alert('Date must be in the format yyyy-mm-dd.');
       return;
     }
 
+    // If all checks passed, collect data
     const data = {
       englishTitle,
       frenchTitle,
@@ -239,44 +283,29 @@
     URL.revokeObjectURL(url);
   });
 
-  uploader.addEventListener('change', () => {
-    const input = uploader.shadowRoot.querySelector('input[type="file"]');
-    const file = input?.files?.[0];
-    if (!file) return;
+  uploader.addEventListener('change', (event) => {
+    const files = event.detail?.files;
+    if (!files || files.length === 0) return;
 
+    const file = files[0];
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
         const data = JSON.parse(e.target.result);
-
         const setInput = (selector, value) => {
           const input = document.querySelector(selector);
-          if (input?.shadowRoot) {
-            const el = input.shadowRoot.querySelector('input');
-            if (el) el.value = value || '';
+          if(input?.shadowRoot) {
+            const shadowInput = input.shadowRoot.querySelector('input');
+            if(shadowInput) shadowInput.value = value || '';
           }
         };
-
-        const setDate = (selector, value) => {
-          const input = document.querySelector(selector);
-          if (input?.shadowRoot) {
-            const [year, month, day] = value.split('-');
-            const selects = input.shadowRoot.querySelectorAll('select');
-            if (selects.length === 3) {
-              selects[0].value = year;
-              selects[1].value = month;
-              selects[2].value = day;
-            }
-          }
-        };
-
         setInput('gcds-input[name="englishTitle"]', data.englishTitle);
         setInput('gcds-input[name="frenchTitle"]', data.frenchTitle);
         setInput('gcds-input[name="version"]', data.version);
-        setDate('gcds-date-input[name="date"]', data.date);
+        setInput('gcds-date-input[name="date"]', data.date);
 
         const visibilityGroup = document.querySelector('gcds-radio-group[name="visibility"]');
-        if (visibilityGroup?.shadowRoot) {
+        if(visibilityGroup?.shadowRoot) {
           visibilityGroup.shadowRoot.querySelectorAll('input[type="radio"]').forEach(input => {
             input.checked = input.value === data.visibility;
           });
