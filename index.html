@@ -1,50 +1,257 @@
-form.addEventListener('submit', (event) => {
-  event.preventDefault();
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Title Form - GC Design System</title>
 
-  const getValue = (selector) =>
-    document.querySelector(selector)?.shadowRoot?.querySelector('input')?.value || '';
+  <!-- GC Design System CSS -->
+  <link rel="stylesheet" href="https://cdn.design-system.alpha.canada.ca/@cdssnc/gcds-utility@1.8.0/dist/gcds-utility.min.css" />
+  <link rel="stylesheet" href="https://cdn.design-system.alpha.canada.ca/@cdssnc/gcds-components@0.34.1/dist/gcds/gcds.css" />
 
-  const englishTitle = getValue('gcds-input[name="englishTitle"]');
-  const frenchTitle = getValue('gcds-input[name="frenchTitle"]');
-  const version = getValue('gcds-input[name="version"]');
-  const date = getValue('gcds-input[name="date"]');
-  const visibilityGroup = document.querySelector('gcds-radio-group[name="visibility"]');
-  const visibility = visibilityGroup?.shadowRoot.querySelector('input[type="radio"]:checked')?.value || '';
+  <!-- GC Design System JS -->
+  <script type="module" src="https://cdn.design-system.alpha.canada.ca/@cdssnc/gcds-components@0.34.1/dist/gcds/gcds.esm.js"></script>
+  <script nomodule src="https://cdn.design-system.alpha.canada.ca/@cdssnc/gcds-components@0.34.1/dist/gcds/gcds.js"></script>
 
-  // Basic validation for required fields
-  if (!englishTitle || !frenchTitle || !version || !date || !visibility) {
-    alert('Please complete all required fields before saving.');
-    return;
+  <style>
+    #itemsContainer {
+      margin-top: 1rem;
+    }
+    .item-pair {
+      border: 1px solid #ccc;
+      margin-bottom: 1rem;
+      padding: 1rem;
+      border-radius: 0.25rem;
+      background: #f9f9f9;
+    }
+    .item-header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .item-controls {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .item-notes {
+      margin-top: 0.5rem;
+      border-top: 1px solid #ccc;
+      padding-top: 0.5rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+
+<body>
+<gcds-container main-container size="xl" centered tag="main">
+  <gcds-heading tag="h1">Form</gcds-heading>
+
+  <form id="titleForm">
+    <gcds-input label="English Title" name="englishTitle" required></gcds-input>
+    <gcds-input label="French Title" name="frenchTitle" required></gcds-input>
+
+    <gcds-radio-group
+      name="visibility"
+      legend="Visibility"
+      required
+      options='[
+        { "id": "public", "label": "Public", "value": "public", "hint": "Visible to everyone.", "checked": "" },
+        { "id": "internal", "label": "Internal", "value": "internal", "hint": "Visible only internally." }
+      ]'>
+    </gcds-radio-group>
+
+    <gcds-input label="Version" name="version" required></gcds-input>
+    <gcds-input label="Date" name="date" type="date" required></gcds-input>
+
+    <h2>Items</h2>
+    <div id="itemsContainer"></div>
+    <gcds-button type="button" onclick="addItem()">Add Root Item</gcds-button>
+
+    <br /><br />
+    <gcds-button type="submit">Save as JSON</gcds-button>
+  </form>
+
+  <h2>Load JSON</h2>
+  <input type="file" id="fileInput" accept="application/json" />
+
+  <gcds-footer display="full" contextual-heading="GC Footer"></gcds-footer>
+</gcds-container>
+
+<script>
+  const form = document.getElementById('titleForm');
+  const fileInput = document.getElementById('fileInput');
+  const itemsContainer = document.getElementById('itemsContainer');
+
+  function createGcdsInput(label, value = '', type = 'text') {
+    const input = document.createElement('gcds-input');
+    input.setAttribute('label', label);
+    if (type !== 'text') input.setAttribute('type', type);
+    setTimeout(() => {
+      input.shadowRoot.querySelector('input').value = value;
+    });
+    return input;
   }
 
-  const data = {
-    englishTitle,
-    frenchTitle,
-    version,
-    date,
-    visibility,
-    items: [],
-  };
+  function addItem(en = '', fr = '', level = 0, noteEn = '', noteFr = '') {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'item-pair';
+    wrapper.style.marginLeft = `${level * 30}px`;
+    wrapper.dataset.level = level;
 
-  itemsContainer.querySelectorAll('.item-pair').forEach(pair => {
-    const level = parseInt(pair.dataset.level);
-    const en = pair.querySelector('gcds-input[label="Item in English"]')?.shadowRoot.querySelector('input').value || '';
-    const fr = pair.querySelector('gcds-input[label="Item in French"]')?.shadowRoot.querySelector('input').value || '';
-    const noteEn = pair.querySelector('gcds-input[label="English note"]')?.shadowRoot.querySelector('input')?.value || '';
-    const noteFr = pair.querySelector('gcds-input[label="French note"]')?.shadowRoot.querySelector('input')?.value || '';
-    data.items.push({ english: en, french: fr, level, noteEnglish: noteEn, noteFrench: noteFr });
+    const header = document.createElement('div');
+    header.className = 'item-header';
+    const enInput = createGcdsInput('Item in English', en);
+    const frInput = createGcdsInput('Item in French', fr);
+    header.appendChild(enInput);
+    header.appendChild(frInput);
+
+    const controls = document.createElement('div');
+    controls.className = 'item-controls';
+
+    const addChildBtn = document.createElement('gcds-button');
+    addChildBtn.setAttribute('type', 'button');
+    addChildBtn.textContent = '+ Child';
+    addChildBtn.onclick = () => {
+      const idx = [...itemsContainer.children].indexOf(wrapper);
+      const newItem = addItem('', '', level + 1);
+      itemsContainer.insertBefore(newItem, itemsContainer.children[idx + 1]);
+    };
+
+    const toggleNoteBtn = document.createElement('gcds-button');
+    toggleNoteBtn.setAttribute('type', 'button');
+    toggleNoteBtn.textContent = '+ Note';
+
+    const upBtn = document.createElement('gcds-button');
+    upBtn.setAttribute('type', 'button');
+    upBtn.textContent = '↑';
+    upBtn.onclick = () => {
+      const prev = wrapper.previousElementSibling;
+      if (prev) itemsContainer.insertBefore(wrapper, prev);
+    };
+
+    const downBtn = document.createElement('gcds-button');
+    downBtn.setAttribute('type', 'button');
+    downBtn.textContent = '↓';
+    downBtn.onclick = () => {
+      const next = wrapper.nextElementSibling;
+      if (next) itemsContainer.insertBefore(next, wrapper);
+    };
+
+    const removeBtn = document.createElement('gcds-button');
+    removeBtn.setAttribute('type', 'button');
+    removeBtn.textContent = 'Remove';
+    removeBtn.onclick = () => wrapper.remove();
+
+    controls.append(addChildBtn, toggleNoteBtn, upBtn, downBtn, removeBtn);
+    wrapper.append(header, controls);
+
+    let notes = null;
+    toggleNoteBtn.onclick = () => {
+      if (!notes) {
+        notes = document.createElement('div');
+        notes.className = 'item-notes';
+        const enNote = createGcdsInput('English note', noteEn);
+        const frNote = createGcdsInput('French note', noteFr);
+        notes.append(enNote, frNote);
+        wrapper.appendChild(notes);
+        toggleNoteBtn.textContent = 'Remove Note';
+      } else {
+        notes.remove();
+        notes = null;
+        toggleNoteBtn.textContent = '+ Note';
+      }
+    };
+
+    if (noteEn || noteFr) toggleNoteBtn.click();
+    itemsContainer.appendChild(wrapper);
+    return wrapper;
+  }
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const getValue = (selector) =>
+      document.querySelector(selector)?.shadowRoot?.querySelector('input')?.value || '';
+
+    const englishTitle = getValue('gcds-input[name="englishTitle"]');
+    const frenchTitle = getValue('gcds-input[name="frenchTitle"]');
+    const version = getValue('gcds-input[name="version"]');
+    const date = getValue('gcds-input[name="date"]');
+
+    const visibilityGroup = document.querySelector('gcds-radio-group[name="visibility"]');
+    const visibility = visibilityGroup?.shadowRoot.querySelector('input[type="radio"]:checked')?.value || '';
+
+    if (!englishTitle || !frenchTitle || !version || !date || !visibility) {
+      alert('Please complete all required fields before saving.');
+      return;
+    }
+
+    const data = {
+      englishTitle,
+      frenchTitle,
+      version,
+      date,
+      visibility,
+      items: []
+    };
+
+    itemsContainer.querySelectorAll('.item-pair').forEach(pair => {
+      const level = parseInt(pair.dataset.level);
+      const en = pair.querySelector('gcds-input[label="Item in English"]')?.shadowRoot.querySelector('input')?.value || '';
+      const fr = pair.querySelector('gcds-input[label="Item in French"]')?.shadowRoot.querySelector('input')?.value || '';
+      const noteEn = pair.querySelector('gcds-input[label="English note"]')?.shadowRoot.querySelector('input')?.value || '';
+      const noteFr = pair.querySelector('gcds-input[label="French note"]')?.shadowRoot.querySelector('input')?.value || '';
+      data.items.push({ english: en, french: fr, level, noteEnglish: noteEn, noteFrench: noteFr });
+    });
+
+    const cleanTitle = englishTitle.trim().toLowerCase().replace(/[^a-z0-9-_]+/g, '-');
+    const cleanVersion = version.trim().replace(/[^a-z0-9.]+/gi, '-');
+    const filename = `${cleanTitle}-${cleanVersion}.json`;
+
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(url);
   });
 
-  // Clean filename: remove unsafe characters from title
-  const cleanTitle = englishTitle.trim().toLowerCase().replace(/[^a-z0-9-_]+/g, '-');
-  const cleanVersion = version.trim().replace(/[^a-z0-9.]+/gi, '-');
-  const filename = `${cleanTitle}-${cleanVersion}.json`;
+  fileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target.result);
+        const setInput = (selector, value) => {
+          document.querySelector(selector).shadowRoot.querySelector('input').value = value || '';
+        };
+        setInput('gcds-input[name="englishTitle"]', data.englishTitle);
+        setInput('gcds-input[name="frenchTitle"]', data.frenchTitle);
+        setInput('gcds-input[name="version"]', data.version);
+        setInput('gcds-input[name="date"]', data.date);
 
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = filename;
-  link.click();
-  URL.revokeObjectURL(url);
-});
+        document.querySelector('gcds-radio-group[name="visibility"]').shadowRoot
+          .querySelectorAll('input[type="radio"]').forEach(input => {
+            input.checked = input.value === data.visibility;
+          });
+
+        itemsContainer.innerHTML = '';
+        (data.items || []).forEach(item =>
+          addItem(item.english, item.french, item.level || 0, item.noteEnglish || '', item.noteFrench || '')
+        );
+      } catch (err) {
+        alert('Invalid JSON file.');
+      }
+    };
+    reader.readAsText(file);
+  });
+</script>
+</body>
+</html>
