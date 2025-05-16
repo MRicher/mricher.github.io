@@ -1,7 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
+<html dir="ltr" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Title Form - GC Design System</title>
 
   <!-- GC Design System Utility CSS -->
@@ -60,8 +60,17 @@
   </style>
 </head>
 <body>
-  <main class="gcds-container gcds-container--max-width">
-    <h1>Title Form</h1>
+    <gcds-container
+      id="main-content"
+      main-container
+      size="xl"
+      centered
+      tag="main"
+    >
+      <section>
+        <gcds-heading tag="h1">Form</gcds-heading>
+      </section>
+
     <form id="titleForm">
       <gcds-input label="English Title" name="englishTitle" required></gcds-input>
       <gcds-input label="French Title" name="frenchTitle" required></gcds-input>
@@ -84,7 +93,13 @@
 
     <h2>Load JSON</h2>
     <input type="file" id="fileInput" accept="application/json" />
-  </main>
+    <gcds-footer
+      display="full"
+      contextual-heading="RCMP"
+    >
+    </gcds-footer>
+  </body>
+</html>
 
   <script>
     const form = document.getElementById('titleForm');
