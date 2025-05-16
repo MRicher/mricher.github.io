@@ -56,10 +56,11 @@
     <gcds-input label="French Title" name="frenchTitle" required></gcds-input>
 
     <gcds-radio-group
-      label="Visibility"
       name="visibility"
+      legend="Visibility"
+      required
       options='[
-        { "id": "public", "label": "Public", "value": "public", "hint": "Visible to everyone.", "required": 'yes' , "checked": "yes" },
+        { "id": "public", "label": "Public", "value": "public", "hint": "Visible to everyone.", "checked": "" },
         { "id": "internal", "label": "Internal", "value": "internal", "hint": "Visible only internally." }
       ]'>
     </gcds-radio-group>
@@ -76,13 +77,18 @@
   </form>
 
   <h2>Load JSON</h2>
-  <input type="file" id="fileInput" accept="application/json" />
+  <gcds-file-uploader
+    uploader-id="uploader"
+    label="Upload JSON File"
+    name="file-uploader"
+    hint="Select a JSON file to load data from."
+  ></gcds-file-uploader>
 
 </gcds-container>
 
 <script>
   const form = document.getElementById('titleForm');
-  const fileInput = document.getElementById('fileInput');
+  const uploader = document.querySelector('gcds-file-uploader');
   const itemsContainer = document.getElementById('itemsContainer');
 
   function createGcdsInput(label, value = '', type = 'text') {
@@ -232,9 +238,11 @@
     URL.revokeObjectURL(url);
   });
 
-  fileInput.addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+  uploader.addEventListener('change', (event) => {
+    const files = event.detail.files;
+    if (!files || files.length === 0) return;
+
+    const file = files[0];
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
