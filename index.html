@@ -255,6 +255,14 @@ function getValueFromInput(selector) {
     link.download = filename;
     link.click();
     URL.revokeObjectURL(url);
+
+    console.log({
+  englishTitle,
+  frenchTitle,
+  version,
+  date,
+  visibility
+});
   });
 
   uploader.addEventListener('change', (event) => {
