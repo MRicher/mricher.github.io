@@ -48,51 +48,52 @@
 </head>
 
 <body>
-<gcds-container main-container size="xl" centered tag="main">
-  <gcds-heading tag="h1">Form</gcds-heading>
+  <gcds-container main-container size="xl" centered tag="main">
+    <gcds-heading tag="h1">Form</gcds-heading>
 
-  <form id="titleForm" novalidate>
-    <gcds-input label="English Title" name="englishTitle" required></gcds-input>
-    <gcds-input label="French Title" name="frenchTitle" required></gcds-input>
+    <form id="titleForm" novalidate>
+      <gcds-input id="englishTitle" label="English Title" name="englishTitle" required></gcds-input>
+      <gcds-input id="frenchTitle" label="French Title" name="frenchTitle" required></gcds-input>
 
-    <gcds-radio-group
-      name="visibility"
-      legend="Visibility"
-      required
-      options='[
-        { "id": "public", "label": "Public", "value": "public", "hint": "Visible to everyone." },
-        { "id": "internal", "label": "Internal", "value": "internal", "hint": "Visible only internally." }
-      ]'>
-    </gcds-radio-group>
+      <gcds-radio-group
+        id="visibility"
+        name="visibility"
+        legend="Visibility"
+        required
+        options='[
+          { "id": "visibility-public", "label": "Public", "value": "public", "hint": "Visible to everyone." },
+          { "id": "visibility-internal", "label": "Internal", "value": "internal", "hint": "Visible only internally." }
+        ]'>
+      </gcds-radio-group>
 
-    <gcds-input label="Version (1.0.0)" name="version" required></gcds-input>
+      <gcds-input id="version" label="Version (1.0.0)" name="version" required></gcds-input>
 
-    <gcds-date-input
-      legend="Date input"
-      name="date"
-      format="full"
-      required
-    ></gcds-date-input>
+      <gcds-date-input
+        id="publish-date"
+        legend="Date input"
+        name="date"
+        format="full"
+        required
+      ></gcds-date-input>
 
-    <h2>Items</h2>
-    <div id="itemsContainer"></div>
-    <gcds-button type="button" onclick="addItem()">Add Root Item</gcds-button>
+      <gcds-heading tag="h2">Items</gcds-heading>
+      <div id="itemsContainer"></div>
+      <gcds-button type="button" onclick="addItem()">Add Root Item</gcds-button>
 
-    <br /><br />
-    <gcds-button type="submit">Save as JSON</gcds-button>
-  </form>
+      <br /><br />
+      <gcds-button type="submit">Save as JSON</gcds-button>
+    </form>
 
-  <h2>Load JSON</h2>
-  <gcds-file-uploader
-    uploader-id="uploader"
-    label="Upload JSON File"
-    name="file-uploader"
-    hint="Select a JSON file to load data from."
-  ></gcds-file-uploader>
+    <gcds-heading tag="h2">Load JSON</gcds-heading>
+    <gcds-file-uploader
+      uploader-id="json-upload"
+      label="Upload JSON File"
+      name="file-uploader"
+      hint="Select a JSON file to load data from."
+    ></gcds-file-uploader>
+  </gcds-container>
 
-</gcds-container>
-
-<script>
+  <script>
   const form = document.getElementById('titleForm');
   const uploader = document.querySelector('gcds-file-uploader');
   const itemsContainer = document.getElementById('itemsContainer');
@@ -386,8 +387,6 @@
     };
     reader.readAsText(file);
   });
-
-</script>
-
+  </script>
 </body>
 </html>
