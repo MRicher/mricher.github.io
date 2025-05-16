@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Title Form - GC Design System</title>
+  <title>GC Design System Form with JSON Load/Save</title>
 
   <!-- GC Design System CSS -->
   <link rel="stylesheet" href="https://cdn.design-system.alpha.canada.ca/@cdssnc/gcds-utility@1.8.0/dist/gcds-utility.min.css" />
@@ -101,6 +101,7 @@
     const input = document.createElement('gcds-input');
     input.setAttribute('label', label);
     if (type !== 'text') input.setAttribute('type', type);
+    // Delay setting value until shadowRoot is ready
     setTimeout(() => {
       if (input.shadowRoot) {
         const nativeInput = input.shadowRoot.querySelector('input');
@@ -185,7 +186,7 @@
     return wrapper;
   }
 
-  // Helper to get the value of gcds-input or gcds-select
+  // Helper to get the value from gcds-input or gcds-select (inside shadow DOM)
   function getGcdsValue(selector) {
     const el = document.querySelector(selector);
     if (!el?.shadowRoot) return '';
@@ -193,12 +194,37 @@
     return nativeInput?.value.trim() || '';
   }
 
-  // Helper to get selected value of gcds-radio-group
+  // Helper to get selected value from gcds-radio-group
   function getGcdsRadioValue(name) {
     const group = document.querySelector(`gcds-radio-group[name="${name}"]`);
     if (!group?.shadowRoot) return '';
     const checkedRadio = group.shadowRoot.querySelector('input[type="radio"]:checked');
     return checkedRadio?.value || '';
+  }
+
+  // Set value for gcds-input or gcds-select components, updating shadow DOM inputs and dispatching events
+  function setGcdsValue(selector, value) {
+    const el = document.querySelector(selector);
+    if (!el || !el.shadowRoot) return;
+    const nativeInput = el.shadowRoot.querySelector('input, select, textarea');
+    if (nativeInput) {
+      nativeInput.value = value ?? '';
+      nativeInput.dispatchEvent(new Event('input', { bubbles: true }));
+      nativeInput.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+  }
+
+  // Set radio button checked inside gcds-radio-group by value
+  function setGcdsRadioValue(name, value) {
+    const group = document.querySelector(`gcds-radio-group[name="${name}"]`);
+    if (!group?.shadowRoot) return;
+    const radios = group.shadowRoot.querySelectorAll('input[type="radio"]');
+    radios.forEach(radio => {
+      radio.checked = radio.value === value;
+      if (radio.checked) {
+        radio.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    });
   }
 
   form.addEventListener('submit', (event) => {
@@ -209,7 +235,7 @@
     const version = getGcdsValue('gcds-input[name="version"]');
     const visibility = getGcdsRadioValue('visibility');
 
-    // For gcds-date-input, get the date parts
+    // For gcds-date-input get parts
     const dateInput = document.querySelector('gcds-date-input[name="date"]');
     let date = '';
     if (dateInput?.shadowRoot) {
@@ -217,39 +243,28 @@
       const dayInput = dateInput.shadowRoot.querySelector('gcds-input.gcds-date-input__day');
       const yearInput = dateInput.shadowRoot.querySelector('gcds-input.gcds-date-input__year');
 
-      const month = monthSelect?.shadowRoot.querySelector('select')?.value || '';
-      const day = dayInput?.shadowRoot.querySelector('input')?.value || '';
-      const year = yearInput?.shadowRoot.querySelector('input')?.value || '';
+      function getShadowInputValue(gcdsComponent) {
+        if (!gcdsComponent?.shadowRoot) return '';
+        const nativeInput = gcdsComponent.shadowRoot.querySelector('input, select, textarea');
+        return nativeInput?.value.trim() || '';
+      }
+
+      const year = getShadowInputValue(yearInput);
+      const month = getShadowInputValue(monthSelect);
+      const day = getShadowInputValue(dayInput);
 
       if (year && month && day) {
         date = `${year.padStart(4, '0')}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
       }
     }
 
-    // Validate required fields
-    let missingFields = [];
-    if (!englishTitle) missingFields.push('English Title');
-    if (!frenchTitle) missingFields.push('French Title');
-    if (!version) missingFields.push('Version');
-    if (!date) missingFields.push('Date');
-    if (!visibility) missingFields.push('Visibility');
-
-    if (missingFields.length > 0) {
-      alert('Please complete all required fields before saving. Missing: ' + missingFields.join(', '));
-      return;
-    }
-
-    // Validate version: must be number.number.number
-    if (!/^\d+\.\d+\.\d+$/.test(version)) {
-      alert('Version must follow the format number.number.number, e.g., 1.0.0');
-      return;
-    }
-
-    // Validate date: simple regex yyyy-mm-dd
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-      alert('Date must be in YYYY-MM-DD format.');
-      return;
-    }
+    // Validation
+    if (!englishTitle) return alert('English title is required');
+    if (!frenchTitle) return alert('French title is required');
+    if (!version) return alert('Version is required');
+    if (!visibility) return alert('Visibility is required');
+    if (!date) return alert('Date is required');
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return alert('Date must be in YYYY-MM-DD format');
 
     // Gather items
     const items = [];
@@ -310,39 +325,13 @@
       try {
         const data = JSON.parse(e.target.result);
 
-        // Helper to set gcds-input or gcds-select value properly
-        function setGcdsValue(selector, value) {
-          const el = document.querySelector(selector);
-          if (!el) return;
-          if (el.shadowRoot) {
-            // For gcds-input or gcds-select, set internal input/select value
-            const input = el.shadowRoot.querySelector('input, select, textarea');
-            if (input) {
-              input.value = value || '';
-              input.dispatchEvent(new Event('input', { bubbles: true }));
-              input.dispatchEvent(new Event('change', { bubbles: true }));
-            }
-          }
-        }
-
         // Set text inputs
         setGcdsValue('gcds-input[name="englishTitle"]', data.englishTitle);
         setGcdsValue('gcds-input[name="frenchTitle"]', data.frenchTitle);
         setGcdsValue('gcds-input[name="version"]', data.version);
 
         // Set visibility radio
-        if (data.visibility) {
-          const visibilityGroup = document.querySelector('gcds-radio-group[name="visibility"]');
-          if (visibilityGroup?.shadowRoot) {
-            const radios = visibilityGroup.shadowRoot.querySelectorAll('input[type="radio"]');
-            radios.forEach(radio => {
-              radio.checked = radio.value === data.visibility;
-              if (radio.checked) {
-                radio.dispatchEvent(new Event('change', { bubbles: true }));
-              }
-            });
-          }
-        }
+        setGcdsRadioValue('visibility', data.visibility);
 
         // Set date input parts (month, day, year)
         if (data.date) {
@@ -350,7 +339,7 @@
           if (dateInput?.shadowRoot) {
             const [year, month, day] = data.date.split('-');
 
-            // Month select
+            // Month select inside gcds-date-input shadowRoot > gcds-select shadowRoot > select
             const monthSelect = dateInput.shadowRoot.querySelector('gcds-select[name="month"]');
             if (monthSelect?.shadowRoot) {
               const selectEl = monthSelect.shadowRoot.querySelector('select');
@@ -360,7 +349,7 @@
               }
             }
 
-            // Day input
+            // Day input inside gcds-date-input shadowRoot
             const dayInput = dateInput.shadowRoot.querySelector('gcds-input.gcds-date-input__day');
             if (dayInput?.shadowRoot) {
               const dayEl = dayInput.shadowRoot.querySelector('input');
@@ -371,7 +360,7 @@
               }
             }
 
-            // Year input
+            // Year input inside gcds-date-input shadowRoot
             const yearInput = dateInput.shadowRoot.querySelector('gcds-input.gcds-date-input__year');
             if (yearInput?.shadowRoot) {
               const yearEl = yearInput.shadowRoot.querySelector('input');
@@ -399,5 +388,6 @@
   });
 
 </script>
+
 </body>
 </html>
