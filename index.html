@@ -228,6 +228,55 @@
     });
   }
 
+  // Set date input from ISO string (YYYY-MM-DD)
+  function setGcdsDateValue(selector, dateString) {
+    if (!dateString || !/^\d{4}-\d{2}-\d{2}$/.test(dateString)) return;
+    
+    const [year, month, day] = dateString.split('-');
+    const dateInput = document.querySelector(selector);
+    
+    if (!dateInput?.shadowRoot) return;
+    
+    // Wait for components to be fully rendered with their shadowRoots
+    setTimeout(() => {
+      try {
+        // Month select
+        const monthSelect = dateInput.shadowRoot.querySelector('gcds-select[name="month"]');
+        if (monthSelect?.shadowRoot) {
+          const selectEl = monthSelect.shadowRoot.querySelector('select');
+          if (selectEl) {
+            selectEl.value = month;
+            selectEl.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+        }
+        
+        // Day input
+        const dayInput = dateInput.shadowRoot.querySelector('gcds-input.gcds-date-input__day');
+        if (dayInput?.shadowRoot) {
+          const dayEl = dayInput.shadowRoot.querySelector('input');
+          if (dayEl) {
+            dayEl.value = parseInt(day, 10).toString(); // Remove leading zero
+            dayEl.dispatchEvent(new Event('input', { bubbles: true }));
+            dayEl.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+        }
+        
+        // Year input
+        const yearInput = dateInput.shadowRoot.querySelector('gcds-input.gcds-date-input__year');
+        if (yearInput?.shadowRoot) {
+          const yearEl = yearInput.shadowRoot.querySelector('input');
+          if (yearEl) {
+            yearEl.value = year;
+            yearEl.dispatchEvent(new Event('input', { bubbles: true }));
+            yearEl.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+        }
+      } catch (error) {
+        console.error('Error setting date value:', error);
+      }
+    }, 100); // Give components time to render
+  }
+
   form.addEventListener('submit', (event) => {
     event.preventDefault();
 
@@ -327,51 +376,16 @@
         const data = JSON.parse(e.target.result);
 
         // Set text inputs
-        setGcdsValue('gcds-input[name="englishTitle"]', data.englishTitle);
-        setGcdsValue('gcds-input[name="frenchTitle"]', data.frenchTitle);
-        setGcdsValue('gcds-input[name="version"]', data.version);
+        setGcdsValue('#englishTitle', data.englishTitle);
+        setGcdsValue('#frenchTitle', data.frenchTitle);
+        setGcdsValue('#version', data.version);
 
         // Set visibility radio
         setGcdsRadioValue('visibility', data.visibility);
 
-        // Set date input parts (month, day, year)
+        // Set date input
         if (data.date) {
-          const dateInput = document.querySelector('gcds-date-input[name="date"]');
-          if (dateInput?.shadowRoot) {
-            const [year, month, day] = data.date.split('-');
-
-            // Month select inside gcds-date-input shadowRoot > gcds-select shadowRoot > select
-            const monthSelect = dateInput.shadowRoot.querySelector('gcds-select[name="month"]');
-            if (monthSelect?.shadowRoot) {
-              const selectEl = monthSelect.shadowRoot.querySelector('select');
-              if (selectEl) {
-                selectEl.value = month;
-                selectEl.dispatchEvent(new Event('change', { bubbles: true }));
-              }
-            }
-
-            // Day input inside gcds-date-input shadowRoot
-            const dayInput = dateInput.shadowRoot.querySelector('gcds-input.gcds-date-input__day');
-            if (dayInput?.shadowRoot) {
-              const dayEl = dayInput.shadowRoot.querySelector('input');
-              if (dayEl) {
-                dayEl.value = day;
-                dayEl.dispatchEvent(new Event('input', { bubbles: true }));
-                dayEl.dispatchEvent(new Event('change', { bubbles: true }));
-              }
-            }
-
-            // Year input inside gcds-date-input shadowRoot
-            const yearInput = dateInput.shadowRoot.querySelector('gcds-input.gcds-date-input__year');
-            if (yearInput?.shadowRoot) {
-              const yearEl = yearInput.shadowRoot.querySelector('input');
-              if (yearEl) {
-                yearEl.value = year;
-                yearEl.dispatchEvent(new Event('input', { bubbles: true }));
-                yearEl.dispatchEvent(new Event('change', { bubbles: true }));
-              }
-            }
-          }
+          setGcdsDateValue('#publish-date', data.date);
         }
 
         // Clear existing items
