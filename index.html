@@ -185,21 +185,32 @@
     return wrapper;
   }
 
+  // Helper to read date value parts and combine them into YYYY-MM-DD
+  function getDateValue() {
+    const dateInput = document.querySelector('gcds-date-input[name="date"]');
+    if (!dateInput?.shadowRoot) return '';
+
+    const year = dateInput.shadowRoot.querySelector('input[name="year"]')?.value.trim() || '';
+    const month = dateInput.shadowRoot.querySelector('input[name="month"]')?.value.trim() || '';
+    const day = dateInput.shadowRoot.querySelector('input[name="day"]')?.value.trim() || '';
+
+    if (!year || !month || !day) return '';
+
+    // Add leading zero if needed
+    const mm = month.padStart(2, '0');
+    const dd = day.padStart(2, '0');
+
+    return `${year}-${mm}-${dd}`;
+  }
+
   form.addEventListener('submit', (event) => {
     event.preventDefault();
 
-    // Utility to get value from gcds-input and gcds-date-input
+    // Utility to get value from gcds-input (excluding date)
     function getInputValue(selector) {
       const el = document.querySelector(selector);
       if (!el) return '';
 
-      // Handle gcds-date-input (it uses shadowRoot input)
-      if (el.tagName.toLowerCase() === 'gcds-date-input') {
-        const input = el.shadowRoot?.querySelector('input');
-        return input ? input.value.trim() : '';
-      }
-
-      // Handle gcds-input
       if (el.tagName.toLowerCase() === 'gcds-input') {
         const input = el.shadowRoot?.querySelector('input');
         return input ? input.value.trim() : '';
@@ -211,13 +222,12 @@
     const englishTitle = getInputValue('gcds-input[name="englishTitle"]');
     const frenchTitle = getInputValue('gcds-input[name="frenchTitle"]');
     const version = getInputValue('gcds-input[name="version"]');
-    const date = getInputValue('gcds-date-input[name="date"]');
+    const date = getDateValue();
 
     const visibilityGroup = document.querySelector('gcds-radio-group[name="visibility"]');
     const checkedRadio = visibilityGroup?.shadowRoot.querySelector('input[type="radio"]:checked');
     const visibility = checkedRadio ? checkedRadio.value : '';
 
-    // Debug alerts to identify empty/invalid fields
     if (!englishTitle) {
       alert('English Title is empty');
       return;
@@ -239,19 +249,16 @@
       return;
     }
 
-    // Validate version format
     if (!/^\d+\.\d+\.\d+$/.test(version)) {
       alert('Version must follow the format number.number.number, e.g., 1.0.0');
       return;
     }
 
-    // Validate date format YYYY-MM-DD
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
       alert('Date must be in the format yyyy-mm-dd.');
       return;
     }
 
-    // If all checks passed, collect data
     const data = {
       englishTitle,
       frenchTitle,
@@ -302,7 +309,18 @@
         setInput('gcds-input[name="englishTitle"]', data.englishTitle);
         setInput('gcds-input[name="frenchTitle"]', data.frenchTitle);
         setInput('gcds-input[name="version"]', data.version);
-        setInput('gcds-date-input[name="date"]', data.date);
+
+        // Set date parts separately
+        const dateInput = document.querySelector('gcds-date-input[name="date"]');
+        if (dateInput?.shadowRoot && data.date) {
+          const [year, month, day] = data.date.split('-');
+          const yearInput = dateInput.shadowRoot.querySelector('input[name="year"]');
+          const monthInput = dateInput.shadowRoot.querySelector('input[name="month"]');
+          const dayInput = dateInput.shadowRoot.querySelector('input[name="day"]');
+          if(yearInput) yearInput.value = year || '';
+          if(monthInput) monthInput.value = month || '';
+          if(dayInput) dayInput.value = day || '';
+        }
 
         const visibilityGroup = document.querySelector('gcds-radio-group[name="visibility"]');
         if(visibilityGroup?.shadowRoot) {
