@@ -181,11 +181,24 @@
     return wrapper;
   }
 
-  function getValueFromInput(selector) {
-    const el = document.querySelector(selector);
-    const input = el?.shadowRoot?.querySelector('input');
-    return input?.value.trim() || '';
+function getValueFromInput(selector) {
+  const el = document.querySelector(selector);
+  if (!el || !el.shadowRoot) return '';
+
+  if (el.tagName.toLowerCase() === 'gcds-date-input') {
+    const selects = el.shadowRoot.querySelectorAll('select');
+    if (selects.length === 3) {
+      const [year, month, day] = Array.from(selects).map(s => s.value.padStart(2, '0'));
+      if (!year || !month || !day) return '';
+      return `${year}-${month}-${day}`;
+    }
+    return '';
+  } else {
+    const input = el.shadowRoot.querySelector('input');
+    return input?.value?.trim() || '';
   }
+}
+
 
   form.addEventListener('submit', (event) => {
     event.preventDefault();
