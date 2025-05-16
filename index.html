@@ -60,13 +60,20 @@
       legend="Visibility"
       required
       options='[
-        { "id": "public", "label": "Public", "value": "public", "hint": "Visible to everyone." },
+        { "id": "public", "label": "Public", "value": "public", "hint": "Visible to everyone.", "checked": "" },
         { "id": "internal", "label": "Internal", "value": "internal", "hint": "Visible only internally." }
       ]'>
     </gcds-radio-group>
 
     <gcds-input label="Version (1.0.0)" name="version" required></gcds-input>
-    <gcds-input label="Date (yyyy-mm-dd)" name="date" type="date" required></gcds-input>
+
+    <gcds-date-input
+      legend="Date input"
+      name="date"
+      format="full"
+      value="YYYY-MM-DD"
+      required
+    ></gcds-date-input>
 
     <h2>Items</h2>
     <div id="itemsContainer"></div>
@@ -81,9 +88,8 @@
     uploader-id="uploader"
     label="Upload JSON File"
     name="file-uploader"
-    hint="Select a JSON file to load data from.">
-  </gcds-file-uploader>
-
+    hint="Select a JSON file to load data from."
+  ></gcds-file-uploader>
 </gcds-container>
 
 <script>
@@ -96,8 +102,7 @@
     input.setAttribute('label', label);
     if (type !== 'text') input.setAttribute('type', type);
     setTimeout(() => {
-      const el = input.shadowRoot?.querySelector('input');
-      if (el) el.value = value;
+      input.shadowRoot.querySelector('input').value = value;
     });
     return input;
   }
@@ -177,16 +182,6 @@
     return wrapper;
   }
 
-  function setGcdsInputValue(name, value) {
-    const input = document.querySelector(`gcds-input[name="${name}"]`);
-    if (input) {
-      setTimeout(() => {
-        const el = input.shadowRoot?.querySelector('input');
-        if (el) el.value = value;
-      });
-    }
-  }
-
   form.addEventListener('submit', (event) => {
     event.preventDefault();
 
@@ -196,7 +191,7 @@
     const englishTitle = getValue('gcds-input[name="englishTitle"]');
     const frenchTitle = getValue('gcds-input[name="frenchTitle"]');
     const version = getValue('gcds-input[name="version"]');
-    const date = getValue('gcds-input[name="date"]');
+    const date = getValue('gcds-date-input[name="date"]');
 
     const visibilityGroup = document.querySelector('gcds-radio-group[name="visibility"]');
     const visibility = visibilityGroup?.shadowRoot.querySelector('input[type="radio"]:checked')?.value || '';
@@ -206,8 +201,8 @@
       return;
     }
 
-    if (!/^\d+\.\d+\.\d+$/.test(version)) {
-      alert('Version must follow the format number.number.number, example: 1.0.0');
+    if (!/\d+\.\d+\.\d+/.test(version)) {
+      alert('Version must follow the format number.number.number, e.g., 1.0.0');
       return;
     }
 
@@ -247,8 +242,8 @@
     URL.revokeObjectURL(url);
   });
 
-  uploader.addEventListener('change', (event) => {
-    const files = event.detail.files;
+  uploader.addEventListener('gcdsFileUploaderChange', (event) => {
+    const files = event.detail?.files;
     if (!files || files.length === 0) return;
 
     const file = files[0];
@@ -257,10 +252,21 @@
       try {
         const data = JSON.parse(e.target.result);
 
-        setGcdsInputValue('englishTitle', data.englishTitle);
-        setGcdsInputValue('frenchTitle', data.frenchTitle);
-        setGcdsInputValue('version', data.version);
-        setGcdsInputValue('date', data.date);
+        const setInput = (selector, value) => {
+          const input = document.querySelector(selector);
+          if (input?.shadowRoot) {
+            input.shadowRoot.querySelector('input').value = value || '';
+          }
+        };
+
+        setInput('gcds-input[name="englishTitle"]', data.englishTitle);
+        setInput('gcds-input[name="frenchTitle"]', data.frenchTitle);
+        setInput('gcds-input[name="version"]', data.version);
+
+        const dateInput = document.querySelector('gcds-date-input[name="date"]');
+        if (dateInput?.shadowRoot) {
+          dateInput.shadowRoot.querySelector('input').value = data.date || '';
+        }
 
         const visibilityGroup = document.querySelector('gcds-radio-group[name="visibility"]');
         if (visibilityGroup?.shadowRoot) {
