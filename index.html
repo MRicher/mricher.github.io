@@ -70,12 +70,16 @@
       <gcds-input label="English Title" name="englishTitle" required></gcds-input>
       <gcds-input label="French Title" name="frenchTitle" required></gcds-input>
 
-      <gcds-radio-group legend="Visibility" name="visibility">
-        <gcds-radio label="Public" value="public" checked></gcds-radio>
-        <gcds-radio label="Internal" value="internal"></gcds-radio>
-      </gcds-radio-group>
+    <gcds-radio-group
+      name="visibility"
+      legend="Visibility"
+      options='[
+        { "label": "Public", "id": "public", "value": "public", "hint": "Visible to everyone." },
+        { "label": "Internal", "id": "internal", "value": "internal", "hint": "Only visible internally." }
+      ]'
+    ></gcds-radio-group>
 
-      <gcds-input label="Version" name="version" placeholder="e.g., 1.0" required></gcds-input>
+      <gcds-input label="Version" name="version" placeholder="1.0.0" required></gcds-input>
       <gcds-input label="Date" name="date" type="date" required></gcds-input>
 
       <h2>Items</h2>
@@ -189,8 +193,8 @@
         return el?.shadowRoot.querySelector('input')?.value || '';
       };
 
-      const visibility = document.querySelector('gcds-radio-group[name="visibility"]')
-        ?.querySelector('gcds-radio[checked]')?.value || 'public';
+      const visibilityGroup = document.querySelector('gcds-radio-group[name="visibility"]');
+      const visibility = visibilityGroup?.shadowRoot.querySelector('input[type="radio"]:checked')?.value || 'public';
 
       const data = {
         englishTitle: getInputValue('englishTitle'),
@@ -234,9 +238,10 @@
           setInput('frenchTitle', data.frenchTitle);
           setInput('version', data.version);
           setInput('date', data.date);
-          document.querySelectorAll('gcds-radio').forEach(radio => {
-            radio.checked = radio.value === data.visibility;
-          });
+          const visibilityGroup = document.querySelector('gcds-radio-group[name="visibility"]');
+            visibilityGroup.shadowRoot.querySelectorAll('input[type="radio"]').forEach(input => {
+              input.checked = input.value === data.visibility;
+            });
 
           itemsContainer.innerHTML = '';
           (data.items || []).forEach(item =>
