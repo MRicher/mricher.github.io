@@ -67,9 +67,8 @@
 
     <gcds-input label="Version (1.0.0)" name="version" required></gcds-input>
 
-    <!-- Updated date input -->
     <gcds-date-input
-      legend="Date"
+      legend="Date (yyyy-mm-dd)"
       name="date"
       format="full"
       required>
@@ -88,9 +87,8 @@
     uploader-id="uploader"
     label="Upload JSON File"
     name="file-uploader"
-    hint="Select a JSON file to load data from."
-  ></gcds-file-uploader>
-
+    hint="Select a JSON file to load data from.">
+  </gcds-file-uploader>
 </gcds-container>
 
 <script>
@@ -183,16 +181,19 @@
     return wrapper;
   }
 
+  function getValueFromInput(selector) {
+    const el = document.querySelector(selector);
+    const input = el?.shadowRoot?.querySelector('input');
+    return input?.value.trim() || '';
+  }
+
   form.addEventListener('submit', (event) => {
     event.preventDefault();
 
-    const getValue = (selector) =>
-      document.querySelector(selector)?.shadowRoot?.querySelector('input')?.value.trim() || '';
-
-    const englishTitle = getValue('gcds-input[name="englishTitle"]');
-    const frenchTitle = getValue('gcds-input[name="frenchTitle"]');
-    const version = getValue('gcds-input[name="version"]');
-    const date = getValue('gcds-date-input[name="date"]');
+    const englishTitle = getValueFromInput('gcds-input[name="englishTitle"]');
+    const frenchTitle = getValueFromInput('gcds-input[name="frenchTitle"]');
+    const version = getValueFromInput('gcds-input[name="version"]');
+    const date = getValueFromInput('gcds-date-input[name="date"]');
 
     const visibilityGroup = document.querySelector('gcds-radio-group[name="visibility"]');
     const visibility = visibilityGroup?.shadowRoot.querySelector('input[type="radio"]:checked')?.value || '';
@@ -252,12 +253,14 @@
     reader.onload = (e) => {
       try {
         const data = JSON.parse(e.target.result);
+
         const setInput = (selector, value) => {
-          const input = document.querySelector(selector);
-          if (input?.shadowRoot) {
-            input.shadowRoot.querySelector('input').value = value || '';
+          const el = document.querySelector(selector);
+          if (el?.shadowRoot) {
+            el.shadowRoot.querySelector('input').value = value || '';
           }
         };
+
         setInput('gcds-input[name="englishTitle"]', data.englishTitle);
         setInput('gcds-input[name="frenchTitle"]', data.frenchTitle);
         setInput('gcds-input[name="version"]', data.version);
