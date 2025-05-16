@@ -247,7 +247,12 @@
       const frenchTitle = document.querySelector('gcds-input[name="frenchTitle"]').shadowRoot.querySelector('input').value;
       const version = document.querySelector('gcds-input[name="version"]').shadowRoot.querySelector('input').value;
       const date = document.querySelector('gcds-input[name="date"]').shadowRoot.querySelector('input').value;
-      const visibility = document.querySelector('gcds-radio[name="visibility"]:checked').value;
+      let visibility = 'public'; // default fallback
+      document.querySelectorAll('gcds-radio[name="visibility"]').forEach(radio => {
+        if (radio.checked) {
+          visibility = radio.value;
+        }
+      });
 
       const items = [];
       itemsContainer.querySelectorAll('.item-pair').forEach(pair => {
