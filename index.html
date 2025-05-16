@@ -97,18 +97,69 @@
   const form = document.getElementById('titleForm');
   const uploader = document.querySelector('gcds-file-uploader');
   const itemsContainer = document.getElementById('itemsContainer');
+  
+  // Add event listener for when components have fully loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    // Make sure custom elements are registered and ready
+    console.log('DOM fully loaded and custom elements should be ready');
+  });
+
+  // Add a function to ensure Web Components are ready
+  // Direct property access for setting values on GC Design System components
+  function setComponentValue(selector, value) {
+    const component = document.querySelector(selector);
+    if (!component) return false;
+    
+    // Try different approaches to set the value
+    
+    // 1. Direct value property if available
+    if ('value' in component) {
+      component.value = value;
+      return true;
+    }
+    
+    // 2. Use a setValue method if available
+    if (typeof component.setValue === 'function') {
+      component.setValue(value);
+      return true;
+    }
+    
+    // 3. Try to find and manipulate the input within shadow DOM
+    if (component.shadowRoot) {
+      const input = component.shadowRoot.querySelector('input, select, textarea');
+      if (input) {
+        input.value = value;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+        return true;
+      }
+    }
+    
+    return false;
+  }
 
   function createGcdsInput(label, value = '', type = 'text') {
     const input = document.createElement('gcds-input');
     input.setAttribute('label', label);
     if (type !== 'text') input.setAttribute('type', type);
-    // Delay setting value until shadowRoot is ready
+    
+    // Use direct property setting when possible, which is more reliable than attributes
+    if (value) {
+      input.value = value;
+    }
+    
+    // Also use timeout approach as fallback
     setTimeout(() => {
       if (input.shadowRoot) {
         const nativeInput = input.shadowRoot.querySelector('input');
-        if(nativeInput) nativeInput.value = value;
+        if (nativeInput && value) {
+          nativeInput.value = value;
+          nativeInput.dispatchEvent(new Event('input', { bubbles: true }));
+          nativeInput.dispatchEvent(new Event('change', { bubbles: true }));
+        }
       }
-    });
+    }, 50);
+    
     return input;
   }
 
@@ -203,78 +254,179 @@
     return checkedRadio?.value || '';
   }
 
-  // Set value for gcds-input or gcds-select components, updating shadow DOM inputs and dispatching events
+  // Set value for gcds-input components with retry mechanism
   function setGcdsValue(selector, value) {
-    const el = document.querySelector(selector);
-    if (!el || !el.shadowRoot) return;
-    const nativeInput = el.shadowRoot.querySelector('input, select, textarea');
-    if (nativeInput) {
-      nativeInput.value = value ?? '';
+    if (value === undefined || value === null) return;
+    
+    const attemptSet = (attempts = 0) => {
+      const el = document.querySelector(selector);
+      if (!el) {
+        if (attempts < 5) {
+          setTimeout(() => attemptSet(attempts + 1), 200);
+        }
+        return;
+      }
+      
+      // If shadowRoot isn't ready yet, wait
+      if (!el.shadowRoot) {
+        if (attempts < 5) {
+          setTimeout(() => attemptSet(attempts + 1), 200);
+        }
+        return;
+      }
+      
+      const nativeInput = el.shadowRoot.querySelector('input, select, textarea');
+      if (!nativeInput) {
+        if (attempts < 5) {
+          setTimeout(() => attemptSet(attempts + 1), 200);
+        }
+        return;
+      }
+      
+      // Set the value and dispatch events
+      nativeInput.value = value;
       nativeInput.dispatchEvent(new Event('input', { bubbles: true }));
       nativeInput.dispatchEvent(new Event('change', { bubbles: true }));
-    }
+    };
+    
+    attemptSet();
   }
 
-  // Set radio button checked inside gcds-radio-group by value
+  // Set radio button checked inside gcds-radio-group by value with retry
   function setGcdsRadioValue(name, value) {
-    const group = document.querySelector(`gcds-radio-group[name="${name}"]`);
-    if (!group?.shadowRoot) return;
-    const radios = group.shadowRoot.querySelectorAll('input[type="radio"]');
-    radios.forEach(radio => {
-      radio.checked = radio.value === value;
-      if (radio.checked) {
-        radio.dispatchEvent(new Event('change', { bubbles: true }));
+    if (!value) return;
+    
+    const attemptSet = (attempts = 0) => {
+      const group = document.querySelector(`gcds-radio-group[name="${name}"]`);
+      if (!group) {
+        if (attempts < 5) {
+          setTimeout(() => attemptSet(attempts + 1), 200);
+        }
+        return;
       }
-    });
+      
+      // If shadowRoot isn't ready yet, wait
+      if (!group.shadowRoot) {
+        if (attempts < 5) {
+          setTimeout(() => attemptSet(attempts + 1), 200);
+        }
+        return;
+      }
+      
+      const radios = group.shadowRoot.querySelectorAll('input[type="radio"]');
+      if (!radios.length) {
+        if (attempts < 5) {
+          setTimeout(() => attemptSet(attempts + 1), 200);
+        }
+        return;
+      }
+      
+      // Set the checked state
+      radios.forEach(radio => {
+        if (radio.value === value) {
+          radio.checked = true;
+          radio.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      });
+    };
+    
+    attemptSet();
   }
 
-  // Set date input from ISO string (YYYY-MM-DD)
+  // Set date input from ISO string (YYYY-MM-DD) with robust retry logic
   function setGcdsDateValue(selector, dateString) {
     if (!dateString || !/^\d{4}-\d{2}-\d{2}$/.test(dateString)) return;
     
     const [year, month, day] = dateString.split('-');
-    const dateInput = document.querySelector(selector);
     
-    if (!dateInput?.shadowRoot) return;
-    
-    // Wait for components to be fully rendered with their shadowRoots
-    setTimeout(() => {
+    const attemptSet = (attempts = 0) => {
+      const dateInput = document.querySelector(selector);
+      if (!dateInput) {
+        if (attempts < 10) {
+          setTimeout(() => attemptSet(attempts + 1), 200);
+        }
+        return;
+      }
+      
+      // If shadowRoot isn't ready yet, wait
+      if (!dateInput.shadowRoot) {
+        if (attempts < 10) {
+          setTimeout(() => attemptSet(attempts + 1), 200);
+        }
+        return;
+      }
+      
       try {
         // Month select
         const monthSelect = dateInput.shadowRoot.querySelector('gcds-select[name="month"]');
-        if (monthSelect?.shadowRoot) {
-          const selectEl = monthSelect.shadowRoot.querySelector('select');
-          if (selectEl) {
-            selectEl.value = month;
-            selectEl.dispatchEvent(new Event('change', { bubbles: true }));
+        if (!monthSelect || !monthSelect.shadowRoot) {
+          if (attempts < 10) {
+            setTimeout(() => attemptSet(attempts + 1), 200);
           }
+          return;
         }
+        
+        const selectEl = monthSelect.shadowRoot.querySelector('select');
+        if (!selectEl) {
+          if (attempts < 10) {
+            setTimeout(() => attemptSet(attempts + 1), 200);
+          }
+          return;
+        }
+        
+        selectEl.value = month;
+        selectEl.dispatchEvent(new Event('change', { bubbles: true }));
         
         // Day input
         const dayInput = dateInput.shadowRoot.querySelector('gcds-input.gcds-date-input__day');
-        if (dayInput?.shadowRoot) {
-          const dayEl = dayInput.shadowRoot.querySelector('input');
-          if (dayEl) {
-            dayEl.value = parseInt(day, 10).toString(); // Remove leading zero
-            dayEl.dispatchEvent(new Event('input', { bubbles: true }));
-            dayEl.dispatchEvent(new Event('change', { bubbles: true }));
+        if (!dayInput || !dayInput.shadowRoot) {
+          if (attempts < 10) {
+            setTimeout(() => attemptSet(attempts + 1), 200);
           }
+          return;
         }
+        
+        const dayEl = dayInput.shadowRoot.querySelector('input');
+        if (!dayEl) {
+          if (attempts < 10) {
+            setTimeout(() => attemptSet(attempts + 1), 200);
+          }
+          return;
+        }
+        
+        dayEl.value = parseInt(day, 10).toString(); // Remove leading zero
+        dayEl.dispatchEvent(new Event('input', { bubbles: true }));
+        dayEl.dispatchEvent(new Event('change', { bubbles: true }));
         
         // Year input
         const yearInput = dateInput.shadowRoot.querySelector('gcds-input.gcds-date-input__year');
-        if (yearInput?.shadowRoot) {
-          const yearEl = yearInput.shadowRoot.querySelector('input');
-          if (yearEl) {
-            yearEl.value = year;
-            yearEl.dispatchEvent(new Event('input', { bubbles: true }));
-            yearEl.dispatchEvent(new Event('change', { bubbles: true }));
+        if (!yearInput || !yearInput.shadowRoot) {
+          if (attempts < 10) {
+            setTimeout(() => attemptSet(attempts + 1), 200);
           }
+          return;
         }
+        
+        const yearEl = yearInput.shadowRoot.querySelector('input');
+        if (!yearEl) {
+          if (attempts < 10) {
+            setTimeout(() => attemptSet(attempts + 1), 200);
+          }
+          return;
+        }
+        
+        yearEl.value = year;
+        yearEl.dispatchEvent(new Event('input', { bubbles: true }));
+        yearEl.dispatchEvent(new Event('change', { bubbles: true }));
       } catch (error) {
         console.error('Error setting date value:', error);
+        if (attempts < 10) {
+          setTimeout(() => attemptSet(attempts + 1), 200);
+        }
       }
-    }, 100); // Give components time to render
+    };
+    
+    attemptSet();
   }
 
   form.addEventListener('submit', (event) => {
@@ -374,28 +526,69 @@
     reader.onload = (e) => {
       try {
         const data = JSON.parse(e.target.result);
-
-        // Set text inputs
-        setGcdsValue('#englishTitle', data.englishTitle);
-        setGcdsValue('#frenchTitle', data.frenchTitle);
-        setGcdsValue('#version', data.version);
-
-        // Set visibility radio
-        setGcdsRadioValue('visibility', data.visibility);
-
-        // Set date input
-        if (data.date) {
-          setGcdsDateValue('#publish-date', data.date);
-        }
-
-        // Clear existing items
-        itemsContainer.innerHTML = '';
-        if (Array.isArray(data.items)) {
-          data.items.forEach(item => {
-            addItem(item.english, item.french, item.level || 0, item.noteEnglish, item.noteFrench);
-          });
-        }
+        console.log('Parsed JSON data:', data);
+        
+        // Wait for all custom elements to be defined
+        whenCustomElementsDefined().then(() => {
+          console.log('All custom elements are defined, populating form');
+          
+          // Set text inputs with a delay to ensure components are ready
+          setTimeout(() => {
+            console.log('Setting form values...');
+            
+            // Set text fields
+            document.getElementById('englishTitle').value = data.englishTitle || '';
+            document.getElementById('frenchTitle').value = data.frenchTitle || '';
+            document.getElementById('version').value = data.version || '';
+            
+            // Set radio button for visibility
+            const visibilityRadio = document.getElementById('visibility');
+            if (visibilityRadio && data.visibility) {
+              // Use the internal value setting mechanism as a backup
+              if (visibilityRadio.setValue) {
+                visibilityRadio.setValue(data.visibility);
+              } else {
+                setGcdsRadioValue('visibility', data.visibility);
+              }
+            }
+            
+            // Set date
+            if (data.date) {
+              const dateInput = document.getElementById('publish-date');
+              if (dateInput && dateInput.setValue) {
+                // Try to use component's own setValue method if available
+                dateInput.setValue(data.date);
+              } else {
+                setGcdsDateValue('#publish-date', data.date);
+              }
+            }
+            
+            // Clear existing items
+            itemsContainer.innerHTML = '';
+            
+            // Add items with a small delay
+            setTimeout(() => {
+              if (Array.isArray(data.items) && data.items.length > 0) {
+                console.log('Adding items:', data.items.length);
+                data.items.forEach(item => {
+                  addItem(
+                    item.english || '', 
+                    item.french || '', 
+                    item.level || 0, 
+                    item.noteEnglish || '', 
+                    item.noteFrench || ''
+                  );
+                });
+              }
+            }, 300);
+            
+          }, 500);
+        }).catch(err => {
+          console.error('Error waiting for custom elements:', err);
+        });
+        
       } catch (error) {
+        console.error('Error parsing or processing JSON file:', error);
         alert('Error parsing JSON file: ' + error.message);
       }
     };
