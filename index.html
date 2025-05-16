@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Title Form - GC Design System</title>
+  <title>GC Design System Form</title>
 
   <!-- GC Design System CSS -->
   <link rel="stylesheet" href="https://cdn.design-system.alpha.canada.ca/@cdssnc/gcds-utility@1.8.0/dist/gcds-utility.min.css" />
@@ -24,29 +24,19 @@
       border-radius: 0.25rem;
       background: #f9f9f9;
     }
-    .item-header {
+    .item-header, .item-controls, .item-notes {
       display: flex;
       flex-wrap: wrap;
       gap: 0.5rem;
       align-items: center;
     }
-    .item-controls {
-      display: flex;
-      gap: 0.5rem;
-      margin-top: 0.5rem;
-      flex-wrap: wrap;
-    }
     .item-notes {
       margin-top: 0.5rem;
       border-top: 1px solid #ccc;
       padding-top: 0.5rem;
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
     }
   </style>
 </head>
-
 <body>
 <gcds-container main-container size="xl" centered tag="main">
   <gcds-heading tag="h1">Form</gcds-heading>
@@ -66,13 +56,7 @@
     </gcds-radio-group>
 
     <gcds-input label="Version (1.0.0)" name="version" required></gcds-input>
-
-    <gcds-date-input
-      legend="Date (yyyy-mm-dd)"
-      name="date"
-      format="full"
-      required>
-    </gcds-date-input>
+    <gcds-date-input legend="Date (yyyy-mm-dd)" name="date" format="full" required></gcds-date-input>
 
     <h2>Items</h2>
     <div id="itemsContainer"></div>
@@ -87,8 +71,8 @@
     uploader-id="uploader"
     label="Upload JSON File"
     name="file-uploader"
-    hint="Select a JSON file to load data from.">
-  </gcds-file-uploader>
+    hint="Select a JSON file to load data from."
+  ></gcds-file-uploader>
 </gcds-container>
 
 <script>
@@ -96,14 +80,22 @@
   const uploader = document.querySelector('gcds-file-uploader');
   const itemsContainer = document.getElementById('itemsContainer');
 
-  function createGcdsInput(label, value = '', type = 'text') {
-    const input = document.createElement('gcds-input');
-    input.setAttribute('label', label);
-    if (type !== 'text') input.setAttribute('type', type);
-    setTimeout(() => {
-      input.shadowRoot.querySelector('input').value = value;
-    });
-    return input;
+  function getValueFromInput(selector) {
+    const el = document.querySelector(selector);
+    if (!el || !el.shadowRoot) return '';
+
+    if (el.tagName.toLowerCase() === 'gcds-date-input') {
+      const selects = el.shadowRoot.querySelectorAll('select');
+      if (selects.length === 3) {
+        const [year, month, day] = Array.from(selects).map(s => s.value.padStart(2, '0'));
+        if (!year || !month || !day) return '';
+        return `${year}-${month}-${day}`;
+      }
+      return '';
+    } else {
+      const input = el.shadowRoot.querySelector('input');
+      return input?.value?.trim() || '';
+    }
   }
 
   function addItem(en = '', fr = '', level = 0, noteEn = '', noteFr = '') {
@@ -121,7 +113,6 @@
 
     const controls = document.createElement('div');
     controls.className = 'item-controls';
-
     const addChildBtn = document.createElement('gcds-button');
     addChildBtn.setAttribute('type', 'button');
     addChildBtn.textContent = '+ Child';
@@ -181,24 +172,15 @@
     return wrapper;
   }
 
-function getValueFromInput(selector) {
-  const el = document.querySelector(selector);
-  if (!el || !el.shadowRoot) return '';
-
-  if (el.tagName.toLowerCase() === 'gcds-date-input') {
-    const selects = el.shadowRoot.querySelectorAll('select');
-    if (selects.length === 3) {
-      const [year, month, day] = Array.from(selects).map(s => s.value.padStart(2, '0'));
-      if (!year || !month || !day) return '';
-      return `${year}-${month}-${day}`;
-    }
-    return '';
-  } else {
-    const input = el.shadowRoot.querySelector('input');
-    return input?.value?.trim() || '';
+  function createGcdsInput(label, value = '', type = 'text') {
+    const input = document.createElement('gcds-input');
+    input.setAttribute('label', label);
+    if (type !== 'text') input.setAttribute('type', type);
+    setTimeout(() => {
+      input.shadowRoot.querySelector('input').value = value;
+    });
+    return input;
   }
-}
-
 
   form.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -216,12 +198,12 @@ function getValueFromInput(selector) {
       return;
     }
 
-    if (!/^\d+\.\d+\.\d+$/.test(version)) {
+    if (!/\d+\.\d+\.\d+/.test(version)) {
       alert('Version must follow the format number.number.number, e.g., 1.0.0');
       return;
     }
 
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    if (!/\d{4}-\d{2}-\d{2}/.test(date)) {
       alert('Date must be in the format yyyy-mm-dd.');
       return;
     }
@@ -255,37 +237,43 @@ function getValueFromInput(selector) {
     link.download = filename;
     link.click();
     URL.revokeObjectURL(url);
-
-    console.log({
-  englishTitle,
-  frenchTitle,
-  version,
-  date,
-  visibility
-});
   });
 
-  uploader.addEventListener('change', (event) => {
-    const files = event.detail.files;
-    if (!files || files.length === 0) return;
+  uploader.addEventListener('change', () => {
+    const input = uploader.shadowRoot.querySelector('input[type="file"]');
+    const file = input?.files?.[0];
+    if (!file) return;
 
-    const file = files[0];
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
         const data = JSON.parse(e.target.result);
 
         const setInput = (selector, value) => {
-          const el = document.querySelector(selector);
-          if (el?.shadowRoot) {
-            el.shadowRoot.querySelector('input').value = value || '';
+          const input = document.querySelector(selector);
+          if (input?.shadowRoot) {
+            const el = input.shadowRoot.querySelector('input');
+            if (el) el.value = value || '';
+          }
+        };
+
+        const setDate = (selector, value) => {
+          const input = document.querySelector(selector);
+          if (input?.shadowRoot) {
+            const [year, month, day] = value.split('-');
+            const selects = input.shadowRoot.querySelectorAll('select');
+            if (selects.length === 3) {
+              selects[0].value = year;
+              selects[1].value = month;
+              selects[2].value = day;
+            }
           }
         };
 
         setInput('gcds-input[name="englishTitle"]', data.englishTitle);
         setInput('gcds-input[name="frenchTitle"]', data.frenchTitle);
         setInput('gcds-input[name="version"]', data.version);
-        setInput('gcds-date-input[name="date"]', data.date);
+        setDate('gcds-date-input[name="date"]', data.date);
 
         const visibilityGroup = document.querySelector('gcds-radio-group[name="visibility"]');
         if (visibilityGroup?.shadowRoot) {
