@@ -46,12 +46,11 @@
     }
   </style>
 </head>
-
 <body>
   <gcds-container main-container size="xl" centered tag="main">
     <gcds-heading tag="h1">Form</gcds-heading>
 
-    <form id="titleForm" novalidate>
+    <gcds-form id="titleForm" novalidate>
       <gcds-input id="englishTitle" label="English Title" name="englishTitle" required></gcds-input>
       <gcds-input id="frenchTitle" label="French Title" name="frenchTitle" required></gcds-input>
 
@@ -82,7 +81,7 @@
 
       <br /><br />
       <gcds-button type="submit">Save as JSON</gcds-button>
-    </form>
+    </gcds-form>
 
     <gcds-heading tag="h2">Load JSON</gcds-heading>
     <gcds-file-uploader
@@ -91,7 +90,6 @@
       name="file-uploader"
       hint="Select a JSON file to load data from."
     ></gcds-file-uploader>
-    <gcds-button id="loadJsonBtn" type="button" style="display:none; margin-top: 1rem;">Load JSON Data</gcds-button>
   </gcds-container>
 
 <script>
@@ -99,78 +97,52 @@
   const form = document.getElementById('titleForm');
   const uploader = document.querySelector('gcds-file-uploader');
   const itemsContainer = document.getElementById('itemsContainer');
-  const loadJsonBtn = document.getElementById('loadJsonBtn');
-  
-  // ===== Component Value Manipulation Functions =====
-  
-  // Get value from a GCDS component (works for inputs and selects)
+
+  // ===== Component Value Manipulation Functions (unchanged) =====
   function getComponentValue(selector) {
     const component = document.querySelector(selector);
     if (!component?.shadowRoot) return '';
-    
     const input = component.shadowRoot.querySelector('input, select, textarea');
     return input?.value?.trim() || '';
   }
-  
-  // Get selected radio value
   function getRadioValue(name) {
     const group = document.querySelector(`gcds-radio-group[name="${name}"]`);
     if (!group?.shadowRoot) return '';
-    
     const checked = group.shadowRoot.querySelector('input[type="radio"]:checked');
     return checked?.value || '';
   }
-  
-  // Set value for a GCDS component with retry mechanism
   function setComponentValue(selector, value, maxAttempts = 5) {
     if (value === undefined || value === null) return;
-    
     function attempt(attempts = 0) {
       const component = document.querySelector(selector);
       if (!component || !component.shadowRoot) {
-        if (attempts < maxAttempts) {
-          setTimeout(() => attempt(attempts + 1), 200);
-        }
+        if (attempts < maxAttempts) setTimeout(() => attempt(attempts + 1), 200);
         return;
       }
-      
       const input = component.shadowRoot.querySelector('input, select, textarea');
       if (!input) {
-        if (attempts < maxAttempts) {
-          setTimeout(() => attempt(attempts + 1), 200);
-        }
+        if (attempts < maxAttempts) setTimeout(() => attempt(attempts + 1), 200);
         return;
       }
-      
       input.value = value;
       input.dispatchEvent(new Event('input', { bubbles: true }));
       input.dispatchEvent(new Event('change', { bubbles: true }));
     }
-    
     attempt();
   }
-  
-  // Set radio button value
   function setRadioValue(name, value, maxAttempts = 5) {
     if (!value) return;
-    
     function attempt(attempts = 0) {
       const group = document.querySelector(`gcds-radio-group[name="${name}"]`);
       if (!group || !group.shadowRoot) {
-        if (attempts < maxAttempts) {
-          setTimeout(() => attempt(attempts + 1), 200);
-        }
+        if (attempts < maxAttempts) setTimeout(() => attempt(attempts + 1), 200);
         return;
       }
-      
       const radios = group.shadowRoot.querySelectorAll('input[type="radio"]');
       if (!radios.length) {
-        if (attempts < maxAttempts) {
-          setTimeout(() => attempt(attempts + 1), 200);
-        }
+        if (attempts < maxAttempts) setTimeout(() => attempt(attempts + 1), 200);
         return;
       }
-      
       for (const radio of radios) {
         if (radio.value === value) {
           radio.checked = true;
@@ -179,52 +151,39 @@
         }
       }
     }
-    
     attempt();
   }
-  
-  // Set date value from ISO string (YYYY-MM-DD)
   function setDateValue(selector, dateString, maxAttempts = 10) {
     if (!dateString || !/^\d{4}-\d{2}-\d{2}$/.test(dateString)) return;
-    
     const [year, month, day] = dateString.split('-');
-    
     function attempt(attempts = 0) {
       const dateInput = document.querySelector(selector);
       if (!dateInput || !dateInput.shadowRoot) {
-        if (attempts < maxAttempts) {
-          setTimeout(() => attempt(attempts + 1), 200);
-        }
+        if (attempts < maxAttempts) setTimeout(() => attempt(attempts + 1), 200);
         return;
       }
-      
       try {
         // Month select
         const monthSelect = dateInput.shadowRoot.querySelector('gcds-select[name="month"]');
         if (!monthSelect?.shadowRoot) {
-          if (attempts < maxAttempts) {
-            setTimeout(() => attempt(attempts + 1), 200);
-          }
+          if (attempts < maxAttempts) setTimeout(() => attempt(attempts + 1), 200);
           return;
         }
-        
         const selectEl = monthSelect.shadowRoot.querySelector('select');
         if (selectEl) {
           selectEl.value = month;
           selectEl.dispatchEvent(new Event('change', { bubbles: true }));
         }
-        
         // Day input
         const dayInput = dateInput.shadowRoot.querySelector('gcds-input.gcds-date-input__day');
         if (dayInput?.shadowRoot) {
           const dayEl = dayInput.shadowRoot.querySelector('input');
           if (dayEl) {
-            dayEl.value = parseInt(day, 10).toString(); // Remove leading zero
+            dayEl.value = parseInt(day, 10).toString();
             dayEl.dispatchEvent(new Event('input', { bubbles: true }));
             dayEl.dispatchEvent(new Event('change', { bubbles: true }));
           }
         }
-        
         // Year input
         const yearInput = dateInput.shadowRoot.querySelector('gcds-input.gcds-date-input__year');
         if (yearInput?.shadowRoot) {
@@ -236,26 +195,16 @@
           }
         }
       } catch (error) {
-        console.error('Error setting date value:', error);
-        if (attempts < maxAttempts) {
-          setTimeout(() => attempt(attempts + 1), 200);
-        }
+        if (attempts < maxAttempts) setTimeout(() => attempt(attempts + 1), 200);
       }
     }
-    
     attempt();
   }
-  
-  // Create a GCDS input element
   function createInputElement(label, value = '') {
     const input = document.createElement('gcds-input');
     input.setAttribute('label', label);
-    
     if (value) {
-      // Set value directly on the element
       input.value = value;
-      
-      // Also use a timeout to ensure value is set in the shadowDOM
       setTimeout(() => {
         if (input.shadowRoot) {
           const nativeInput = input.shadowRoot.querySelector('input');
@@ -267,75 +216,57 @@
         }
       }, 50);
     }
-    
     return input;
   }
-  
-  // Get date from date input component
   function getDateValue(selector) {
     const dateInput = document.querySelector(selector);
     if (!dateInput?.shadowRoot) return '';
-    
     function getShadowValue(component) {
       if (!component?.shadowRoot) return '';
       const input = component.shadowRoot.querySelector('input, select');
       return input?.value || '';
     }
-    
     const monthSelect = dateInput.shadowRoot.querySelector('gcds-select[name="month"]');
     const dayInput = dateInput.shadowRoot.querySelector('gcds-input.gcds-date-input__day');
     const yearInput = dateInput.shadowRoot.querySelector('gcds-input.gcds-date-input__year');
-    
     const year = getShadowValue(yearInput);
     const month = getShadowValue(monthSelect);
     const day = getShadowValue(dayInput);
-    
     if (year && month && day) {
       return `${year.padStart(4, '0')}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
     }
-    
     return '';
   }
-  
-  // ===== Item Management Functions =====
-  
-  // Add a new item to the form
+
+  // ===== Item Management Functions (unchanged) =====
   function addItem(en = '', fr = '', level = 0, noteEn = '', noteFr = '') {
     const wrapper = document.createElement('div');
     wrapper.className = 'item-pair';
     wrapper.style.marginLeft = `${level * 30}px`;
     wrapper.dataset.level = level;
-
     const header = document.createElement('div');
     header.className = 'item-header';
-    
     const enInput = createInputElement('Item in English', en);
     const frInput = createInputElement('Item in French', fr);
-    
     header.appendChild(enInput);
     header.appendChild(frInput);
-
     const controls = document.createElement('div');
     controls.className = 'item-controls';
-
     const addChildBtn = document.createElement('gcds-button');
     addChildBtn.setAttribute('type', 'button');
     addChildBtn.textContent = '+ Child';
     addChildBtn.onclick = () => {
       const idx = Array.from(itemsContainer.children).indexOf(wrapper);
       const newItem = addItem('', '', level + 1);
-      
       if (idx >= 0 && idx < itemsContainer.children.length - 1) {
         itemsContainer.insertBefore(newItem, itemsContainer.children[idx + 1]);
       } else {
         itemsContainer.appendChild(newItem);
       }
     };
-
     const toggleNoteBtn = document.createElement('gcds-button');
     toggleNoteBtn.setAttribute('type', 'button');
     toggleNoteBtn.textContent = '+ Note';
-
     const upBtn = document.createElement('gcds-button');
     upBtn.setAttribute('type', 'button');
     upBtn.textContent = '↑';
@@ -343,7 +274,6 @@
       const prev = wrapper.previousElementSibling;
       if (prev) itemsContainer.insertBefore(wrapper, prev);
     };
-
     const downBtn = document.createElement('gcds-button');
     downBtn.setAttribute('type', 'button');
     downBtn.textContent = '↓';
@@ -351,24 +281,19 @@
       const next = wrapper.nextElementSibling;
       if (next) itemsContainer.insertBefore(next, wrapper);
     };
-
     const removeBtn = document.createElement('gcds-button');
     removeBtn.setAttribute('type', 'button');
     removeBtn.textContent = 'Remove';
     removeBtn.onclick = () => wrapper.remove();
-
     controls.append(addChildBtn, toggleNoteBtn, upBtn, downBtn, removeBtn);
     wrapper.append(header, controls);
-
     let notes = null;
     toggleNoteBtn.onclick = () => {
       if (!notes) {
         notes = document.createElement('div');
         notes.className = 'item-notes';
-        
         const enNote = createInputElement('English note', noteEn);
         const frNote = createInputElement('French note', noteFr);
-        
         notes.append(enNote, frNote);
         wrapper.appendChild(notes);
         toggleNoteBtn.textContent = 'Remove Note';
@@ -378,38 +303,29 @@
         toggleNoteBtn.textContent = '+ Note';
       }
     };
-
-    // Show notes if they exist
     if (noteEn || noteFr) {
       setTimeout(() => toggleNoteBtn.click(), 100);
     }
-    
     itemsContainer.appendChild(wrapper);
     return wrapper;
   }
-  
-  // Extract items data from the form
   function getItemsData() {
     const items = [];
-    
     Array.from(itemsContainer.children).forEach(wrapper => {
       const level = parseInt(wrapper.dataset.level) || 0;
       const enInput = wrapper.querySelector('gcds-input[label="Item in English"]');
       const frInput = wrapper.querySelector('gcds-input[label="Item in French"]');
       const enNoteInput = wrapper.querySelector('gcds-input[label="English note"]');
       const frNoteInput = wrapper.querySelector('gcds-input[label="French note"]');
-      
       function getInputValue(input) {
         if (!input?.shadowRoot) return '';
         const nativeInput = input.shadowRoot.querySelector('input');
         return nativeInput?.value?.trim() || '';
       }
-      
       const itemEn = getInputValue(enInput);
       const itemFr = getInputValue(frInput);
       const noteEn = getInputValue(enNoteInput);
       const noteFr = getInputValue(frNoteInput);
-      
       if (itemEn || itemFr) {
         items.push({
           english: itemEn,
@@ -420,35 +336,24 @@
         });
       }
     });
-    
     return items;
   }
-  
+
   // ===== Form Submission =====
-  
-  // Handle form submission to save as JSON
   form.addEventListener('submit', (event) => {
     event.preventDefault();
-    
-    // Get form data
     const englishTitle = getComponentValue('#englishTitle');
     const frenchTitle = getComponentValue('#frenchTitle');
     const version = getComponentValue('#version');
     const visibility = getRadioValue('visibility');
     const date = getDateValue('gcds-date-input[name="date"]');
-    
-    // Validate required fields
     if (!englishTitle) return alert('English title is required');
     if (!frenchTitle) return alert('French title is required');
     if (!version) return alert('Version is required');
     if (!visibility) return alert('Visibility is required');
     if (!date) return alert('Date is required');
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return alert('Date must be in YYYY-MM-DD format');
-    
-    // Get items data
     const items = getItemsData();
-    
-    // Create output JSON
     const output = {
       englishTitle,
       frenchTitle,
@@ -457,61 +362,32 @@
       date,
       items
     };
-    
-    // Download JSON file
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(output, null, 2));
     const downloadLink = document.createElement('a');
     downloadLink.setAttribute("href", dataStr);
     downloadLink.setAttribute("download", "form-data.json");
     downloadLink.click();
   });
-  
-  // ===== File Upload & Load =====
-  
-  // Handle file selection
-  uploader.addEventListener('change', (e) => {
+
+  // ===== File Upload & Load (AUTO-POPULATE ON CHANGE) =====
+  uploader.addEventListener('change', async (e) => {
     const files = e.detail?.files || [];
-    
-    if (files.length > 0) {
-      const file = files[0];
-      
-      if (!file.name.endsWith('.json')) {
-        alert('Please upload a valid JSON file.');
-        return;
-      }
-      
-      loadJsonBtn.style.display = 'inline-block';
-    } else {
-      loadJsonBtn.style.display = 'none';
+    if (!files.length) return;
+    const file = files[0];
+    if (!file.name.endsWith('.json')) {
+      alert('Please upload a valid JSON file.');
+      return;
     }
-  });
-  
-  // Handle JSON load button click
-  loadJsonBtn.addEventListener('click', async () => {
-    // Get the file from the uploader
-    const fileInput = uploader.shadowRoot?.querySelector('input[type="file"]');
-    if (!fileInput || !fileInput.files || !fileInput.files[0]) return;
-    
-    const file = fileInput.files[0];
-    
     try {
-      // Read and parse the file
       const text = await file.text();
       const data = JSON.parse(text);
-      
-      // Clear existing items first
       itemsContainer.innerHTML = '';
-      
-      // Set form values
       setTimeout(() => {
-        // Set basic fields
         setComponentValue('#englishTitle', data.englishTitle || '');
         setComponentValue('#frenchTitle', data.frenchTitle || '');
         setComponentValue('#version', data.version || '');
         setRadioValue('visibility', data.visibility || '');
         setDateValue('#publish-date', data.date || '');
-        
-        // Add items with a delay to ensure fields are set first
         setTimeout(() => {
           if (Array.isArray(data.items)) {
             data.items.forEach(item => {
@@ -526,9 +402,7 @@
           }
         }, 300);
       }, 200);
-      
     } catch (err) {
-      console.error('Error loading JSON:', err);
       alert('Error parsing JSON file: ' + err.message);
     }
   });
