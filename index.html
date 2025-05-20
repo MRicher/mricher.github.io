@@ -98,7 +98,7 @@
   const uploader = document.querySelector('gcds-file-uploader');
   const itemsContainer = document.getElementById('itemsContainer');
 
-  // ===== Component Value Manipulation Functions (unchanged) =====
+  // ===== Component Value Manipulation Functions =====
   function getComponentValue(selector) {
     const component = document.querySelector(selector);
     if (!component?.shadowRoot) return '';
@@ -238,7 +238,7 @@
     return '';
   }
 
-  // ===== Item Management Functions (unchanged) =====
+  // ===== Item Management Functions =====
   function addItem(en = '', fr = '', level = 0, noteEn = '', noteFr = '') {
     const wrapper = document.createElement('div');
     wrapper.className = 'item-pair';
@@ -339,7 +339,7 @@
     return items;
   }
 
-  // ===== Form Submission =====
+  // ===== Form Submission with Date Validation =====
   form.addEventListener('submit', (event) => {
     event.preventDefault();
     const englishTitle = getComponentValue('#englishTitle');
@@ -353,6 +353,13 @@
     if (!visibility) return alert('Visibility is required');
     if (!date) return alert('Date is required');
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return alert('Date must be in YYYY-MM-DD format');
+    // Validate day and year range
+    const [yearStr, monthStr, dayStr] = date.split('-');
+    const year = parseInt(yearStr, 10);
+    const day = parseInt(dayStr, 10);
+    const currentYear = new Date().getFullYear();
+    if (day < 1 || day > 31) return alert('Day must be between 1 and 31');
+    if (year < 1990 || year > currentYear) return alert(`Year must be between 1990 and ${currentYear}`);
     const items = getItemsData();
     const output = {
       englishTitle,
