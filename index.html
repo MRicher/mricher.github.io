@@ -3,16 +3,20 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="GC Design System Form with JSON Load/Save. Create and manage bilingual forms with accessibility and SEO best practices." />
   <title>GC Design System Form with JSON Load/Save</title>
 
   <!-- GC Design System CSS -->
   <link rel="stylesheet" href="https://cdn.design-system.alpha.canada.ca/@cdssnc/gcds-utility@1.8.0/dist/gcds-utility.min.css" />
   <link rel="stylesheet" href="https://cdn.design-system.alpha.canada.ca/@cdssnc/gcds-components@0.34.1/dist/gcds/gcds.css" />
+  <!-- Your custom styles (move from inline to external if possible for maintainability) -->
+  <link rel="stylesheet" href="styles.css" />
 
   <!-- GC Design System JS -->
-  <script type="module" src="https://cdn.design-system.alpha.canada.ca/@cdssnc/gcds-components@0.34.1/dist/gcds/gcds.esm.js"></script>
-  <script nomodule src="https://cdn.design-system.alpha.canada.ca/@cdssnc/gcds-components@0.34.1/dist/gcds/gcds.js"></script>
+  <script type="module" src="https://cdn.design-system.alpha.canada.ca/@cdssnc/gcds-components@0.34.1/dist/gcds/gcds.esm.js" defer></script>
+  <script nomodule src="https://cdn.design-system.alpha.canada.ca/@cdssnc/gcds-components@0.34.1/dist/gcds/gcds.js" defer></script>
 
+  <!-- Move the inline styles to an external file (styles.css) for maintainability -->
   <style>
     #itemsContainer {
       margin-top: 1rem;
@@ -47,384 +51,389 @@
   </style>
 </head>
 <body>
-  <gcds-container main-container size="xl" centered tag="main">
-    <gcds-heading tag="h1">Form</gcds-heading>
+  <main>
+    <gcds-container main-container size="xl" centered tag="main">
+      <gcds-heading tag="h1">Form</gcds-heading>
 
-    <gcds-form id="titleForm" novalidate>
-      <gcds-input id="englishTitle" label="English Title" name="englishTitle" required></gcds-input>
-      <gcds-input id="frenchTitle" label="French Title" name="frenchTitle" required></gcds-input>
+      <form id="titleForm" novalidate aria-label="GC Design System Form">
+        <gcds-input id="englishTitle" label="English Title" name="englishTitle" required aria-required="true"></gcds-input>
+        <gcds-input id="frenchTitle" label="French Title" name="frenchTitle" required aria-required="true"></gcds-input>
 
-      <!-- FIELDSET for Type of manual -->
-      <fieldset style="margin-bottom: 1.5em; padding: 0.75em; border: 1px solid #ccc; border-radius: 0.25em;">
-        <legend style="font-weight: bold; margin-bottom: 0.5em;">Type of manual</legend>
-        <gcds-radio-group
-          id="visibility"
-          name="visibility"
-          legend="Type of manual"
+        <!-- FIELDSET for Type of manual -->
+        <fieldset style="margin-bottom: 1.5em; padding: 0.75em; border: 1px solid #ccc; border-radius: 0.25em;">
+          <legend style="font-weight: bold; margin-bottom: 0.5em;">Type of manual</legend>
+          <gcds-radio-group
+            id="visibility"
+            name="visibility"
+            legend="Type of manual"
+            required
+            options='[
+              { "id": "visibility-public", "label": "Public", "value": "public", "hint": "Visible to everyone." },
+              { "id": "visibility-internal", "label": "Internal", "value": "internal", "hint": "Visible only internally." }
+            ]'
+          ></gcds-radio-group>
+        </fieldset>
+
+        <gcds-input id="version" label="Version (1.0.0)" name="version" required aria-required="true"></gcds-input>
+
+        <gcds-date-input
+          id="publish-date"
+          legend="Date input"
+          name="date"
+          format="full"
+          min-year="1990"
           required
-          options='[
-            { "id": "visibility-public", "label": "Public", "value": "public", "hint": "Visible to everyone." },
-            { "id": "visibility-internal", "label": "Internal", "value": "internal", "hint": "Visible only internally." }
-          ]'>
-        </gcds-radio-group>
-      </fieldset>
+        ></gcds-date-input>
+        <!-- Accessibility: Provide instructions for date format for screen readers -->
+        <span id="dateHelp" class="visually-hidden">Date must be in YYYY-MM-DD format, year between 1990 and current year.</span>
 
-      <gcds-input id="version" label="Version (1.0.0)" name="version" required></gcds-input>
+        <gcds-heading tag="h2">Items</gcds-heading>
+        <div id="itemsContainer"></div>
+        <gcds-button type="button" onclick="addItem()">Add Root Item</gcds-button>
 
-<gcds-date-input
-  id="publish-date"
-  legend="Date input"
-  name="date"
-  format="full"
-  min-year="1990"
-  required
-></gcds-date-input>
-<script>
-  // Dynamically set the max-year attribute to the current year for the GC Design System date input
-  document.addEventListener('DOMContentLoaded', function() {
-    const currentYear = new Date().getFullYear();
-    document.getElementById('publish-date').setAttribute('max-year', currentYear);
-  });
-</script>
+        <br /><br />
+        <gcds-button type="submit">Save as JSON</gcds-button>
+      </form>
 
-      <gcds-heading tag="h2">Items</gcds-heading>
-      <div id="itemsContainer"></div>
-      <gcds-button type="button" onclick="addItem()">Add Root Item</gcds-button>
+      <gcds-heading tag="h2">Load JSON</gcds-heading>
+      <gcds-file-uploader
+        uploader-id="json-upload"
+        label="Upload JSON File"
+        name="file-uploader"
+        hint="Select a JSON file to load data from."
+        aria-label="Upload a JSON file"
+      ></gcds-file-uploader>
+    </gcds-container>
+  </main>
 
-      <br /><br />
-      <gcds-button type="submit">Save as JSON</gcds-button>
-    </gcds-form>
+  <!-- Defer script execution for performance -->
+  <script defer>
+    // Dynamically set the max-year attribute to the current year for the GC Design System date input
+    document.addEventListener('DOMContentLoaded', function() {
+      const currentYear = new Date().getFullYear();
+      document.getElementById('publish-date').setAttribute('max-year', currentYear);
+    });
 
-    <gcds-heading tag="h2">Load JSON</gcds-heading>
-    <gcds-file-uploader
-      uploader-id="json-upload"
-      label="Upload JSON File"
-      name="file-uploader"
-      hint="Select a JSON file to load data from."
-    ></gcds-file-uploader>
-  </gcds-container>
+    // DOM Element References
+    const form = document.getElementById('titleForm');
+    const uploader = document.querySelector('gcds-file-uploader');
+    const itemsContainer = document.getElementById('itemsContainer');
 
-<script>
-  // DOM Element References
-  const form = document.getElementById('titleForm');
-  const uploader = document.querySelector('gcds-file-uploader');
-  const itemsContainer = document.getElementById('itemsContainer');
-
-  // ===== Component Value Manipulation Functions =====
-  function getComponentValue(selector) {
-    const component = document.querySelector(selector);
-    if (!component?.shadowRoot) return '';
-    const input = component.shadowRoot.querySelector('input, select, textarea');
-    return input?.value?.trim() || '';
-  }
-  function getRadioValue(name) {
-    const group = document.querySelector(`gcds-radio-group[name="${name}"]`);
-    if (!group?.shadowRoot) return '';
-    const checked = group.shadowRoot.querySelector('input[type="radio"]:checked');
-    return checked?.value || '';
-  }
-  function setComponentValue(selector, value, maxAttempts = 5) {
-    if (value === undefined || value === null) return;
-    function attempt(attempts = 0) {
+    // ===== Component Value Manipulation Functions =====
+    function getComponentValue(selector) {
       const component = document.querySelector(selector);
-      if (!component || !component.shadowRoot) {
-        if (attempts < maxAttempts) setTimeout(() => attempt(attempts + 1), 200);
-        return;
-      }
+      if (!component?.shadowRoot) return '';
       const input = component.shadowRoot.querySelector('input, select, textarea');
-      if (!input) {
-        if (attempts < maxAttempts) setTimeout(() => attempt(attempts + 1), 200);
-        return;
-      }
-      input.value = value;
-      input.dispatchEvent(new Event('input', { bubbles: true }));
-      input.dispatchEvent(new Event('change', { bubbles: true }));
+      return input?.value?.trim() || '';
     }
-    attempt();
-  }
-  function setRadioValue(name, value, maxAttempts = 5) {
-    if (!value) return;
-    function attempt(attempts = 0) {
+    function getRadioValue(name) {
       const group = document.querySelector(`gcds-radio-group[name="${name}"]`);
-      if (!group || !group.shadowRoot) {
-        if (attempts < maxAttempts) setTimeout(() => attempt(attempts + 1), 200);
-        return;
-      }
-      const radios = group.shadowRoot.querySelectorAll('input[type="radio"]');
-      if (!radios.length) {
-        if (attempts < maxAttempts) setTimeout(() => attempt(attempts + 1), 200);
-        return;
-      }
-      for (const radio of radios) {
-        if (radio.value === value) {
-          radio.checked = true;
-          radio.dispatchEvent(new Event('change', { bubbles: true }));
-          break;
-        }
-      }
+      if (!group?.shadowRoot) return '';
+      const checked = group.shadowRoot.querySelector('input[type="radio"]:checked');
+      return checked?.value || '';
     }
-    attempt();
-  }
-  function setDateValue(selector, dateString, maxAttempts = 10) {
-    if (!dateString || !/^\d{4}-\d{2}-\d{2}$/.test(dateString)) return;
-    const [year, month, day] = dateString.split('-');
-    function attempt(attempts = 0) {
-      const dateInput = document.querySelector(selector);
-      if (!dateInput || !dateInput.shadowRoot) {
-        if (attempts < maxAttempts) setTimeout(() => attempt(attempts + 1), 200);
-        return;
-      }
-      try {
-        // Month select
-        const monthSelect = dateInput.shadowRoot.querySelector('gcds-select[name="month"]');
-        if (!monthSelect?.shadowRoot) {
+    function setComponentValue(selector, value, maxAttempts = 5) {
+      if (value === undefined || value === null) return;
+      function attempt(attempts = 0) {
+        const component = document.querySelector(selector);
+        if (!component || !component.shadowRoot) {
           if (attempts < maxAttempts) setTimeout(() => attempt(attempts + 1), 200);
           return;
         }
-        const selectEl = monthSelect.shadowRoot.querySelector('select');
-        if (selectEl) {
-          selectEl.value = month;
-          selectEl.dispatchEvent(new Event('change', { bubbles: true }));
+        const input = component.shadowRoot.querySelector('input, select, textarea');
+        if (!input) {
+          if (attempts < maxAttempts) setTimeout(() => attempt(attempts + 1), 200);
+          return;
         }
-        // Day input
-        const dayInput = dateInput.shadowRoot.querySelector('gcds-input.gcds-date-input__day');
-        if (dayInput?.shadowRoot) {
-          const dayEl = dayInput.shadowRoot.querySelector('input');
-          if (dayEl) {
-            dayEl.value = parseInt(day, 10).toString();
-            dayEl.dispatchEvent(new Event('input', { bubbles: true }));
-            dayEl.dispatchEvent(new Event('change', { bubbles: true }));
-          }
-        }
-        // Year input
-        const yearInput = dateInput.shadowRoot.querySelector('gcds-input.gcds-date-input__year');
-        if (yearInput?.shadowRoot) {
-          const yearEl = yearInput.shadowRoot.querySelector('input');
-          if (yearEl) {
-            yearEl.value = year;
-            yearEl.dispatchEvent(new Event('input', { bubbles: true }));
-            yearEl.dispatchEvent(new Event('change', { bubbles: true }));
-          }
-        }
-      } catch (error) {
-        if (attempts < maxAttempts) setTimeout(() => attempt(attempts + 1), 200);
+        input.value = value;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.dispatchEvent(new Event('change', { bubbles: true }));
       }
+      attempt();
     }
-    attempt();
-  }
-  function createInputElement(label, value = '') {
-    const input = document.createElement('gcds-input');
-    input.setAttribute('label', label);
-    if (value) {
-      input.value = value;
-      setTimeout(() => {
-        if (input.shadowRoot) {
-          const nativeInput = input.shadowRoot.querySelector('input');
-          if (nativeInput) {
-            nativeInput.value = value;
-            nativeInput.dispatchEvent(new Event('input', { bubbles: true }));
-            nativeInput.dispatchEvent(new Event('change', { bubbles: true }));
+    function setRadioValue(name, value, maxAttempts = 5) {
+      if (!value) return;
+      function attempt(attempts = 0) {
+        const group = document.querySelector(`gcds-radio-group[name="${name}"]`);
+        if (!group || !group.shadowRoot) {
+          if (attempts < maxAttempts) setTimeout(() => attempt(attempts + 1), 200);
+          return;
+        }
+        const radios = group.shadowRoot.querySelectorAll('input[type="radio"]');
+        if (!radios.length) {
+          if (attempts < maxAttempts) setTimeout(() => attempt(attempts + 1), 200);
+          return;
+        }
+        for (const radio of radios) {
+          if (radio.value === value) {
+            radio.checked = true;
+            radio.dispatchEvent(new Event('change', { bubbles: true }));
+            break;
           }
         }
-      }, 50);
+      }
+      attempt();
     }
-    return input;
-  }
-  function getDateValue(selector) {
-    const dateInput = document.querySelector(selector);
-    if (!dateInput?.shadowRoot) return '';
-    function getShadowValue(component) {
-      if (!component?.shadowRoot) return '';
-      const input = component.shadowRoot.querySelector('input, select');
-      return input?.value || '';
+    function setDateValue(selector, dateString, maxAttempts = 10) {
+      if (!dateString || !/^\d{4}-\d{2}-\d{2}$/.test(dateString)) return;
+      const [year, month, day] = dateString.split('-');
+      function attempt(attempts = 0) {
+        const dateInput = document.querySelector(selector);
+        if (!dateInput || !dateInput.shadowRoot) {
+          if (attempts < maxAttempts) setTimeout(() => attempt(attempts + 1), 200);
+          return;
+        }
+        try {
+          // Month select
+          const monthSelect = dateInput.shadowRoot.querySelector('gcds-select[name="month"]');
+          if (!monthSelect?.shadowRoot) {
+            if (attempts < maxAttempts) setTimeout(() => attempt(attempts + 1), 200);
+            return;
+          }
+          const selectEl = monthSelect.shadowRoot.querySelector('select');
+          if (selectEl) {
+            selectEl.value = month;
+            selectEl.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+          // Day input
+          const dayInput = dateInput.shadowRoot.querySelector('gcds-input.gcds-date-input__day');
+          if (dayInput?.shadowRoot) {
+            const dayEl = dayInput.shadowRoot.querySelector('input');
+            if (dayEl) {
+              dayEl.value = parseInt(day, 10).toString();
+              dayEl.dispatchEvent(new Event('input', { bubbles: true }));
+              dayEl.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+          }
+          // Year input
+          const yearInput = dateInput.shadowRoot.querySelector('gcds-input.gcds-date-input__year');
+          if (yearInput?.shadowRoot) {
+            const yearEl = yearInput.shadowRoot.querySelector('input');
+            if (yearEl) {
+              yearEl.value = year;
+              yearEl.dispatchEvent(new Event('input', { bubbles: true }));
+              yearEl.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+          }
+        } catch (error) {
+          if (attempts < maxAttempts) setTimeout(() => attempt(attempts + 1), 200);
+        }
+      }
+      attempt();
     }
-    const monthSelect = dateInput.shadowRoot.querySelector('gcds-select[name="month"]');
-    const dayInput = dateInput.shadowRoot.querySelector('gcds-input.gcds-date-input__day');
-    const yearInput = dateInput.shadowRoot.querySelector('gcds-input.gcds-date-input__year');
-    const year = getShadowValue(yearInput);
-    const month = getShadowValue(monthSelect);
-    const day = getShadowValue(dayInput);
-    if (year && month && day) {
-      return `${year.padStart(4, '0')}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    function createInputElement(label, value = '') {
+      const input = document.createElement('gcds-input');
+      input.setAttribute('label', label);
+      if (value) {
+        input.value = value;
+        setTimeout(() => {
+          if (input.shadowRoot) {
+            const nativeInput = input.shadowRoot.querySelector('input');
+            if (nativeInput) {
+              nativeInput.value = value;
+              nativeInput.dispatchEvent(new Event('input', { bubbles: true }));
+              nativeInput.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+          }
+        }, 50);
+      }
+      return input;
     }
-    return '';
-  }
+    function getDateValue(selector) {
+      const dateInput = document.querySelector(selector);
+      if (!dateInput?.shadowRoot) return '';
+      function getShadowValue(component) {
+        if (!component?.shadowRoot) return '';
+        const input = component.shadowRoot.querySelector('input, select');
+        return input?.value || '';
+      }
+      const monthSelect = dateInput.shadowRoot.querySelector('gcds-select[name="month"]');
+      const dayInput = dateInput.shadowRoot.querySelector('gcds-input.gcds-date-input__day');
+      const yearInput = dateInput.shadowRoot.querySelector('gcds-input.gcds-date-input__year');
+      const year = getShadowValue(yearInput);
+      const month = getShadowValue(monthSelect);
+      const day = getShadowValue(dayInput);
+      if (year && month && day) {
+        return `${year.padStart(4, '0')}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+      }
+      return '';
+    }
 
-  // ===== Item Management Functions =====
-  function addItem(en = '', fr = '', level = 0, noteEn = '', noteFr = '') {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'item-pair';
-    wrapper.style.marginLeft = `${level * 30}px`;
-    wrapper.dataset.level = level;
-    const header = document.createElement('div');
-    header.className = 'item-header';
-    const enInput = createInputElement('Item in English', en);
-    const frInput = createInputElement('Item in French', fr);
-    header.appendChild(enInput);
-    header.appendChild(frInput);
-    const controls = document.createElement('div');
-    controls.className = 'item-controls';
-    const addChildBtn = document.createElement('gcds-button');
-    addChildBtn.setAttribute('type', 'button');
-    addChildBtn.textContent = '+ Child';
-    addChildBtn.onclick = () => {
-      const idx = Array.from(itemsContainer.children).indexOf(wrapper);
-      const newItem = addItem('', '', level + 1);
-      if (idx >= 0 && idx < itemsContainer.children.length - 1) {
-        itemsContainer.insertBefore(newItem, itemsContainer.children[idx + 1]);
-      } else {
-        itemsContainer.appendChild(newItem);
+    // ===== Item Management Functions =====
+    function addItem(en = '', fr = '', level = 0, noteEn = '', noteFr = '') {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'item-pair';
+      wrapper.style.marginLeft = `${level * 30}px`;
+      wrapper.dataset.level = level;
+      const header = document.createElement('div');
+      header.className = 'item-header';
+      const enInput = createInputElement('Item in English', en);
+      const frInput = createInputElement('Item in French', fr);
+      header.appendChild(enInput);
+      header.appendChild(frInput);
+      const controls = document.createElement('div');
+      controls.className = 'item-controls';
+      const addChildBtn = document.createElement('gcds-button');
+      addChildBtn.setAttribute('type', 'button');
+      addChildBtn.textContent = '+ Child';
+      addChildBtn.onclick = () => {
+        const idx = Array.from(itemsContainer.children).indexOf(wrapper);
+        const newItem = addItem('', '', level + 1);
+        if (idx >= 0 && idx < itemsContainer.children.length - 1) {
+          itemsContainer.insertBefore(newItem, itemsContainer.children[idx + 1]);
+        } else {
+          itemsContainer.appendChild(newItem);
+        }
+      };
+      const toggleNoteBtn = document.createElement('gcds-button');
+      toggleNoteBtn.setAttribute('type', 'button');
+      toggleNoteBtn.textContent = '+ Note';
+      const upBtn = document.createElement('gcds-button');
+      upBtn.setAttribute('type', 'button');
+      upBtn.textContent = '\u2191';
+      upBtn.onclick = () => {
+        const prev = wrapper.previousElementSibling;
+        if (prev) itemsContainer.insertBefore(wrapper, prev);
+      };
+      const downBtn = document.createElement('gcds-button');
+      downBtn.setAttribute('type', 'button');
+      downBtn.textContent = '\u2193';
+      downBtn.onclick = () => {
+        const next = wrapper.nextElementSibling;
+        if (next) itemsContainer.insertBefore(next, wrapper);
+      };
+      const removeBtn = document.createElement('gcds-button');
+      removeBtn.setAttribute('type', 'button');
+      removeBtn.textContent = 'Remove';
+      removeBtn.onclick = () => wrapper.remove();
+      controls.append(addChildBtn, toggleNoteBtn, upBtn, downBtn, removeBtn);
+      wrapper.append(header, controls);
+      let notes = null;
+      toggleNoteBtn.onclick = () => {
+        if (!notes) {
+          notes = document.createElement('div');
+          notes.className = 'item-notes';
+          const enNote = createInputElement('English note', noteEn);
+          const frNote = createInputElement('French note', noteFr);
+          notes.append(enNote, frNote);
+          wrapper.appendChild(notes);
+          toggleNoteBtn.textContent = 'Remove Note';
+        } else {
+          notes.remove();
+          notes = null;
+          toggleNoteBtn.textContent = '+ Note';
+        }
+      };
+      if (noteEn || noteFr) {
+        setTimeout(() => toggleNoteBtn.click(), 100);
       }
-    };
-    const toggleNoteBtn = document.createElement('gcds-button');
-    toggleNoteBtn.setAttribute('type', 'button');
-    toggleNoteBtn.textContent = '+ Note';
-    const upBtn = document.createElement('gcds-button');
-    upBtn.setAttribute('type', 'button');
-    upBtn.textContent = '↑';
-    upBtn.onclick = () => {
-      const prev = wrapper.previousElementSibling;
-      if (prev) itemsContainer.insertBefore(wrapper, prev);
-    };
-    const downBtn = document.createElement('gcds-button');
-    downBtn.setAttribute('type', 'button');
-    downBtn.textContent = '↓';
-    downBtn.onclick = () => {
-      const next = wrapper.nextElementSibling;
-      if (next) itemsContainer.insertBefore(next, wrapper);
-    };
-    const removeBtn = document.createElement('gcds-button');
-    removeBtn.setAttribute('type', 'button');
-    removeBtn.textContent = 'Remove';
-    removeBtn.onclick = () => wrapper.remove();
-    controls.append(addChildBtn, toggleNoteBtn, upBtn, downBtn, removeBtn);
-    wrapper.append(header, controls);
-    let notes = null;
-    toggleNoteBtn.onclick = () => {
-      if (!notes) {
-        notes = document.createElement('div');
-        notes.className = 'item-notes';
-        const enNote = createInputElement('English note', noteEn);
-        const frNote = createInputElement('French note', noteFr);
-        notes.append(enNote, frNote);
-        wrapper.appendChild(notes);
-        toggleNoteBtn.textContent = 'Remove Note';
-      } else {
-        notes.remove();
-        notes = null;
-        toggleNoteBtn.textContent = '+ Note';
-      }
-    };
-    if (noteEn || noteFr) {
-      setTimeout(() => toggleNoteBtn.click(), 100);
+      itemsContainer.appendChild(wrapper);
+      return wrapper;
     }
-    itemsContainer.appendChild(wrapper);
-    return wrapper;
-  }
-  function getItemsData() {
-    const items = [];
-    Array.from(itemsContainer.children).forEach(wrapper => {
-      const level = parseInt(wrapper.dataset.level) || 0;
-      const enInput = wrapper.querySelector('gcds-input[label="Item in English"]');
-      const frInput = wrapper.querySelector('gcds-input[label="Item in French"]');
-      const enNoteInput = wrapper.querySelector('gcds-input[label="English note"]');
-      const frNoteInput = wrapper.querySelector('gcds-input[label="French note"]');
-      function getInputValue(input) {
-        if (!input?.shadowRoot) return '';
-        const nativeInput = input.shadowRoot.querySelector('input');
-        return nativeInput?.value?.trim() || '';
+    function getItemsData() {
+      const items = [];
+      Array.from(itemsContainer.children).forEach(wrapper => {
+        const level = parseInt(wrapper.dataset.level) || 0;
+        const enInput = wrapper.querySelector('gcds-input[label="Item in English"]');
+        const frInput = wrapper.querySelector('gcds-input[label="Item in French"]');
+        const enNoteInput = wrapper.querySelector('gcds-input[label="English note"]');
+        const frNoteInput = wrapper.querySelector('gcds-input[label="French note"]');
+        function getInputValue(input) {
+          if (!input?.shadowRoot) return '';
+          const nativeInput = input.shadowRoot.querySelector('input');
+          return nativeInput?.value?.trim() || '';
+        }
+        const itemEn = getInputValue(enInput);
+        const itemFr = getInputValue(frInput);
+        const noteEn = getInputValue(enNoteInput);
+        const noteFr = getInputValue(frNoteInput);
+        if (itemEn || itemFr) {
+          items.push({
+            english: itemEn,
+            french: itemFr,
+            level: level,
+            noteEnglish: noteEn,
+            noteFrench: noteFr
+          });
+        }
+      });
+      return items;
+    }
+
+    // ===== Form Submission with Date Validation & required checks =====
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const englishTitle = getComponentValue('#englishTitle');
+      const frenchTitle = getComponentValue('#frenchTitle');
+      const version = getComponentValue('#version');
+      const visibility = getRadioValue('visibility');
+      const date = getDateValue('gcds-date-input[name="date"]');
+      if (!englishTitle) return alert('English title is required');
+      if (!frenchTitle) return alert('French title is required');
+      if (!version) return alert('Version is required');
+      if (!visibility) return alert('Type of manual is required');
+      if (!date) return alert('Date is required');
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return alert('Date must be in YYYY-MM-DD format');
+      // Validate day and year range
+      const [yearStr, monthStr, dayStr] = date.split('-');
+      const year = parseInt(yearStr, 10);
+      const day = parseInt(dayStr, 10);
+      const currentYear = new Date().getFullYear();
+      if (day < 1 || day > 31) return alert('Day must be between 1 and 31');
+      if (year < 1990 || year > currentYear) return alert(`Year must be between 1990 and ${currentYear}`);
+      const items = getItemsData();
+      const output = {
+        englishTitle,
+        frenchTitle,
+        version,
+        visibility,
+        date,
+        items
+      };
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(output, null, 2));
+      const downloadLink = document.createElement('a');
+      downloadLink.setAttribute("href", dataStr);
+      downloadLink.setAttribute("download", "form-data.json");
+      downloadLink.click();
+    });
+
+    // ===== File Upload & Load (AUTO-POPULATE ON CHANGE) =====
+    uploader.addEventListener('change', async (e) => {
+      const files = e.detail?.files || [];
+      if (!files.length) return;
+      const file = files[0];
+      if (!file.name.endsWith('.json')) {
+        alert('Please upload a valid JSON file.');
+        return;
       }
-      const itemEn = getInputValue(enInput);
-      const itemFr = getInputValue(frInput);
-      const noteEn = getInputValue(enNoteInput);
-      const noteFr = getInputValue(frNoteInput);
-      if (itemEn || itemFr) {
-        items.push({
-          english: itemEn,
-          french: itemFr,
-          level: level,
-          noteEnglish: noteEn,
-          noteFrench: noteFr
-        });
+      try {
+        const text = await file.text();
+        const data = JSON.parse(text);
+        itemsContainer.innerHTML = '';
+        setTimeout(() => {
+          setComponentValue('#englishTitle', data.englishTitle || '');
+          setComponentValue('#frenchTitle', data.frenchTitle || '');
+          setComponentValue('#version', data.version || '');
+          setRadioValue('visibility', data.visibility || '');
+          setDateValue('#publish-date', data.date || '');
+          setTimeout(() => {
+            if (Array.isArray(data.items)) {
+              data.items.forEach(item => {
+                addItem(
+                  item.english || '', 
+                  item.french || '', 
+                  item.level || 0, 
+                  item.noteEnglish || '', 
+                  item.noteFrench || ''
+                );
+              });
+            }
+          }, 300);
+        }, 200);
+      } catch (err) {
+        alert('Error parsing JSON file: ' + err.message);
       }
     });
-    return items;
-  }
-
-  // ===== Form Submission with Date Validation & required checks =====
-  form.addEventListener('submit', (event) => {
-    event.preventDefault();
-    const englishTitle = getComponentValue('#englishTitle');
-    const frenchTitle = getComponentValue('#frenchTitle');
-    const version = getComponentValue('#version');
-    const visibility = getRadioValue('visibility');
-    const date = getDateValue('gcds-date-input[name="date"]');
-    if (!englishTitle) return alert('English title is required');
-    if (!frenchTitle) return alert('French title is required');
-    if (!version) return alert('Version is required');
-    if (!visibility) return alert('Type of manual is required');
-    if (!date) return alert('Date is required');
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return alert('Date must be in YYYY-MM-DD format');
-    // Validate day and year range
-    const [yearStr, monthStr, dayStr] = date.split('-');
-    const year = parseInt(yearStr, 10);
-    const day = parseInt(dayStr, 10);
-    const currentYear = new Date().getFullYear();
-    if (day < 1 || day > 31) return alert('Day must be between 1 and 31');
-    if (year < 1990 || year > currentYear) return alert(`Year must be between 1990 and ${currentYear}`);
-    const items = getItemsData();
-    const output = {
-      englishTitle,
-      frenchTitle,
-      version,
-      visibility,
-      date,
-      items
-    };
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(output, null, 2));
-    const downloadLink = document.createElement('a');
-    downloadLink.setAttribute("href", dataStr);
-    downloadLink.setAttribute("download", "form-data.json");
-    downloadLink.click();
-  });
-
-  // ===== File Upload & Load (AUTO-POPULATE ON CHANGE) =====
-  uploader.addEventListener('change', async (e) => {
-    const files = e.detail?.files || [];
-    if (!files.length) return;
-    const file = files[0];
-    if (!file.name.endsWith('.json')) {
-      alert('Please upload a valid JSON file.');
-      return;
-    }
-    try {
-      const text = await file.text();
-      const data = JSON.parse(text);
-      itemsContainer.innerHTML = '';
-      setTimeout(() => {
-        setComponentValue('#englishTitle', data.englishTitle || '');
-        setComponentValue('#frenchTitle', data.frenchTitle || '');
-        setComponentValue('#version', data.version || '');
-        setRadioValue('visibility', data.visibility || '');
-        setDateValue('#publish-date', data.date || '');
-        setTimeout(() => {
-          if (Array.isArray(data.items)) {
-            data.items.forEach(item => {
-              addItem(
-                item.english || '', 
-                item.french || '', 
-                item.level || 0, 
-                item.noteEnglish || '', 
-                item.noteFrench || ''
-              );
-            });
-          }
-        }, 300);
-      }, 200);
-    } catch (err) {
-      alert('Error parsing JSON file: ' + err.message);
-    }
-  });
-</script>
+  </script>
 </body>
 </html>
