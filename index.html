@@ -413,8 +413,14 @@
 
     // ===== File Upload & Load (AUTO-POPULATE ON CHANGE) =====
     uploader.addEventListener('change', async (e) => {
-      const files = e.detail?.files || [];
-      if (!files.length) return;
+      // Try the detail property first (for gcds-file-uploader), fallback to native input if needed
+      let files = e.detail?.files;
+      if (!files || !files.length) {
+        // Fallback: Try the native file input inside shadowRoot
+        const input = uploader.shadowRoot && uploader.shadowRoot.querySelector('input[type="file"]');
+        files = input?.files;
+        if (!files || !files.length) return;
+      }
       const file = files[0];
       if (!file.name.endsWith('.json')) {
         alert('Please upload a valid JSON file.');
@@ -428,7 +434,7 @@
           setComponentValue('#englishTitle', data.englishTitle || '');
           setComponentValue('#frenchTitle', data.frenchTitle || '');
           setComponentValue('#version', data.version || '');
-          setRadioValue('visibility', data.visibility || '');
+          setRadioValue('manualType', data.manualType || '');
           setDateValue('#publish-date', data.date || '');
           setTimeout(() => {
             if (Array.isArray(data.items)) {
