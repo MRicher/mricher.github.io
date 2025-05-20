@@ -48,6 +48,16 @@
       gap: 1rem;
       flex-wrap: wrap;
     }
+    .manual-fieldset {
+      margin-bottom: 1.5em;
+      padding: 0.75em;
+      border: 1px solid #ccc;
+      border-radius: 0.25em;
+    }
+    .manual-legend {
+      font-weight: bold;
+      margin-bottom: 0.5em;
+    }
   </style>
 </head>
 <body>
@@ -60,17 +70,15 @@
         <gcds-input id="frenchTitle" label="French Title" name="frenchTitle" required aria-required="true"></gcds-input>
 
         <!-- FIELDSET for Type of manual -->
-        <fieldset style="margin-bottom: 1.5em; padding: 0.75em; border: 1px solid #ccc; border-radius: 0.25em;">
-          <legend style="font-weight: bold; margin-bottom: 0.5em;">Type of manual</legend>
+        <fieldset class="manual-fieldset">
+          <legend class="manual-legend">Type of manual</legend>
           <gcds-radio-group
             id="manualType"
             name="manualType"
             legend="Type of manual"
-            required
             options='[
-              { "id": "manual-type-user", "label": "User", "value": "user" },
-              { "id": "manual-type-service", "label": "Service", "value": "service" },
-              { "id": "manual-type-maintenance", "label": "Maintenance", "value": "maintenance" }
+              { "id": "manual-type-public", "label": "Public", "value": "public" },
+              { "id": "manual-type-internal", "label": "Internal", "value": "internal", "checked": true }
             ]'
           ></gcds-radio-group>
         </fieldset>
