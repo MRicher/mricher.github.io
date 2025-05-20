@@ -98,7 +98,7 @@
 
         <gcds-heading tag="h2">Items</gcds-heading>
         <div id="itemsContainer"></div>
-        <gcds-button type="button" onclick="addItem()">Add Root Item</gcds-button>
+        <gcds-button type="button" id="addRootItemBtn">Add Root Item</gcds-button>
 
         <br /><br />
         <gcds-button type="submit">Save as JSON</gcds-button>
@@ -117,18 +117,17 @@
 
   <!-- Defer script execution for performance -->
   <script defer>
-    // Dynamically set the max-year attribute to the current year for the GC Design System date input
     document.addEventListener('DOMContentLoaded', function() {
       const currentYear = new Date().getFullYear();
       document.getElementById('publish-date').setAttribute('max-year', currentYear);
     });
 
-    // DOM Element References
     const form = document.getElementById('titleForm');
     const uploader = document.querySelector('gcds-file-uploader');
     const itemsContainer = document.getElementById('itemsContainer');
+    const addRootItemBtn = document.getElementById('addRootItemBtn');
 
-    // ===== Component Value Manipulation Functions =====
+    // --- Utility Functions ---
     function getComponentValue(selector) {
       const component = document.querySelector(selector);
       if (!component?.shadowRoot) return '';
@@ -268,105 +267,187 @@
       return '';
     }
 
-    // ===== Item Management Functions =====
-    function addItem(en = '', fr = '', level = 0, noteEn = '', noteFr = '') {
+    // Hierarchical numbering utility
+    function computeNumbering(flatItems) {
+      let result = [];
+      function helper(level, parentIdx, prefix) {
+        let count = 0;
+        for (let i = parentIdx + 1; i < flatItems.length; i++) {
+          if (flatItems[i].level === level) {
+            count++;
+            const number = prefix ? `${prefix}.${count}` : `${count}`;
+            result[i] = number;
+            // Recurse for children
+            helper(level + 1, i, number);
+          } else if (flatItems[i].level < level) {
+            break;
+          }
+        }
+      }
+      helper(0, -1, '');
+      return result;
+    }
+
+    // === Item Management System ===
+    let itemData = [];
+
+    function rerenderItems() {
+      itemsContainer.innerHTML = '';
+      const numbers = computeNumbering(itemData);
+      itemData.forEach((item, idx) => {
+        renderItem(item, numbers[idx], idx);
+      });
+    }
+
+    function renderItem(item, number, idx) {
       const wrapper = document.createElement('div');
       wrapper.className = 'item-pair';
-      wrapper.style.marginLeft = `${level * 30}px`;
-      wrapper.dataset.level = level;
+      wrapper.style.marginLeft = `${item.level * 30}px`;
+      wrapper.dataset.level = item.level;
+      wrapper.dataset.idx = idx;
+
       const header = document.createElement('div');
       header.className = 'item-header';
-      const enInput = createInputElement('Item in English', en);
-      const frInput = createInputElement('Item in French', fr);
+
+      const enInput = createInputElement(`${number}. Item in English`, item.english);
+      const frInput = createInputElement(`${number}. Item in French`, item.french);
       header.appendChild(enInput);
       header.appendChild(frInput);
+
       const controls = document.createElement('div');
       controls.className = 'item-controls';
+
       const addChildBtn = document.createElement('gcds-button');
       addChildBtn.setAttribute('type', 'button');
       addChildBtn.textContent = '+ Child';
       addChildBtn.onclick = () => {
-        const idx = Array.from(itemsContainer.children).indexOf(wrapper);
-        const newItem = addItem('', '', level + 1);
-        if (idx >= 0 && idx < itemsContainer.children.length - 1) {
-          itemsContainer.insertBefore(newItem, itemsContainer.children[idx + 1]);
-        } else {
-          itemsContainer.appendChild(newItem);
-        }
+        // Insert new child after this item
+        const childLevel = item.level + 1;
+        const insertIdx = idx + 1;
+        itemData.splice(insertIdx, 0, {
+          english: '',
+          french: '',
+          level: childLevel,
+          noteEnglish: '',
+          noteFrench: ''
+        });
+        rerenderItems();
       };
+
       const toggleNoteBtn = document.createElement('gcds-button');
       toggleNoteBtn.setAttribute('type', 'button');
-      toggleNoteBtn.textContent = '+ Note';
+      toggleNoteBtn.textContent = (item.noteEnglish || item.noteFrench) ? 'Remove Note' : '+ Note';
+
+      let notes = null;
+      function showNotes() {
+        notes = document.createElement('div');
+        notes.className = 'item-notes';
+        const enNote = createInputElement('English note', item.noteEnglish || '');
+        const frNote = createInputElement('French note', item.noteFrench || '');
+        enNote.addEventListener('input', () => {
+          itemData[idx].noteEnglish = enNote.shadowRoot.querySelector('input').value;
+        });
+        frNote.addEventListener('input', () => {
+          itemData[idx].noteFrench = frNote.shadowRoot.querySelector('input').value;
+        });
+        notes.append(enNote, frNote);
+        wrapper.appendChild(notes);
+      }
+      function removeNotes() {
+        if (notes) {
+          notes.remove();
+          notes = null;
+        }
+      }
+      toggleNoteBtn.onclick = () => {
+        if (notes) {
+          removeNotes();
+          itemData[idx].noteEnglish = '';
+          itemData[idx].noteFrench = '';
+          toggleNoteBtn.textContent = '+ Note';
+        } else {
+          showNotes();
+          toggleNoteBtn.textContent = 'Remove Note';
+        }
+      };
+      if (item.noteEnglish || item.noteFrench) {
+        setTimeout(() => {
+          showNotes();
+          toggleNoteBtn.textContent = 'Remove Note';
+        }, 0);
+      }
+
       const upBtn = document.createElement('gcds-button');
       upBtn.setAttribute('type', 'button');
       upBtn.textContent = '\u2191';
       upBtn.onclick = () => {
-        const prev = wrapper.previousElementSibling;
-        if (prev) itemsContainer.insertBefore(wrapper, prev);
+        if (idx > 0) {
+          const tmp = itemData[idx];
+          itemData[idx] = itemData[idx - 1];
+          itemData[idx - 1] = tmp;
+          rerenderItems();
+        }
       };
+
       const downBtn = document.createElement('gcds-button');
       downBtn.setAttribute('type', 'button');
       downBtn.textContent = '\u2193';
       downBtn.onclick = () => {
-        const next = wrapper.nextElementSibling;
-        if (next) itemsContainer.insertBefore(next, wrapper);
+        if (idx < itemData.length - 1) {
+          const tmp = itemData[idx];
+          itemData[idx] = itemData[idx + 1];
+          itemData[idx + 1] = tmp;
+          rerenderItems();
+        }
       };
+
       const removeBtn = document.createElement('gcds-button');
       removeBtn.setAttribute('type', 'button');
       removeBtn.textContent = 'Remove';
-      removeBtn.onclick = () => wrapper.remove();
+      removeBtn.onclick = () => {
+        itemData.splice(idx, 1);
+        rerenderItems();
+      };
+
       controls.append(addChildBtn, toggleNoteBtn, upBtn, downBtn, removeBtn);
       wrapper.append(header, controls);
-      let notes = null;
-      toggleNoteBtn.onclick = () => {
-        if (!notes) {
-          notes = document.createElement('div');
-          notes.className = 'item-notes';
-          const enNote = createInputElement('English note', noteEn);
-          const frNote = createInputElement('French note', noteFr);
-          notes.append(enNote, frNote);
-          wrapper.appendChild(notes);
-          toggleNoteBtn.textContent = 'Remove Note';
-        } else {
-          notes.remove();
-          notes = null;
-          toggleNoteBtn.textContent = '+ Note';
-        }
-      };
-      if (noteEn || noteFr) {
-        setTimeout(() => toggleNoteBtn.click(), 100);
-      }
-      itemsContainer.appendChild(wrapper);
-      return wrapper;
-    }
-    function getItemsData() {
-      const items = [];
-      Array.from(itemsContainer.children).forEach(wrapper => {
-        const level = parseInt(wrapper.dataset.level) || 0;
-        const enInput = wrapper.querySelector('gcds-input[label="Item in English"]');
-        const frInput = wrapper.querySelector('gcds-input[label="Item in French"]');
-        const enNoteInput = wrapper.querySelector('gcds-input[label="English note"]');
-        const frNoteInput = wrapper.querySelector('gcds-input[label="French note"]');
-        function getInputValue(input) {
-          if (!input?.shadowRoot) return '';
-          const nativeInput = input.shadowRoot.querySelector('input');
-          return nativeInput?.value?.trim() || '';
-        }
-        const itemEn = getInputValue(enInput);
-        const itemFr = getInputValue(frInput);
-        const noteEn = getInputValue(enNoteInput);
-        const noteFr = getInputValue(frNoteInput);
-        if (itemEn || itemFr) {
-          items.push({
-            english: itemEn,
-            french: itemFr,
-            level: level,
-            noteEnglish: noteEn,
-            noteFrench: noteFr
-          });
-        }
+
+      // Update model on input
+      enInput.addEventListener('input', () => {
+        itemData[idx].english = enInput.shadowRoot.querySelector('input').value;
       });
-      return items;
+      frInput.addEventListener('input', () => {
+        itemData[idx].french = frInput.shadowRoot.querySelector('input').value;
+      });
+
+      itemsContainer.appendChild(wrapper);
+    }
+
+    addRootItemBtn.onclick = () => {
+      itemData.push({
+        english: '',
+        french: '',
+        level: 0,
+        noteEnglish: '',
+        noteFrench: ''
+      });
+      rerenderItems();
+    };
+
+    // For loading from JSON file or programmatically
+    function loadItemsFromData(items) {
+      itemData = Array.isArray(items) ? items.map(i => ({
+        english: i.english || '',
+        french: i.french || '',
+        level: i.level || 0,
+        noteEnglish: i.noteEnglish || '',
+        noteFrench: i.noteFrench || ''
+      })) : [];
+      rerenderItems();
+    }
+
+    function getItemsData() {
+      return [...itemData];
     }
 
     // ===== Form Submission with Date Validation & required checks =====
@@ -399,11 +480,9 @@
         date,
         items
       };
-    
-      // Generate filename: all lowercase, spaces to dashes, version at end
       let filename = englishTitle.toLowerCase().replace(/\s+/g, '-');
       filename += '-' + version + '.json';
-    
+
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(output, null, 2));
       const downloadLink = document.createElement('a');
       downloadLink.setAttribute("href", dataStr);
@@ -413,10 +492,8 @@
 
     // ===== File Upload & Load (AUTO-POPULATE ON CHANGE) =====
     uploader.addEventListener('change', async (e) => {
-      // Try the detail property first (for gcds-file-uploader), fallback to native input if needed
       let files = e.detail?.files;
       if (!files || !files.length) {
-        // Fallback: Try the native file input inside shadowRoot
         const input = uploader.shadowRoot && uploader.shadowRoot.querySelector('input[type="file"]');
         files = input?.files;
         if (!files || !files.length) return;
@@ -429,31 +506,20 @@
       try {
         const text = await file.text();
         const data = JSON.parse(text);
-        itemsContainer.innerHTML = '';
-        setTimeout(() => {
-          setComponentValue('#englishTitle', data.englishTitle || '');
-          setComponentValue('#frenchTitle', data.frenchTitle || '');
-          setComponentValue('#version', data.version || '');
-          setRadioValue('manualType', data.manualType || '');
-          setDateValue('#publish-date', data.date || '');
-          setTimeout(() => {
-            if (Array.isArray(data.items)) {
-              data.items.forEach(item => {
-                addItem(
-                  item.english || '', 
-                  item.french || '', 
-                  item.level || 0, 
-                  item.noteEnglish || '', 
-                  item.noteFrench || ''
-                );
-              });
-            }
-          }, 300);
-        }, 200);
+        setComponentValue('#englishTitle', data.englishTitle || '');
+        setComponentValue('#frenchTitle', data.frenchTitle || '');
+        setComponentValue('#version', data.version || '');
+        setRadioValue('manualType', data.manualType || '');
+        setDateValue('#publish-date', data.date || '');
+        loadItemsFromData(data.items || []);
       } catch (err) {
         alert('Error parsing JSON file: ' + err.message);
       }
     });
+
+    // Initial render if any items already present (optional)
+    rerenderItems();
+
   </script>
 </body>
 </html>
