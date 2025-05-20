@@ -54,16 +54,20 @@
       <gcds-input id="englishTitle" label="English Title" name="englishTitle" required></gcds-input>
       <gcds-input id="frenchTitle" label="French Title" name="frenchTitle" required></gcds-input>
 
-      <gcds-radio-group
-        id="visibility"
-        name="visibility"
-        legend="Visibility"
-        required
-        options='[
-          { "id": "visibility-public", "label": "Public", "value": "public", "hint": "Visible to everyone." },
-          { "id": "visibility-internal", "label": "Internal", "value": "internal", "hint": "Visible only internally." }
-        ]'>
-      </gcds-radio-group>
+      <!-- FIELDSET for Type of manual -->
+      <fieldset style="margin-bottom: 1.5em; padding: 0.75em; border: 1px solid #ccc; border-radius: 0.25em;">
+        <legend style="font-weight: bold; margin-bottom: 0.5em;">Type of manual</legend>
+        <gcds-radio-group
+          id="visibility"
+          name="visibility"
+          legend="Type of manual"
+          required
+          options='[
+            { "id": "visibility-public", "label": "Public", "value": "public", "hint": "Visible to everyone." },
+            { "id": "visibility-internal", "label": "Internal", "value": "internal", "hint": "Visible only internally." }
+          ]'>
+        </gcds-radio-group>
+      </fieldset>
 
       <gcds-input id="version" label="Version (1.0.0)" name="version" required></gcds-input>
 
@@ -339,7 +343,7 @@
     return items;
   }
 
-  // ===== Form Submission with Date Validation =====
+  // ===== Form Submission with Date Validation & required checks =====
   form.addEventListener('submit', (event) => {
     event.preventDefault();
     const englishTitle = getComponentValue('#englishTitle');
@@ -350,7 +354,7 @@
     if (!englishTitle) return alert('English title is required');
     if (!frenchTitle) return alert('French title is required');
     if (!version) return alert('Version is required');
-    if (!visibility) return alert('Visibility is required');
+    if (!visibility) return alert('Type of manual is required');
     if (!date) return alert('Date is required');
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return alert('Date must be in YYYY-MM-DD format');
     // Validate day and year range
