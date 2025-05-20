@@ -63,13 +63,14 @@
         <fieldset style="margin-bottom: 1.5em; padding: 0.75em; border: 1px solid #ccc; border-radius: 0.25em;">
           <legend style="font-weight: bold; margin-bottom: 0.5em;">Type of manual</legend>
           <gcds-radio-group
-            id="visibility"
-            name="visibility"
+            id="manualType"
+            name="manualType"
             legend="Type of manual"
             required
             options='[
-              { "id": "visibility-public", "label": "Public", "value": "public", "hint": "Visible to everyone." },
-              { "id": "visibility-internal", "label": "Internal", "value": "internal", "hint": "Visible only internally." }
+              { "id": "manual-type-user", "label": "User", "value": "user" },
+              { "id": "manual-type-service", "label": "Service", "value": "service" },
+              { "id": "manual-type-maintenance", "label": "Maintenance", "value": "maintenance" }
             ]'
           ></gcds-radio-group>
         </fieldset>
@@ -366,12 +367,12 @@
       const englishTitle = getComponentValue('#englishTitle');
       const frenchTitle = getComponentValue('#frenchTitle');
       const version = getComponentValue('#version');
-      const visibility = getRadioValue('visibility');
+      const manualType = getRadioValue('manualType');
       const date = getDateValue('gcds-date-input[name="date"]');
       if (!englishTitle) return alert('English title is required');
       if (!frenchTitle) return alert('French title is required');
       if (!version) return alert('Version is required');
-      if (!visibility) return alert('Type of manual is required');
+      if (!manualType) return alert('Type of manual is required');
       if (!date) return alert('Date is required');
       if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return alert('Date must be in YYYY-MM-DD format');
       // Validate day and year range
@@ -386,14 +387,19 @@
         englishTitle,
         frenchTitle,
         version,
-        visibility,
+        manualType,
         date,
         items
       };
+    
+      // Generate filename: all lowercase, spaces to dashes, version at end
+      let filename = englishTitle.toLowerCase().replace(/\s+/g, '-');
+      filename += '-' + version + '.json';
+    
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(output, null, 2));
       const downloadLink = document.createElement('a');
       downloadLink.setAttribute("href", dataStr);
-      downloadLink.setAttribute("download", "form-data.json");
+      downloadLink.setAttribute("download", filename);
       downloadLink.click();
     });
 
