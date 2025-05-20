@@ -71,13 +71,21 @@
 
       <gcds-input id="version" label="Version (1.0.0)" name="version" required></gcds-input>
 
-      <gcds-date-input
-        id="publish-date"
-        legend="Date input"
-        name="date"
-        format="full"
-        required
-      ></gcds-date-input>
+<gcds-date-input
+  id="publish-date"
+  legend="Date input"
+  name="date"
+  format="full"
+  min-year="1990"
+  required
+></gcds-date-input>
+<script>
+  // Dynamically set the max-year attribute to the current year for the GC Design System date input
+  document.addEventListener('DOMContentLoaded', function() {
+    const currentYear = new Date().getFullYear();
+    document.getElementById('publish-date').setAttribute('max-year', currentYear);
+  });
+</script>
 
       <gcds-heading tag="h2">Items</gcds-heading>
       <div id="itemsContainer"></div>
