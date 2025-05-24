@@ -34,9 +34,11 @@
   <main role="main" property="mainContentOfPage" class="container">
     <h1>New Brunswick <abbr>RCMP</Abbr> daily occurrence report<br>
       <small>April 2, 6 am – April 3, 6 am</small></h1>
+      <div class="well"> 
         <div id="output" role="region" aria-labelledby="wb-cont" aria-live="polite">
           <p>Loading...</p>
         </div>
+      </div>
   </main>
 
   <script>
@@ -69,14 +71,42 @@
         const total = Number(data.number1) + Number(data.number2) + Number(data.number3) + Number(data.number4);
 
         output.innerHTML = `
-        
-          <p><strong>Total number of calls:</strong> ${total}</p>
           <dl class="dl-horizontal brdr-0">
+            <dt>Total number of calls</dt>
+            <dd>${total}</dd>
             <dt>Priority 1</dt><dd>${data.number1}</dd>
             <dt>Priority 2</dt><dd>${data.number2}</dd>
             <dt>Priority 3</dt><dd>${data.number3}</dd>
             <dt>Priority 4</dt><dd>${data.number4}</dd>
           </dl>
+          <section class="alert alert-info">
+            <h2 id="s1">Operational files of note</h2>
+            <p>Please note, locations refer to the <abbr>RCMP</abbr> detachment responsible for the area in which the incident occurred.</p>
+          </section>
+          <section id="s2">
+            <h3>Northeast</h3>
+            <ol>
+              <li><b>Blackville:</b> Individual in mental distress. Individual transported to hospital.</li>
+            </ol>
+          </section>
+          <section id="s3">
+            <h3>Southeast</h3>
+            <ol>
+              <li><b>Blackville:</b> Individual in mental distress. Individual transported to hospital.</li>
+            </ol>
+          </section>
+          <section id="s4">
+            <h3>West</h3>
+            <ol>
+              <li><b>Blackville:</b> Individual in mental distress. Individual transported to hospital.</li>
+            </ol>
+          </section>
+          <section id="s5">
+            <h3>Codiac</h3>
+            <ol>
+              <li><b>Blackville:</b> Individual in mental distress. Individual transported to hospital.</li>
+            </ol>
+          </section>
         `;
       } catch (error) {
         output.innerHTML = `<p class="text-danger"><strong>Error loading file:</strong> ${error.message}</p>`;
