@@ -1,23 +1,44 @@
 <!DOCTYPE html>
 <html lang="en" class="no-js">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Loaded Numbers</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Loaded Numbers - Canada.ca</title>
 
   <!-- WET-BOEW CSS -->
-  <link rel="stylesheet" href="https://wet-boew.github.io/wet-boew/dist/css/wet-boew.min.css">
-  <link rel="stylesheet" href="https://wet-boew.github.io/wet-boew/dist/css/theme.min.css">
+  <link rel="stylesheet" href="https://wet-boew.github.io/wet-boew/dist/css/wet-boew.min.css" />
+  <link rel="stylesheet" href="https://wet-boew.github.io/wet-boew/dist/css/theme.min.css" />
 
   <!-- WET-BOEW JS -->
   <script src="https://wet-boew.github.io/wet-boew/dist/js/wet-boew.min.js"></script>
   <script src="https://wet-boew.github.io/wet-boew/dist/js/theme.min.js"></script>
+
+  <style>
+    /* Adjust spacing to fit the dl-horizontal style */
+    dl.dl-horizontal dt {
+      float: left;
+      width: 25%;
+      font-weight: bold;
+    }
+    dl.dl-horizontal dd {
+      margin-left: 26%;
+      margin-bottom: 0.75rem;
+    }
+    .text-danger {
+      color: #a30000;
+      font-weight: 700;
+    }
+  </style>
 </head>
 <body vocab="http://schema.org/" typeof="WebPage">
+  <header role="banner" id="wb-bnr">
+    <div id="wb-bar">
+      <div class="container">
+        <h1 property="name" id="wb-cont">Loaded Numbers</h1>
+      </div>
+    </div>
+  </header>
 
-
-
-  <!-- Main Content Area -->
   <main role="main" property="mainContentOfPage" class="container">
     <section>
       <div class="well">
@@ -28,7 +49,7 @@
     </section>
   </main>
 
-  <!-- Custom Script -->
+
   <script>
     document.addEventListener("DOMContentLoaded", async () => {
       const params = new URLSearchParams(window.location.search);
@@ -55,11 +76,17 @@
           return;
         }
 
+        // Calculate total
+        const total = Number(data.number1) + Number(data.number2) + Number(data.number3) + Number(data.number4);
+
         output.innerHTML = `
-          <p><strong>Number 1:</strong> ${data.number1}</p>
-          <p><strong>Number 2:</strong> ${data.number2}</p>
-          <p><strong>Number 3:</strong> ${data.number3}</p>
-          <p><strong>Number 4:</strong> ${data.number4}</p>
+          <p><strong>Total number of calls:</strong> ${total}</p>
+          <dl class="dl-horizontal brdr-0">
+            <dt>Priority 1</dt><dd>${data.number1}</dd>
+            <dt>Priority 2</dt><dd>${data.number2}</dd>
+            <dt>Priority 3</dt><dd>${data.number3}</dd>
+            <dt>Priority 4</dt><dd>${data.number4}</dd>
+          </dl>
         `;
       } catch (error) {
         output.innerHTML = `<p class="text-danger"><strong>Error loading file:</strong> ${error.message}</p>`;
