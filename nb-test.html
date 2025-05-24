@@ -20,79 +20,78 @@
     </div>
   </main>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", async () => {
-      const params = new URLSearchParams(window.location.search);
-      const baseFilename = params.get('file');
-      const output = document.getElementById('output');
+ <script>
+  document.addEventListener("DOMContentLoaded", async () => {
+    const params = new URLSearchParams(window.location.search);
+    const baseFilename = params.get('file');
+    const output = document.getElementById('output');
 
-      if (!baseFilename || !/^[a-zA-Z0-9_-]+$/.test(baseFilename)) {
-        output.innerHTML = '<p class="text-danger"><strong>Error:</strong> Missing or invalid "file" parameter in URL. Example: ?file=21-2025</p>';
+    if (!baseFilename || !/^[a-zA-Z0-9_-]+$/.test(baseFilename)) {
+      output.innerHTML = '<p class="text-danger"><strong>Error:</strong> Missing or invalid "file" parameter in URL. Example: ?file=21-2025</p>';
+      return;
+    }
+
+    const filename = `${baseFilename}.json`;
+
+    try {
+      const response = await fetch(filename);
+      if (!response.ok) throw new Error(`Could not load ${filename} (HTTP ${response.status})`);
+
+      const data = await response.json();
+      const priorities = data.priorities;
+      const regions = data.regions;
+
+      const requiredKeys = ['priority1', 'priority2', 'priority3', 'priority4'];
+      const missing = requiredKeys.filter(k => !(k in priorities));
+      if (missing.length) {
+        output.innerHTML = `<p class="text-danger"><strong>Error:</strong> Missing keys in JSON: ${missing.join(', ')}</p>`;
         return;
       }
 
-      const filename = `${baseFilename}.json`;
+      // Calculate total
+      const total = Object.values(priorities).reduce((sum, val) => sum + Number(val), 0);
 
-      try {
-        const response = await fetch(filename);
-        if (!response.ok) throw new Error(`Could not load ${filename} (HTTP ${response.status})`);
+      let regionSections = '';
+      for (const [regionName, items] of Object.entries(regions)) {
+        regionSections += `<section><h3>${regionName}</h3><ol>`;
+        for (const item of items) {
+          const text = item.en.trim();
+          if (!text) continue;
 
-        const data = await response.json();
-        const requiredKeys = ['number1', 'number2', 'number3', 'number4'];
-        const missing = requiredKeys.filter(k => !(k in data));
-
-        if (missing.length) {
-          output.innerHTML = `<p class="text-danger"><strong>Error:</strong> Missing keys in JSON: ${missing.join(', ')}</p>`;
-          return;
+          const firstPeriodIndex = text.indexOf('.');
+          if (firstPeriodIndex !== -1) {
+            const lead = text.slice(0, firstPeriodIndex).trim();
+            const rest = text.slice(firstPeriodIndex + 1).trim();
+            regionSections += `<li><b>${lead}:</b> ${rest}</li>`;
+          } else {
+            regionSections += `<li>${text}</li>`;
+          }
         }
+        regionSections += '</ol></section>';
+      }
 
-        // Calculate total
-        const total = Number(data.number1) + Number(data.number2) + Number(data.number3) + Number(data.number4);
-
-        output.innerHTML = `
+      output.innerHTML = `
         <div class="well"> 
           <dl class="dl-horizontal brdr-0">
             <dt>Total number of calls</dt>
             <dd>${total}</dd>
-            <dt>Priority 1</dt><dd>${data.number1}</dd>
-            <dt>Priority 2</dt><dd>${data.number2}</dd>
-            <dt>Priority 3</dt><dd>${data.number3}</dd>
-            <dt>Priority 4</dt><dd>${data.number4}</dd>
+            <dt>Priority 1</dt><dd>${priorities.priority1}</dd>
+            <dt>Priority 2</dt><dd>${priorities.priority2}</dd>
+            <dt>Priority 3</dt><dd>${priorities.priority3}</dd>
+            <dt>Priority 4</dt><dd>${priorities.priority4}</dd>
           </dl>
-</div>
-          <section class="alert alert-info">
-            <h2 id="s1">Operational files of note</h2>
-            <p>Please note, locations refer to the <abbr>RCMP</abbr> detachment responsible for the area in which the incident occurred.</p>
-          </section>
-          <section id="s2">
-            <h3>Northeast</h3>
-            <ol>
-              <li><b>Blackville:</b> Individual in mental distress. Individual transported to hospital.</li>
-            </ol>
-          </section>
-          <section id="s3">
-            <h3>Southeast</h3>
-            <ol>
-              <li><b>Blackville:</b> Individual in mental distress. Individual transported to hospital.</li>
-            </ol>
-          </section>
-          <section id="s4">
-            <h3>West</h3>
-            <ol>
-              <li><b>Blackville:</b> Individual in mental distress. Individual transported to hospital.</li>
-            </ol>
-          </section>
-          <section id="s5">
-            <h3>Codiac</h3>
-            <ol>
-              <li><b>Blackville:</b> Individual in mental distress. Individual transported to hospital.</li>
-            </ol>
-          </section>
-        `;
-      } catch (error) {
-        output.innerHTML = `<p class="text-danger"><strong>Error loading file:</strong> ${error.message}</p>`;
-      }
-    });
-  </script>
+        </div>
+        <section class="alert alert-info">
+          <h2 id="s1">Operational files of note</h2>
+          <p>Please note, locations refer to the <abbr>RCMP</abbr> detachment responsible for the area in which the incident occurred.</p>
+        </section>
+        ${regionSections}
+      `;
+
+    } catch (error) {
+      output.innerHTML = `<p class="text-danger"><strong>Error loading file:</strong> ${error.message}</p>`;
+    }
+  });
+</script>
 </body>
 </html>
