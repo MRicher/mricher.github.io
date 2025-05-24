@@ -1,54 +1,82 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>View Numbers from JSON</title>
-  <style>
-    body {
-      font-family: system-ui, sans-serif;
-      background-color: #f4f4f4;
-      padding: 2rem;
-      color: #222;
-    }
-    main {
-      background: white;
-      padding: 2rem;
-      border-radius: 8px;
-      max-width: 600px;
-      margin: auto;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-    h1 {
-      font-size: 1.75rem;
-      margin-bottom: 1rem;
-    }
-    .number {
-      margin: 1rem 0;
-      font-size: 1.25rem;
-    }
-    .error {
-      color: red;
-      font-weight: bold;
-    }
-  </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Loaded Numbers - Canada.ca</title>
+
+  <!-- WET/GCWeb Theme CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/wet-boew@latest/dist/css/wet-boew.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/wet-boew@latest/dist/css/theme.min.css">
+
+  <!-- Load WET scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/wet-boew@latest/dist/js/wet-boew.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/wet-boew@latest/dist/js/theme.min.js"></script>
 </head>
-<body>
-  <main>
-    <h1 id="heading">Loaded Numbers</h1>
-    <div id="output" role="region" aria-labelledby="heading" aria-live="polite">
-      <p>Loading...</p>
+<body vocab="http://schema.org/" typeof="WebPage">
+
+  <!-- Government of Canada Web Experience Toolkit (WET) Header -->
+  <header role="banner" id="wb-bnr">
+    <div id="wb-bar">
+      <div class="container">
+        <div class="row">
+          <div class="col-xs-8 col-md-9">
+            <p class="wb-inv">Government of Canada</p>
+            <a href="https://www.canada.ca/en.html" class="gcweb-menu">
+              <img src="https://www.canada.ca/etc/designs/canada/wet-boew/assets/sig-blk-en.svg" alt="Government of Canada" />
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
+    <div class="container">
+      <h1 property="name" id="wb-cont">Loaded Numbers</h1>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main role="main" property="mainContentOfPage" class="container">
+    <section>
+      <div class="well">
+        <div id="output" role="region" aria-labelledby="wb-cont" aria-live="polite">
+          <p>Loading...</p>
+        </div>
+      </div>
+    </section>
   </main>
 
+  <!-- Footer -->
+  <footer role="contentinfo" id="wb-info">
+    <div class="landscape">
+      <nav class="container wb-navcurr">
+        <h2 class="wb-inv">About this site</h2>
+        <ul class="list-unstyled colcount-sm-2 colcount-md-3">
+          <li><a href="https://www.canada.ca/en/contact.html">Contact us</a></li>
+          <li><a href="https://www.canada.ca/en/government/dept.html">Departments and agencies</a></li>
+          <li><a href="https://www.canada.ca/en/government/system.html">Government-wide reporting</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="brand">
+      <div class="container">
+        <div class="row">
+          <div class="col-xs-6 col-md-4">
+            <img src="https://www.canada.ca/etc/designs/canada/wet-boew/assets/wmms-blk.svg" alt="Symbol of the Government of Canada" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Custom Script -->
   <script>
-    async function loadJSONFromQuery() {
+    document.addEventListener("DOMContentLoaded", async () => {
       const params = new URLSearchParams(window.location.search);
       const baseFilename = params.get('file');
       const output = document.getElementById('output');
 
       if (!baseFilename || !/^[a-zA-Z0-9_-]+$/.test(baseFilename)) {
-        output.innerHTML = '<p class="error">Missing or invalid "file" parameter in URL. Example: ?file=21-2025</p>';
+        output.innerHTML = '<p class="text-danger"><strong>Error:</strong> Missing or invalid "file" parameter in URL. Example: ?file=21-2025</p>';
         return;
       }
 
@@ -56,32 +84,27 @@
 
       try {
         const response = await fetch(filename);
-
-        if (!response.ok) {
-          throw new Error(`Could not load ${filename} (HTTP ${response.status})`);
-        }
+        if (!response.ok) throw new Error(`Could not load ${filename} (HTTP ${response.status})`);
 
         const data = await response.json();
         const requiredKeys = ['number1', 'number2', 'number3', 'number4'];
         const missing = requiredKeys.filter(k => !(k in data));
 
         if (missing.length) {
-          output.innerHTML = `<p class="error">Missing keys in JSON: ${missing.join(', ')}</p>`;
+          output.innerHTML = `<p class="text-danger"><strong>Error:</strong> Missing keys in JSON: ${missing.join(', ')}</p>`;
           return;
         }
 
         output.innerHTML = `
-          <div class="number"><strong>Number 1:</strong> ${data.number1}</div>
-          <div class="number"><strong>Number 2:</strong> ${data.number2}</div>
-          <div class="number"><strong>Number 3:</strong> ${data.number3}</div>
-          <div class="number"><strong>Number 4:</strong> ${data.number4}</div>
+          <p><strong>Number 1:</strong> ${data.number1}</p>
+          <p><strong>Number 2:</strong> ${data.number2}</p>
+          <p><strong>Number 3:</strong> ${data.number3}</p>
+          <p><strong>Number 4:</strong> ${data.number4}</p>
         `;
       } catch (error) {
-        output.innerHTML = `<p class="error">Error loading file: ${error.message}</p>`;
+        output.innerHTML = `<p class="text-danger"><strong>Error loading file:</strong> ${error.message}</p>`;
       }
-    }
-
-    loadJSONFromQuery();
+    });
   </script>
 </body>
 </html>
