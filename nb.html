@@ -45,67 +45,80 @@
 
   <script>
     const regions = ['Northeast', 'Southeast', 'West', 'Codiac'];
-    const detachmentsByRegion = {
-      "Northeast": ["Bathurst", "Caraquet", "Tracadie", "Neguac", "Campbellton", "Dalhousie"],
-      "Southeast": ["Moncton", "Sackville", "Shediac", "Richibucto", "Bouctouche"],
-      "West": ["Fredericton", "Oromocto", "Woodstock", "Grand Falls", "Perth-Andover"],
-      "Codiac": ["Moncton", "Dieppe"]
-    };
+const detachmentsByRegion = {
+  "Northeast": ["Bathurst", "Caraquet", "Tracadie", "Neguac", "Campbellton", "Dalhousie"],
+  "Southeast": ["Moncton", "Sackville", "Shediac", "Richibucto", "Bouctouche"],
+  "West": ["Fredericton", "Oromocto", "Woodstock", "Grand Falls", "Perth-Andover"],
+  "Codiac": ["Moncton", "Dieppe"]
+};
 
-    const regionContainer = document.getElementById('regions');
+function addEntry(region) {
+  const container = document.getElementById(`${region}-entries`);
+  const detachments = detachmentsByRegion[region] || [];
 
-    regions.forEach(region => {
-      const section = document.createElement('section');
-      section.classList.add('mb-5');
-      section.innerHTML = `
-        <fieldset class="border rounded-3 p-3">
-          <legend class="float-none w-auto px-2 fw-bold">${region}</legend>
-          <div class="mb-3">
-            <button type="button" class="btn btn-outline-secondary add-btn" data-region="${region}">Add Operational File</button>
-          </div>
-          <ol class="list-group list-group-numbered" id="${region}-entries"></ol>
-        </fieldset>
-      `;
-      regionContainer.appendChild(section);
-      addEntry(region);
-    });
-
-    document.addEventListener('click', function (e) {
-      if (e.target.classList.contains('add-btn')) {
-        const region = e.target.getAttribute('data-region');
-        addEntry(region);
-      } else if (e.target.classList.contains('remove-btn')) {
-        e.target.closest('li').remove();
-      }
-    });
-
-    function addEntry(region) {
-      const container = document.getElementById(`${region}-entries`);
-      const detachments = detachmentsByRegion[region] || [];
-
-      const li = document.createElement('li');
-      li.className = "list-group-item";
-      li.innerHTML = `
-        <div class="row g-2 align-items-center">
-          <div class="col-md-3">
-            <select class="form-select" name="${region}_detachment[]" aria-label="${region} detachment">
-              <option value="">Select Detachment</option>
-              ${detachments.map(d => `<option value="${d}">${d}</option>`).join('')}
-            </select>
-          </div>
-          <div class="col-md-4">
-            <input type="text" class="form-control" name="${region}_en[]" placeholder="English operational file" aria-label="${region} English operational file" />
-          </div>
-          <div class="col-md-4">
-            <input type="text" class="form-control" name="${region}_fr[]" placeholder="French operational file" aria-label="${region} French operational file" />
-          </div>
-          <div class="col-md-1 text-end">
-            <button type="button" class="btn btn-sm btn-outline-danger remove-btn" aria-label="Remove entry">Remove</button>
-          </div>
+  const li = document.createElement('li');
+  li.className = "list-group-item";
+  li.innerHTML = `
+    <div class="row g-2 align-items-center">
+      <div class="col-md-3">
+        <select class="form-select" name="${region}_detachment[]"
+                aria-label="${region} detachment">
+          <option value="">Select Detachment</option>
+          ${detachments.map(d => `<option value="${d}">${d}</option>`).join('')}
+        </select>
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" name="${region}_en[]" placeholder="English operational file" aria-label="${region} English operational file" />
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" name="${region}_fr[]" placeholder="French operational file" aria-label="${region} French operational file" />
+      </div>
+      <div class="col-md-1 text-end">
+        <button type="button" class="btn btn-sm btn-outline-danger remove-btn" aria-label="Remove entry">Remove</button>
+        <div class="reorder-buttons mt-1 d-none">
+          <button type="button" class="btn btn-sm btn-outline-secondary move-up" title="Move up">↑</button>
+          <button type="button" class="btn btn-sm btn-outline-secondary move-down" title="Move down">↓</button>
         </div>
-      `;
-      container.appendChild(li);
+      </div>
+    </div>
+  `;
+  container.appendChild(li);
+  updateReorderButtons(container);
+}
+
+document.addEventListener('click', function (e) {
+  if (e.target.classList.contains('add-btn')) {
+    const region = e.target.getAttribute('data-region');
+    addEntry(region);
+  } else if (e.target.classList.contains('remove-btn')) {
+    const li = e.target.closest('li');
+    const container = li.parentElement;
+    li.remove();
+    updateReorderButtons(container);
+  } else if (e.target.classList.contains('move-up')) {
+    const li = e.target.closest('li');
+    if (li.previousElementSibling) {
+      li.parentNode.insertBefore(li, li.previousElementSibling);
     }
+  } else if (e.target.classList.contains('move-down')) {
+    const li = e.target.closest('li');
+    if (li.nextElementSibling) {
+      li.parentNode.insertBefore(li.nextElementSibling, li);
+    }
+  }
+});
+
+function updateReorderButtons(container) {
+  const items = container.querySelectorAll('li');
+  items.forEach((li, idx) => {
+    const reorderDiv = li.querySelector('.reorder-buttons');
+    if (items.length > 2) {
+      reorderDiv.classList.remove('d-none');
+    } else {
+      reorderDiv.classList.add('d-none');
+    }
+  });
+}
 
     document.getElementById('priorityForm').addEventListener('submit', function (e) {
       e.preventDefault();
