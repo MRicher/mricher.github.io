@@ -25,7 +25,12 @@
     input[type="number"] {
       width: 100%;
       padding: 0.5rem;
-      margin-bottom: 1rem;
+      margin-bottom: 0.25rem;
+    }
+    .error-message {
+      color: #b00020;
+      font-size: 0.9rem;
+      margin-bottom: 0.75rem;
     }
     button {
       background-color: #0078D4;
@@ -42,18 +47,22 @@
 </head>
 <body>
   <h1>Enter Four Numbers</h1>
-  <form id="numberForm">
+  <form id="numberForm" novalidate>
     <label for="number1">Number 1:</label>
-    <input type="number" id="number1" name="number1" required maxlength="7" pattern="-?[0-9]{1,6}" step="1" />
+    <input type="number" id="number1" name="number1" aria-describedby="error1" required step="1" />
+    <div id="error1" class="error-message" role="alert" aria-live="assertive"></div>
 
     <label for="number2">Number 2:</label>
-    <input type="number" id="number2" name="number2" required maxlength="7" pattern="-?[0-9]{1,6}" step="1" />
+    <input type="number" id="number2" name="number2" aria-describedby="error2" required step="1" />
+    <div id="error2" class="error-message" role="alert" aria-live="assertive"></div>
 
     <label for="number3">Number 3:</label>
-    <input type="number" id="number3" name="number3" required maxlength="7" pattern="-?[0-9]{1,6}" step="1" />
+    <input type="number" id="number3" name="number3" aria-describedby="error3" required step="1" />
+    <div id="error3" class="error-message" role="alert" aria-live="assertive"></div>
 
     <label for="number4">Number 4:</label>
-    <input type="number" id="number4" name="number4" required maxlength="7" pattern="-?[0-9]{1,6}" step="1" />
+    <input type="number" id="number4" name="number4" aria-describedby="error4" required step="1" />
+    <div id="error4" class="error-message" role="alert" aria-live="assertive"></div>
 
     <button type="submit">Save as JSON</button>
   </form>
@@ -63,18 +72,27 @@
       e.preventDefault();
 
       const inputs = ['number1', 'number2', 'number3', 'number4'];
+      let isValid = true;
       const data = {};
 
-      for (const id of inputs) {
-        const value = document.getElementById(id).value.trim();
+      inputs.forEach(id => {
+        const input = document.getElementById(id);
+        const errorDiv = document.getElementById('error' + id.slice(-1));
+        const value = input.value.trim();
+        errorDiv.textContent = '';
 
-        if (!/^[-]?\d{1,6}$/.test(value)) {
-          alert(`Invalid input in ${id}. Must be a number between -999999 and 999999.`);
-          return;
+        if (value === '') {
+          errorDiv.textContent = 'This field is required.';
+          isValid = false;
+        } else if (!/^[-]?\d{1,6}$/.test(value)) {
+          errorDiv.textContent = 'Please enter a valid number between -999999 and 999999.';
+          isValid = false;
+        } else {
+          data[id] = parseInt(value, 10);
         }
+      });
 
-        data[id] = parseInt(value, 10);
-      }
+      if (!isValid) return;
 
       const now = new Date();
       const year = now.getFullYear();
