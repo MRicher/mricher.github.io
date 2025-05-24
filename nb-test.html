@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>View Numbers from JSON</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background-color: #f4f4f4;
+      padding: 2rem;
+      color: #222;
+    }
+    main {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      font-size: 1.75rem;
+      margin-bottom: 1rem;
+    }
+    .number {
+      margin: 1rem 0;
+      font-size: 1.25rem;
+    }
+    .error {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1 id="heading">Loaded Numbers</h1>
+    <div id="output" role="region" aria-labelledby="heading" aria-live="polite">
+      <p>Loading...</p>
+    </div>
+  </main>
+
+  <script>
+    async function loadJSONFromQuery() {
+      const params = new URLSearchParams(window.location.search);
+      const baseFilename = params.get('file');
+      const output = document.getElementById('output');
+
+      if (!baseFilename || !/^[a-zA-Z0-9_-]+$/.test(baseFilename)) {
+        output.innerHTML = '<p class="error">Missing or invalid "file" parameter in URL. Example: ?file=21-2025</p>';
+        return;
+      }
+
+      const filename = `${baseFilename}.json`;
+
+      try {
+        const response = await fetch(filename);
+
+        if (!response.ok) {
+          throw new Error(`Could not load ${filename} (HTTP ${response.status})`);
+        }
+
+        const data = await response.json();
+        const requiredKeys = ['number1', 'number2', 'number3', 'number4'];
+        const missing = requiredKeys.filter(k => !(k in data));
+
+        if (missing.length) {
+          output.innerHTML = `<p class="error">Missing keys in JSON: ${missing.join(', ')}</p>`;
+          return;
+        }
+
+        output.innerHTML = `
+          <div class="number"><strong>Number 1:</strong> ${data.number1}</div>
+          <div class="number"><strong>Number 2:</strong> ${data.number2}</div>
+          <div class="number"><strong>Number 3:</strong> ${data.number3}</div>
+          <div class="number"><strong>Number 4:</strong> ${data.number4}</div>
+        `;
+      } catch (error) {
+        output.innerHTML = `<p class="error">Error loading file: ${error.message}</p>`;
+      }
+    }
+
+    loadJSONFromQuery();
+  </script>
+</body>
+</html>
