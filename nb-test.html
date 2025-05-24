@@ -14,12 +14,10 @@
 <body vocab="http://schema.org/" typeof="WebPage">
   <main role="main" property="mainContentOfPage" class="container">
     <h1>New Brunswick <abbr>RCMP</Abbr> daily occurrence report<br>
-      <small>April 2, 6 am – April 3, 6 am</small></h1>
-      <div class="well"> 
-        <div id="output" role="region" aria-labelledby="wb-cont" aria-live="polite">
-          <p>Loading...</p>
-        </div>
-      </div>
+    <small>April 2, 6 am – April 3, 6 am</small></h1>
+    <div id="output" role="region" aria-labelledby="wb-cont" aria-live="polite">
+      <p>Loading...</p>
+    </div>
   </main>
 
   <script>
@@ -52,6 +50,7 @@
         const total = Number(data.number1) + Number(data.number2) + Number(data.number3) + Number(data.number4);
 
         output.innerHTML = `
+        <div class="well"> 
           <dl class="dl-horizontal brdr-0">
             <dt>Total number of calls</dt>
             <dd>${total}</dd>
@@ -60,6 +59,7 @@
             <dt>Priority 3</dt><dd>${data.number3}</dd>
             <dt>Priority 4</dt><dd>${data.number4}</dd>
           </dl>
+</div>
           <section class="alert alert-info">
             <h2 id="s1">Operational files of note</h2>
             <p>Please note, locations refer to the <abbr>RCMP</abbr> detachment responsible for the area in which the incident occurred.</p>
