@@ -19,8 +19,7 @@
       <p>Loading...</p>
     </div>
   </main>
-
- <script>
+<script>
   document.addEventListener("DOMContentLoaded", async () => {
     const params = new URLSearchParams(window.location.search);
     const baseFilename = params.get('file');
@@ -51,9 +50,10 @@
       // Calculate total
       const total = Object.values(priorities).reduce((sum, val) => sum + Number(val), 0);
 
+      let sectionIndex = 2; // s1 is already used
       let regionSections = '';
       for (const [regionName, items] of Object.entries(regions)) {
-        regionSections += `<section><h3>${regionName}</h3><ol>`;
+        regionSections += `<section id="s${sectionIndex++}"><h2>${regionName}</h2><ol>`;
         for (const item of items) {
           const text = item.en.trim();
           if (!text) continue;
