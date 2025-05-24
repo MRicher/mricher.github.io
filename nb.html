@@ -44,16 +44,16 @@
   <h1>Enter Four Numbers</h1>
   <form id="numberForm">
     <label for="number1">Number 1:</label>
-    <input type="number" id="number1" name="number1" required />
+    <input type="number" id="number1" name="number1" required maxlength="7" pattern="-?[0-9]{1,6}" step="1" />
 
     <label for="number2">Number 2:</label>
-    <input type="number" id="number2" name="number2" required />
+    <input type="number" id="number2" name="number2" required maxlength="7" pattern="-?[0-9]{1,6}" step="1" />
 
     <label for="number3">Number 3:</label>
-    <input type="number" id="number3" name="number3" required />
+    <input type="number" id="number3" name="number3" required maxlength="7" pattern="-?[0-9]{1,6}" step="1" />
 
     <label for="number4">Number 4:</label>
-    <input type="number" id="number4" name="number4" required />
+    <input type="number" id="number4" name="number4" required maxlength="7" pattern="-?[0-9]{1,6}" step="1" />
 
     <button type="submit">Save as JSON</button>
   </form>
@@ -62,20 +62,26 @@
     document.getElementById('numberForm').addEventListener('submit', function (e) {
       e.preventDefault();
 
-      const data = {
-        number1: parseFloat(document.getElementById('number1').value),
-        number2: parseFloat(document.getElementById('number2').value),
-        number3: parseFloat(document.getElementById('number3').value),
-        number4: parseFloat(document.getElementById('number4').value),
-      };
+      const inputs = ['number1', 'number2', 'number3', 'number4'];
+      const data = {};
+
+      for (const id of inputs) {
+        const value = document.getElementById(id).value.trim();
+
+        if (!/^[-]?\d{1,6}$/.test(value)) {
+          alert(`Invalid input in ${id}. Must be a number between -999999 and 999999.`);
+          return;
+        }
+
+        data[id] = parseInt(value, 10);
+      }
 
       const now = new Date();
       const year = now.getFullYear();
       const weekNumber = getISOWeekNumber(now);
-
       const filename = `${weekNumber}-${year}.json`;
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
 
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
       link.download = filename;
@@ -88,11 +94,8 @@
       tempDate.setHours(0, 0, 0, 0);
       tempDate.setDate(tempDate.getDate() + 3 - ((tempDate.getDay() + 6) % 7));
       const week1 = new Date(tempDate.getFullYear(), 0, 4);
-      return (
-        1 +
-        Math.round(
-          ((tempDate.getTime() - week1.getTime()) / 86400000 - 3 + ((week1.getDay() + 6) % 7)) / 7
-        )
+      return 1 + Math.round(
+        ((tempDate.getTime() - week1.getTime()) / 86400000 - 3 + ((week1.getDay() + 6) % 7)) / 7
       );
     }
   </script>
