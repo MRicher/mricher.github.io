@@ -235,6 +235,34 @@
       const nextDay = date.toISOString().split('T')[0];
       return nextDay;
     }
+
+        // Sanitize region entries as specified
+    function sanitizeRegionEntries(data) {
+      const abbrRCMP = '<abbr>RCMP</abbr>';
+      const abbrGRC = '<abbr>GRC</abbr>';
+      const curlyApos = /’/g;
+      const rcmpRe = /\bRCMP\b/g;
+      const grcRe = /\bGRC\b/g;
+      const emailRe = /([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,})/gi;
+      
+      Object.keys(data.regions).forEach(region => {
+        data.regions[region] = data.regions[region].map(entry => {
+          const sanitized = {};
+          for (const key of ['detachment', 'en', 'fr']) {
+            let v = entry[key] || '';
+            v = v.replace(curlyApos, "'");
+            v = v.replace(rcmpRe, abbrRCMP);
+            v = v.replace(grcRe, abbrGRC);
+            v = v.replace(emailRe, (email) => {
+              const emailLc = email.toLowerCase();
+              return `<a href="mailto:${emailLc}">${emailLc}</a>`;
+            });
+            sanitized[key] = v;
+          }
+          return sanitized;
+        });
+      });
+    }
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
