@@ -5,38 +5,75 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Priority and Operational Files Form</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <style>
+    /* High contrast focus indicator for keyboard users */
+    :focus-visible {
+      outline: 3px solid #0033cc !important;
+      outline-offset: 2px;
+    }
+    /* Better color contrast for invalid feedback */
+    .invalid-feedback {
+      color: #b30000;
+    }
+    /* Required field asterisk styling */
+    .required-asterisk {
+      color: #b30000;
+      margin-left: 0.25em;
+    }
+  </style>
 </head>
 <body class="bg-light">
-  <div class="container my-5">
+  <div class="container my-5" role="main">
     <h1 class="mb-4">Enter Priorities and Operational Files of Note</h1>
-    <form id="priorityForm" novalidate>
+    <form id="priorityForm" novalidate aria-describedby="formInstructions">
+      <p id="formInstructions" class="visually-hidden">
+        All fields marked with a red asterisk are required. Use keyboard navigation for all controls. Operational file entries can be reordered or removed.
+      </p>
       <div class="mb-4">
-        <label for="reportDate" class="form-label">Report Date</label>
-        <input type="date" id="reportDate" name="reportDate" class="form-control" required />
-        <div class="invalid-feedback">The report date is required.</div>
+        <label for="reportDate" class="form-label">
+          Report Date <span class="required-asterisk" aria-hidden="true">*</span>
+        </label>
+        <input type="date" id="reportDate" name="reportDate" class="form-control" required aria-required="true" aria-describedby="reportDate-desc" />
+        <div id="reportDate-desc" class="form-text visually-hidden">Please select the date for the report.</div>
+        <div class="invalid-feedback" id="reportDateError">The report date is required.</div>
       </div>
-      <div class="row g-3">
-        <div class="col-md-6">
-          <label for="priority1" class="form-label">Priority 1</label>
-          <input type="number" class="form-control" id="priority1" name="priority1" required min="0" />
-          <div class="invalid-feedback">Enter a number between 0 and 999999.</div>
+      <fieldset aria-labelledby="priorityLegend">
+        <legend id="priorityLegend" class="visually-hidden">Priority Values</legend>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="priority1" class="form-label">
+              Priority 1 <span class="required-asterisk" aria-hidden="true">*</span>
+            </label>
+            <input type="number" class="form-control" id="priority1" name="priority1" required min="0" max="999999" aria-required="true" aria-describedby="priority1-desc" />
+            <div id="priority1-desc" class="form-text visually-hidden">Enter a number between 0 and 999999 for Priority 1.</div>
+            <div class="invalid-feedback">Enter a number between 0 and 999999.</div>
+          </div>
+          <div class="col-md-6">
+            <label for="priority2" class="form-label">
+              Priority 2 <span class="required-asterisk" aria-hidden="true">*</span>
+            </label>
+            <input type="number" class="form-control" id="priority2" name="priority2" required min="0" max="999999" aria-required="true" aria-describedby="priority2-desc" />
+            <div id="priority2-desc" class="form-text visually-hidden">Enter a number between 0 and 999999 for Priority 2.</div>
+            <div class="invalid-feedback">Enter a number between 0 and 999999.</div>
+          </div>
+          <div class="col-md-6">
+            <label for="priority3" class="form-label">
+              Priority 3 <span class="required-asterisk" aria-hidden="true">*</span>
+            </label>
+            <input type="number" class="form-control" id="priority3" name="priority3" required min="0" max="999999" aria-required="true" aria-describedby="priority3-desc" />
+            <div id="priority3-desc" class="form-text visually-hidden">Enter a number between 0 and 999999 for Priority 3.</div>
+            <div class="invalid-feedback">Enter a number between 0 and 999999.</div>
+          </div>
+          <div class="col-md-6">
+            <label for="priority4" class="form-label">
+              Priority 4 <span class="required-asterisk" aria-hidden="true">*</span>
+            </label>
+            <input type="number" class="form-control" id="priority4" name="priority4" required min="0" max="999999" aria-required="true" aria-describedby="priority4-desc" />
+            <div id="priority4-desc" class="form-text visually-hidden">Enter a number between 0 and 999999 for Priority 4.</div>
+            <div class="invalid-feedback">Enter a number between 0 and 999999.</div>
+          </div>
         </div>
-        <div class="col-md-6">
-          <label for="priority2" class="form-label">Priority 2</label>
-          <input type="number" class="form-control" id="priority2" name="priority2" required min="0" />
-          <div class="invalid-feedback">Enter a number between 0 and 999999.</div>
-        </div>
-        <div class="col-md-6">
-          <label for="priority3" class="form-label">Priority 3</label>
-          <input type="number" class="form-control" id="priority3" name="priority3" required min="0" />
-          <div class="invalid-feedback">Enter a number between 0 and 999999.</div>
-        </div>
-        <div class="col-md-6">
-          <label for="priority4" class="form-label">Priority 4</label>
-          <input type="number" class="form-control" id="priority4" name="priority4" required min="0" />
-          <div class="invalid-feedback">Enter a number between 0 and 999999.</div>
-        </div>
-      </div>
+      </fieldset>
       <hr class="my-5" />
       <div id="regions"></div>
       <div class="mt-4">
@@ -59,9 +96,10 @@
     regions.forEach(region => {
       const section = document.createElement('section');
       section.classList.add('mb-5');
+      section.setAttribute('aria-labelledby', `${region}-legend`);
       section.innerHTML = `
         <fieldset class="border rounded-3 p-3">
-          <legend class="float-none w-auto px-2 fw-bold">${region}</legend>
+          <legend id="${region}-legend" class="float-none w-auto px-2 fw-bold">${region}</legend>
           <ol class="list-group list-group-numbered" id="${region}-entries"></ol>
           <div class="mt-3">
             <button type="button" class="btn btn-outline-secondary add-btn" data-region="${region}">Add operational file</button>
@@ -81,21 +119,24 @@
       li.innerHTML = `
         <div class="row g-2 align-items-center">
           <div class="col-md-3">
-            <select class="form-select" name="${region}_detachment[]" aria-label="${region} detachment">
+            <label for="${region}-detachment-${container.children.length}" class="visually-hidden">${region} detachment</label>
+            <select class="form-select" id="${region}-detachment-${container.children.length}" name="${region}_detachment[]" aria-label="${region} detachment">
               <option value="">Select Detachment</option>
               ${detachments.map(d => `<option value="${d}">${d}</option>`).join('')}
             </select>
           </div>
           <div class="col-md-3">
-            <input type="text" class="form-control" name="${region}_en[]" placeholder="English operational file" />
+            <label for="${region}-en-${container.children.length}" class="visually-hidden">English operational file</label>
+            <input type="text" class="form-control" id="${region}-en-${container.children.length}" name="${region}_en[]" placeholder="English operational file" autocomplete="off" />
           </div>
           <div class="col-md-3">
-            <input type="text" class="form-control" name="${region}_fr[]" placeholder="French operational file" />
+            <label for="${region}-fr-${container.children.length}" class="visually-hidden">French operational file</label>
+            <input type="text" class="form-control" id="${region}-fr-${container.children.length}" name="${region}_fr[]" placeholder="French operational file" autocomplete="off" />
           </div>
           <div class="col-md-3 d-flex justify-content-end gap-2">
-            <button type="button" class="btn btn-sm btn-outline-secondary move-up">↑</button>
-            <button type="button" class="btn btn-sm btn-outline-secondary move-down">↓</button>
-            <button type="button" class="btn btn-sm btn-outline-danger remove-btn">✕</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary move-up" aria-label="Move entry up">↑</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary move-down" aria-label="Move entry down">↓</button>
+            <button type="button" class="btn btn-sm btn-outline-danger remove-btn" aria-label="Remove entry">✕</button>
           </div>
         </div>
       `;
@@ -148,7 +189,12 @@
           input.classList.remove('is-invalid');
         }
       });
-      if (!valid) return;
+      if (!valid) {
+        // Focus the first invalid element
+        const firstError = form.querySelector('.is-invalid');
+        if (firstError) firstError.focus();
+        return;
+      }
 
       // Gather data
       const data = {
