@@ -8,7 +8,7 @@
   <style>
     :focus-visible { outline: 3px solid #0033cc !important; outline-offset: 2px;}
     .invalid-feedback { color: #b30000;}
-    .required-asterisk { color: #b30000; margin-left: 0.25em;}
+    .required-txt { color: #b30000; margin-left: 0.25em;}
   </style>
 </head>
 <body class="bg-light">
@@ -16,11 +16,11 @@
     <h1 class="mb-4">Enter Priorities and Operational Files of Note</h1>
     <form id="priorityForm" novalidate aria-describedby="formInstructions">
       <p id="formInstructions" class="visually-hidden">
-        All fields marked with a red asterisk are required. Use keyboard navigation for all controls. Operational file entries can be reordered or removed.
+        Use keyboard navigation for all controls. Operational file entries can be reordered or removed.
       </p>
       <div class="mb-4">
         <label for="reportDate" class="form-label">
-          Report Date <span class="required-asterisk" aria-hidden="true">*</span>
+          Report Date <span class="required-txt" aria-hidden="true">(required)</span>
         </label>
         <input type="date" id="reportDate" name="reportDate" class="form-control" required aria-required="true" aria-describedby="reportDate-desc" />
         <div id="reportDate-desc" class="form-text visually-hidden">Please select the date for the report.</div>
@@ -31,7 +31,7 @@
         <div class="row g-3">
           <div class="col-md-6">
             <label for="priority1" class="form-label">
-              Priority 1 <span class="required-asterisk" aria-hidden="true">*</span>
+              Priority 1 <span class="required-txt" aria-hidden="true">(required)</span>
             </label>
             <input type="number" class="form-control" id="priority1" name="priority1" required min="0" max="999999" aria-required="true" aria-describedby="priority1-desc" />
             <div id="priority1-desc" class="form-text visually-hidden">Enter a number between 0 and 999999 for Priority 1.</div>
@@ -39,7 +39,7 @@
           </div>
           <div class="col-md-6">
             <label for="priority2" class="form-label">
-              Priority 2 <span class="required-asterisk" aria-hidden="true">*</span>
+              Priority 2 <span class="required-txt" aria-hidden="true">(required)</span>
             </label>
             <input type="number" class="form-control" id="priority2" name="priority2" required min="0" max="999999" aria-required="true" aria-describedby="priority2-desc" />
             <div id="priority2-desc" class="form-text visually-hidden">Enter a number between 0 and 999999 for Priority 2.</div>
@@ -47,7 +47,7 @@
           </div>
           <div class="col-md-6">
             <label for="priority3" class="form-label">
-              Priority 3 <span class="required-asterisk" aria-hidden="true">*</span>
+              Priority 3 <span class="required-txt" aria-hidden="true">(required)</span>
             </label>
             <input type="number" class="form-control" id="priority3" name="priority3" required min="0" max="999999" aria-required="true" aria-describedby="priority3-desc" />
             <div id="priority3-desc" class="form-text visually-hidden">Enter a number between 0 and 999999 for Priority 3.</div>
@@ -55,7 +55,7 @@
           </div>
           <div class="col-md-6">
             <label for="priority4" class="form-label">
-              Priority 4 <span class="required-asterisk" aria-hidden="true">*</span>
+              Priority 4 <span class="required-txt" aria-hidden="true">(required)</span>
             </label>
             <input type="number" class="form-control" id="priority4" name="priority4" required min="0" max="999999" aria-required="true" aria-describedby="priority4-desc" />
             <div id="priority4-desc" class="form-text visually-hidden">Enter a number between 0 and 999999 for Priority 4.</div>
