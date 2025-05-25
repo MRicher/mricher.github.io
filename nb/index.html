@@ -35,7 +35,7 @@
 
       while (current <= tomorrow) {
         const dateStr = formatDate(current);
-        const linkUrl = `nb-test.html?date=${dateStr}`;
+        const linkUrl = `nb-test.html?f=${dateStr}`;
 
         const exists = await checkLinkExists(linkUrl);
         if (exists) {
