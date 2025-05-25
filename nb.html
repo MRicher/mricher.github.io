@@ -6,20 +6,9 @@
   <title>Priority and Operational Files Form</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <style>
-    /* High contrast focus indicator for keyboard users */
-    :focus-visible {
-      outline: 3px solid #0033cc !important;
-      outline-offset: 2px;
-    }
-    /* Better color contrast for invalid feedback */
-    .invalid-feedback {
-      color: #b30000;
-    }
-    /* Required field asterisk styling */
-    .required-asterisk {
-      color: #b30000;
-      margin-left: 0.25em;
-    }
+    :focus-visible { outline: 3px solid #0033cc !important; outline-offset: 2px;}
+    .invalid-feedback { color: #b30000;}
+    .required-asterisk { color: #b30000; margin-left: 0.25em;}
   </style>
 </head>
 <body class="bg-light">
@@ -199,6 +188,7 @@
       // Gather data
       const data = {
         date: form.reportDate.value,
+        nextDay: getNextDay(form.reportDate.value),
         priorities: {
           priority1: Number(form.priority1.value),
           priority2: Number(form.priority2.value),
@@ -222,10 +212,9 @@
           }
         }
       });
-      // Save as JSON file
-      const now = new Date();
-      const weekNumber = getISOWeekNumber(now);
-      const filename = `${weekNumber}-${now.getFullYear()}.json`;
+      // Save as JSON file with new convention: nb-yyyy-mm-dd.json
+      const reportDate = form.reportDate.value; // yyyy-mm-dd
+      const filename = `nb-${reportDate}.json`;
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
@@ -237,13 +226,15 @@
     // Set default date
     document.getElementById("reportDate").valueAsDate = new Date();
 
-    // Helper to get ISO week number
-    function getISOWeekNumber(date) {
-      const tempDate = new Date(date.getTime());
-      tempDate.setHours(0, 0, 0, 0);
-      tempDate.setDate(tempDate.getDate() + 3 - ((tempDate.getDay() + 6) % 7));
-      const week1 = new Date(tempDate.getFullYear(), 0, 4);
-      return 1 + Math.round(((tempDate - week1) / 86400000 - 3 + ((week1.getDay() + 6) % 7)) / 7);
+    // Get next day as yyyy-mm-dd string
+    function getNextDay(dateString) {
+      const d = new Date(dateString);
+      d.setDate(d.getDate() + 1);
+      // Pad month and day for leading zero
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      return `${yyyy}-${mm}-${dd}`;
     }
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
