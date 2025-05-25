@@ -16,16 +16,17 @@
 
     const listEl = document.getElementById('link-list');
 
-    // Helper: format YYYY-MM-DD
     function formatDate(date) {
       return date.toISOString().split('T')[0];
     }
 
-    async function checkLinkExists(url) {
+    async function checkJsonExists(dateStr) {
+      const jsonUrl = `nb-${dateStr}.json`;
       try {
-        const response = await fetch(url, { method: 'HEAD' });
+        const response = await fetch(jsonUrl, { method: 'HEAD' });
         return response.ok;
       } catch (err) {
+        console.error(`Error checking ${jsonUrl}:`, err);
         return false;
       }
     }
@@ -35,13 +36,12 @@
 
       while (current <= tomorrow) {
         const dateStr = formatDate(current);
-        const linkUrl = `nb-test.html?f=${dateStr}`;
 
-        const exists = await checkLinkExists(linkUrl);
+        const exists = await checkJsonExists(dateStr);
         if (exists) {
           const li = document.createElement('li');
           const a = document.createElement('a');
-          a.href = linkUrl;
+          a.href = `nb-test.html?f=${dateStr}`;
           a.textContent = dateStr;
           li.appendChild(a);
           listEl.appendChild(li);
