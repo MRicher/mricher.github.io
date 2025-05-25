@@ -22,7 +22,7 @@
 <script>
   document.addEventListener("DOMContentLoaded", async () => {
     const params = new URLSearchParams(window.location.search);
-    const baseFilename = params.get('file');
+    const baseFilename = params.get('f');
     const output = document.getElementById('output');
 
     if (!baseFilename || !/^[a-zA-Z0-9_-]+$/.test(baseFilename)) {
