@@ -13,85 +13,109 @@
 </head>
 <body vocab="http://schema.org/" typeof="WebPage">
   <main role="main" property="mainContentOfPage" class="container">
-    <h1>New Brunswick <abbr>RCMP</Abbr> daily occurrence report<br>
-    <small>April 2, 6 am – April 3, 6 am</small></h1>
+    <h1>New Brunswick <abbr title="Royal Canadian Mounted Police">RCMP</abbr> daily occurrence report<br>
+      <small id="date-range-display">Loading date...</small>
+    </h1>
     <div id="output" role="region" aria-labelledby="wb-cont" aria-live="polite">
       <p>Loading...</p>
     </div>
   </main>
-<script>
-  document.addEventListener("DOMContentLoaded", async () => {
-    const params = new URLSearchParams(window.location.search);
-    const baseFilename = params.get('f');
-    const output = document.getElementById('output');
 
-    if (!baseFilename || !/^[a-zA-Z0-9_-]+$/.test(baseFilename)) {
-      output.innerHTML = '<p class="text-danger"><strong>Error:</strong> Missing or invalid "file" parameter in URL. Example: ?file=21-2025</p>';
-      return;
-    }
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const params = new URLSearchParams(window.location.search);
+      const baseFilename = params.get('f');
+      const output = document.getElementById('output');
+      const dateDisplay = document.getElementById('date-range-display');
 
-    const filename = `nb-${baseFilename}.json`;
-
-    try {
-      const response = await fetch(filename);
-      if (!response.ok) throw new Error(`Could not load ${filename} (HTTP ${response.status})`);
-
-      const data = await response.json();
-      const priorities = data.priorities;
-      const regions = data.regions;
-
-      const requiredKeys = ['priority1', 'priority2', 'priority3', 'priority4'];
-      const missing = requiredKeys.filter(k => !(k in priorities));
-      if (missing.length) {
-        output.innerHTML = `<p class="text-danger"><strong>Error:</strong> Missing keys in JSON: ${missing.join(', ')}</p>`;
+      // Validate query string param
+      if (!baseFilename || !/^\d{4}-\d{2}-\d{2}$/.test(baseFilename)) {
+        output.innerHTML = `
+          <p class="text-danger">
+            <strong>Error:</strong> Missing or invalid "f" parameter in URL. 
+            Use format like: <code>?f=2025-05-24</code>
+          </p>`;
+        dateDisplay.textContent = 'Invalid date';
         return;
       }
 
-      // Calculate total
-      const total = Object.values(priorities).reduce((sum, val) => sum + Number(val), 0);
+      const filename = `nb-${baseFilename}.json`;
 
-      let sectionIndex = 2; // s1 is already used
-      let regionSections = '';
-      for (const [regionName, items] of Object.entries(regions)) {
-        regionSections += `<section id="s${sectionIndex++}"><h2>${regionName}</h2><ol>`;
-        for (const item of items) {
-          const text = item.en.trim();
-          if (!text) continue;
+      try {
+        const response = await fetch(filename);
+        if (!response.ok) throw new Error(`Could not load ${filename} (HTTP ${response.status})`);
 
-          const firstPeriodIndex = text.indexOf('.');
-          if (firstPeriodIndex !== -1) {
-            const lead = text.slice(0, firstPeriodIndex).trim();
-            const rest = text.slice(firstPeriodIndex + 1).trim();
-            regionSections += `<li><b>${lead}:</b> ${rest}</li>`;
-          } else {
-            regionSections += `<li>${text}</li>`;
-          }
+        const data = await response.json();
+        const priorities = data.priorities || {};
+        const regions = data.regions || {};
+
+        const requiredKeys = ['priority1', 'priority2', 'priority3', 'priority4'];
+        const missing = requiredKeys.filter(k => !(k in priorities));
+        if (missing.length) {
+          output.innerHTML = `
+            <p class="text-danger">
+              <strong>Error:</strong> Missing keys in JSON: ${missing.join(', ')}
+            </p>`;
+          dateDisplay.textContent = baseFilename;
+          return;
         }
-        regionSections += '</ol></section>';
+
+        const total = Object.values(priorities).reduce((sum, val) => sum + Number(val), 0);
+
+        // Build regions
+        let sectionIndex = 2;
+        let regionSections = '';
+        for (const [regionName, items] of Object.entries(regions)) {
+          if (!Array.isArray(items) || items.length === 0) continue;
+
+          regionSections += `<section id="s${sectionIndex++}"><h2>${regionName}</h2><ol>`;
+          for (const item of items) {
+            const text = (item?.en || '').trim();
+            if (!text) continue;
+
+            const firstPeriodIndex = text.indexOf('.');
+            if (firstPeriodIndex !== -1) {
+              const lead = text.slice(0, firstPeriodIndex).trim();
+              const rest = text.slice(firstPeriodIndex + 1).trim();
+              regionSections += `<li><b>${lead}:</b> ${rest}</li>`;
+            } else {
+              regionSections += `<li>${text}</li>`;
+            }
+          }
+          regionSections += '</ol></section>';
+        }
+
+        output.innerHTML = `
+          <div class="well pddng-bttm-0"> 
+            <dl class="dl-horizontal brdr-0">
+              <dt>Total number of calls</dt><dd>${total}</dd>
+              <dt>Priority 1</dt><dd>${priorities.priority1}</dd>
+              <dt>Priority 2</dt><dd>${priorities.priority2}</dd>
+              <dt>Priority 3</dt><dd>${priorities.priority3}</dd>
+              <dt>Priority 4</dt><dd>${priorities.priority4}</dd>
+            </dl>
+          </div>
+          <section class="alert alert-info">
+            <h2 id="s1">Operational files of note</h2>
+            <p>
+              Please note, locations refer to the <abbr title="Royal Canadian Mounted Police">RCMP</abbr> detachment responsible 
+              for the area in which the incident occurred.
+            </p>
+          </section>
+          ${regionSections}
+        `;
+
+        dateDisplay.textContent = new Date(baseFilename).toLocaleDateString('en-CA', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+
+      } catch (error) {
+        output.innerHTML = `<p class="text-danger"><strong>Error loading file:</strong> ${error.message}</p>`;
+        dateDisplay.textContent = baseFilename;
       }
-
-      output.innerHTML = `
-        <div class="well pddng-bttm-0"> 
-          <dl class="dl-horizontal brdr-0">
-            <dt>Total number of calls</dt>
-            <dd>${total}</dd>
-            <dt>Priority 1</dt><dd>${priorities.priority1}</dd>
-            <dt>Priority 2</dt><dd>${priorities.priority2}</dd>
-            <dt>Priority 3</dt><dd>${priorities.priority3}</dd>
-            <dt>Priority 4</dt><dd>${priorities.priority4}</dd>
-          </dl>
-        </div>
-        <section class="alert alert-info">
-          <h2 id="s1">Operational files of note</h2>
-          <p>Please note, locations refer to the <abbr>RCMP</abbr> detachment responsible for the area in which the incident occurred.</p>
-        </section>
-        ${regionSections}
-      `;
-
-    } catch (error) {
-      output.innerHTML = `<p class="text-danger"><strong>Error loading file:</strong> ${error.message}</p>`;
-    }
-  });
-</script>
+    });
+  </script>
 </body>
 </html>
