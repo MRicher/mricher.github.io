@@ -20,14 +20,14 @@
       </p>
       <div class="mb-4">
         <label for="reportDate" class="form-label">
-          Report Date <span class="required-txt" aria-hidden="true">(required)</span>
+          Report date <span class="required-txt" aria-hidden="true">(required)</span>
         </label>
         <input type="date" id="reportDate" name="reportDate" class="form-control" required aria-required="true" aria-describedby="reportDate-desc" />
         <div id="reportDate-desc" class="form-text visually-hidden">Please select the date for the report.</div>
         <div class="invalid-feedback" id="reportDateError">The report date is required.</div>
       </div>
       <fieldset aria-labelledby="priorityLegend">
-        <legend id="priorityLegend" class="visually-hidden">Priority Values</legend>
+        <legend id="priorityLegend" class="visually-hidden">Priority values</legend>
         <div class="row g-3">
           <div class="col-md-6">
             <label for="priority1" class="form-label">
@@ -110,7 +110,7 @@
           <div class="col-md-3">
             <label for="${region}-detachment-${container.children.length}" class="visually-hidden">${region} detachment</label>
             <select class="form-select" id="${region}-detachment-${container.children.length}" name="${region}_detachment[]" aria-label="${region} detachment">
-              <option value="">Select Detachment</option>
+              <option value="">Select detachment</option>
               ${detachments.map(d => `<option value="${d}">${d}</option>`).join('')}
             </select>
           </div>
