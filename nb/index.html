@@ -9,7 +9,7 @@
   <ul id="link-list"></ul>
 
   <script>
-    const startDate = new Date('2025-05-25');
+    const startDate = new Date('2025-05-24');
     const today = new Date();
     const tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + 1);
@@ -35,7 +35,7 @@
 
       while (current <= tomorrow) {
         const dateStr = formatDate(current);
-        const linkUrl = `nb.html?date=${dateStr}`;
+        const linkUrl = `nb-test.html?date=${dateStr}`;
 
         const exists = await checkLinkExists(linkUrl);
         if (exists) {
