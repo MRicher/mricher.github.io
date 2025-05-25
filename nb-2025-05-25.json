@@ -1,0 +1,55 @@
+{
+  "date": "2025-05-25",
+  "nextDay": "2025-05-25",
+  "priorities": {
+    "priority1": 67,
+    "priority2": 34,
+    "priority3": 554,
+    "priority4": 65
+  },
+  "regions": {
+    "Northeast": [
+      {
+        "detachment": "Bathurst",
+        "en": "weqw",
+        "fr": "wqe"
+      },
+      {
+        "detachment": "Tracadie",
+        "en": "wewqe",
+        "fr": "eqweqwe"
+      }
+    ],
+    "Southeast": [
+      {
+        "detachment": "Shediac",
+        "en": "wqeqw",
+        "fr": "wqewqe"
+      },
+      {
+        "detachment": "Bouctouche",
+        "en": "wqewqe",
+        "fr": "wqewqeqw"
+      },
+      {
+        "detachment": "Sackville",
+        "en": "wqeqwe",
+        "fr": "ewqeqw"
+      }
+    ],
+    "West": [
+      {
+        "detachment": "Oromocto",
+        "en": "ewqeqw",
+        "fr": "ewqewqe"
+      }
+    ],
+    "Codiac": [
+      {
+        "detachment": "Moncton",
+        "en": "ewqewq",
+        "fr": "wqewqeqw"
+      }
+    ]
+  }
+}
