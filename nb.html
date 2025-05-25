@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Operational File Entry</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Priority and Operational Files Form</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
 </head>
-<body>
-  <div class="container py-5">
-    <h1 class="mb-4">Operational File Entry</h1>
-    <form id="operationalForm">
+<body class="bg-light">
+  <div class="container my-5">
+    <h1 class="mb-4">Enter Priorities and Operational Files of Note</h1>
 
+    <form id="priorityForm" novalidate>
       <!-- Date Picker -->
       <div class="mb-4">
-        <label for="reportDate" class="form-label">Date</label>
-        <input type="date" class="form-control" id="reportDate" name="reportDate" required>
+        <label for="reportDate" class="form-label">Report Date</label>
+        <input type="date" id="reportDate" name="reportDate" class="form-control" required />
       </div>
 
-      <!-- Priority Fields -->
+      <!-- Priorities -->
       <div class="row g-3">
         <div class="col-md-6">
           <label for="priority1" class="form-label">Priority 1</label>
@@ -41,111 +41,179 @@
         </div>
       </div>
 
-      <!-- Regional Sections -->
-      <div id="regions" class="mt-5"></div>
+      <hr class="my-5" />
 
-      <button type="submit" class="btn btn-primary mt-4">Submit</button>
+      <!-- Regions -->
+      <div id="regions"></div>
+
+      <!-- Submit -->
+      <div class="mt-4">
+        <button type="submit" class="btn btn-primary">Save as JSON</button>
+      </div>
     </form>
   </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      // Set today's date as default
-      const today = new Date().toISOString().split('T')[0];
-      document.getElementById('reportDate').value = today;
+    const detachmentsByRegion = {
+      "Northeast": ["Bathurst", "Caraquet", "Tracadie", "Neguac", "Campbellton", "Dalhousie"],
+      "Southeast": ["Moncton", "Sackville", "Shediac", "Richibucto", "Bouctouche"],
+      "West": ["Fredericton", "Oromocto", "Woodstock", "Grand Falls", "Perth-Andover"],
+      "Codiac": ["Moncton", "Dieppe"]
+    };
 
-      const regions = ['Northeast', 'Southeast', 'West', 'Codiac'];
-      const detachmentsByRegion = {
-        "Northeast": ["Bathurst", "Caraquet", "Tracadie", "Neguac", "Campbellton", "Dalhousie"],
-        "Southeast": ["Moncton", "Sackville", "Shediac", "Richibucto", "Bouctouche"],
-        "West": ["Fredericton", "Oromocto", "Woodstock", "Grand Falls", "Perth-Andover"],
-        "Codiac": ["Moncton", "Dieppe"]
+    const regions = Object.keys(detachmentsByRegion);
+    const regionContainer = document.getElementById('regions');
+
+    regions.forEach(region => {
+      const section = document.createElement('section');
+      section.classList.add('mb-5');
+      section.innerHTML = `
+        <fieldset class="border rounded-3 p-3">
+          <legend class="float-none w-auto px-2 fw-bold">${region}</legend>
+          <ol class="list-group list-group-numbered" id="${region}-entries"></ol>
+          <div class="mt-3">
+            <button type="button" class="btn btn-outline-secondary add-btn" data-region="${region}">Add operational file</button>
+          </div>
+        </fieldset>
+      `;
+      regionContainer.appendChild(section);
+      addEntry(region);
+    });
+
+    function addEntry(region) {
+      const container = document.getElementById(`${region}-entries`);
+      const detachments = detachmentsByRegion[region] || [];
+
+      const li = document.createElement('li');
+      li.className = "list-group-item";
+      li.innerHTML = `
+        <div class="row g-2 align-items-center">
+          <div class="col-md-3">
+            <select class="form-select" name="${region}_detachment[]" aria-label="${region} detachment">
+              <option value="">Select Detachment</option>
+              ${detachments.map(d => `<option value="${d}">${d}</option>`).join('')}
+            </select>
+          </div>
+          <div class="col-md-3">
+            <input type="text" class="form-control" name="${region}_en[]" placeholder="English operational file" />
+          </div>
+          <div class="col-md-3">
+            <input type="text" class="form-control" name="${region}_fr[]" placeholder="French operational file" />
+          </div>
+          <div class="col-md-3 d-flex justify-content-end gap-2">
+            <button type="button" class="btn btn-sm btn-outline-secondary move-up" title="Move Up">↑</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary move-down" title="Move Down">↓</button>
+            <button type="button" class="btn btn-sm btn-outline-danger remove-btn" title="Remove">✖</button>
+          </div>
+        </div>
+      `;
+      container.appendChild(li);
+      toggleMoveButtons(container);
+    }
+
+    function toggleMoveButtons(container) {
+      const items = container.querySelectorAll("li");
+      items.forEach((item, index) => {
+        item.querySelector(".move-up").style.display = index === 0 ? "none" : "inline-block";
+        item.querySelector(".move-down").style.display = index === items.length - 1 ? "none" : "inline-block";
+      });
+    }
+
+    document.addEventListener('click', function (e) {
+      if (e.target.classList.contains('add-btn')) {
+        addEntry(e.target.dataset.region);
+      } else if (e.target.classList.contains('remove-btn')) {
+        const region = e.target.closest("fieldset").querySelector("ol").id.replace('-entries', '');
+        const container = document.getElementById(`${region}-entries`);
+        e.target.closest('li').remove();
+        toggleMoveButtons(container);
+      } else if (e.target.classList.contains('move-up') || e.target.classList.contains('move-down')) {
+        const li = e.target.closest('li');
+        const region = e.target.closest("fieldset").querySelector("ol").id.replace('-entries', '');
+        const container = document.getElementById(`${region}-entries`);
+        if (e.target.classList.contains('move-up') && li.previousElementSibling) {
+          container.insertBefore(li, li.previousElementSibling);
+        } else if (e.target.classList.contains('move-down') && li.nextElementSibling) {
+          container.insertBefore(li.nextElementSibling, li);
+        }
+        toggleMoveButtons(container);
+      }
+    });
+
+    document.getElementById('priorityForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const inputs = ['priority1', 'priority2', 'priority3', 'priority4'];
+      let isValid = true;
+      const data = {
+        date: document.getElementById("reportDate").value,
+        priorities: {},
+        regions: {}
       };
 
-      const regionContainer = document.getElementById('regions');
+      inputs.forEach((id, idx) => {
+        const input = document.getElementById(id);
+        const errorDiv = document.getElementById('error' + (idx + 1));
+        const value = input.value.trim();
+        input.classList.remove('is-invalid');
+        errorDiv.textContent = '';
 
-      regions.forEach(region => {
-        const section = document.createElement('section');
-        section.classList.add('mb-5');
-        section.innerHTML = `
-          <fieldset class="border rounded-3 p-3">
-            <legend class="float-none w-auto px-2 fw-bold">${region}</legend>
-            <ol class="list-group list-group-numbered" id="${region}-entries"></ol>
-            <div class="mt-3">
-              <button type="button" class="btn btn-outline-secondary add-btn" data-region="${region}">Add operational file</button>
-            </div>
-          </fieldset>
-        `;
-        regionContainer.appendChild(section);
-        addEntry(region);
-      });
-
-      function addEntry(region) {
-        const container = document.getElementById(`${region}-entries`);
-        const detachments = detachmentsByRegion[region] || [];
-
-        const li = document.createElement('li');
-        li.className = "list-group-item";
-        li.innerHTML = `
-          <div class="row g-2 align-items-center">
-            <div class="col-md-3">
-              <select class="form-select" name="${region}_detachment[]" aria-label="${region} detachment">
-                <option value="">Select Detachment</option>
-                ${detachments.map(d => `<option value="${d}">${d}</option>`).join('')}
-              </select>
-            </div>
-            <div class="col-md-4">
-              <input type="text" class="form-control" name="${region}_en[]" placeholder="English operational file" />
-            </div>
-            <div class="col-md-4">
-              <input type="text" class="form-control" name="${region}_fr[]" placeholder="French operational file" />
-            </div>
-            <div class="col-md-1 d-flex flex-column align-items-end">
-              <button type="button" class="btn btn-sm btn-outline-secondary move-up mb-1">↑</button>
-              <button type="button" class="btn btn-sm btn-outline-secondary move-down mb-1">↓</button>
-              <button type="button" class="btn btn-sm btn-outline-danger remove-btn">×</button>
-            </div>
-          </div>
-        `;
-        container.appendChild(li);
-        updateReorderButtons();
-      }
-
-      function updateReorderButtons() {
-        regions.forEach(region => {
-          const list = document.getElementById(`${region}-entries`);
-          const items = list.querySelectorAll('li');
-          items.forEach((item, index) => {
-            const upBtn = item.querySelector('.move-up');
-            const downBtn = item.querySelector('.move-down');
-            upBtn.style.display = (items.length > 1 && index > 0) ? 'inline-block' : 'none';
-            downBtn.style.display = (items.length > 1 && index < items.length - 1) ? 'inline-block' : 'none';
-          });
-        });
-      }
-
-      document.addEventListener('click', function (e) {
-        if (e.target.classList.contains('add-btn')) {
-          const region = e.target.getAttribute('data-region');
-          addEntry(region);
-        } else if (e.target.classList.contains('remove-btn')) {
-          e.target.closest('li').remove();
-          updateReorderButtons();
-        } else if (e.target.classList.contains('move-up')) {
-          const li = e.target.closest('li');
-          if (li.previousElementSibling) {
-            li.parentNode.insertBefore(li, li.previousElementSibling);
-          }
-          updateReorderButtons();
-        } else if (e.target.classList.contains('move-down')) {
-          const li = e.target.closest('li');
-          if (li.nextElementSibling) {
-            li.parentNode.insertBefore(li.nextElementSibling, li);
-          }
-          updateReorderButtons();
+        if (value === '') {
+          input.classList.add('is-invalid');
+          errorDiv.textContent = 'This field is required.';
+          isValid = false;
+        } else if (!/^[-]?\d{1,6}$/.test(value)) {
+          input.classList.add('is-invalid');
+          errorDiv.textContent = 'Enter a number between -999999 and 999999.';
+          isValid = false;
+        } else {
+          data.priorities[id] = parseInt(value, 10);
         }
       });
+
+      if (!isValid) return;
+
+      regions.forEach(region => {
+        const detInputs = document.getElementsByName(`${region}_detachment[]`);
+        const enInputs = document.getElementsByName(`${region}_en[]`);
+        const frInputs = document.getElementsByName(`${region}_fr[]`);
+        data.regions[region] = [];
+
+        for (let i = 0; i < enInputs.length; i++) {
+          const det = detInputs[i].value.trim();
+          const en = enInputs[i].value.trim();
+          const fr = frInputs[i].value.trim();
+          if (det || en || fr) {
+            data.regions[region].push({ detachment: det, en, fr });
+          }
+        }
+      });
+
+      const now = new Date();
+      const year = now.getFullYear();
+      const weekNumber = getISOWeekNumber(now);
+      const filename = `${weekNumber}-${year}.json`;
+
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      link.click();
+      URL.revokeObjectURL(link.href);
     });
+
+    function getISOWeekNumber(date) {
+      const tempDate = new Date(date.getTime());
+      tempDate.setHours(0, 0, 0, 0);
+      tempDate.setDate(tempDate.getDate() + 3 - ((tempDate.getDay() + 6) % 7));
+      const week1 = new Date(tempDate.getFullYear(), 0, 4);
+      return 1 + Math.round(((tempDate - week1) / 86400000 - 3 + ((week1.getDay() + 6) % 7)) / 7);
+    }
+
+    // Default date to today
+    document.getElementById("reportDate").valueAsDate = new Date();
   </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
