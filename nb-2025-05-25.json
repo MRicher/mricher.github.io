@@ -1,54 +1,54 @@
 {
   "date": "2025-05-25",
-  "nextDay": "2025-05-25",
+  "nextDay": "2025-05-26",
   "priorities": {
-    "priority1": 67,
-    "priority2": 34,
-    "priority3": 554,
-    "priority4": 65
+    "priority1": 12,
+    "priority2": 324,
+    "priority3": 654,
+    "priority4": 432
   },
   "regions": {
     "Northeast": [
       {
         "detachment": "Bathurst",
-        "en": "weqw",
-        "fr": "wqe"
-      },
-      {
-        "detachment": "Tracadie",
-        "en": "wewqe",
-        "fr": "eqweqwe"
+        "en": "Smarties",
+        "fr": "Rockets"
       }
     ],
     "Southeast": [
       {
-        "detachment": "Shediac",
-        "en": "wqeqw",
-        "fr": "wqewqe"
-      },
-      {
-        "detachment": "Bouctouche",
-        "en": "wqewqe",
-        "fr": "wqewqeqw"
-      },
-      {
-        "detachment": "Sackville",
-        "en": "wqeqwe",
-        "fr": "ewqeqw"
+        "detachment": "Moncton",
+        "en": "Jos Louis",
+        "fr": "Caramel à la crème"
       }
     ],
     "West": [
       {
+        "detachment": "Fredericton",
+        "en": "Big Turk",
+        "fr": "P’tits oursons en gélatine"
+      },
+      {
         "detachment": "Oromocto",
-        "en": "ewqeqw",
-        "fr": "ewqewqe"
+        "en": "Coffee Crisp",
+        "fr": "Câlisse de bonbon au sirop d’érable"
+      },
+      {
+        "detachment": "Grand Falls",
+        "en": "Kerr’s Molasses Kisses",
+        "fr": "Bonbons à l’érable dur"
       }
     ],
     "Codiac": [
       {
-        "detachment": "Moncton",
-        "en": "ewqewq",
-        "fr": "wqewqeqw"
+        "detachment": "Dieppe",
+        "en": "Maple Sugar Candies",
+        "fr": "Moules à la tire"
+      },
+      {
+        "detachment": "Dieppe",
+        "en": "Eat-More Bar",
+        "fr": "Barres Régal"
       }
     ]
   }
