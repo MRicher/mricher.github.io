@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JSON File List</title>
+</head>
+<body>
+  <h1>Available Daily JSON Files</h1>
+  <ul id="file-list">Loading...</ul>
+
+  <script>
+    const startDate = new Date('2025-05-25'); // change as needed
+    const today = new Date(); // to prevent infinite loop if files keep existing
+    const fileList = document.getElementById('file-list');
+
+    async function checkFiles() {
+      let date = new Date(startDate);
+      fileList.innerHTML = '';
+      
+      while (date <= today) {
+        const yyyy = date.getFullYear();
+        const mm = String(date.getMonth() + 1).padStart(2, '0');
+        const dd = String(date.getDate()).padStart(2, '0');
+        const filename = `nb-${yyyy}-${mm}-${dd}.json`;
+
+        try {
+          const res = await fetch(filename, { method: 'HEAD' });
+          if (res.ok) {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = `viewer.html?file=${filename}`;
+            a.textContent = filename;
+            li.appendChild(a);
+            fileList.appendChild(li);
+          } else {
+            break; // Stop when a file is missing
+          }
+        } catch (e) {
+          break; // Network error, stop
+        }
+
+        date.setDate(date.getDate() + 1); // move to next day
+      }
+
+      if (fileList.children.length === 0) {
+        fileList.textContent = 'No JSON files found.';
+      }
+    }
+
+    checkFiles();
+  </script>
+</body>
+</html>
