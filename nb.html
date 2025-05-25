@@ -186,9 +186,10 @@
       }
 
       // Gather data
+      const dateValue = form.reportDate.value;
       const data = {
-        date: form.reportDate.value,
-        nextDay: getNextDay(form.reportDate.value),
+        date: dateValue,
+        nextDay: getNextDay(dateValue),
         priorities: {
           priority1: Number(form.priority1.value),
           priority2: Number(form.priority2.value),
@@ -228,7 +229,9 @@
 
     // Get next day as yyyy-mm-dd string
     function getNextDay(dateString) {
+      if (!dateString) return ""; // Guard: no input
       const d = new Date(dateString);
+      if (isNaN(d.getTime())) return ""; // Guard: invalid date
       d.setDate(d.getDate() + 1);
       const yyyy = d.getFullYear();
       const mm = String(d.getMonth() + 1).padStart(2, '0');
