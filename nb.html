@@ -213,6 +213,7 @@
           }
         }
       });
+      sanitizeRegionEntries(data); 
       // Save as JSON file with new convention: nb-yyyy-mm-dd.json
       const reportDate = form.reportDate.value; // yyyy-mm-dd
       const filename = `nb-${reportDate}.json`;
@@ -235,8 +236,7 @@
       const nextDay = date.toISOString().split('T')[0];
       return nextDay;
     }
-
-        // Sanitize region entries as specified
+    // Sanitize region entries as specified
     function sanitizeRegionEntries(data) {
       const abbrRCMP = '<abbr>RCMP</abbr>';
       const abbrGRC = '<abbr>GRC</abbr>';
