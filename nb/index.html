@@ -2,51 +2,56 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>JSON File List</title>
+  <title>Date-Based Link List</title>
 </head>
 <body>
-  <h1>Available Daily JSON Files</h1>
-  <ul id="file-list">Loading...</ul>
+  <h1>Available Links</h1>
+  <ul id="link-list"></ul>
 
-<script>
-  const startDate = new Date('2025-05-26'); // change as needed
-  const today = new Date();
-  const fileList = document.getElementById('file-list');
+  <script>
+    const startDate = new Date('2025-05-25');
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
 
-  async function checkFiles() {
-    let date = new Date(startDate);
-    fileList.innerHTML = '';
+    const listEl = document.getElementById('link-list');
 
-    while (date <= today) {
-      const yyyy = date.getFullYear();
-      const mm = String(date.getMonth() + 1).padStart(2, '0');
-      const dd = String(date.getDate()).padStart(2, '0');
-      const filename = `nb-${yyyy}-${mm}-${dd}.json`;
+    // Helper: format YYYY-MM-DD
+    function formatDate(date) {
+      return date.toISOString().split('T')[0];
+    }
 
+    async function checkLinkExists(url) {
       try {
-        const res = await fetch(filename, { method: 'HEAD' });
-        if (res.ok) {
+        const response = await fetch(url, { method: 'HEAD' });
+        return response.ok;
+      } catch (err) {
+        return false;
+      }
+    }
+
+    async function generateLinks() {
+      let current = new Date(startDate);
+
+      while (current <= tomorrow) {
+        const dateStr = formatDate(current);
+        const linkUrl = `myfile.html?date=${dateStr}`;
+
+        const exists = await checkLinkExists(linkUrl);
+        if (exists) {
           const li = document.createElement('li');
           const a = document.createElement('a');
-          a.href = `viewer.html?file=${filename}`;
-          a.textContent = filename;
+          a.href = linkUrl;
+          a.textContent = dateStr;
           li.appendChild(a);
-          fileList.appendChild(li);
+          listEl.appendChild(li);
         }
-        // Don't break if not found, just skip it
-      } catch (e) {
-        // Ignore network errors, just skip
+
+        current.setDate(current.getDate() + 1);
       }
-
-      date.setDate(date.getDate() + 1);
     }
 
-    if (fileList.children.length === 0) {
-      fileList.textContent = 'No JSON files found.';
-    }
-  }
-
-  checkFiles();
-</script>
+    generateLinks();
+  </script>
 </body>
 </html>
