@@ -73,11 +73,12 @@
             const text = (item?.en || '').trim();
             if (!text) continue;
 
-            const firstPeriodIndex = text.indexOf('.');
-            if (firstPeriodIndex !== -1) {
-              const lead = text.slice(0, firstPeriodIndex).trim();
-              const rest = text.slice(firstPeriodIndex + 1).trim();
-              regionSections += `<li><b>${lead}:</b> ${rest}</li>`;
+            const detachment = item?.detachment ? item.detachment.trim() : '';
+            const text = (item?.en || '').trim();
+            if (!text) continue;
+            
+            if (detachment) {
+              regionSections += `<li><b>${detachment}:</b> ${text}</li>`;
             } else {
               regionSections += `<li>${text}</li>`;
             }
@@ -106,8 +107,10 @@
         `;
 
       // Compute date range in desired format
-      const startDate = new Date(baseFilename);
-      const endDate = new Date(data.nextDay);
+      const [sy, sm, sd] = baseFilename.split('-').map(Number);
+      const startDate = new Date(sy, sm - 1, sd);
+      const [ey, em, ed] = data.nextDay.split('-').map(Number);
+      const endDate = new Date(ey, em - 1, ed);
       
       const options = { month: 'long', day: 'numeric', year: 'numeric' };
       
