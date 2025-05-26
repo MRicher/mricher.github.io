@@ -116,7 +116,7 @@
       const startStr = `${startDate.toLocaleString('en-CA', options)}`;
       const endStr = `${endDate.toLocaleString('en-CA', options)}`;
       
-      dateDisplay.textContent = `6 am on ${startStr} to 6 am on ${endStr}`;
+      dateDisplay.textContent = `From 6 am on ${startStr} to 6 am on ${endStr}`;
 
       } catch (error) {
         output.innerHTML = `<p class="text-danger"><strong>Error loading file:</strong> ${error.message}</p>`;
