@@ -1,0 +1,120 @@
+{
+  "date": "2025-05-22",
+  "nextDay": "2025-05-23",
+  "priorities": {
+    "priority1": 3,
+    "priority2": 96,
+    "priority3": 147,
+    "priority4": 65
+  },
+  "regions": {
+    "Northeast": [
+      {
+        "detachment": "Campbellton",
+        "en": "Sexual assault. Investigation ongoing.",
+        "fr": "Agression sexuelle. Enquête en cours."
+      }
+    ],
+    "Southeast": [
+      {
+        "detachment": "Grand Bay-Westfield",
+        "en": "Suspended driver. Individual issued documents pending future court appearance.",
+        "fr": "Conduite pendant la suspension du permis. Documents de comparution en cour remis à une personne."
+      },
+      {
+        "detachment": "Hampton",
+        "en": "Individual in mental distress. Individual transported to hospital.",
+        "fr": "Détresse psychologique. Personne transportée à l'hôpital."
+      },
+      {
+        "detachment": "Hampton",
+        "en": "Threats. Individual arrested.",
+        "fr": "Menaces. Personne arrêtée."
+      },
+      {
+        "detachment": "Richibucto",
+        "en": "Individual in mental distress. Individual transported to hospital.",
+        "fr": "Détresse psychologique. Personne transportée à l'hôpital."
+      },
+      {
+        "detachment": "Richibucto",
+        "en": "Individual in mental distress. Individual transported to hospital.",
+        "fr": "Détresse psychologique. Personne transportée à l'hôpital."
+      },
+      {
+        "detachment": "Sackville",
+        "en": "Assault. Investigation ongoing.",
+        "fr": "Voies de fait. Enquête en cours."
+      },
+      {
+        "detachment": "Shediac",
+        "en": "Wellbeing check. Individual spoken to.",
+        "fr": "Vérification du mieux-être. La police a parlé à une personne."
+      }
+    ],
+    "West": [
+      {
+        "detachment": "Keswick",
+        "en": "Theft of vehicle, stolen vehicle recovered. Individual arrested.",
+        "fr": "Vol de véhicule, récupération d'un véhicule volé. Personne arrêtée."
+      },
+      {
+        "detachment": "Minto",
+        "en": "Missing person. Individual located safe.",
+        "fr": "Personne disparue. Personne retrouvée saine et sauve."
+      },
+      {
+        "detachment": "Minto",
+        "en": "Break and enter into a business, theft. Investigation ongoing.",
+        "fr": "Introduction par effraction et vol dans un commerce. Enquête en cours."
+      },
+      {
+        "detachment": "St. George",
+        "en": "Sudden death. No criminality suspected.",
+        "fr": "Mort subite. Aucun acte criminel soupçonné."
+      },
+      {
+        "detachment": "St. Stephen",
+        "en": "Sudden death. No criminality suspected.",
+        "fr": "Mort subite. Aucun acte criminel soupçonné."
+      },
+      {
+        "detachment": "Tobique",
+        "en": "Assault with a weapon. Investigation ongoing.",
+        "fr": "Agression armée. Enquête en cours."
+      }
+    ],
+    "Codiac": [
+      {
+        "detachment": "Moncton",
+        "en": "Assault with a weapon. Investigation ongoing.",
+        "fr": "Agression armée. Enquête en cours."
+      },
+      {
+        "detachment": "Moncton",
+        "en": "Sudden death. No criminality suspected.",
+        "fr": "Mort subite. Aucun acte criminel soupçonné."
+      },
+      {
+        "detachment": "Moncton",
+        "en": "Missing person. Investigation ongoing.",
+        "fr": "Personne disparue. Enquête en cours."
+      },
+      {
+        "detachment": "Moncton",
+        "en": "Assault with a weapon. Investigation ongoing.",
+        "fr": "Agression armée. Enquête en cours."
+      },
+      {
+        "detachment": "Moncton",
+        "en": "Individual in mental distress. Individual detained and transported to hospital.",
+        "fr": "Détresse psychologique. Personne détenue et transportée à l'hôpital."
+      },
+      {
+        "detachment": "Moncton",
+        "en": "Assault, break and enter into a residence. Investigation ongoing.",
+        "fr": "Voies de fait, introduction par effraction dans une résidence. Enquête en cours."
+      }
+    ]
+  }
+}
