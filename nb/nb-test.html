@@ -69,10 +69,11 @@
           if (!Array.isArray(items) || items.length === 0) continue;
 
           regionSections += `<section id="s${sectionIndex++}"><h2>${regionName}</h2><ol>`;
-          for (const item of items) {
+
+            for (const item of items) {
             const text = (item?.en || '').trim();
             if (!text) continue;
-
+          
             const detachment = item?.detachment ? item.detachment.trim() : '';
             const text = (item?.en || '').trim();
             if (!text) continue;
@@ -83,6 +84,7 @@
               regionSections += `<li>${text}</li>`;
             }
           }
+          
           regionSections += '</ol></section>';
         }
 
