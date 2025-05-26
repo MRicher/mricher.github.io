@@ -1,0 +1,55 @@
+{
+  "date": "2025-05-27",
+  "nextDay": "2025-05-27",
+  "priorities": {
+    "priority1": 12,
+    "priority2": 34,
+    "priority3": 64,
+    "priority4": 432
+  },
+  "regions": {
+    "Northeast": [
+      {
+        "detachment": "Bathurst",
+        "en": "Smarties. Kit Kat",
+        "fr": "Rockets"
+      }
+    ],
+    "Southeast": [
+      {
+        "detachment": "Moncton",
+        "en": "Jos Louis",
+        "fr": "Caramel à la crème"
+      }
+    ],
+    "West": [
+      {
+        "detachment": "Fredericton",
+        "en": "Big Turk",
+        "fr": "P'tits oursons en gélatine"
+      },
+      {
+        "detachment": "Oromocto",
+        "en": "Coffee Crisp",
+        "fr": "Câlisse de bonbon au sirop d'érable"
+      },
+      {
+        "detachment": "Grand Falls",
+        "en": "Kerr's Molasses Kisses",
+        "fr": "Bonbons à l'érable dur"
+      }
+    ],
+    "Codiac": [
+      {
+        "detachment": "Dieppe",
+        "en": "Maple Sugar Candies",
+        "fr": "Moules à la tire"
+      },
+      {
+        "detachment": "Dieppe",
+        "en": "Eat-More Bar",
+        "fr": "Barres Régal"
+      }
+    ]
+  }
+}
