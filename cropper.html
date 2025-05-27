@@ -54,7 +54,7 @@
           image.style.display = "block";
           if (cropper) cropper.destroy();
           cropper = new Cropper(image, {
-            aspectRatio: NaN, // freeform
+            aspectRatio: 825 / 200,
             viewMode: 1,
             movable: true,
             scalable: true,
@@ -68,8 +68,8 @@
     cropBtn.addEventListener("click", () => {
       if (!cropper) return;
       const croppedCanvas = cropper.getCroppedCanvas({
-        width: 800, // resize width (change as needed)
-        height: 600, // resize height (change as needed)
+        width: 825,
+        height: 200,
         imageSmoothingQuality: "high",
       });
       canvas.style.display = "block";
