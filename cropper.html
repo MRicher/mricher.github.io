@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Offline Image Crop & Resize Tool</title>
+  <link
+    href="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.css"
+    rel="stylesheet"
+  />
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 2rem;
+    }
+    img {
+      max-width: 100%;
+    }
+    #preview {
+      margin-top: 1rem;
+      max-width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <h1>Crop & Resize Image Tool</h1>
+
+  <input type="file" id="inputImage" accept="image/*" />
+  <br /><br />
+  <div>
+    <img id="image" style="max-width: 100%; display: none" />
+  </div>
+
+  <button id="cropBtn">Crop & Resize</button>
+  <a id="downloadLink" style="display:none" download="cropped-image.png">Download Cropped Image</a>
+  <br />
+  <canvas id="preview" style="display:none"></canvas>
+
+  <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.js"></script>
+  <script>
+    const inputImage = document.getElementById("inputImage");
+    const image = document.getElementById("image");
+    const cropBtn = document.getElementById("cropBtn");
+    const canvas = document.getElementById("preview");
+    const downloadLink = document.getElementById("downloadLink");
+    let cropper;
+
+    inputImage.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (event) {
+          image.src = event.target.result;
+          image.style.display = "block";
+          if (cropper) cropper.destroy();
+          cropper = new Cropper(image, {
+            aspectRatio: NaN, // freeform
+            viewMode: 1,
+            movable: true,
+            scalable: true,
+            zoomable: true,
+          });
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    cropBtn.addEventListener("click", () => {
+      if (!cropper) return;
+      const croppedCanvas = cropper.getCroppedCanvas({
+        width: 800, // resize width (change as needed)
+        height: 600, // resize height (change as needed)
+        imageSmoothingQuality: "high",
+      });
+      canvas.style.display = "block";
+      canvas.width = croppedCanvas.width;
+      canvas.height = croppedCanvas.height;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(croppedCanvas, 0, 0);
+
+      canvas.toBlob((blob) => {
+        const url = URL.createObjectURL(blob);
+        downloadLink.href = url;
+        downloadLink.style.display = "inline-block";
+        downloadLink.textContent = "Download Cropped Image";
+      }, "image/png");
+    });
+  </script>
+</body>
+</html>
