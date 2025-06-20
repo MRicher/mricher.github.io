@@ -763,4 +763,180 @@
                                             aria-describedby="english-progress-${index}-desc">
                                         <option value="To be actioned" ${record['english-progress'] === 'To be actioned' ? 'selected' : ''}>To be actioned</option>
                                         <option value="In progress" ${record['english-progress'] === 'In progress' ? 'selected' : ''}>In progress</option>
-                                        <option value="Complete" ${record['
+                                        <option value="Complete" ${record['english-progress'] === 'Complete' ? 'selected' : ''}>Complete</option>
+                                    </select>
+                                    <div id="english-progress-${index}-desc" class="sr-only">Current progress status in English</div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="french-progress-${index}">French Progress</label>
+                                    <select id="french-progress-${index}" class="form-select" 
+                                            onchange="editor.updateRecord(${index}, 'french-progress', this.value)"
+                                            aria-describedby="french-progress-${index}-desc">
+                                        <option value="À mettre en œuvre" ${record['french-progress'] === 'À mettre en œuvre' ? 'selected' : ''}>À mettre en œuvre</option>
+                                        <option value="En cours" ${record['french-progress'] === 'En cours' ? 'selected' : ''}>En cours</option>
+                                        <option value="Terminé" ${record['french-progress'] === 'Terminé' ? 'selected' : ''}>Terminé</option>
+                                    </select>
+                                    <div id="french-progress-${index}-desc" class="sr-only">Current progress status in French</div>
+                                </div>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label" for="recommendations-1-${index}">Recommendations 1</label>
+                                    <input type="text" id="recommendations-1-${index}" class="form-input" 
+                                           value="${record['recommendations-1'] || ''}"
+                                           onchange="editor.updateRecord(${index}, 'recommendations-1', this.value)"
+                                           aria-describedby="recommendations-1-${index}-desc">
+                                    <div id="recommendations-1-${index}-desc" class="sr-only">First set of recommendation codes</div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="recommendations-2-${index}">Recommendations 2</label>
+                                    <input type="text" id="recommendations-2-${index}" class="form-input" 
+                                           value="${record['recommendations-2'] || ''}"
+                                           onchange="editor.updateRecord(${index}, 'recommendations-2', this.value)"
+                                           aria-describedby="recommendations-2-${index}-desc">
+                                    <div id="recommendations-2-${index}-desc" class="sr-only">Second set of recommendation codes</div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="recommendations-3-${index}">Recommendations 3</label>
+                                    <input type="text" id="recommendations-3-${index}" class="form-input" 
+                                           value="${record['recommendations-3'] || ''}"
+                                           onchange="editor.updateRecord(${index}, 'recommendations-3', this.value)"
+                                           aria-describedby="recommendations-3-${index}-desc">
+                                    <div id="recommendations-3-${index}-desc" class="sr-only">Third set of recommendation codes</div>
+                                </div>
+                            </div>
+
+                            <div class="updates-section">
+                                <div class="updates-header">
+                                    <h3 class="updates-title">Progress Updates</h3>
+                                </div>
+                                
+                                ${[1, 2, 3, 4, 5, 6].map(updateNum => {
+                                    const hasUpdate = record[`update-${updateNum}-date`] || record[`english-update-${updateNum}`] || record[`french-update-${updateNum}`];
+                                    return hasUpdate ? `
+                                        <div class="update-item">
+                                            <div class="update-header">
+                                                <span class="update-number">Update ${updateNum}</span>
+                                            </div>
+                                            <div class="form-grid">
+                                                <div class="form-group">
+                                                    <label class="form-label" for="update-${updateNum}-date-${index}">Update ${updateNum} Date</label>
+                                                    <input type="date" id="update-${updateNum}-date-${index}" class="form-input" 
+                                                           value="${record[`update-${updateNum}-date`] || ''}"
+                                                           onchange="editor.updateRecord(${index}, 'update-${updateNum}-date', this.value)"
+                                                           aria-describedby="update-${updateNum}-date-${index}-desc">
+                                                    <div id="update-${updateNum}-date-${index}-desc" class="sr-only">Date of update ${updateNum}</div>
+                                                </div>
+                                            </div>
+                                            <div class="form-grid">
+                                                <div class="form-group">
+                                                    <label class="form-label" for="english-update-${updateNum}-${index}">English Update ${updateNum}</label>
+                                                    <textarea id="english-update-${updateNum}-${index}" class="form-textarea" 
+                                                              onchange="editor.updateRecord(${index}, 'english-update-${updateNum}', this.value)"
+                                                              aria-describedby="english-update-${updateNum}-${index}-desc">${record[`english-update-${updateNum}`] || ''}</textarea>
+                                                    <div id="english-update-${updateNum}-${index}-desc" class="sr-only">Update ${updateNum} text in English</div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label class="form-label" for="french-update-${updateNum}-${index}">French Update ${updateNum}</label>
+                                                    <textarea id="french-update-${updateNum}-${index}" class="form-textarea" 
+                                                              onchange="editor.updateRecord(${index}, 'french-update-${updateNum}', this.value)"
+                                                              aria-describedby="french-update-${updateNum}-${index}-desc">${record[`french-update-${updateNum}`] || ''}</textarea>
+                                                    <div id="french-update-${updateNum}-${index}-desc" class="sr-only">Update ${updateNum} text in French</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ` : '';
+                                }).join('')}
+                                
+                                <button class="btn btn-secondary" onclick="editor.addUpdate(${index})" 
+                                        aria-label="Add new update to record ${index + 1}">
+                                    ➕ Add Update
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            addUpdate(recordIndex) {
+                const record = this.data.data[recordIndex];
+                if (!record) return;
+
+                // Find the next available update slot
+                for (let i = 1; i <= 6; i++) {
+                    if (!record[`update-${i}-date`] && !record[`english-update-${i}`] && !record[`french-update-${i}`]) {
+                        record[`update-${i}-date`] = new Date().toISOString().split('T')[0];
+                        record[`english-update-${i}`] = '';
+                        record[`french-update-${i}`] = '';
+                        this.render();
+                        this.showAlert(`Update ${i} added to record ${recordIndex + 1}!`);
+                        
+                        // Focus on the new update's date field
+                        setTimeout(() => {
+                            const newUpdateElement = document.getElementById(`update-${i}-date-${recordIndex}`);
+                            if (newUpdateElement) {
+                                newUpdateElement.focus();
+                            }
+                        }, 100);
+                        return;
+                    }
+                }
+                
+                this.showAlert('Maximum number of updates (6) reached for this record.', 'error');
+            }
+        }
+
+        // Initialize the editor
+        const editor = new RCMPDataEditor();
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                switch (e.key) {
+                    case 's':
+                        e.preventDefault();
+                        editor.saveData();
+                        break;
+                    case 'n':
+                        e.preventDefault();
+                        editor.addNewRecord();
+                        break;
+                    case 'd':
+                        e.preventDefault();
+                        editor.downloadData();
+                        break;
+                }
+            }
+        });
+
+        // Add form validation
+        document.addEventListener('input', (e) => {
+            if (e.target.classList.contains('form-input') || e.target.classList.contains('form-textarea')) {
+                e.target.classList.remove('error');
+                if (e.target.value.trim() === '' && e.target.hasAttribute('required')) {
+                    e.target.classList.add('error');
+                }
+            }
+        });
+
+        // Announce page load for screen readers
+        document.addEventListener('DOMContentLoaded', () => {
+            const announcement = document.createElement('div');
+            announcement.setAttribute('aria-live', 'polite');
+            announcement.setAttribute('aria-atomic', 'true');
+            announcement.className = 'sr-only';
+            announcement.textContent = 'RCMP JSON Data Editor loaded successfully. Use Tab to navigate through the form controls.';
+            document.body.appendChild(announcement);
+            
+            setTimeout(() => {
+                announcement.remove();
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
