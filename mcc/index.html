@@ -383,6 +383,21 @@
         class RCMPDataEditor {
             constructor() {
                 this.data = { data: [] };
+                this.themeMapping = {
+                    'Culture and accountability': 'Culture et reddition de comptes',
+                    'Firearms': 'Armes à feu',
+                    'Gender-based violence and intimate partner violence': 'La violence fondée sur le sexe et la violence exercée par les partenaires intimes',
+                    'Governance': 'Gouvernance',
+                    'Information sharing': 'Communication d\'information',
+                    'Managing crises': 'Gestion de crises',
+                    'Organizational standards': 'Normes organisationnelles',
+                    'Partnerships and engagement': 'Partenariats et engagement',
+                    'Resourcing and recruitment': 'Ressources et recrutement',
+                    'Training': 'Formation'
+                };
+                this.reversedThemeMapping = Object.fromEntries(
+                    Object.entries(this.themeMapping).map(([key, value]) => [value, key])
+                );
                 this.init();
                 this.loadInitialData();
             }
@@ -652,6 +667,23 @@
             updateRecord(index, field, value) {
                 if (this.data.data[index]) {
                     this.data.data[index][field] = value;
+                    
+                    // Handle theme linking
+                    if (field === 'english-theme' && this.themeMapping[value]) {
+                        this.data.data[index]['french-theme'] = this.themeMapping[value];
+                        // Update the French theme dropdown
+                        const frenchSelect = document.getElementById(`french-theme-${index}`);
+                        if (frenchSelect) {
+                            frenchSelect.value = this.themeMapping[value];
+                        }
+                    } else if (field === 'french-theme' && this.reversedThemeMapping[value]) {
+                        this.data.data[index]['english-theme'] = this.reversedThemeMapping[value];
+                        // Update the English theme dropdown
+                        const englishSelect = document.getElementById(`english-theme-${index}`);
+                        if (englishSelect) {
+                            englishSelect.value = this.reversedThemeMapping[value];
+                        }
+                    }
                 }
             }
 
@@ -659,6 +691,13 @@
                 return progress.toLowerCase().includes('complete') || progress.toLowerCase().includes('terminé') 
                     ? 'status-complete' 
                     : 'status-pending';
+            }
+
+            getThemeOptions(selectedValue, isEnglish = true) {
+                const themes = isEnglish ? Object.keys(this.themeMapping) : Object.values(this.themeMapping);
+                return themes.map(theme => 
+                    `<option value="${theme}" ${selectedValue === theme ? 'selected' : ''}>${theme}</option>`
+                ).join('');
             }
 
             render() {
@@ -702,19 +741,23 @@
                                 
                                 <div class="form-group">
                                     <label class="form-label" for="english-theme-${index}">English Theme</label>
-                                    <input type="text" id="english-theme-${index}" class="form-input" 
-                                           value="${record['english-theme'] || ''}"
-                                           onchange="editor.updateRecord(${index}, 'english-theme', this.value)"
-                                           aria-describedby="english-theme-${index}-desc">
+                                    <select id="english-theme-${index}" class="form-select" 
+                                            onchange="editor.updateRecord(${index}, 'english-theme', this.value)"
+                                            aria-describedby="english-theme-${index}-desc">
+                                        <option value="">Select a theme...</option>
+                                        ${this.getThemeOptions(record['english-theme'], true)}
+                                    </select>
                                     <div id="english-theme-${index}-desc" class="sr-only">Theme or category in English</div>
                                 </div>
                                 
                                 <div class="form-group">
                                     <label class="form-label" for="french-theme-${index}">French Theme</label>
-                                    <input type="text" id="french-theme-${index}" class="form-input" 
-                                           value="${record['french-theme'] || ''}"
-                                           onchange="editor.updateRecord(${index}, 'french-theme', this.value)"
-                                           aria-describedby="french-theme-${index}-desc">
+                                    <select id="french-theme-${index}" class="form-select" 
+                                            onchange="editor.updateRecord(${index}, 'french-theme', this.value)"
+                                            aria-describedby="french-theme-${index}-desc">
+                                        <option value="">Sélectionner un thème...</option>
+                                        ${this.getThemeOptions(record['french-theme'], false)}
+                                    </select>
                                     <div id="french-theme-${index}-desc" class="sr-only">Theme or category in French</div>
                                 </div>
                             </div>
