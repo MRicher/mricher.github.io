@@ -94,8 +94,8 @@
 </head>
 <body>
     <div class="container">
-        <h1>Document to HTML Converter with RCMP/GRC Abbreviation Wrapper</h1>
-        <p>Paste content from Word (DOCX, DOC), PDF, ODT, RTF, and TXT documents directly into the text area below. The tool will automatically convert and clean the content to HTML, preserve safe styling, sanitize dangerous elements, and automatically wrap RCMP and GRC with abbreviation tags.</p>
+        <h1>Document to HTML Converter with RCMP/GRC & Canadian Text Processing</h1>
+        <p>Paste content from Word (DOCX, DOC), PDF, ODT, RTF, and TXT documents directly into the text area below. The tool will automatically convert and clean the content to HTML, preserve safe styling, sanitize dangerous elements, and automatically wrap RCMP and GRC with abbreviation tags. It also formats times, numbers, and Canadian provinces/territories.</p>
         
         <div class="paste-info">
             <strong>📋 How to use:</strong>
@@ -106,7 +106,8 @@
                 <li><strong>Web Content:</strong> Copy HTML content from web pages and paste here</li>
             </ul>
             <div class="supported-formats">
-                ✅ Supports pasted content from: Word (DOCX, DOC), PDF, ODT, RTF, TXT, and HTML sources
+                ✅ Supports pasted content from: Word (DOCX, DOC), PDF, ODT, RTF, TXT, and HTML sources<br>
+                ✅ Automatically formats: Times (a.m./p.m. → am/pm), Numbers (adds non-breaking spaces), Canadian provinces/territories
             </div>
         </div>
         
@@ -121,19 +122,22 @@ Try pasting:
 - Text from any other document type
 
 The tool will automatically detect and convert your pasted content!">
-This is a test with RCMP and GRC mentioned.
-<p>The <strong>RCMP</strong> reported on <em>GRC</em> activities.</p>
-<h2 style="color: blue;">Important Header</h2>
-<p style="color: red; font-weight: bold;">Styled paragraph from Word</p>
+This is a test with RCMP and GRC mentioned at 3:30 a.m. and 2:15 p.m.
+<p>The <strong>RCMP</strong> reported on <em>GRC</em> activities in ON and QC.</p>
+<h2 style="color: blue;">Meeting scheduled for 10 a.m. in BC</h2>
+<p style="color: red; font-weight: bold;">Report from AB at 4:30 p.m.</p>
 <ul>
-  <li>First item with RCMP</li>
-  <li>Second item with GRC</li>
+  <li>First item with RCMP at 9:15 a.m. in NS</li>
+  <li>Second item with GRC at 1:45 p.m. in NB</li>
+  <li>Document 123 from SK office</li>
+  <li>File 456 from MB department</li>
 </ul>
 <a href="https://example.com">Safe link</a>
 <script>alert('malicious');</script>
 <abbr>RCMP</abbr> is already wrapped.
-<blockquote>Quote with <span style="background-color: yellow;">highlighted text</span></blockquote>
-Some more RCMP text here.
+<blockquote>Quote with <span style="background-color: yellow;">highlighted text</span> from NT at 11:30 a.m.</blockquote>
+Some more RCMP text here from YT and NU offices.
+French text: Rapport du GRC de QC (Québec) à 14 h 30.
         </textarea>
         </div>
         
@@ -303,6 +307,117 @@ Some more RCMP text here.
                 })
                 .join('\n');
         }
+
+        // Canadian provinces and territories mapping
+        const provinceMapping = {
+            // English provinces
+            'AB': 'Alberta',
+            'BC': 'British Columbia',
+            'MB': 'Manitoba',
+            'NB': 'New Brunswick',
+            'NL': 'Newfoundland and Labrador',
+            'NS': 'Nova Scotia',
+            'ON': 'Ontario',
+            'PE': 'Prince Edward Island',
+            'QC': 'Quebec',
+            'SK': 'Saskatchewan',
+            'NT': 'Northwest Territories',
+            'NU': 'Nunavut',
+            'YT': 'Yukon',
+            // French provinces (with French names)
+            'QC_FR': 'Québec',
+            'NB_FR': 'Nouveau-Brunswick',
+            'ON_FR': 'Ontario',
+            'MB_FR': 'Manitoba',
+            'AB_FR': 'Alberta',
+            'BC_FR': 'Colombie-Britannique',
+            'SK_FR': 'Saskatchewan',
+            'NS_FR': 'Nouvelle-Écosse',
+            'PE_FR': 'Île-du-Prince-Édouard',
+            'NL_FR': 'Terre-Neuve-et-Labrador',
+            'NT_FR': 'Territoires du Nord-Ouest',
+            'NU_FR': 'Nunavut',
+            'YT_FR': 'Yukon'
+        };
+
+        // Function to detect if text is likely French
+        function isFrenchContext(text) {
+            const frenchWords = ['le', 'la', 'les', 'de', 'du', 'des', 'et', 'à', 'dans', 'sur', 'avec', 'pour', 'par', 'rapport', 'bureau', 'province', 'territoire', 'GRC'];
+            const words = text.toLowerCase().split(/\s+/);
+            const frenchWordCount = words.filter(word => frenchWords.includes(word)).length;
+            return frenchWordCount >= 2 || text.includes('GRC');
+        }
+
+        // Function to apply Canadian text formatting
+        function applyCanadianFormatting(html) {
+            // Create a temporary div to work with the DOM
+            const temp = document.createElement('div');
+            temp.innerHTML = html;
+            
+            // Function to process text nodes
+            function processTextNode(node) {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    let text = node.textContent;
+                    let originalText = text;
+                    
+                    // 1. Add non-breaking space before numbers with space before and after
+                    text = text.replace(/(\s)(\d+)(\s)/g, '$1&nbsp;$2$3');
+                    
+                    // 2. Change a.m./p.m. to am/pm
+                    text = text.replace(/(\d+):(\d+)\s*a\.m\./gi, '$1:$2 am');
+                    text = text.replace(/(\d+):(\d+)\s*p\.m\./gi, '$1:$2 pm');
+                    text = text.replace(/(\d+)\s*a\.m\./gi, '$1 am');
+                    text = text.replace(/(\d+)\s*p\.m\./gi, '$1 pm');
+                    
+                    // 3. Handle Canadian provinces and territories
+                    // Get surrounding context to determine if French
+                    const parentText = node.parentNode ? node.parentNode.textContent : text;
+                    const isFrench = isFrenchContext(parentText);
+                    
+                    // Replace province abbreviations
+                    Object.keys(provinceMapping).forEach(abbrev => {
+                        if (abbrev.endsWith('_FR')) return; // Skip French keys for now
+                        
+                        const pattern = new RegExp(`\\b${abbrev}\\b`, 'g');
+                        if (pattern.test(text)) {
+                            if (isFrench) {
+                                // Use French name with parentheses
+                                const frenchKey = abbrev + '_FR';
+                                const frenchName = provinceMapping[frenchKey] || provinceMapping[abbrev];
+                                text = text.replace(pattern, `, ${frenchName} (${provinceMapping[abbrev]})`);
+                            } else {
+                                // Use English name with comma
+                                text = text.replace(pattern, `, ${provinceMapping[abbrev]}`);
+                            }
+                        }
+                    });
+                    
+                    if (text !== originalText) {
+                        // Create a new element to hold the processed HTML
+                        const wrapper = document.createElement('span');
+                        wrapper.innerHTML = text;
+                        
+                        // Replace the text node with the new content
+                        const parent = node.parentNode;
+                        while (wrapper.firstChild) {
+                            parent.insertBefore(wrapper.firstChild, node);
+                        }
+                        parent.removeChild(node);
+                    }
+                } else if (node.nodeType === Node.ELEMENT_NODE) {
+                    // Recursively process child nodes
+                    const children = Array.from(node.childNodes);
+                    children.forEach(child => processTextNode(child));
+                }
+            }
+            
+            // Process all nodes
+            const allNodes = Array.from(temp.childNodes);
+            allNodes.forEach(node => processTextNode(node));
+            
+            return temp.innerHTML;
+        }
+
         // HTML sanitization function - preserves structural elements and safe styling
         function sanitizeHTML(html) {
             // Create a temporary div to parse HTML
@@ -487,8 +602,11 @@ Some more RCMP text here.
                 // First sanitize the HTML (preserving safe styling)
                 let sanitized = sanitizeHTML(input);
                 
+                // Apply Canadian text formatting (times, numbers, provinces)
+                let formatted = applyCanadianFormatting(sanitized);
+                
                 // Then wrap RCMP and GRC with abbreviation tags
-                let processed = wrapAbbreviations(sanitized);
+                let processed = wrapAbbreviations(formatted);
                 
                 // Display the results
                 output.innerHTML = processed;
@@ -505,9 +623,6 @@ Some more RCMP text here.
             document.getElementById('htmlInput').value = '';
             document.getElementById('output').innerHTML = '';
             document.getElementById('rawOutput').innerHTML = '';
-            document.getElementById('fileInput').value = '';
-            document.getElementById('fileInfo').style.display = 'none';
-            document.getElementById('processFileBtn').style.display = 'none';
         }
         
         // Process the default content on page load
