@@ -393,133 +393,19 @@
                     Object.entries(this.themeMapping).map(([key, value]) => [value, key])
                 );
                 this.init();
-                this.loadInitialData();
             }
-
+        
             init() {
                 this.bindEvents();
                 this.render();
             }
-
-            loadInitialData() {
-                // Load the provided JSON data
-                this.data = {
-                    "data": [
-                        {
-                            "last-updated": "2025-03-01",
-                            "english-theme": "Managing crises",
-                            "french-theme": "Gestion de crises",
-                            "english-commitment": "",
-                            "french-commitment": "",
-                            "english-title": "Explore the establishment of an RCMP capacity to support victims of mass casualty, mass violence and terrorism events",
-                            "french-title": "Étudier la mise en place d'une capacité de la GRC à soutenir les victimes d'événements de masse, de violence de masse et de terrorisme",
-                            "english-summary ": "The RCMP will draft a framework to create the National Centre of Expertise on Supporting Victims of Terrorism, Mass Violence and Mass Casualty. The policy proposal will outline how the RCMP will feed into the broader initiative led jointly by Public Safety Canada with the RCMP to provide operational support from a law enforcement perspective.",
-                            "french-summary": "La GRC va élaborer un cadre pour créer le Centre national d'expertise sur le soutien aux victimes du terrorisme, de la violence de masse et des pertes massives. La proposition de politique décrira comment la GRC contribuera à l'initiative plus large menée conjointement par la Sécurité publique Canada et la GRC pour fournir un soutien opérationnel du point de vue de l'application de la loi.",
-                            "english-progress": "Complete",
-                            "french-progress": "Terminé",
-                            "recommendations-1": "C2, C12",
-                            "recommendations-2": "",
-                            "recommendations-3": "",
-                            "update-1-date": "2025-03-01",
-                            "english-update-1": "The proposed Framework for a National Centre of Expertise on Supporting Victims of Terrorism, Mass Violence and Mass Casualty Incidents was completed in December 2024.  Efforts are underway to determine appropriate resourcing to continue with implementation.",
-                            "french-update-1": "Le cadre proposé pour la création d'un Centre national d'expertise sur le soutien aux victimes du terrorisme, de la violence de masse et des pertes massives a été établi en décembre 2024. Des travaux sont en cours pour déterminer les ressources nécessaires afin de poursuivre la mise en œuvre.",
-                            "update-2-date": "",
-                            "english-update-2": "",
-                            "french-update-2": "",
-                            "update-3-date": "",
-                            "english-update-3": "",
-                            "french-update-3": "",
-                            "update-4-date": "",
-                            "english-update-4": "",
-                            "french-update-4": "",
-                            "update-5-date": "",
-                            "english-update-5": "",
-                            "french-update-5": "",
-                            "update-6-date": "",
-                            "english-update-6": "",
-                            "french-update-6": ""
-                        },
-                        {
-                            "last-updated": "2024-08-01",
-                            "english-theme": "Managing crises",
-                            "french-theme": "Gestion de crises",
-                            "english-commitment": "",
-                            "french-commitment": "",
-                            "english-title": "Explore integration of victim management within the command structure",
-                            "french-title": "Étudier l'intégration de la gestion des victimes dans la structure de commandement",
-                            "english-summary ": "The RCMP will examine how to effectively integrate a Victim Management Role within command structures and ensure the position is well placed and clear within the organization. The role will support the broader approach to incident management, as will other new functions such as the dedicated hotline for families.",
-                            "french-summary": "La GRC se penchera sur la façon d'intégrer efficacement un rôle de gestion des victimes aux structures de commandement et s'assurera que le poste correspondant est placé au bon endroit et bien mis en évidence dans l'organisation. Ce rôle viendra s'inscrire dans la stratégie générale de gestion d'incidents, à l'instar d'autres fonctions nouvelles comme la ligne d'aide pour les familles.",
-                            "english-progress": "To be actioned",
-                            "french-progress": "À mettre en œuvre",
-                            "recommendations-1": "C7",
-                            "recommendations-2": "",
-                            "recommendations-3": "",
-                            "update-1-date": "",
-                            "english-update-1": "",
-                            "french-update-1": "",
-                            "update-2-date": "",
-                            "english-update-2": "",
-                            "french-update-2": "",
-                            "update-3-date": "",
-                            "english-update-3": "",
-                            "french-update-3": "",
-                            "update-4-date": "",
-                            "english-update-4": "",
-                            "french-update-4": "",
-                            "update-5-date": "",
-                            "english-update-5": "",
-                            "french-update-5": "",
-                            "update-6-date": "",
-                            "english-update-6": "",
-                            "french-update-6": ""
-                        },
-                        {
-                            "last-updated": "2025-06-01",
-                            "english-theme": "Organizational standards",
-                            "french-theme": "Normes organisationnelles",
-                            "english-commitment": "",
-                            "french-commitment": "",
-                            "english-title": "Establish national policy for the RCMP's Community Program Officer function",
-                            "french-title": "Établir une politique nationale pour la fonction d'agent de programme communautaire de la GRC",
-                            "english-summary ": "The RCMP will establish a national policy for its Community Program Officer function to support increased divisional use of this enhanced service delivery option.",
-                            "french-summary": "La GRC établira une politique nationale pour sa fonction d'agent de programme communautaire afin d'appuyer l'utilisation accrue de cette option de prestation de services améliorée dans les divisions.",
-                            "english-progress": "Complete",
-                            "french-progress": "Terminé",
-                            "recommendations-1": "P54",
-                            "recommendations-2": "",
-                            "recommendations-3": "",
-                            "update-1-date": "2025-03-01",
-                            "english-update-1": "This policy has been created and is awaiting publication. Once published, a memo to Commanding Officers and Criminal Operations Officers will be sent to inform them of the new policy.",
-                            "french-update-1": "Cette politique a été élaborée et est en attente de publication. Lorsqu'elle sera publiée, une note de service sera envoyée aux commandants divisionnaires et aux officiers responsables des Enquêtes criminelles pour les en informer.",
-                            "update-2-date": "2025-06-01",
-                            "english-update-2": "The amended Community Program Officers policy was published in December 2024. The amendments support increased divisional use of this enhanced service delivery option.",
-                            "french-update-2": "La politique modifiée sur les agents de programmes communautaires a été publiée en décembre 2024. Les modifications apportées appuient le recours accru par les divisions à cette option de prestation de services améliorés.",
-                            "update-3-date": "",
-                            "english-update-3": "",
-                            "french-update-3": "",
-                            "update-4-date": "",
-                            "english-update-4": "",
-                            "french-update-4": "",
-                            "update-5-date": "",
-                            "english-update-5": "",
-                            "french-update-5": "",
-                            "update-6-date": "",
-                            "english-update-6": "",
-                            "french-update-6": ""
-                        }
-                    ]
-                };
-                this.render();
-            }
-
+        
             bindEvents() {
                 document.getElementById('fileInput').addEventListener('change', (e) => this.handleFileUpload(e));
                 document.getElementById('addRecord').addEventListener('click', () => this.addNewRecord());
-                document.getElementById('saveData').addEventListener('click', () => this.saveData());
                 document.getElementById('downloadData').addEventListener('click', () => this.downloadData());
-                document.getElementById('clearAll').addEventListener('click', () => this.clearAllData());
             }
-
+        
             showAlert(message, type = 'success') {
                 const alertsContainer = document.getElementById('alerts');
                 const alert = document.createElement('div');
@@ -534,19 +420,19 @@
                     alert.remove();
                 }, 5000);
             }
-
+        
             showLoading() {
                 document.getElementById('loading').style.display = 'block';
             }
-
+        
             hideLoading() {
                 document.getElementById('loading').style.display = 'none';
             }
-
+        
             handleFileUpload(event) {
                 const file = event.target.files[0];
                 if (!file) return;
-
+        
                 this.showLoading();
                 
                 const reader = new FileReader();
@@ -568,7 +454,7 @@
                 };
                 reader.readAsText(file);
             }
-
+        
             addNewRecord() {
                 const newRecord = this.createEmptyRecord();
                 this.data.data.push(newRecord);
@@ -583,7 +469,7 @@
                     }
                 }, 100);
             }
-
+        
             createEmptyRecord() {
                 return {
                     "last-updated": new Date().toISOString().split('T')[0],
@@ -620,7 +506,7 @@
                     "french-update-6": ""
                 };
             }
-
+        
             deleteRecord(index) {
                 if (confirm('Are you sure you want to delete this record? This action cannot be undone.')) {
                     this.data.data.splice(index, 1);
@@ -628,12 +514,7 @@
                     this.showAlert('Record deleted successfully!');
                 }
             }
-
-            saveData() {
-                // Simulate saving (in a real app, this would send to a server)
-                this.showAlert('Data saved successfully!');
-            }
-
+        
             downloadData() {
                 const dataStr = JSON.stringify(this.data, null, 2);
                 const dataBlob = new Blob([dataStr], { type: 'application/json' });
@@ -649,15 +530,7 @@
                 
                 this.showAlert('Data downloaded successfully!');
             }
-
-            clearAllData() {
-                if (confirm('Are you sure you want to clear all data? This action cannot be undone.')) {
-                    this.data = { data: [] };
-                    this.render();
-                    this.showAlert('All data cleared successfully!');
-                }
-            }
-
+        
             updateRecord(index, field, value) {
                 if (this.data.data[index]) {
                     this.data.data[index][field] = value;
@@ -665,14 +538,12 @@
                     // Handle theme linking
                     if (field === 'english-theme' && this.themeMapping[value]) {
                         this.data.data[index]['french-theme'] = this.themeMapping[value];
-                        // Update the French theme dropdown
                         const frenchSelect = document.getElementById(`french-theme-${index}`);
                         if (frenchSelect) {
                             frenchSelect.value = this.themeMapping[value];
                         }
                     } else if (field === 'french-theme' && this.reversedThemeMapping[value]) {
                         this.data.data[index]['english-theme'] = this.reversedThemeMapping[value];
-                        // Update the English theme dropdown
                         const englishSelect = document.getElementById(`english-theme-${index}`);
                         if (englishSelect) {
                             englishSelect.value = this.reversedThemeMapping[value];
@@ -680,20 +551,20 @@
                     }
                 }
             }
-
+        
             getStatusClass(progress) {
                 return progress.toLowerCase().includes('complete') || progress.toLowerCase().includes('terminé') 
                     ? 'status-complete' 
                     : 'status-pending';
             }
-
+        
             getThemeOptions(selectedValue, isEnglish = true) {
                 const themes = isEnglish ? Object.keys(this.themeMapping) : Object.values(this.themeMapping);
                 return themes.map(theme => 
                     `<option value="${theme}" ${selectedValue === theme ? 'selected' : ''}>${theme}</option>`
                 ).join('');
             }
-
+        
             render() {
                 const container = document.getElementById('recordsContainer');
                 
@@ -706,7 +577,7 @@
                     `;
                     return;
                 }
-
+        
                 container.innerHTML = this.data.data.map((record, index) => `
                     <div class="record" id="record-${index}">
                         <div class="record-header">
@@ -716,8 +587,7 @@
                                     ${record['english-progress'] || 'Unknown Status'}
                                 </span>
                                 <span>Updated: ${record['last-updated'] || 'Not set'}</span>
-                                <button class="btn btn-danger" onclick="editor.deleteRecord(${index})" 
-                                        aria-label="Delete record ${index + 1}">
+                                <button class="btn btn-danger" onclick="editor.deleteRecord(${index})">
                                     🗑️ Delete
                                 </button>
                             </div>
@@ -725,128 +595,104 @@
                         <div class="record-body">
                             <div class="form-grid">
                                 <div class="form-group">
-                                    <label class="form-label" for="last-updated-${index}">Last Updated</label>
-                                    <input type="date" id="last-updated-${index}" class="form-input" 
+                                    <label class="form-label">Last Updated</label>
+                                    <input type="date" class="form-input" 
                                            value="${record['last-updated'] || ''}"
-                                           onchange="editor.updateRecord(${index}, 'last-updated', this.value)"
-                                           aria-describedby="last-updated-${index}-desc">
-                                    <div id="last-updated-${index}-desc" class="sr-only">Date when this record was last updated</div>
+                                           onchange="editor.updateRecord(${index}, 'last-updated', this.value)">
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="form-label" for="english-theme-${index}">English Theme</label>
+                                    <label class="form-label">English Theme</label>
                                     <select id="english-theme-${index}" class="form-select" 
-                                            onchange="editor.updateRecord(${index}, 'english-theme', this.value)"
-                                            aria-describedby="english-theme-${index}-desc">
+                                            onchange="editor.updateRecord(${index}, 'english-theme', this.value)">
                                         <option value="">Select a theme...</option>
                                         ${this.getThemeOptions(record['english-theme'], true)}
                                     </select>
-                                    <div id="english-theme-${index}-desc" class="sr-only">Theme or category in English</div>
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="form-label" for="french-theme-${index}">French Theme</label>
+                                    <label class="form-label">French Theme</label>
                                     <select id="french-theme-${index}" class="form-select" 
-                                            onchange="editor.updateRecord(${index}, 'french-theme', this.value)"
-                                            aria-describedby="french-theme-${index}-desc">
+                                            onchange="editor.updateRecord(${index}, 'french-theme', this.value)">
                                         <option value="">Sélectionner un thème...</option>
                                         ${this.getThemeOptions(record['french-theme'], false)}
                                     </select>
-                                    <div id="french-theme-${index}-desc" class="sr-only">Theme or category in French</div>
                                 </div>
                             </div>
-
+        
                             <div class="form-grid">
                                 <div class="form-group">
-                                    <label class="form-label" for="english-title-${index}">English Title</label>
-                                    <textarea id="english-title-${index}" class="form-textarea" 
-                                              onchange="editor.updateRecord(${index}, 'english-title', this.value)"
-                                              aria-describedby="english-title-${index}-desc">${record['english-title'] || ''}</textarea>
-                                    <div id="english-title-${index}-desc" class="sr-only">Title of the commitment in English</div>
+                                    <label class="form-label">English Title</label>
+                                    <textarea class="form-textarea" 
+                                              onchange="editor.updateRecord(${index}, 'english-title', this.value)">${record['english-title'] || ''}</textarea>
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="form-label" for="french-title-${index}">French Title</label>
-                                    <textarea id="french-title-${index}" class="form-textarea" 
-                                              onchange="editor.updateRecord(${index}, 'french-title', this.value)"
-                                              aria-describedby="french-title-${index}-desc">${record['french-title'] || ''}</textarea>
-                                    <div id="french-title-${index}-desc" class="sr-only">Title of the commitment in French</div>
+                                    <label class="form-label">French Title</label>
+                                    <textarea class="form-textarea" 
+                                              onchange="editor.updateRecord(${index}, 'french-title', this.value)">${record['french-title'] || ''}</textarea>
                                 </div>
                             </div>
-
+        
                             <div class="form-grid">
                                 <div class="form-group">
-                                    <label class="form-label" for="english-summary-${index}">English Summary</label>
-                                    <textarea id="english-summary-${index}" class="form-textarea" 
-                                              onchange="editor.updateRecord(${index}, 'english-summary ', this.value)"
-                                              aria-describedby="english-summary-${index}-desc">${record['english-summary '] || ''}</textarea>
-                                    <div id="english-summary-${index}-desc" class="sr-only">Summary of the commitment in English</div>
+                                    <label class="form-label">English Summary</label>
+                                    <textarea class="form-textarea" 
+                                              onchange="editor.updateRecord(${index}, 'english-summary ', this.value)">${record['english-summary '] || ''}</textarea>
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="form-label" for="french-summary-${index}">French Summary</label>
-                                    <textarea id="french-summary-${index}" class="form-textarea" 
-                                              onchange="editor.updateRecord(${index}, 'french-summary', this.value)"
-                                              aria-describedby="french-summary-${index}-desc">${record['french-summary'] || ''}</textarea>
-                                    <div id="french-summary-${index}-desc" class="sr-only">Summary of the commitment in French</div>
+                                    <label class="form-label">French Summary</label>
+                                    <textarea class="form-textarea" 
+                                              onchange="editor.updateRecord(${index}, 'french-summary', this.value)">${record['french-summary'] || ''}</textarea>
                                 </div>
                             </div>
-
+        
                             <div class="form-grid">
                                 <div class="form-group">
-                                    <label class="form-label" for="english-progress-${index}">English Progress</label>
-                                    <select id="english-progress-${index}" class="form-select" 
-                                            onchange="editor.updateRecord(${index}, 'english-progress', this.value)"
-                                            aria-describedby="english-progress-${index}-desc">
+                                    <label class="form-label">English Progress</label>
+                                    <select class="form-select" 
+                                            onchange="editor.updateRecord(${index}, 'english-progress', this.value)">
                                         <option value="To be actioned" ${record['english-progress'] === 'To be actioned' ? 'selected' : ''}>To be actioned</option>
                                         <option value="In progress" ${record['english-progress'] === 'In progress' ? 'selected' : ''}>In progress</option>
                                         <option value="Complete" ${record['english-progress'] === 'Complete' ? 'selected' : ''}>Complete</option>
                                     </select>
-                                    <div id="english-progress-${index}-desc" class="sr-only">Current progress status in English</div>
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="form-label" for="french-progress-${index}">French Progress</label>
-                                    <select id="french-progress-${index}" class="form-select" 
-                                            onchange="editor.updateRecord(${index}, 'french-progress', this.value)"
-                                            aria-describedby="french-progress-${index}-desc">
+                                    <label class="form-label">French Progress</label>
+                                    <select class="form-select" 
+                                            onchange="editor.updateRecord(${index}, 'french-progress', this.value)">
                                         <option value="À mettre en œuvre" ${record['french-progress'] === 'À mettre en œuvre' ? 'selected' : ''}>À mettre en œuvre</option>
                                         <option value="En cours" ${record['french-progress'] === 'En cours' ? 'selected' : ''}>En cours</option>
                                         <option value="Terminé" ${record['french-progress'] === 'Terminé' ? 'selected' : ''}>Terminé</option>
                                     </select>
-                                    <div id="french-progress-${index}-desc" class="sr-only">Current progress status in French</div>
                                 </div>
                             </div>
-
+        
                             <div class="form-grid">
                                 <div class="form-group">
-                                    <label class="form-label" for="recommendations-1-${index}">Recommendations 1</label>
-                                    <input type="text" id="recommendations-1-${index}" class="form-input" 
+                                    <label class="form-label">Recommendations 1</label>
+                                    <input type="text" class="form-input" 
                                            value="${record['recommendations-1'] || ''}"
-                                           onchange="editor.updateRecord(${index}, 'recommendations-1', this.value)"
-                                           aria-describedby="recommendations-1-${index}-desc">
-                                    <div id="recommendations-1-${index}-desc" class="sr-only">First set of recommendation codes</div>
+                                           onchange="editor.updateRecord(${index}, 'recommendations-1', this.value)">
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="form-label" for="recommendations-2-${index}">Recommendations 2</label>
-                                    <input type="text" id="recommendations-2-${index}" class="form-input" 
+                                    <label class="form-label">Recommendations 2</label>
+                                    <input type="text" class="form-input" 
                                            value="${record['recommendations-2'] || ''}"
-                                           onchange="editor.updateRecord(${index}, 'recommendations-2', this.value)"
-                                           aria-describedby="recommendations-2-${index}-desc">
-                                    <div id="recommendations-2-${index}-desc" class="sr-only">Second set of recommendation codes</div>
+                                           onchange="editor.updateRecord(${index}, 'recommendations-2', this.value)">
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="form-label" for="recommendations-3-${index}">Recommendations 3</label>
-                                    <input type="text" id="recommendations-3-${index}" class="form-input" 
+                                    <label class="form-label">Recommendations 3</label>
+                                    <input type="text" class="form-input" 
                                            value="${record['recommendations-3'] || ''}"
-                                           onchange="editor.updateRecord(${index}, 'recommendations-3', this.value)"
-                                           aria-describedby="recommendations-3-${index}-desc">
-                                    <div id="recommendations-3-${index}-desc" class="sr-only">Third set of recommendation codes</div>
+                                           onchange="editor.updateRecord(${index}, 'recommendations-3', this.value)">
                                 </div>
                             </div>
-
+        
                             <div class="updates-section">
                                 <div class="updates-header">
                                     <h3 class="updates-title">Progress Updates</h3>
@@ -861,37 +707,30 @@
                                             </div>
                                             <div class="form-grid">
                                                 <div class="form-group">
-                                                    <label class="form-label" for="update-${updateNum}-date-${index}">Update ${updateNum} Date</label>
-                                                    <input type="date" id="update-${updateNum}-date-${index}" class="form-input" 
+                                                    <label class="form-label">Update ${updateNum} Date</label>
+                                                    <input type="date" class="form-input" 
                                                            value="${record[`update-${updateNum}-date`] || ''}"
-                                                           onchange="editor.updateRecord(${index}, 'update-${updateNum}-date', this.value)"
-                                                           aria-describedby="update-${updateNum}-date-${index}-desc">
-                                                    <div id="update-${updateNum}-date-${index}-desc" class="sr-only">Date of update ${updateNum}</div>
+                                                           onchange="editor.updateRecord(${index}, 'update-${updateNum}-date', this.value)">
                                                 </div>
                                             </div>
                                             <div class="form-grid">
                                                 <div class="form-group">
-                                                    <label class="form-label" for="english-update-${updateNum}-${index}">English Update ${updateNum}</label>
-                                                    <textarea id="english-update-${updateNum}-${index}" class="form-textarea" 
-                                                              onchange="editor.updateRecord(${index}, 'english-update-${updateNum}', this.value)"
-                                                              aria-describedby="english-update-${updateNum}-${index}-desc">${record[`english-update-${updateNum}`] || ''}</textarea>
-                                                    <div id="english-update-${updateNum}-${index}-desc" class="sr-only">Update ${updateNum} text in English</div>
+                                                    <label class="form-label">English Update ${updateNum}</label>
+                                                    <textarea class="form-textarea" 
+                                                              onchange="editor.updateRecord(${index}, 'english-update-${updateNum}', this.value)">${record[`english-update-${updateNum}`] || ''}</textarea>
                                                 </div>
                                                 
                                                 <div class="form-group">
-                                                    <label class="form-label" for="french-update-${updateNum}-${index}">French Update ${updateNum}</label>
-                                                    <textarea id="french-update-${updateNum}-${index}" class="form-textarea" 
-                                                              onchange="editor.updateRecord(${index}, 'french-update-${updateNum}', this.value)"
-                                                              aria-describedby="french-update-${updateNum}-${index}-desc">${record[`french-update-${updateNum}`] || ''}</textarea>
-                                                    <div id="french-update-${updateNum}-${index}-desc" class="sr-only">Update ${updateNum} text in French</div>
+                                                    <label class="form-label">French Update ${updateNum}</label>
+                                                    <textarea class="form-textarea" 
+                                                              onchange="editor.updateRecord(${index}, 'french-update-${updateNum}', this.value)">${record[`french-update-${updateNum}`] || ''}</textarea>
                                                 </div>
                                             </div>
                                         </div>
                                     ` : '';
                                 }).join('')}
                                 
-                                <button class="btn btn-secondary" onclick="editor.addUpdate(${index})" 
-                                        aria-label="Add new update to record ${index + 1}">
+                                <button class="btn btn-secondary" onclick="editor.addUpdate(${index})">
                                     ➕ Add Update
                                 </button>
                             </div>
@@ -899,11 +738,11 @@
                     </div>
                 `).join('');
             }
-
+        
             addUpdate(recordIndex) {
                 const record = this.data.data[recordIndex];
                 if (!record) return;
-
+        
                 // Find the next available update slot
                 for (let i = 1; i <= 6; i++) {
                     if (!record[`update-${i}-date`] && !record[`english-update-${i}`] && !record[`french-update-${i}`]) {
@@ -912,14 +751,6 @@
                         record[`french-update-${i}`] = '';
                         this.render();
                         this.showAlert(`Update ${i} added to record ${recordIndex + 1}!`);
-                        
-                        // Focus on the new update's date field
-                        setTimeout(() => {
-                            const newUpdateElement = document.getElementById(`update-${i}-date-${recordIndex}`);
-                            if (newUpdateElement) {
-                                newUpdateElement.focus();
-                            }
-                        }, 100);
                         return;
                     }
                 }
@@ -927,18 +758,14 @@
                 this.showAlert('Maximum number of updates (6) reached for this record.', 'error');
             }
         }
-
+        
         // Initialize the editor
         const editor = new RCMPDataEditor();
-
+        
         // Add keyboard shortcuts
         document.addEventListener('keydown', (e) => {
             if (e.ctrlKey || e.metaKey) {
                 switch (e.key) {
-                    case 's':
-                        e.preventDefault();
-                        editor.saveData();
-                        break;
                     case 'n':
                         e.preventDefault();
                         editor.addNewRecord();
@@ -949,30 +776,6 @@
                         break;
                 }
             }
-        });
-
-        // Add form validation
-        document.addEventListener('input', (e) => {
-            if (e.target.classList.contains('form-input') || e.target.classList.contains('form-textarea')) {
-                e.target.classList.remove('error');
-                if (e.target.value.trim() === '' && e.target.hasAttribute('required')) {
-                    e.target.classList.add('error');
-                }
-            }
-        });
-
-        // Announce page load for screen readers
-        document.addEventListener('DOMContentLoaded', () => {
-            const announcement = document.createElement('div');
-            announcement.setAttribute('aria-live', 'polite');
-            announcement.setAttribute('aria-atomic', 'true');
-            announcement.className = 'sr-only';
-            announcement.textContent = 'RCMP JSON Data Editor loaded successfully. Use Tab to navigate through the form controls.';
-            document.body.appendChild(announcement);
-            
-            setTimeout(() => {
-                announcement.remove();
-            }, 3000);
         });
     </script>
 </body>
