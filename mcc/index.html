@@ -393,6 +393,7 @@
                     Object.entries(this.themeMapping).map(([key, value]) => [value, key])
                 );
                 this.init();
+                this.loadInitialData();
             }
 
             init() {
@@ -400,10 +401,123 @@
                 this.render();
             }
 
+            loadInitialData() {
+                // Load the provided JSON data
+                this.data = {
+                    "data": [
+                        {
+                            "last-updated": "2025-03-01",
+                            "english-theme": "Managing crises",
+                            "french-theme": "Gestion de crises",
+                            "english-commitment": "",
+                            "french-commitment": "",
+                            "english-title": "Explore the establishment of an RCMP capacity to support victims of mass casualty, mass violence and terrorism events",
+                            "french-title": "Étudier la mise en place d'une capacité de la GRC à soutenir les victimes d'événements de masse, de violence de masse et de terrorisme",
+                            "english-summary ": "The RCMP will draft a framework to create the National Centre of Expertise on Supporting Victims of Terrorism, Mass Violence and Mass Casualty. The policy proposal will outline how the RCMP will feed into the broader initiative led jointly by Public Safety Canada with the RCMP to provide operational support from a law enforcement perspective.",
+                            "french-summary": "La GRC va élaborer un cadre pour créer le Centre national d'expertise sur le soutien aux victimes du terrorisme, de la violence de masse et des pertes massives. La proposition de politique décrira comment la GRC contribuera à l'initiative plus large menée conjointement par la Sécurité publique Canada et la GRC pour fournir un soutien opérationnel du point de vue de l'application de la loi.",
+                            "english-progress": "Complete",
+                            "french-progress": "Terminé",
+                            "recommendations-1": "C2, C12",
+                            "recommendations-2": "",
+                            "recommendations-3": "",
+                            "update-1-date": "2025-03-01",
+                            "english-update-1": "The proposed Framework for a National Centre of Expertise on Supporting Victims of Terrorism, Mass Violence and Mass Casualty Incidents was completed in December 2024.  Efforts are underway to determine appropriate resourcing to continue with implementation.",
+                            "french-update-1": "Le cadre proposé pour la création d'un Centre national d'expertise sur le soutien aux victimes du terrorisme, de la violence de masse et des pertes massives a été établi en décembre 2024. Des travaux sont en cours pour déterminer les ressources nécessaires afin de poursuivre la mise en œuvre.",
+                            "update-2-date": "",
+                            "english-update-2": "",
+                            "french-update-2": "",
+                            "update-3-date": "",
+                            "english-update-3": "",
+                            "french-update-3": "",
+                            "update-4-date": "",
+                            "english-update-4": "",
+                            "french-update-4": "",
+                            "update-5-date": "",
+                            "english-update-5": "",
+                            "french-update-5": "",
+                            "update-6-date": "",
+                            "english-update-6": "",
+                            "french-update-6": ""
+                        },
+                        {
+                            "last-updated": "2024-08-01",
+                            "english-theme": "Managing crises",
+                            "french-theme": "Gestion de crises",
+                            "english-commitment": "",
+                            "french-commitment": "",
+                            "english-title": "Explore integration of victim management within the command structure",
+                            "french-title": "Étudier l'intégration de la gestion des victimes dans la structure de commandement",
+                            "english-summary ": "The RCMP will examine how to effectively integrate a Victim Management Role within command structures and ensure the position is well placed and clear within the organization. The role will support the broader approach to incident management, as will other new functions such as the dedicated hotline for families.",
+                            "french-summary": "La GRC se penchera sur la façon d'intégrer efficacement un rôle de gestion des victimes aux structures de commandement et s'assurera que le poste correspondant est placé au bon endroit et bien mis en évidence dans l'organisation. Ce rôle viendra s'inscrire dans la stratégie générale de gestion d'incidents, à l'instar d'autres fonctions nouvelles comme la ligne d'aide pour les familles.",
+                            "english-progress": "To be actioned",
+                            "french-progress": "À mettre en œuvre",
+                            "recommendations-1": "C7",
+                            "recommendations-2": "",
+                            "recommendations-3": "",
+                            "update-1-date": "",
+                            "english-update-1": "",
+                            "french-update-1": "",
+                            "update-2-date": "",
+                            "english-update-2": "",
+                            "french-update-2": "",
+                            "update-3-date": "",
+                            "english-update-3": "",
+                            "french-update-3": "",
+                            "update-4-date": "",
+                            "english-update-4": "",
+                            "french-update-4": "",
+                            "update-5-date": "",
+                            "english-update-5": "",
+                            "french-update-5": "",
+                            "update-6-date": "",
+                            "english-update-6": "",
+                            "french-update-6": ""
+                        },
+                        {
+                            "last-updated": "2025-06-01",
+                            "english-theme": "Organizational standards",
+                            "french-theme": "Normes organisationnelles",
+                            "english-commitment": "",
+                            "french-commitment": "",
+                            "english-title": "Establish national policy for the RCMP's Community Program Officer function",
+                            "french-title": "Établir une politique nationale pour la fonction d'agent de programme communautaire de la GRC",
+                            "english-summary ": "The RCMP will establish a national policy for its Community Program Officer function to support increased divisional use of this enhanced service delivery option.",
+                            "french-summary": "La GRC établira une politique nationale pour sa fonction d'agent de programme communautaire afin d'appuyer l'utilisation accrue de cette option de prestation de services améliorée dans les divisions.",
+                            "english-progress": "Complete",
+                            "french-progress": "Terminé",
+                            "recommendations-1": "P54",
+                            "recommendations-2": "",
+                            "recommendations-3": "",
+                            "update-1-date": "2025-03-01",
+                            "english-update-1": "This policy has been created and is awaiting publication. Once published, a memo to Commanding Officers and Criminal Operations Officers will be sent to inform them of the new policy.",
+                            "french-update-1": "Cette politique a été élaborée et est en attente de publication. Lorsqu'elle sera publiée, une note de service sera envoyée aux commandants divisionnaires et aux officiers responsables des Enquêtes criminelles pour les en informer.",
+                            "update-2-date": "2025-06-01",
+                            "english-update-2": "The amended Community Program Officers policy was published in December 2024. The amendments support increased divisional use of this enhanced service delivery option.",
+                            "french-update-2": "La politique modifiée sur les agents de programmes communautaires a été publiée en décembre 2024. Les modifications apportées appuient le recours accru par les divisions à cette option de prestation de services améliorés.",
+                            "update-3-date": "",
+                            "english-update-3": "",
+                            "french-update-3": "",
+                            "update-4-date": "",
+                            "english-update-4": "",
+                            "french-update-4": "",
+                            "update-5-date": "",
+                            "english-update-5": "",
+                            "french-update-5": "",
+                            "update-6-date": "",
+                            "english-update-6": "",
+                            "french-update-6": ""
+                        }
+                    ]
+                };
+                this.render();
+            }
+
             bindEvents() {
                 document.getElementById('fileInput').addEventListener('change', (e) => this.handleFileUpload(e));
                 document.getElementById('addRecord').addEventListener('click', () => this.addNewRecord());
+                document.getElementById('saveData').addEventListener('click', () => this.saveData());
                 document.getElementById('downloadData').addEventListener('click', () => this.downloadData());
+                document.getElementById('clearAll').addEventListener('click', () => this.clearAllData());
             }
 
             showAlert(message, type = 'success') {
@@ -515,6 +629,11 @@
                 }
             }
 
+            saveData() {
+                // Simulate saving (in a real app, this would send to a server)
+                this.showAlert('Data saved successfully!');
+            }
+
             downloadData() {
                 const dataStr = JSON.stringify(this.data, null, 2);
                 const dataBlob = new Blob([dataStr], { type: 'application/json' });
@@ -529,6 +648,14 @@
                 URL.revokeObjectURL(url);
                 
                 this.showAlert('Data downloaded successfully!');
+            }
+
+            clearAllData() {
+                if (confirm('Are you sure you want to clear all data? This action cannot be undone.')) {
+                    this.data = { data: [] };
+                    this.render();
+                    this.showAlert('All data cleared successfully!');
+                }
             }
 
             updateRecord(index, field, value) {
@@ -756,3 +883,97 @@
                                                     <textarea id="french-update-${updateNum}-${index}" class="form-textarea" 
                                                               onchange="editor.updateRecord(${index}, 'french-update-${updateNum}', this.value)"
                                                               aria-describedby="french-update-${updateNum}-${index}-desc">${record[`french-update-${updateNum}`] || ''}</textarea>
+                                                    <div id="french-update-${updateNum}-${index}-desc" class="sr-only">Update ${updateNum} text in French</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ` : '';
+                                }).join('')}
+                                
+                                <button class="btn btn-secondary" onclick="editor.addUpdate(${index})" 
+                                        aria-label="Add new update to record ${index + 1}">
+                                    ➕ Add Update
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            addUpdate(recordIndex) {
+                const record = this.data.data[recordIndex];
+                if (!record) return;
+
+                // Find the next available update slot
+                for (let i = 1; i <= 6; i++) {
+                    if (!record[`update-${i}-date`] && !record[`english-update-${i}`] && !record[`french-update-${i}`]) {
+                        record[`update-${i}-date`] = new Date().toISOString().split('T')[0];
+                        record[`english-update-${i}`] = '';
+                        record[`french-update-${i}`] = '';
+                        this.render();
+                        this.showAlert(`Update ${i} added to record ${recordIndex + 1}!`);
+                        
+                        // Focus on the new update's date field
+                        setTimeout(() => {
+                            const newUpdateElement = document.getElementById(`update-${i}-date-${recordIndex}`);
+                            if (newUpdateElement) {
+                                newUpdateElement.focus();
+                            }
+                        }, 100);
+                        return;
+                    }
+                }
+                
+                this.showAlert('Maximum number of updates (6) reached for this record.', 'error');
+            }
+        }
+
+        // Initialize the editor
+        const editor = new RCMPDataEditor();
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                switch (e.key) {
+                    case 's':
+                        e.preventDefault();
+                        editor.saveData();
+                        break;
+                    case 'n':
+                        e.preventDefault();
+                        editor.addNewRecord();
+                        break;
+                    case 'd':
+                        e.preventDefault();
+                        editor.downloadData();
+                        break;
+                }
+            }
+        });
+
+        // Add form validation
+        document.addEventListener('input', (e) => {
+            if (e.target.classList.contains('form-input') || e.target.classList.contains('form-textarea')) {
+                e.target.classList.remove('error');
+                if (e.target.value.trim() === '' && e.target.hasAttribute('required')) {
+                    e.target.classList.add('error');
+                }
+            }
+        });
+
+        // Announce page load for screen readers
+        document.addEventListener('DOMContentLoaded', () => {
+            const announcement = document.createElement('div');
+            announcement.setAttribute('aria-live', 'polite');
+            announcement.setAttribute('aria-atomic', 'true');
+            announcement.className = 'sr-only';
+            announcement.textContent = 'RCMP JSON Data Editor loaded successfully. Use Tab to navigate through the form controls.';
+            document.body.appendChild(announcement);
+            
+            setTimeout(() => {
+                announcement.remove();
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
