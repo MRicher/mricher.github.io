@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Sanitizer with Abbreviation Wrapper</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 14px;
+            resize: vertical;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .output {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            min-height: 100px;
+        }
+        .label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        abbr {
+            text-decoration: underline;
+            text-decoration-style: dotted;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>HTML Sanitizer with CBC/BCB Abbreviation Wrapper</h1>
+        <p>Enter HTML content below. The tool will sanitize dangerous elements and automatically wrap CBC and BCB with abbreviation tags.</p>
+        
+        <div class="label">Input HTML:</div>
+        <textarea id="htmlInput" placeholder="Enter your HTML content here...">
+This is a test with CBC and BCB mentioned.
+The CBC reported on BCB activities.
+<script>alert('malicious');</script>
+<abbr title="Canadian Broadcasting Corporation">CBC</abbr> is already wrapped.
+Some more CBC text here.
+        </textarea>
+        
+        <button onclick="processHTML()">Sanitize & Process</button>
+        <button onclick="clearAll()">Clear</button>
+        
+        <div class="label">Sanitized Output:</div>
+        <div id="output" class="output"></div>
+        
+        <div class="label">Raw HTML:</div>
+        <div id="rawOutput" class="output" style="font-family: monospace; font-size: 12px;"></div>
+    </div>
+
+    <script>
+        // HTML sanitization function
+        function sanitizeHTML(html) {
+            // Create a temporary div to parse HTML
+            const temp = document.createElement('div');
+            temp.innerHTML = html;
+            
+            // Remove dangerous elements
+            const dangerousElements = temp.querySelectorAll('script, iframe, object, embed, form, input, button, link[rel="stylesheet"], style');
+            dangerousElements.forEach(el => el.remove());
+            
+            // Remove dangerous attributes
+            const allElements = temp.querySelectorAll('*');
+            allElements.forEach(el => {
+                const dangerousAttrs = ['onclick', 'onload', 'onerror', 'onmouseover', 'onfocus', 'onblur', 'onchange', 'onsubmit'];
+                dangerousAttrs.forEach(attr => {
+                    if (el.hasAttribute(attr)) {
+                        el.removeAttribute(attr);
+                    }
+                });
+                
+                // Sanitize href attributes
+                if (el.hasAttribute('href')) {
+                    const href = el.getAttribute('href');
+                    if (href.toLowerCase().startsWith('javascript:') || href.toLowerCase().startsWith('data:')) {
+                        el.removeAttribute('href');
+                    }
+                }
+                
+                // Sanitize src attributes
+                if (el.hasAttribute('src')) {
+                    const src = el.getAttribute('src');
+                    if (src.toLowerCase().startsWith('javascript:') || src.toLowerCase().startsWith('data:')) {
+                        el.removeAttribute('src');
+                    }
+                }
+            });
+            
+            return temp.innerHTML;
+        }
+        
+        // Function to wrap CBC and BCB with abbr tags
+        function wrapAbbreviations(html) {
+            // Create a temporary div to work with the DOM
+            const temp = document.createElement('div');
+            temp.innerHTML = html;
+            
+            // Function to process text nodes
+            function processTextNode(node) {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    let text = node.textContent;
+                    
+                    text = text.replace(/\b(RCMP|GRC)\b/g, (match) => {
+                        return `<abbr>${match}</abbr>`;
+                    });
+                    
+                    if (text !== node.textContent) {
+                        // Create a new element to hold the processed HTML
+                        const wrapper = document.createElement('span');
+                        wrapper.innerHTML = text;
+                        
+                        // Replace the text node with the new content
+                        const parent = node.parentNode;
+                        while (wrapper.firstChild) {
+                            parent.insertBefore(wrapper.firstChild, node);
+                        }
+                        parent.removeChild(node);
+                    }
+                } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName.toLowerCase() !== 'abbr') {
+                    // Recursively process child nodes, but skip if already inside an abbr tag
+                    const children = Array.from(node.childNodes);
+                    children.forEach(child => processTextNode(child));
+                }
+            }
+            
+            // Process all nodes
+            const allNodes = Array.from(temp.childNodes);
+            allNodes.forEach(node => processTextNode(node));
+            
+            return temp.innerHTML;
+        }
+        
+        // Main processing function
+        function processHTML() {
+            const input = document.getElementById('htmlInput').value;
+            const output = document.getElementById('output');
+            const rawOutput = document.getElementById('rawOutput');
+            
+            if (!input.trim()) {
+                output.innerHTML = '<em>No input provided</em>';
+                rawOutput.innerHTML = '<em>No input provided</em>';
+                return;
+            }
+            
+            try {
+                // First sanitize the HTML
+                let sanitized = sanitizeHTML(input);
+                
+                // Then wrap CBC and BCB with abbreviation tags
+                let processed = wrapAbbreviations(sanitized);
+                
+                // Display the results
+                output.innerHTML = processed;
+                rawOutput.textContent = processed;
+                
+            } catch (error) {
+                output.innerHTML = '<em style="color: red;">Error processing HTML: ' + error.message + '</em>';
+                rawOutput.innerHTML = '<em style="color: red;">Error processing HTML</em>';
+            }
+        }
+        
+        // Clear function
+        function clearAll() {
+            document.getElementById('htmlInput').value = '';
+            document.getElementById('output').innerHTML = '';
+            document.getElementById('rawOutput').innerHTML = '';
+        }
+        
+        // Process the default content on page load
+        window.onload = function() {
+            processHTML();
+        };
+    </script>
+</body>
+</html>
