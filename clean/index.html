@@ -95,7 +95,7 @@
 <body>
     <div class="container">
         <h1>Document to HTML Converter with RCMP/GRC & Canadian Text Processing</h1>
-        <p>Paste content from Word (DOCX, DOC), PDF, ODT, RTF, and TXT documents directly into the text area below. The tool will automatically convert and clean the content to HTML, preserve safe styling, sanitize dangerous elements, and automatically wrap RCMP and GRC with abbreviation tags. It also formats times, numbers, and Canadian provinces/territories.</p>
+        <p>Paste content from Word (DOCX, DOC), PDF, ODT, RTF, and TXT documents directly into the text area below. The tool will automatically convert and clean the content to HTML, preserve safe styling, sanitize dangerous elements, automatically wrap RCMP and GRC with abbreviation tags, and convert emails and URLs to clickable links. It also formats times, numbers, and Canadian provinces/territories.</p>
         
         <div class="paste-info">
             <strong>📋 How to use:</strong>
@@ -104,6 +104,7 @@
                 <li><strong>PDF Files:</strong> Open PDF, select and copy text, then paste here</li>
                 <li><strong>Other Documents:</strong> Copy content from ODT, RTF, or TXT files and paste here</li>
                 <li><strong>Web Content:</strong> Copy HTML content from web pages and paste here</li>
+                <li><strong>Auto-linking:</strong> Email addresses and URLs will automatically become clickable links</li>
             </ul>
         </div>
         
@@ -116,6 +117,8 @@ Try pasting:
 - Text selected and copied from a PDF
 - Content from web pages (HTML)
 - Text from any other document type
+- Email addresses (will be converted to lowercase links)
+- URLs (will become clickable links)
 
 The tool will automatically detect and convert your pasted content!">
         </textarea>
@@ -326,6 +329,87 @@ The tool will automatically detect and convert your pasted content!">
             const words = text.toLowerCase().split(/\s+/);
             const frenchWordCount = words.filter(word => frenchWords.includes(word)).length;
             return frenchWordCount >= 2 || text.includes('GRC');
+        }
+
+        // Function to convert URLs and emails to clickable links
+        function autoLinkify(html) {
+            // Create a temporary div to work with the DOM
+            const temp = document.createElement('div');
+            temp.innerHTML = html;
+            
+            // Function to process text nodes for URLs and emails
+            function processTextNode(node) {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    let text = node.textContent;
+                    let hasChanges = false;
+                    
+                    // Email regex - matches email addresses
+                    const emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g;
+                    
+                    // URL regex - matches http/https URLs and www URLs
+                    const urlRegex = /\b(?:https?:\/\/|www\.)[A-Za-z0-9.-]+(?:\.[A-Za-z]{2,})(?:\/[^\s]*)?/g;
+                    
+                    // RCMP/GRC domain regex for special handling
+                    const rcmpDomainRegex = /\b(?:https?:\/\/)?(?:www\.)?(rcmp\.ca|grc\.ca)([^\s]*)/g;
+                    
+                    // First, handle RCMP/GRC domains specially
+                    text = text.replace(rcmpDomainRegex, (match, domain, path) => {
+                        hasChanges = true;
+                        // Remove the domain but keep the path, create a relative link
+                        const linkText = path || '/';
+                        return `<a href="${linkText}">${linkText}</a>`;
+                    });
+                    
+                    // Handle regular URLs (but not RCMP/GRC domains which were already processed)
+                    text = text.replace(urlRegex, (match) => {
+                        // Skip if this is an RCMP/GRC domain (already processed)
+                        if (match.includes('rcmp.ca') || match.includes('grc.ca')) {
+                            return match;
+                        }
+                        
+                        hasChanges = true;
+                        let url = match;
+                        let href = match;
+                        
+                        // Add protocol if missing
+                        if (!href.startsWith('http')) {
+                            href = 'https://' + href;
+                        }
+                        
+                        return `<a href="${href}" target="_blank">${url}</a>`;
+                    });
+                    
+                    // Handle email addresses
+                    text = text.replace(emailRegex, (match) => {
+                        hasChanges = true;
+                        const lowercaseEmail = match.toLowerCase();
+                        return `<a href="mailto:${lowercaseEmail}">${lowercaseEmail}</a>`;
+                    });
+                    
+                    if (hasChanges) {
+                        // Create a new element to hold the processed HTML
+                        const wrapper = document.createElement('span');
+                        wrapper.innerHTML = text;
+                        
+                        // Replace the text node with the new content
+                        const parent = node.parentNode;
+                        while (wrapper.firstChild) {
+                            parent.insertBefore(wrapper.firstChild, node);
+                        }
+                        parent.removeChild(node);
+                    }
+                } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName.toLowerCase() !== 'a') {
+                    // Recursively process child nodes, but skip if already inside an anchor tag
+                    const children = Array.from(node.childNodes);
+                    children.forEach(child => processTextNode(child));
+                }
+            }
+            
+            // Process all nodes
+            const allNodes = Array.from(temp.childNodes);
+            allNodes.forEach(node => processTextNode(node));
+            
+            return temp.innerHTML;
         }
 
         // Function to apply Canadian text formatting
@@ -560,8 +644,11 @@ The tool will automatically detect and convert your pasted content!">
                 // Apply Canadian text formatting (times, numbers, provinces)
                 let formatted = applyCanadianFormatting(sanitized);
                 
+                // Convert URLs and emails to links
+                let linked = autoLinkify(formatted);
+                
                 // Then wrap RCMP and GRC with abbreviation tags
-                let processed = wrapAbbreviations(formatted);
+                let processed = wrapAbbreviations(linked);
                 
                 // Display the results
                 output.innerHTML = processed;
@@ -582,7 +669,7 @@ The tool will automatically detect and convert your pasted content!">
         
         // Process the default content on page load
         window.onload = function() {
-            processHTML();
+            // Don't auto-process on load since textarea is empty
         };
     </script>
 </body>
