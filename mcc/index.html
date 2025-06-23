@@ -672,24 +672,10 @@
         
                             <div class="form-grid">
                                 <div class="form-group">
-                                    <label class="form-label">Recommendations 1</label>
+                                    <label class="form-label">Recommendations</label>
                                     <input type="text" class="form-input" 
                                            value="${record['recommendations-1'] || ''}"
                                            onchange="editor.updateRecord(${index}, 'recommendations-1', this.value)">
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label class="form-label">Recommendations 2</label>
-                                    <input type="text" class="form-input" 
-                                           value="${record['recommendations-2'] || ''}"
-                                           onchange="editor.updateRecord(${index}, 'recommendations-2', this.value)">
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label class="form-label">Recommendations 3</label>
-                                    <input type="text" class="form-input" 
-                                           value="${record['recommendations-3'] || ''}"
-                                           onchange="editor.updateRecord(${index}, 'recommendations-3', this.value)">
                                 </div>
                             </div>
         
