@@ -376,7 +376,7 @@ The tool will automatically detect and convert your pasted content!">
                             href = 'https://' + href;
                         }
                         
-                        return `<a href="${href}" target="_blank">${url}</a>`;
+                        return `<a href="${href}">${url}</a>`;
                     });
                     
                     // Handle email addresses
@@ -417,16 +417,19 @@ The tool will automatically detect and convert your pasted content!">
             // Work directly with the HTML string instead of DOM to preserve entities
             let text = html;
             
-            // 1. Add non-breaking space before numbers with space before and after
+            // 1. Remove space before commas
+            text = text.replace(/\s+,/g, ',');
+            
+            // 2. Add non-breaking space before numbers with space before and after
             text = text.replace(/(\s)(\d+)(\s)/g, '$1&#160;$2$3');
             
-            // 2. Change a.m./p.m. to am/pm
+            // 3. Change a.m./p.m. to am/pm
             text = text.replace(/(\d+):(\d+)\s*a\.m\./gi, '$1:$2 am');
             text = text.replace(/(\d+):(\d+)\s*p\.m\./gi, '$1:$2 pm');
             text = text.replace(/(\d+)\s*a\.m\./gi, '$1 am');
             text = text.replace(/(\d+)\s*p\.m\./gi, '$1 pm');
             
-            // 3. Handle Canadian provinces and territories
+            // 4. Handle Canadian provinces and territories
             // Get text content to determine if French (without HTML tags)
             const textOnly = text.replace(/<[^>]*>/g, '');
             const isFrench = isFrenchContext(textOnly);
