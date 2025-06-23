@@ -105,44 +105,15 @@
                 <li><strong>Other Documents:</strong> Copy content from ODT, RTF, or TXT files and paste here</li>
                 <li><strong>Web Content:</strong> Copy HTML content from web pages and paste here</li>
             </ul>
-            <div class="supported-formats">
-                ✅ Supports pasted content from: Word (DOCX, DOC), PDF, ODT, RTF, TXT, and HTML sources<br>
-                ✅ Automatically formats: Times (a.m./p.m. → am/pm), Numbers (adds non-breaking spaces), Canadian provinces/territories
-            </div>
         </div>
         
-        <div class="label">📝 Paste Content Here:</div>
+        <div class="label">Paste Content Here:</div>
         <div class="paste-area">
-        <textarea id="htmlInput" placeholder="Paste your content here from Word, PDF, or any document... 
-
-Try pasting:
-- Content copied from a Word document (preserves formatting)
-- Text selected and copied from a PDF
-- Content from web pages (HTML)
-- Text from any other document type
-
-The tool will automatically detect and convert your pasted content!">
-This is a test with RCMP and GRC mentioned at 3:30 a.m. and 2:15 p.m.
-<p>The <strong>RCMP</strong> reported on <em>GRC</em> activities in ON and QC.</p>
-<h2 style="color: blue;">Meeting scheduled for 10 a.m. in BC</h2>
-<p style="color: red; font-weight: bold;">Report from AB at 4:30 p.m.</p>
-<ul>
-  <li>First item with RCMP at 9:15 a.m. in NS</li>
-  <li>Second item with GRC at 1:45 p.m. in NB</li>
-  <li>Document 123 from SK office</li>
-  <li>File 456 from MB department</li>
-</ul>
-<a href="https://example.com">Safe link</a>
-<script>alert('malicious');</script>
-<abbr>RCMP</abbr> is already wrapped.
-<blockquote>Quote with <span style="background-color: yellow;">highlighted text</span> from NT at 11:30 a.m.</blockquote>
-Some more RCMP text here from YT and NU offices.
-French text: Rapport du GRC de QC (Québec) à 14 h 30.
-        </textarea>
+          <textarea id="htmlInput"></textarea>
         </div>
         
-        <button onclick="processHTML()">🔄 Convert & Process Content</button>
-        <button onclick="clearAll()">🗑️ Clear All</button>
+        <button onclick="processHTML()">Convert & Process Content</button>
+        <button onclick="clearAll()">Clear All</button>
         
         <div class="label">Sanitized Output:</div>
         <div id="output" class="output"></div>
