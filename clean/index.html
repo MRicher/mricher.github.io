@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HTML Sanitizer with Abbreviation Wrapper</title>
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -54,28 +54,91 @@
             margin-bottom: 5px;
             color: #333;
         }
+        .file-upload {
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 2px dashed #007bff;
+            border-radius: 10px;
+            background: #f8f9fa;
+            text-align: center;
+        }
+        .file-upload:hover {
+            background: #e9ecef;
+        }
+        .file-input {
+            margin: 10px 0;
+        }
+        .file-info {
+            margin: 10px 0;
+            padding: 10px;
+            background: #e3f2fd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
         abbr {
             text-decoration: underline;
             text-decoration-style: dotted;
+        }
+        .processing {
+            color: #007bff;
+            font-style: italic;
+        }
+        .error {
+            color: #dc3545;
+            background: #f8d7da;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>HTML Sanitizer with CBC/BCB Abbreviation Wrapper</h1>
-        <p>Enter HTML content below. The tool will sanitize dangerous elements and automatically wrap CBC and BCB with abbreviation tags.</p>
+        <h1>Document to HTML Converter with RCMP/GRC Abbreviation Wrapper</h1>
+        <p>Paste content from Word (DOCX, DOC), PDF, ODT, RTF, and TXT documents directly into the text area below. The tool will automatically convert and clean the content to HTML, preserve safe styling, sanitize dangerous elements, and automatically wrap RCMP and GRC with abbreviation tags.</p>
         
-        <div class="label">Input HTML:</div>
-        <textarea id="htmlInput" placeholder="Enter your HTML content here...">
-This is a test with CBC and BCB mentioned.
-The CBC reported on BCB activities.
+        <div class="paste-info">
+            <strong>📋 How to use:</strong>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+                <li><strong>Word Documents:</strong> Open your DOCX/DOC file, select all (Ctrl+A), copy (Ctrl+C), then paste here</li>
+                <li><strong>PDF Files:</strong> Open PDF, select and copy text, then paste here</li>
+                <li><strong>Other Documents:</strong> Copy content from ODT, RTF, or TXT files and paste here</li>
+                <li><strong>Web Content:</strong> Copy HTML content from web pages and paste here</li>
+            </ul>
+            <div class="supported-formats">
+                ✅ Supports pasted content from: Word (DOCX, DOC), PDF, ODT, RTF, TXT, and HTML sources
+            </div>
+        </div>
+        
+        <div class="label">📝 Paste Content Here:</div>
+        <div class="paste-area">
+        <textarea id="htmlInput" placeholder="Paste your content here from Word, PDF, or any document... 
+
+Try pasting:
+- Content copied from a Word document (preserves formatting)
+- Text selected and copied from a PDF
+- Content from web pages (HTML)
+- Text from any other document type
+
+The tool will automatically detect and convert your pasted content!">
+This is a test with RCMP and GRC mentioned.
+<p>The <strong>RCMP</strong> reported on <em>GRC</em> activities.</p>
+<h2 style="color: blue;">Important Header</h2>
+<p style="color: red; font-weight: bold;">Styled paragraph from Word</p>
+<ul>
+  <li>First item with RCMP</li>
+  <li>Second item with GRC</li>
+</ul>
+<a href="https://example.com">Safe link</a>
 <script>alert('malicious');</script>
-<abbr title="Canadian Broadcasting Corporation">CBC</abbr> is already wrapped.
-Some more CBC text here.
+<abbr>RCMP</abbr> is already wrapped.
+<blockquote>Quote with <span style="background-color: yellow;">highlighted text</span></blockquote>
+Some more RCMP text here.
         </textarea>
+        </div>
         
-        <button onclick="processHTML()">Sanitize & Process</button>
-        <button onclick="clearAll()">Clear</button>
+        <button onclick="processHTML()">🔄 Convert & Process Content</button>
+        <button onclick="clearAll()">🗑️ Clear All</button>
         
         <div class="label">Sanitized Output:</div>
         <div id="output" class="output"></div>
@@ -85,47 +148,286 @@ Some more CBC text here.
     </div>
 
     <script>
-        // HTML sanitization function
+        // Enhanced paste event handler to detect and process different content types
+        document.getElementById('htmlInput').addEventListener('paste', function(e) {
+            // Small delay to allow paste to complete, then process
+            setTimeout(function() {
+                autoDetectAndProcess();
+            }, 100);
+        });
+        
+        // Auto-detect content type and enhance if needed
+        function autoDetectAndProcess() {
+            const textarea = document.getElementById('htmlInput');
+            let content = textarea.value;
+            
+            // Skip if content is empty or very short
+            if (!content || content.trim().length < 10) {
+                return;
+            }
+            
+            // Detect and enhance different content types
+            if (isProbablyPlainText(content)) {
+                content = enhancePlainText(content);
+                textarea.value = content;
+            } else if (isProbablyWordContent(content)) {
+                content = enhanceWordContent(content);
+                textarea.value = content;
+            } else if (isProbablyPdfContent(content)) {
+                content = enhancePdfContent(content);
+                textarea.value = content;
+            }
+            
+            // Auto-process after a short delay if content was enhanced
+            setTimeout(function() {
+                if (textarea.value !== content) {
+                    processHTML();
+                }
+            }, 500);
+        }
+        
+        // Detect if content is likely plain text
+        function isProbablyPlainText(content) {
+            // Check if content has no HTML tags and has line breaks
+            const hasNoHtmlTags = !/<[^>]+>/g.test(content);
+            const hasLineBreaks = content.includes('\n');
+            const hasMultipleLines = content.split('\n').length > 2;
+            
+            return hasNoHtmlTags && (hasLineBreaks || hasMultipleLines);
+        }
+        
+        // Detect if content is likely from Word (has specific patterns)
+        function isProbablyWordContent(content) {
+            // Look for Word-specific patterns
+            const wordPatterns = [
+                /mso-/i,  // Microsoft Office styles
+                /class="?Mso/i,  // Word CSS classes
+                /style="[^"]*font-family:[^"]*"/i,  // Inline font styles
+                /<p class="?Mso/i,  // Word paragraph classes
+                /<!--\[if /i,  // Conditional comments
+                /xmlns:w=/i,  // Word XML namespace
+                /<w:/i  // Word XML tags
+            ];
+            
+            return wordPatterns.some(pattern => pattern.test(content));
+        }
+        
+        // Detect if content is likely from PDF
+        function isProbablyPdfContent(content) {
+            // PDF content often has specific characteristics
+            const pdfPatterns = [
+                /^[A-Z\s]+$/m,  // Lines with all caps (common in PDFs)
+                /\s{3,}/g,  // Multiple spaces (PDF formatting artifacts)
+                /\n\s*\n\s*\n/g,  // Multiple blank lines
+                /^\d+\s*$/m,  // Standalone numbers (page numbers)
+                /\s+\d+\s*$/m  // Trailing page numbers
+            ];
+            
+            const hasNoHtmlTags = !/<[^>]+>/g.test(content);
+            const hasMultipleLines = content.split('\n').length > 5;
+            const hasPdfPatterns = pdfPatterns.some(pattern => pattern.test(content));
+            
+            return hasNoHtmlTags && hasMultipleLines && hasPdfPatterns;
+        }
+        
+        // Enhance plain text content
+        function enhancePlainText(content) {
+            return content
+                // Convert double line breaks to paragraph breaks
+                .split('\n\n')
+                .filter(para => para.trim())
+                .map(para => {
+                    para = para.trim();
+                    // Check if it looks like a heading (short line, often caps or title case)
+                    if (para.length < 100 && /^[A-Z]/.test(para) && !para.includes('.') && !para.includes(',')) {
+                        // Determine heading level based on content
+                        if (para.length < 30 && para.toUpperCase() === para) {
+                            return `<h2>${para}</h2>`;
+                        } else if (para.length < 50) {
+                            return `<h3>${para}</h3>`;
+                        }
+                    }
+                    // Convert single line breaks to <br> tags within paragraphs
+                    const formattedPara = para.replace(/\n/g, '<br>');
+                    return `<p>${formattedPara}</p>`;
+                })
+                .join('\n');
+        }
+        
+        // Enhance Word content (already has some HTML but may need cleaning)
+        function enhanceWordContent(content) {
+            // Clean up common Word artifacts
+            return content
+                // Remove Word-specific conditional comments
+                .replace(/<!--\[if [^>]+\]>[\s\S]*?<!\[endif\]-->/gi, '')
+                // Clean up excessive Word styling
+                .replace(/class="?Mso[^"]*"?/gi, '')
+                // Remove empty paragraphs with only non-breaking spaces
+                .replace(/<p[^>]*>(?:&nbsp;|\s)*<\/p>/gi, '')
+                // Clean up font-family declarations (keep basic ones)
+                .replace(/font-family:[^;]*;/gi, (match) => {
+                    if (match.includes('Arial') || match.includes('Times') || match.includes('Helvetica')) {
+                        return match;
+                    }
+                    return '';
+                })
+                // Remove Word XML namespaces
+                .replace(/xmlns:\w+="[^"]*"/gi, '')
+                // Remove Word-specific tags
+                .replace(/<\/?w:[^>]*>/gi, '')
+                // Clean up extra whitespace
+                .replace(/\s+/g, ' ');
+        }
+        
+        // Enhance PDF content
+        function enhancePdfContent(content) {
+            return content
+                // Remove excessive whitespace
+                .replace(/\s{3,}/g, ' ')
+                // Remove standalone page numbers
+                .replace(/^\s*\d+\s*$/gm, '')
+                // Convert multiple line breaks to paragraph breaks
+                .split(/\n\s*\n\s*\n/)
+                .filter(section => section.trim())
+                .map(section => {
+                    // Split section into potential paragraphs
+                    const paragraphs = section.split(/\n\s*\n/).filter(p => p.trim());
+                    return paragraphs.map(para => {
+                        para = para.trim().replace(/\n/g, ' ');
+                        // Check if it looks like a heading
+                        if (para.length < 100 && /^[A-Z]/.test(para) && !para.includes('.') && para.split(' ').length < 10) {
+                            return `<h3>${para}</h3>`;
+                        }
+                        return `<p>${para}</p>`;
+                    }).join('\n');
+                })
+                .join('\n');
+        }
+        // HTML sanitization function - preserves structural elements and safe styling
         function sanitizeHTML(html) {
             // Create a temporary div to parse HTML
             const temp = document.createElement('div');
             temp.innerHTML = html;
             
-            // Remove dangerous elements
-            const dangerousElements = temp.querySelectorAll('script, iframe, object, embed, form, input, button, link[rel="stylesheet"], style');
+            // Define allowed structural elements (these will be preserved)
+            const allowedElements = [
+                'p', 'div', 'span', 'br', 'hr',
+                'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 
+                'strong', 'b', 'em', 'i', 'u', 'strike', 'del', 'ins', 'sub', 'sup',
+                'ul', 'ol', 'li', 'dl', 'dt', 'dd',
+                'table', 'thead', 'tbody', 'tfoot', 'tr', 'td', 'th', 'caption',
+                'a', 'abbr', 'acronym', 'address', 'cite', 'code', 'kbd', 'pre', 'samp', 'var',
+                'blockquote', 'q', 'small', 'big', 'tt',
+                'img', 'figure', 'figcaption'
+            ];
+            
+            // Remove dangerous elements (everything not in allowed list that could be dangerous)
+            const dangerousElements = temp.querySelectorAll('script, iframe, object, embed, form, input, button, select, textarea, link[rel="stylesheet"], style, meta, base, frame, frameset, noframes, applet, area, map, noscript, canvas, audio, video, source, track');
             dangerousElements.forEach(el => el.remove());
             
-            // Remove dangerous attributes
-            const allElements = temp.querySelectorAll('*');
+            // Remove elements that are not in the allowed list (but preserve their content)
+            const allElements = Array.from(temp.querySelectorAll('*'));
             allElements.forEach(el => {
-                const dangerousAttrs = ['onclick', 'onload', 'onerror', 'onmouseover', 'onfocus', 'onblur', 'onchange', 'onsubmit'];
+                const tagName = el.tagName.toLowerCase();
+                
+                // If element is not allowed and not already removed, unwrap it (keep content, remove tag)
+                if (!allowedElements.includes(tagName) && el.parentNode) {
+                    // Move all child nodes to the parent before removing the element
+                    while (el.firstChild) {
+                        el.parentNode.insertBefore(el.firstChild, el);
+                    }
+                    el.parentNode.removeChild(el);
+                }
+            });
+            
+            // Process remaining allowed elements
+            const remainingElements = temp.querySelectorAll('*');
+            remainingElements.forEach(el => {
+                // Remove dangerous event attributes
+                const dangerousAttrs = [
+                    'onclick', 'onload', 'onerror', 'onmouseover', 'onfocus', 'onblur', 
+                    'onchange', 'onsubmit', 'onmouseout', 'onkeydown', 'onkeyup', 'onkeypress',
+                    'onmousedown', 'onmouseup', 'onmousemove', 'onmouseenter', 'onmouseleave',
+                    'ondblclick', 'oncontextmenu', 'onwheel', 'ondrag', 'ondrop', 'onscroll',
+                    'onresize', 'onselect', 'onunload', 'onbeforeunload'
+                ];
                 dangerousAttrs.forEach(attr => {
                     if (el.hasAttribute(attr)) {
                         el.removeAttribute(attr);
                     }
                 });
                 
-                // Sanitize href attributes
+                // Sanitize href attributes (keep safe links)
                 if (el.hasAttribute('href')) {
                     const href = el.getAttribute('href');
-                    if (href.toLowerCase().startsWith('javascript:') || href.toLowerCase().startsWith('data:')) {
+                    if (href.toLowerCase().startsWith('javascript:') || 
+                        href.toLowerCase().startsWith('data:') || 
+                        href.toLowerCase().startsWith('vbscript:')) {
                         el.removeAttribute('href');
                     }
                 }
                 
-                // Sanitize src attributes
+                // Sanitize src attributes (keep safe images)
                 if (el.hasAttribute('src')) {
                     const src = el.getAttribute('src');
-                    if (src.toLowerCase().startsWith('javascript:') || src.toLowerCase().startsWith('data:')) {
+                    if (src.toLowerCase().startsWith('javascript:') || 
+                        src.toLowerCase().startsWith('vbscript:')) {
                         el.removeAttribute('src');
                     }
+                    // Allow data: URLs for images (common in Word documents)
+                    // but could be restricted if needed
                 }
+                
+                // Clean up style attributes while preserving safe styling
+                if (el.hasAttribute('style')) {
+                    const style = el.getAttribute('style');
+                    // Remove potentially dangerous CSS properties
+                    const cleanStyle = style
+                        .replace(/expression\s*\(/gi, '') // Remove CSS expressions
+                        .replace(/javascript:/gi, '') // Remove javascript URLs
+                        .replace(/vbscript:/gi, '') // Remove vbscript URLs
+                        .replace(/@import/gi, '') // Remove @import
+                        .replace(/behavior\s*:/gi, '') // Remove IE behaviors
+                        .replace(/binding\s*:/gi, ''); // Remove XML binding
+                    el.setAttribute('style', cleanStyle);
+                }
+                
+                // Preserve class attributes (Word documents often use these)
+                if (el.hasAttribute('class')) {
+                    const classNames = el.getAttribute('class');
+                    // Remove quotes but keep the classes
+                    const cleanClasses = classNames.replace(/['"]/g, '').trim();
+                    if (cleanClasses) {
+                        el.setAttribute('class', cleanClasses);
+                    } else {
+                        el.removeAttribute('class');
+                    }
+                }
+                
+                // Clean up other common Word document attributes
+                const wordAttrs = ['lang', 'xml:lang', 'dir'];
+                wordAttrs.forEach(attr => {
+                    if (el.hasAttribute(attr)) {
+                        // Keep these attributes as they're generally safe
+                        const value = el.getAttribute(attr);
+                        if (!value || value.trim() === '') {
+                            el.removeAttribute(attr);
+                        }
+                    }
+                });
+                
+                // Remove empty attributes
+                Array.from(el.attributes).forEach(attr => {
+                    if (attr.value.trim() === '') {
+                        el.removeAttribute(attr.name);
+                    }
+                });
             });
             
             return temp.innerHTML;
         }
         
-        // Function to wrap CBC and BCB with abbr tags
+        // Function to wrap RCMP and GRC with abbr tags
         function wrapAbbreviations(html) {
             // Create a temporary div to work with the DOM
             const temp = document.createElement('div');
@@ -136,6 +438,8 @@ Some more CBC text here.
                 if (node.nodeType === Node.TEXT_NODE) {
                     let text = node.textContent;
                     
+                    // Replace RCMP and GRC that are not already inside abbr tags
+                    // Use word boundaries to match whole words only
                     text = text.replace(/\b(RCMP|GRC)\b/g, (match) => {
                         return `<abbr>${match}</abbr>`;
                     });
@@ -165,6 +469,7 @@ Some more CBC text here.
             
             return temp.innerHTML;
         }
+
         
         // Main processing function
         function processHTML() {
@@ -179,10 +484,10 @@ Some more CBC text here.
             }
             
             try {
-                // First sanitize the HTML
+                // First sanitize the HTML (preserving safe styling)
                 let sanitized = sanitizeHTML(input);
                 
-                // Then wrap CBC and BCB with abbreviation tags
+                // Then wrap RCMP and GRC with abbreviation tags
                 let processed = wrapAbbreviations(sanitized);
                 
                 // Display the results
@@ -200,6 +505,9 @@ Some more CBC text here.
             document.getElementById('htmlInput').value = '';
             document.getElementById('output').innerHTML = '';
             document.getElementById('rawOutput').innerHTML = '';
+            document.getElementById('fileInput').value = '';
+            document.getElementById('fileInfo').style.display = 'none';
+            document.getElementById('processFileBtn').style.display = 'none';
         }
         
         // Process the default content on page load
