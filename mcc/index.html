@@ -1096,6 +1096,18 @@
                 
                 this.showAlert('Maximum number of updates (6) reached for this record.', 'error');
             }
+                deleteUpdate(recordIndex, updateNumber) {
+                if (confirm(`Are you sure you want to delete update ${updateNumber}? This action cannot be undone.`)) {
+                    const record = this.data.data[recordIndex];
+                    if (record) {
+                        record[`update-${updateNumber}-date`] = '';
+                        record[`english-update-${updateNumber}`] = '';
+                        record[`french-update-${updateNumber}`] = '';
+                        this.render();
+                        this.showAlert(`Update ${updateNumber} deleted from record ${recordIndex + 1}!`);
+                    }
+                }
+            }
         }
 
         // Initialize the editor
