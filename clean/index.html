@@ -105,6 +105,8 @@
                 <li><strong>Other Documents:</strong> Copy content from ODT, RTF, or TXT files and paste here</li>
                 <li><strong>Web Content:</strong> Copy HTML content from web pages and paste here</li>
                 <li><strong>Auto-linking:</strong> Email addresses and URLs will automatically become clickable links</li>
+                <li><strong>Headings:</strong> Preserves heading structure (converts H1 to H2, maintains hierarchy)</li>
+                <li><strong>Lists:</strong> Maintains ordered and unordered list formatting</li>
             </ul>
         </div>
         
@@ -113,14 +115,14 @@
         <textarea id="htmlInput" placeholder="Paste your content here from Word, PDF, or any document... 
 
 Try pasting:
-- Content copied from a Word document (preserves formatting)
+- Content copied from a Word document (preserves formatting, headings, and lists)
 - Text selected and copied from a PDF
 - Content from web pages (HTML)
 - Text from any other document type
 - Email addresses (will be converted to lowercase links)
 - URLs (will become clickable links)
 
-The tool will automatically detect and convert your pasted content!">
+The tool will automatically detect and convert your pasted content while preserving headings and lists!">
         </textarea>
         </div>
         
@@ -167,9 +169,7 @@ The tool will automatically detect and convert your pasted content!">
             
             // Auto-process after a short delay if content was enhanced
             setTimeout(function() {
-                if (textarea.value !== content) {
-                    processHTML();
-                }
+                processHTML();
             }, 500);
         }
         
@@ -193,7 +193,9 @@ The tool will automatically detect and convert your pasted content!">
                 /<p class="?Mso/i,  // Word paragraph classes
                 /<!--\[if /i,  // Conditional comments
                 /xmlns:w=/i,  // Word XML namespace
-                /<w:/i  // Word XML tags
+                /<w:/i,  // Word XML tags
+                /<h[1-6]/i,  // HTML headings (common in Word)
+                /<ul|<ol|<li/i  // List elements (common in Word)
             ];
             
             return wordPatterns.some(pattern => pattern.test(content));
@@ -217,78 +219,237 @@ The tool will automatically detect and convert your pasted content!">
             return hasNoHtmlTags && hasMultipleLines && hasPdfPatterns;
         }
         
-        // Enhance plain text content
-        function enhancePlainText(content) {
-            return content
-                // Convert double line breaks to paragraph breaks
-                .split('\n\n')
-                .filter(para => para.trim())
-                .map(para => {
-                    para = para.trim();
-                    // Check if it looks like a heading (short line, often caps or title case)
-                    if (para.length < 100 && /^[A-Z]/.test(para) && !para.includes('.') && !para.includes(',')) {
-                        // Determine heading level based on content
-                        if (para.length < 30 && para.toUpperCase() === para) {
-                            return `<h2>${para}</h2>`;
-                        } else if (para.length < 50) {
-                            return `<h3>${para}</h3>`;
+        // Enhanced function to detect list items in plain text
+        function detectListItems(text) {
+            const lines = text.split('\n');
+            const listPatterns = [
+                /^\s*[-•*]\s+/,  // Bullet points
+                /^\s*\d+[.)]\s+/,  // Numbered lists
+                /^\s*[a-zA-Z][.)]\s+/,  // Lettered lists
+                /^\s*[ivxlcdm]+[.)]\s+/i,  // Roman numerals
+                /^\s*§\s*/,  // Section symbols
+                /^\s*○\s+/,  // Circles
+                /^\s*▪\s+/   // Squares
+            ];
+            
+            return lines.map(line => {
+                const trimmed = line.trim();
+                if (!trimmed) return { type: 'empty', content: '' };
+                
+                for (let pattern of listPatterns) {
+                    if (pattern.test(line)) {
+                        const content = line.replace(pattern, '').trim();
+                        if (pattern.source.includes('\\d+')) {
+                            return { type: 'ordered', content: content };
+                        } else {
+                            return { type: 'unordered', content: content };
                         }
                     }
-                    // Convert single line breaks to <br> tags within paragraphs
-                    const formattedPara = para.replace(/\n/g, '<br>');
-                    return `<p>${formattedPara}</p>`;
-                })
-                .join('\n');
+                }
+                
+                return { type: 'text', content: trimmed };
+            });
         }
         
-        // Enhance Word content (already has some HTML but may need cleaning)
+        // Enhanced plain text processing with better heading and list detection
+        function enhancePlainText(content) {
+            const lines = content.split('\n');
+            const processedLines = [];
+            let inList = false;
+            let listType = null;
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                const trimmed = line.trim();
+                
+                if (!trimmed) {
+                    // Empty line - close any open list
+                    if (inList) {
+                        processedLines.push(listType === 'ordered' ? '</ol>' : '</ul>');
+                        inList = false;
+                        listType = null;
+                    }
+                    processedLines.push('');
+                    continue;
+                }
+                
+                // Check if it's a list item
+                const listPatterns = [
+                    { regex: /^\s*[-•*▪○]\s+/, type: 'unordered' },
+                    { regex: /^\s*\d+[.)]\s+/, type: 'ordered' },
+                    { regex: /^\s*[a-zA-Z][.)]\s+/, type: 'ordered' },
+                    { regex: /^\s*[ivxlcdm]+[.)]\s+/i, type: 'ordered' }
+                ];
+                
+                let isListItem = false;
+                let currentListType = null;
+                let listContent = '';
+                
+                for (let pattern of listPatterns) {
+                    if (pattern.regex.test(line)) {
+                        isListItem = true;
+                        currentListType = pattern.type;
+                        listContent = line.replace(pattern.regex, '').trim();
+                        break;
+                    }
+                }
+                
+                if (isListItem) {
+                    // Handle list item
+                    if (!inList || listType !== currentListType) {
+                        // Close previous list if different type
+                        if (inList) {
+                            processedLines.push(listType === 'ordered' ? '</ol>' : '</ul>');
+                        }
+                        // Start new list
+                        processedLines.push(currentListType === 'ordered' ? '<ol>' : '<ul>');
+                        inList = true;
+                        listType = currentListType;
+                    }
+                    processedLines.push(`<li>${listContent}</li>`);
+                } else {
+                    // Not a list item - close any open list
+                    if (inList) {
+                        processedLines.push(listType === 'ordered' ? '</ol>' : '</ul>');
+                        inList = false;
+                        listType = null;
+                    }
+                    
+                    // Check if it's a heading
+                    const nextLine = i + 1 < lines.length ? lines[i + 1].trim() : '';
+                    const isHeading = (
+                        trimmed.length < 100 && 
+                        !trimmed.includes('.') && 
+                        !trimmed.includes(',') &&
+                        (trimmed.toUpperCase() === trimmed || // All caps
+                         /^[A-Z]/.test(trimmed) || // Starts with capital
+                         nextLine === '' || // Followed by blank line
+                         /^[=\-_]{3,}$/.test(nextLine)) // Underlined
+                    );
+                    
+                    if (isHeading) {
+                        // Determine heading level
+                        if (trimmed.length < 30 && trimmed.toUpperCase() === trimmed) {
+                            processedLines.push(`<h2>${trimmed}</h2>`);
+                        } else if (trimmed.length < 50) {
+                            processedLines.push(`<h3>${trimmed}</h3>`);
+                        } else {
+                            processedLines.push(`<h4>${trimmed}</h4>`);
+                        }
+                        
+                        // Skip underline if present
+                        if (i + 1 < lines.length && /^[=\-_]{3,}$/.test(lines[i + 1].trim())) {
+                            i++; // Skip the underline
+                        }
+                    } else {
+                        // Regular paragraph
+                        processedLines.push(`<p>${trimmed}</p>`);
+                    }
+                }
+            }
+            
+            // Close any remaining open list
+            if (inList) {
+                processedLines.push(listType === 'ordered' ? '</ol>' : '</ul>');
+            }
+            
+            return processedLines.filter(line => line !== '').join('\n');
+        }
+        
+        // Enhanced Word content processing to preserve headings and lists
         function enhanceWordContent(content) {
-            // Clean up common Word artifacts
-            return content
+            // Clean up common Word artifacts but preserve structure
+            let cleaned = content
                 // Remove Word-specific conditional comments
                 .replace(/<!--\[if [^>]+\]>[\s\S]*?<!\[endif\]-->/gi, '')
-                // Clean up excessive Word styling
+                // Clean up excessive Word styling but keep some structure
                 .replace(/class="?Mso[^"]*"?/gi, '')
                 // Remove empty paragraphs with only non-breaking spaces
                 .replace(/<p[^>]*>(?:&nbsp;|\s)*<\/p>/gi, '')
-                // Clean up font-family declarations (keep basic ones)
-                .replace(/font-family:[^;]*;/gi, (match) => {
-                    if (match.includes('Arial') || match.includes('Times') || match.includes('Helvetica')) {
-                        return match;
-                    }
-                    return '';
-                })
                 // Remove Word XML namespaces
                 .replace(/xmlns:\w+="[^"]*"/gi, '')
                 // Remove Word-specific tags
                 .replace(/<\/?w:[^>]*>/gi, '')
                 // Clean up extra whitespace
                 .replace(/\s+/g, ' ');
+            
+            // Convert H1 to H2 and maintain heading hierarchy
+            cleaned = cleaned.replace(/<h1([^>]*)>/gi, '<h2$1>');
+            cleaned = cleaned.replace(/<\/h1>/gi, '</h2>');
+            
+            return cleaned;
         }
         
-        // Enhance PDF content
+        // Enhanced PDF content processing with better heading detection
         function enhancePdfContent(content) {
-            return content
-                // Remove excessive whitespace
-                .replace(/\s{3,}/g, ' ')
-                // Remove standalone page numbers
-                .replace(/^\s*\d+\s*$/gm, '')
-                // Convert multiple line breaks to paragraph breaks
-                .split(/\n\s*\n\s*\n/)
-                .filter(section => section.trim())
-                .map(section => {
-                    // Split section into potential paragraphs
-                    const paragraphs = section.split(/\n\s*\n/).filter(p => p.trim());
-                    return paragraphs.map(para => {
-                        para = para.trim().replace(/\n/g, ' ');
-                        // Check if it looks like a heading
-                        if (para.length < 100 && /^[A-Z]/.test(para) && !para.includes('.') && para.split(' ').length < 10) {
-                            return `<h3>${para}</h3>`;
+            const lines = content.split('\n').filter(line => line.trim());
+            const processedLines = [];
+            
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i].trim();
+                
+                // Remove page numbers and excessive whitespace
+                line = line.replace(/^\s*\d+\s*$/, '').replace(/\s{3,}/g, ' ');
+                
+                if (!line) continue;
+                
+                // Check if it's likely a heading
+                const nextLine = i + 1 < lines.length ? lines[i + 1].trim() : '';
+                const isHeading = (
+                    line.length < 100 && 
+                    /^[A-Z]/.test(line) && 
+                    !line.includes('.') && 
+                    line.split(' ').length < 10 &&
+                    (line.toUpperCase() === line || // All caps
+                     nextLine === '' || // Followed by blank line
+                     (nextLine && /^[A-Z]/.test(nextLine))) // Next line also starts with caps
+                );
+                
+                if (isHeading) {
+                    // Determine heading level based on characteristics
+                    if (line.length < 30 && line.toUpperCase() === line) {
+                        processedLines.push(`<h2>${line}</h2>`);
+                    } else if (line.length < 50) {
+                        processedLines.push(`<h3>${line}</h3>`);
+                    } else {
+                        processedLines.push(`<h4>${line}</h4>`);
+                    }
+                } else {
+                    // Check if it's a list item
+                    const listPatterns = [
+                        /^\s*[-•*▪○]\s+/,
+                        /^\s*\d+[.)]\s+/,
+                        /^\s*[a-zA-Z][.)]\s+/
+                    ];
+                    
+                    let isListItem = false;
+                    for (let pattern of listPatterns) {
+                        if (pattern.test(line)) {
+                            const content = line.replace(pattern, '').trim();
+                            processedLines.push(`<li>${content}</li>`);
+                            isListItem = true;
+                            break;
                         }
-                        return `<p>${para}</p>`;
-                    }).join('\n');
-                })
-                .join('\n');
+                    }
+                    
+                    if (!isListItem) {
+                        processedLines.push(`<p>${line}</p>`);
+                    }
+                }
+            }
+            
+            // Group consecutive list items
+            let result = processedLines.join('\n');
+            
+            // Wrap consecutive <li> elements in appropriate list tags
+            result = result.replace(/(<li>.*?<\/li>\s*)+/g, function(match) {
+                // Check if the list items are numbered
+                const hasNumbers = /<li>\d+[.)]\s+/.test(match);
+                const listTag = hasNumbers ? 'ol' : 'ul';
+                return `<${listTag}>\n${match}</${listTag}>`;
+            });
+            
+            return result;
         }
 
         // Canadian provinces and territories mapping
@@ -455,7 +616,7 @@ The tool will automatically detect and convert your pasted content!">
             return text;
         }
 
-        // HTML sanitization function - preserves structural elements and safe styling
+        // Enhanced HTML sanitization function - preserves headings and lists
         function sanitizeHTML(html) {
             // Preserve HTML entities before parsing
             const preservedEntities = html.replace(/&#160;/g, '__NBSP_PLACEHOLDER__');
@@ -479,6 +640,18 @@ The tool will automatically detect and convert your pasted content!">
             // Remove dangerous elements (everything not in allowed list that could be dangerous)
             const dangerousElements = temp.querySelectorAll('script, iframe, object, embed, form, input, button, select, textarea, link[rel="stylesheet"], style, meta, base, frame, frameset, noframes, applet, area, map, noscript, canvas, audio, video, source, track');
             dangerousElements.forEach(el => el.remove());
+            
+            // Convert H1 to H2 to maintain heading hierarchy (never use H1)
+            const h1Elements = temp.querySelectorAll('h1');
+            h1Elements.forEach(h1 => {
+                const h2 = document.createElement('h2');
+                h2.innerHTML = h1.innerHTML;
+                // Copy attributes
+                Array.from(h1.attributes).forEach(attr => {
+                    h2.setAttribute(attr.name, attr.value);
+                });
+                h1.parentNode.replaceChild(h2, h1);
+            });
             
             // Remove elements that are not in the allowed list (but preserve their content)
             const allElements = Array.from(temp.querySelectorAll('*'));
@@ -512,168 +685,103 @@ The tool will automatically detect and convert your pasted content!">
                     }
                 });
                 
-                // Sanitize href attributes (keep safe links)
-                if (el.hasAttribute('href')) {
+                // Clean up dangerous href attributes
+                if (el.tagName.toLowerCase() === 'a' && el.hasAttribute('href')) {
                     const href = el.getAttribute('href');
-                    if (href.toLowerCase().startsWith('javascript:') || 
-                        href.toLowerCase().startsWith('data:') || 
-                        href.toLowerCase().startsWith('vbscript:')) {
+                    if (href.startsWith('javascript:') || href.startsWith('data:') || href.startsWith('vbscript:')) {
                         el.removeAttribute('href');
                     }
                 }
                 
-                // Sanitize src attributes (keep safe images)
-                if (el.hasAttribute('src')) {
-                    const src = el.getAttribute('src');
-                    if (src.toLowerCase().startsWith('javascript:') || 
-                        src.toLowerCase().startsWith('vbscript:')) {
-                        el.removeAttribute('src');
-                    }
-                    // Allow data: URLs for images (common in Word documents)
-                    // but could be restricted if needed
-                }
-                
-                // Clean up style attributes while preserving safe styling
+                // Clean up style attributes - only allow safe CSS properties
                 if (el.hasAttribute('style')) {
                     const style = el.getAttribute('style');
-                    // Remove potentially dangerous CSS properties
-                    const cleanStyle = style
-                        .replace(/expression\s*\(/gi, '') // Remove CSS expressions
-                        .replace(/javascript:/gi, '') // Remove javascript URLs
-                        .replace(/vbscript:/gi, '') // Remove vbscript URLs
-                        .replace(/@import/gi, '') // Remove @import
-                        .replace(/behavior\s*:/gi, '') // Remove IE behaviors
-                        .replace(/binding\s*:/gi, ''); // Remove XML binding
-                    el.setAttribute('style', cleanStyle);
-                }
-                
-                // Preserve class attributes (Word documents often use these)
-                if (el.hasAttribute('class')) {
-                    const classNames = el.getAttribute('class');
-                    // Remove quotes but keep the classes
-                    const cleanClasses = classNames.replace(/['"]/g, '').trim();
-                    if (cleanClasses) {
-                        el.setAttribute('class', cleanClasses);
-                    } else {
-                        el.removeAttribute('class');
+                    // Remove dangerous CSS properties
+                    const cleanStyle = style.replace(/(expression|javascript|vbscript|mocha|livescript|behavior|binding|@import|url\()/gi, '');
+                    if (cleanStyle !== style) {
+                        el.setAttribute('style', cleanStyle);
                     }
                 }
-                
-                // Clean up other common Word document attributes
-                const wordAttrs = ['lang', 'xml:lang', 'dir'];
-                wordAttrs.forEach(attr => {
-                    if (el.hasAttribute(attr)) {
-                        // Keep these attributes as they're generally safe
-                        const value = el.getAttribute(attr);
-                        if (!value || value.trim() === '') {
-                            el.removeAttribute(attr);
-                        }
-                    }
-                });
-                
-                // Remove empty attributes
-                Array.from(el.attributes).forEach(attr => {
-                    if (attr.value.trim() === '') {
-                        el.removeAttribute(attr.name);
-                    }
-                });
             });
             
             // Restore preserved entities
-            const result = temp.innerHTML.replace(/__NBSP_PLACEHOLDER__/g, '&#160;');
+            let result = temp.innerHTML.replace(/__NBSP_PLACEHOLDER__/g, '&#160;');
+            
             return result;
         }
-        
-        // Function to wrap RCMP and GRC with abbr tags
-        function wrapAbbreviations(html) {
-            // Create a temporary div to work with the DOM
-            const temp = document.createElement('div');
-            temp.innerHTML = html;
-            
-            // Function to process text nodes
-            function processTextNode(node) {
-                if (node.nodeType === Node.TEXT_NODE) {
-                    let text = node.textContent;
-                    
-                    // Replace RCMP and GRC that are not already inside abbr tags
-                    // Use word boundaries to match whole words only
-                    text = text.replace(/\b(RCMP|GRC)\b/g, (match) => {
-                        return `<abbr>${match}</abbr>`;
-                    });
-                    
-                    if (text !== node.textContent) {
-                        // Create a new element to hold the processed HTML
-                        const wrapper = document.createElement('span');
-                        wrapper.innerHTML = text;
-                        
-                        // Replace the text node with the new content
-                        const parent = node.parentNode;
-                        while (wrapper.firstChild) {
-                            parent.insertBefore(wrapper.firstChild, node);
-                        }
-                        parent.removeChild(node);
-                    }
-                } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName.toLowerCase() !== 'abbr') {
-                    // Recursively process child nodes, but skip if already inside an abbr tag
-                    const children = Array.from(node.childNodes);
-                    children.forEach(child => processTextNode(child));
-                }
-            }
-            
-            // Process all nodes
-            const allNodes = Array.from(temp.childNodes);
-            allNodes.forEach(node => processTextNode(node));
-            
-            return temp.innerHTML;
-        }
 
-        
-        // Main processing function
+        // Main processing function that handles RCMP/GRC abbreviation wrapping
         function processHTML() {
             const input = document.getElementById('htmlInput').value;
-            const output = document.getElementById('output');
-            const rawOutput = document.getElementById('rawOutput');
+            const outputDiv = document.getElementById('output');
+            const rawOutputDiv = document.getElementById('rawOutput');
             
             if (!input.trim()) {
-                output.innerHTML = '<em>No input provided</em>';
-                rawOutput.innerHTML = '<em>No input provided</em>';
+                outputDiv.innerHTML = '<span class="error">Please paste some content to process.</span>';
+                rawOutputDiv.textContent = '';
                 return;
             }
             
             try {
-                // First sanitize the HTML (preserving safe styling)
-                let sanitized = sanitizeHTML(input);
+                // Show processing message
+                outputDiv.innerHTML = '<span class="processing">Processing content...</span>';
+                rawOutputDiv.textContent = '';
                 
-                // Apply Canadian text formatting (times, numbers, provinces)
-                let formatted = applyCanadianFormatting(sanitized);
+                let processedHTML = input;
                 
-                // Convert URLs and emails to links
-                let linked = autoLinkify(formatted);
+                // Step 1: Auto-linkify URLs and emails
+                processedHTML = autoLinkify(processedHTML);
                 
-                // Then wrap RCMP and GRC with abbreviation tags
-                let processed = wrapAbbreviations(linked);
+                // Step 2: Apply Canadian formatting
+                processedHTML = applyCanadianFormatting(processedHTML);
                 
-                // Display the results
-                output.innerHTML = processed;
-                rawOutput.textContent = processed;
+                // Step 3: Wrap RCMP and GRC in abbreviation tags
+                // Handle RCMP (Royal Canadian Mounted Police)
+                processedHTML = processedHTML.replace(/\bRCMP\b/g, '<abbr title="Royal Canadian Mounted Police">RCMP</abbr>');
+                
+                // Handle GRC (Gendarmerie royale du Canada) - French equivalent
+                processedHTML = processedHTML.replace(/\bGRC\b/g, '<abbr title="Gendarmerie royale du Canada">GRC</abbr>');
+                
+                // Step 4: Sanitize the HTML to remove dangerous elements
+                const sanitizedHTML = sanitizeHTML(processedHTML);
+                
+                // Display results
+                outputDiv.innerHTML = sanitizedHTML;
+                rawOutputDiv.textContent = sanitizedHTML;
                 
             } catch (error) {
-                output.innerHTML = '<em style="color: red;">Error processing HTML: ' + error.message + '</em>';
-                rawOutput.innerHTML = '<em style="color: red;">Error processing HTML</em>';
+                outputDiv.innerHTML = `<span class="error">Error processing content: ${error.message}</span>`;
+                rawOutputDiv.textContent = '';
+                console.error('Processing error:', error);
             }
         }
-        
-        // Clear function
+
+        // Clear all content
         function clearAll() {
             document.getElementById('htmlInput').value = '';
             document.getElementById('output').innerHTML = '';
-            document.getElementById('rawOutput').innerHTML = '';
+            document.getElementById('rawOutput').textContent = '';
         }
-        
-        // Process the default content on page load
-        window.onload = function() {
-            // Don't auto-process on load since textarea is empty
-        };
+
+        // Copy processed HTML to clipboard
+        function copyToClipboard() {
+            const rawOutput = document.getElementById('rawOutput').textContent;
+            if (rawOutput) {
+                navigator.clipboard.writeText(rawOutput).then(() => {
+                    alert('HTML copied to clipboard!');
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                    // Fallback for older browsers
+                    const textArea = document.createElement('textarea');
+                    textArea.value = rawOutput;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    alert('HTML copied to clipboard!');
+                });
+            }
+        }
     </script>
 </body>
 </html>
