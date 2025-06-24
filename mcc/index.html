@@ -825,6 +825,49 @@
                             englishSelect.value = this.reversedThemeMapping[value];
                         }
                     }
+                    
+                    // Handle progress linking
+                    else if (field === 'english-progress') {
+                        let frenchProgress = '';
+                        switch (value) {
+                            case 'To be actioned':
+                                frenchProgress = 'À mettre en œuvre';
+                                break;
+                            case 'In progress':
+                                frenchProgress = 'En cours';
+                                break;
+                            case 'Complete':
+                                frenchProgress = 'Terminé';
+                                break;
+                        }
+                        if (frenchProgress) {
+                            this.data.data[index]['french-progress'] = frenchProgress;
+                            const frenchSelect = document.getElementById(`french-progress-${index}`);
+                            if (frenchSelect) {
+                                frenchSelect.value = frenchProgress;
+                            }
+                        }
+                    } else if (field === 'french-progress') {
+                        let englishProgress = '';
+                        switch (value) {
+                            case 'À mettre en œuvre':
+                                englishProgress = 'To be actioned';
+                                break;
+                            case 'En cours':
+                                englishProgress = 'In progress';
+                                break;
+                            case 'Terminé':
+                                englishProgress = 'Complete';
+                                break;
+                        }
+                        if (englishProgress) {
+                            this.data.data[index]['english-progress'] = englishProgress;
+                            const englishSelect = document.getElementById(`english-progress-${index}`);
+                            if (englishSelect) {
+                                englishSelect.value = englishProgress;
+                            }
+                        }
+                    }
                 }
             }
 
