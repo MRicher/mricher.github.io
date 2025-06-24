@@ -1,644 +1,196 @@
 <!DOCTYPE html>
-<html lang="en" class="govuk-template">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <title>RCMP JSON Data Editor</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="theme-color" content="#0b0c0c">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        /* GOV.UK Design System Styles */
-        * {
-            box-sizing: border-box;
-        }
-
-        html {
-            font-family: "GDS Transport", arial, sans-serif;
-            -webkit-text-size-adjust: 100%;
-            -ms-text-size-adjust: 100%;
-            background-color: #ffffff;
-        }
-
+        * { box-sizing: border-box; }
+        
         body {
+            font-family: Arial, sans-serif;
             margin: 0;
-            padding: 0;
-            background-color: #ffffff;
-            color: #0b0c0c;
-            font-family: "GDS Transport", arial, sans-serif;
-            font-weight: 400;
-            font-size: 19px;
-            line-height: 1.25;
+            padding: 20px;
+            background: #f5f5f5;
+            color: #333;
         }
-
-        .govuk-template__body {
-            margin: 0;
-            background-color: #ffffff;
-        }
-
-        .govuk-width-container {
-            max-width: 960px;
+        
+        .container {
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 0 15px;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-
-        /* Header */
-        .govuk-header {
-            background-color: #444;
-            border-bottom: 10px solid #ffdd00;
-        }
-
-        .govuk-header__container {
-            position: relative;
-            padding-top: 10px;
-            padding-bottom: 10px;
+        
+        .header-container {
             display: flex;
             align-items: center;
-        }
-
-        .govuk-header__logo {
-            margin-right: 30px;
-        }
-
-        .govuk-header__link {
-            color: #ffffff;
-            text-decoration: none;
-        }
-
-        .govuk-header__link:hover {
-            text-decoration: underline;
-        }
-
-        .govuk-header__logotype-text {
-            font-size: 30px;
-            font-weight: bold;
-            letter-spacing: -0.02em;
-        }
-
-        .govuk-header__service-name {
-            font-size: 24px;
-            font-weight: bold;
-            color: #ffffff;
-        }
-
-        /* Typography */
-        .govuk-heading-xl {
-            color: #0b0c0c;
-            font-family: "GDS Transport", arial, sans-serif;
-            font-weight: bold;
-            font-size: 48px;
-            line-height: 1.09375;
-            margin: 0 0 30px 0;
-        }
-
-        .govuk-heading-l {
-            color: #0b0c0c;
-            font-family: "GDS Transport", arial, sans-serif;
-            font-weight: bold;
-            font-size: 36px;
-            line-height: 1.11111;
-            margin: 0 0 20px 0;
-        }
-
-        .govuk-heading-m {
-            color: #0b0c0c;
-            font-family: "GDS Transport", arial, sans-serif;
-            font-weight: bold;
-            font-size: 24px;
-            line-height: 1.25;
-            margin: 0 0 15px 0;
-        }
-
-        .govuk-heading-s {
-            color: #0b0c0c;
-            font-family: "GDS Transport", arial, sans-serif;
-            font-weight: bold;
-            font-size: 19px;
-            line-height: 1.31579;
-            margin: 0 0 15px 0;
-        }
-
-        .govuk-body-l {
-            color: #0b0c0c;
-            font-family: "GDS Transport", arial, sans-serif;
-            font-weight: 400;
-            font-size: 24px;
-            line-height: 1.25;
-            margin: 0 0 20px 0;
-        }
-
-        .govuk-body {
-            color: #0b0c0c;
-            font-family: "GDS Transport", arial, sans-serif;
-            font-weight: 400;
-            font-size: 19px;
-            line-height: 1.25;
-            margin: 0 0 15px 0;
-        }
-
-        .govuk-body-s {
-            color: #505a5f;
-            font-family: "GDS Transport", arial, sans-serif;
-            font-weight: 400;
-            font-size: 16px;
-            line-height: 1.25;
-            margin: 0 0 15px 0;
-        }
-
-        /* Layout */
-        .govuk-main-wrapper {
-            padding-top: 20px;
-            padding-bottom: 40px;
-        }
-
-        .govuk-grid-row {
-            margin-right: -15px;
-            margin-left: -15px;
-            display: flex;
-            flex-wrap: wrap;
-        }
-
-        .govuk-grid-column-full,
-        .govuk-grid-column-two-thirds,
-        .govuk-grid-column-one-third {
-            position: relative;
-            width: 100%;
-            padding-right: 15px;
-            padding-left: 15px;
-        }
-
-        .govuk-grid-column-two-thirds {
-            flex: 0 0 66.66667%;
-            max-width: 66.66667%;
-        }
-
-        .govuk-grid-column-one-third {
-            flex: 0 0 33.33333%;
-            max-width: 33.33333%;
-        }
-
-        /* Buttons */
-        .govuk-button {
-            font-family: "GDS Transport", arial, sans-serif;
-            font-weight: 400;
-            font-size: 19px;
-            line-height: 1;
-            box-sizing: border-box;
-            display: inline-block;
-            position: relative;
-            width: 100%;
-            margin-top: 0;
-            margin-right: 0;
-            margin-left: 0;
-            margin-bottom: 22px;
-            padding: 8px 10px 7px;
-            border: 2px solid transparent;
-            border-radius: 0;
-            color: #ffffff;
-            background-color: #00703c;
-            box-shadow: 0 2px 0 #002d18;
-            text-align: center;
-            vertical-align: top;
-            cursor: pointer;
-            text-decoration: none;
-        }
-
-        .govuk-button:hover {
-            background-color: #005a30;
-        }
-
-        .govuk-button--secondary {
-            background-color: #f3f2f1;
-            box-shadow: 0 2px 0 #929191;
-            color: #0b0c0c;
-        }
-
-        .govuk-button--secondary:hover {
-            background-color: #dbdad9;
-        }
-
-        .govuk-button--warning {
-            background-color: #d4351c;
-            box-shadow: 0 2px 0 #55150b;
-        }
-
-        .govuk-button--warning:hover {
-            background-color: #aa2a16;
-        }
-
-        .govuk-button--small {
-            font-size: 16px;
-            padding: 4px 10px;
-        }
-
-        .govuk-button-group {
-            margin-bottom: 20px;
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .govuk-button-group .govuk-button {
-            margin-bottom: 0;
-            width: auto;
-        }
-
-        /* Forms */
-        .govuk-form-group {
-            margin-bottom: 20px;
-        }
-
-        .govuk-label {
-            color: #0b0c0c;
-            font-family: "GDS Transport", arial, sans-serif;
-            font-weight: 400;
-            font-size: 19px;
-            line-height: 1.25;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .govuk-input,
-        .govuk-select,
-        .govuk-textarea {
-            font-family: "GDS Transport", arial, sans-serif;
-            font-weight: 400;
-            font-size: 19px;
-            line-height: 1.25;
-            box-sizing: border-box;
-            width: 100%;
-            height: 40px;
-            margin-top: 0;
-            padding: 5px 4px 4px;
-            border: 2px solid #0b0c0c;
-            border-radius: 0;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-        }
-
-        .govuk-input:focus,
-        .govuk-select:focus,
-        .govuk-textarea:focus {
-            outline: 3px solid #ffdd00;
-            outline-offset: 0;
-            box-shadow: inset 0 0 0 2px;
-        }
-
-        .govuk-textarea {
-            height: auto;
-            resize: vertical;
-        }
-
-        .govuk-input--width-10 {
-            max-width: 180px;
-        }
-
-        .govuk-file-upload {
-            font-family: "GDS Transport", arial, sans-serif;
-            font-weight: 400;
-            font-size: 19px;
-            line-height: 1.25;
-            box-sizing: border-box;
-            width: 100%;
-            height: 40px;
-            margin-top: 0;
-            padding: 5px 4px 4px;
-            border: 2px solid #0b0c0c;
-            border-radius: 0;
-        }
-
-        .govuk-hint {
-            color: #505a5f;
-            font-family: "GDS Transport", arial, sans-serif;
-            font-weight: 400;
-            font-size: 19px;
-            line-height: 1.25;
-            display: block;
-            margin-bottom: 15px;
-        }
-
-        /* Notifications */
-        .govuk-notification-banner {
-            font-family: "GDS Transport", arial, sans-serif;
-            font-weight: 400;
-            font-size: 19px;
-            line-height: 1.25;
             margin-bottom: 30px;
-            border: 5px solid #1d70b8;
-            background-color: #1d70b8;
         }
-
-        .govuk-notification-banner--success {
-            border-color: #00703c;
-            background-color: #00703c;
+        
+        .header-logo {
+            height: 50px;
+            margin-right: 20px;
+            flex-shrink: 0;
         }
-
-        .govuk-notification-banner__header {
-            padding: 2px 15px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .govuk-notification-banner__title {
-            font-size: 19px;
-            font-weight: bold;
-            margin: 0 0 2px 0;
-            padding: 0;
-            color: #ffffff;
-        }
-
-        .govuk-notification-banner__content {
-            color: #ffffff;
-            padding: 15px 15px 15px;
-        }
-
-        .govuk-notification-banner__heading {
-            font-size: 19px;
-            font-weight: bold;
+        
+        h1 { 
+            color: #2c3e50; 
             margin: 0;
-            color: #ffffff;
+            flex-grow: 1;
         }
-
-        /* Inset text */
-        .govuk-inset-text {
-            font-family: "GDS Transport", arial, sans-serif;
-            font-weight: 400;
-            font-size: 19px;
-            line-height: 1.25;
-            color: #0b0c0c;
-            padding: 15px 0 15px 15px;
-            margin: 15px 0 30px 0;
-            clear: both;
-            border-left: 10px solid #b1b4b6;
-        }
-
-        /* Footer */
-        .govuk-footer {
-            padding-top: 25px;
-            padding-bottom: 25px;
-            border-top: 1px solid #b1b4b6;
-            color: #454a4c;
-            background: #f3f2f1;
-        }
-
-        .govuk-footer__meta {
-            display: flex;
-            margin-right: -15px;
-            margin-left: -15px;
-            flex-wrap: wrap;
-            align-items: end;
-            justify-content: center;
-        }
-
-        .govuk-footer__meta-item {
-            padding-right: 15px;
-            padding-left: 15px;
-        }
-
-        .govuk-footer__meta-item--grow {
-            flex: 1;
-        }
-
-        .govuk-footer__inline-list {
-            margin-top: 0;
-            margin-bottom: 15px;
-            padding: 0;
-            list-style: none;
-        }
-
-        .govuk-footer__inline-list-item {
-            display: inline-block;
-            margin-right: 15px;
-            margin-bottom: 5px;
-        }
-
-        .govuk-footer__link {
-            font-family: "GDS Transport", arial, sans-serif;
-            font-weight: 400;
-            font-size: 16px;
-            line-height: 1.25;
-            color: #454a4c;
-            text-decoration: underline;
-        }
-
-        .govuk-footer__link:hover {
-            color: #0b0c0c;
-        }
-
-        .govuk-footer__meta-custom {
-            margin-top: 15px;
-            font-size: 16px;
-        }
-
-        /* Visually hidden */
-        .govuk-visually-hidden {
-            position: absolute !important;
-            width: 1px !important;
-            height: 1px !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            overflow: hidden !important;
-            clip: rect(0 0 0 0) !important;
-            clip-path: inset(50%) !important;
-            border: 0 !important;
-            white-space: nowrap !important;
-        }
-
-        /* Custom components */
-        .record-card {
-            background: #ffffff;
-            border: 2px solid #b1b4b6;
-            margin-bottom: 30px;
-            padding: 0;
-        }
-
-        .record-card:hover {
-            border-color: #1d70b8;
-        }
-
-        .record-header {
-            background: #f3f2f1;
-            padding: 20px;
-            border-bottom: 1px solid #b1b4b6;
-        }
-
-        .record-body {
-            padding: 20px;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 5px 10px;
-            font-size: 14px;
-            font-weight: bold;
-            text-transform: uppercase;
-            border-radius: 0;
-            margin-right: 10px;
-        }
-
-        .status-complete {
-            background: #00703c;
+        h2 { color: #34495e; margin-bottom: 20px; }
+        h3 { color: #34495e; margin-bottom: 15px; }
+        
+        .btn {
+            background: #3498db;
             color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
         }
-
-        .status-pending {
-            background: #ffdd00;
-            color: #0b0c0c;
-        }
-
-        .update-section {
-            border-top: 2px solid #f3f2f1;
-            margin-top: 30px;
-            padding-top: 20px;
-        }
-
-        .update-item {
-            background: #f8f8f8;
-            border: 1px solid #b1b4b6;
-            padding: 20px;
+        
+        .btn:hover { background: #2980b9; }
+        .btn-secondary { background: #95a5a6; }
+        .btn-secondary:hover { background: #7f8c8d; }
+        .btn-danger { background: #e74c3c; }
+        .btn-danger:hover { background: #c0392b; }
+        
+        .form-group {
             margin-bottom: 20px;
         }
-
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        textarea { resize: vertical; }
+        
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
             margin-bottom: 20px;
         }
-
-        .file-upload-area {
-            border: 2px dashed #b1b4b6;
+        
+        .record-card {
+            border: 1px solid #ddd;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .record-header {
+            background: #ecf0f1;
+            padding: 20px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .record-body { padding: 20px; }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        
+        .status-complete { background: #27ae60; color: white; }
+        .status-pending { background: #f39c12; color: white; }
+        
+        .update-section {
+            border-top: 2px solid #ecf0f1;
+            margin-top: 30px;
+            padding-top: 20px;
+        }
+        
+        .update-item {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            position: relative;
+        }
+        
+        .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        
+        .file-upload {
+            border: 2px dashed #ddd;
             padding: 30px;
             text-align: center;
             margin-bottom: 30px;
-            background: #f8f8f8;
+            border-radius: 8px;
+            background: #f8f9fa;
         }
-
-        .file-upload-area:hover {
-            border-color: #1d70b8;
-            background: #f3f2f1;
-        }
-
-        .loading-spinner {
-            display: none;
+        
+        .file-upload:hover { border-color: #3498db; }
+        
+        .no-records {
             text-align: center;
             padding: 40px;
+            color: #666;
         }
-
-        .spinner {
-            border: 4px solid #f3f2f1;
-            border-top: 4px solid #1d70b8;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 2s linear infinite;
-            display: inline-block;
-            margin-bottom: 10px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Responsive */
+        
         @media (max-width: 768px) {
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-            .govuk-grid-column-two-thirds,
-            .govuk-grid-column-one-third {
-                flex: 0 0 100%;
-                max-width: 100%;
-            }
-            .govuk-button-group {
-                flex-direction: column;
-            }
-            .govuk-button-group .govuk-button {
-                width: 100%;
-            }
-        }
-
-        /* Utility classes */
-        .govuk-!-margin-bottom-2 {
-            margin-bottom: 10px !important;
+            .form-row { grid-template-columns: 1fr; }
+            .record-header { flex-direction: column; align-items: flex-start; }
+            .record-header > div { margin-bottom: 10px; }
+            .header-container { flex-direction: column; text-align: center; }
+            .header-logo { margin-right: 0; margin-bottom: 15px; }
         }
     </style>
 </head>
-<body class="govuk-template__body">
-    <script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
-
-    <header class="govuk-header" role="banner" data-module="govuk-header">
-        <div class="govuk-header__container govuk-width-container">
-            <div class="govuk-header__logo">
-                <img src="wolverine.png" alt="" height="50">
-                    <span class="govuk-header__logotype">
-                        <span class="govuk-header__logotype-text">
-                            Web Communications
-                        </span>
-                    </span>
-            </div>
+<body>
+    <div class="container">
+        <div class="header-container">
+            <img src="wolverine.png" class="header-logo" alt="">
+            <h1>RCMP JSON Data Editor</h1>
         </div>
-    </header>
-
-    <div class="govuk-width-container">
-        <main class="govuk-main-wrapper" id="main-content" role="main">
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-two-thirds">
-                    <h1 class="govuk-heading-xl">RCMP MCC JSON data editor</h1>
-                    <p class="govuk-body-l">Manage and edit RCMP MCC records.</p>
-                </div>
-            </div>
-
-            <!-- Alerts container -->
-            <div id="alerts-container"></div>
-
-            <!-- File upload section -->
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-full">
-                    <div class="file-upload-area">
-                        <h2 class="govuk-heading-m">Upload JSON File</h2>
-                        <p class="govuk-body">Select a JSON file to load existing RCMP data records.</p>
-                        <div class="govuk-file-upload">
-                            <input class="govuk-file-upload" id="file-upload" name="file-upload" type="file" accept=".json" aria-describedby="file-upload-hint">
-                        </div>
-                        <div id="file-upload-hint" class="govuk-hint">
-                            Choose a JSON file containing RCMP MCC commitment data
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Action buttons -->
-            <div class="govuk-button-group">
-                <button class="govuk-button" data-module="govuk-button" id="add-record-btn">
-                    Add new record
-                </button>
-                <button class="govuk-button govuk-button--secondary" data-module="govuk-button" id="download-btn">
-                    Download JSON
-                </button>
-            </div>
-
-            <!-- Loading spinner -->
-            <div id="loading-spinner" class="loading-spinner">
-                <div class="spinner"></div>
-                <p class="govuk-body">Processing data...</p>
-            </div>
-
-            <!-- Records container -->
-            <div id="records-container"></div>
-        </main>
+        
+        <div id="alerts-container"></div>
+        
+        <div class="file-upload">
+            <h3>Upload JSON File</h3>
+            <input type="file" id="file-upload" accept=".json">
+            <p>Select a JSON file to load RCMP data records</p>
+        </div>
+        
+        <div>
+            <button class="btn" id="add-record-btn">Add New Record</button>
+            <button class="btn btn-secondary" id="download-btn">Download JSON</button>
+        </div>
+        
+        <div id="records-container"></div>
     </div>
-
-    <footer class="govuk-footer" role="contentinfo">
-        <div class="govuk-width-container">
-            <div class="govuk-footer__meta">
-                <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
-                    <div class="govuk-footer__meta-custom">
-                        Built by Web Communications
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
 
     <script>
         class RCMPDataEditor {
@@ -663,61 +215,25 @@
             }
 
             init() {
-                this.bindEvents();
-                this.render();
-            }
-
-            bindEvents() {
                 document.getElementById('file-upload').addEventListener('change', (e) => this.handleFileUpload(e));
                 document.getElementById('add-record-btn').addEventListener('click', () => this.addNewRecord());
                 document.getElementById('download-btn').addEventListener('click', () => this.downloadData());
+                this.render();
             }
 
             showAlert(message, type = 'success') {
                 const container = document.getElementById('alerts-container');
-                const alertClass = type === 'success' ? 'govuk-notification-banner--success' : '';
-                const titleText = type === 'success' ? 'Success' : 'Important';
-                
                 const alert = document.createElement('div');
-                alert.className = `govuk-notification-banner ${alertClass}`;
-                alert.setAttribute('role', 'alert');
-                alert.setAttribute('aria-labelledby', 'govuk-notification-banner-title');
-                alert.setAttribute('data-module', 'govuk-notification-banner');
-                
-                alert.innerHTML = `
-                    <div class="govuk-notification-banner__header">
-                        <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
-                            ${titleText}
-                        </h2>
-                    </div>
-                    <div class="govuk-notification-banner__content">
-                        <p class="govuk-notification-banner__heading">
-                            ${message}
-                        </p>
-                    </div>
-                `;
-                
+                alert.className = `alert alert-${type}`;
+                alert.textContent = message;
                 container.appendChild(alert);
-                
-                setTimeout(() => {
-                    alert.remove();
-                }, 5000);
-            }
-
-            showLoading() {
-                document.getElementById('loading-spinner').style.display = 'block';
-            }
-
-            hideLoading() {
-                document.getElementById('loading-spinner').style.display = 'none';
+                setTimeout(() => alert.remove(), 5000);
             }
 
             handleFileUpload(event) {
                 const file = event.target.files[0];
                 if (!file) return;
 
-                this.showLoading();
-                
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     try {
@@ -731,22 +247,13 @@
                         }
                     } catch (error) {
                         this.showAlert('Error loading JSON file: ' + error.message, 'error');
-                    } finally {
-                        this.hideLoading();
                     }
                 };
                 reader.readAsText(file);
             }
 
             addNewRecord() {
-                const newRecord = this.createEmptyRecord();
-                this.data.data.push(newRecord);
-                this.render();
-                this.showAlert('New record added successfully!');
-            }
-
-            createEmptyRecord() {
-                return {
+                const newRecord = {
                     "last-updated": new Date().toISOString().split('T')[0],
                     "english-theme": "",
                     "french-theme": "",
@@ -780,10 +287,13 @@
                     "english-update-6": "",
                     "french-update-6": ""
                 };
+                this.data.data.push(newRecord);
+                this.render();
+                this.showAlert('New record added successfully!');
             }
 
             deleteRecord(index) {
-                if (confirm('Are you sure you want to delete this record? This action cannot be undone.')) {
+                if (confirm('Are you sure you want to delete this record?')) {
                     this.data.data.splice(index, 1);
                     this.render();
                     this.showAlert('Record deleted successfully!');
@@ -814,64 +324,42 @@
                     if (field === 'english-theme' && this.themeMapping[value]) {
                         this.data.data[index]['french-theme'] = this.themeMapping[value];
                         const frenchSelect = document.getElementById(`french-theme-${index}`);
-                        if (frenchSelect) {
-                            frenchSelect.value = this.themeMapping[value];
-                        }
+                        if (frenchSelect) frenchSelect.value = this.themeMapping[value];
                     } else if (field === 'french-theme' && this.reversedThemeMapping[value]) {
                         this.data.data[index]['english-theme'] = this.reversedThemeMapping[value];
                         const englishSelect = document.getElementById(`english-theme-${index}`);
-                        if (englishSelect) {
-                            englishSelect.value = this.reversedThemeMapping[value];
-                        }
+                        if (englishSelect) englishSelect.value = this.reversedThemeMapping[value];
                     }
                     
                     // Handle progress linking
                     else if (field === 'english-progress') {
-                        let frenchProgress = '';
-                        switch (value) {
-                            case 'To be actioned':
-                                frenchProgress = 'À mettre en œuvre';
-                                break;
-                            case 'In progress':
-                                frenchProgress = 'En cours';
-                                break;
-                            case 'Complete':
-                                frenchProgress = 'Terminé';
-                                break;
-                        }
-                        if (frenchProgress) {
-                            this.data.data[index]['french-progress'] = frenchProgress;
+                        const progressMap = {
+                            'To be actioned': 'À mettre en œuvre',
+                            'In progress': 'En cours',
+                            'Complete': 'Terminé'
+                        };
+                        if (progressMap[value]) {
+                            this.data.data[index]['french-progress'] = progressMap[value];
                             const frenchSelect = document.getElementById(`french-progress-${index}`);
-                            if (frenchSelect) {
-                                frenchSelect.value = frenchProgress;
-                            }
+                            if (frenchSelect) frenchSelect.value = progressMap[value];
                         }
                     } else if (field === 'french-progress') {
-                        let englishProgress = '';
-                        switch (value) {
-                            case 'À mettre en œuvre':
-                                englishProgress = 'To be actioned';
-                                break;
-                            case 'En cours':
-                                englishProgress = 'In progress';
-                                break;
-                            case 'Terminé':
-                                englishProgress = 'Complete';
-                                break;
-                        }
-                        if (englishProgress) {
-                            this.data.data[index]['english-progress'] = englishProgress;
+                        const progressMap = {
+                            'À mettre en œuvre': 'To be actioned',
+                            'En cours': 'In progress',
+                            'Terminé': 'Complete'
+                        };
+                        if (progressMap[value]) {
+                            this.data.data[index]['english-progress'] = progressMap[value];
                             const englishSelect = document.getElementById(`english-progress-${index}`);
-                            if (englishSelect) {
-                                englishSelect.value = englishProgress;
-                            }
+                            if (englishSelect) englishSelect.value = progressMap[value];
                         }
                     }
                 }
             }
 
             getStatusClass(progress) {
-                return progress.toLowerCase().includes('complete') || progress.toLowerCase().includes('terminé') 
+                return progress && (progress.toLowerCase().includes('complete') || progress.toLowerCase().includes('terminé')) 
                     ? 'status-complete' 
                     : 'status-pending';
             }
@@ -888,9 +376,9 @@
                 
                 if (this.data.data.length === 0) {
                     container.innerHTML = `
-                        <div class="govuk-inset-text">
-                            <h3 class="govuk-heading-m">No records found</h3>
-                            <p class="govuk-body">Upload a JSON file or add a new record to get started.</p>
+                        <div class="no-records">
+                            <h3>No records found</h3>
+                            <p>Upload a JSON file or add a new record to get started.</p>
                         </div>
                     `;
                     return;
@@ -899,53 +387,34 @@
                 container.innerHTML = this.data.data.map((record, index) => `
                     <div class="record-card">
                         <div class="record-header">
-                            <div class="govuk-grid-row">
-                                <div class="govuk-grid-column-two-thirds">
-                                    <h2 class="govuk-heading-l govuk-!-margin-bottom-2">
-                                        Record ${index + 1}${record['english-title'] ? ` - ${record['english-title']}` : ''}
-                                    </h2>
-                                    <div class="govuk-body">
-                                        <span class="status-badge ${this.getStatusClass(record['english-progress'])}">
-                                            ${record['english-progress'] || 'Unknown Status'}
-                                        </span>
-                                        <span class="govuk-body-s">Updated: ${record['last-updated'] || 'Not set'}</span>
-                                    </div>
-                                </div>
-                                <div class="govuk-grid-column-one-third">
-                                    <button class="govuk-button govuk-button--warning govuk-button--small" 
-                                            onclick="editor.deleteRecord(${index})">
-                                        Delete record
-                                    </button>
-                                </div>
+                            <div>
+                                <h2>Record ${index + 1}${record['english-title'] ? ` - ${record['english-title']}` : ''}</h2>
+                                <span class="status-badge ${this.getStatusClass(record['english-progress'])}">
+                                    ${record['english-progress'] || 'Unknown Status'}
+                                </span>
+                                <span>Updated: ${record['last-updated'] || 'Not set'}</span>
                             </div>
+                            <button class="btn btn-danger" onclick="editor.deleteRecord(${index})">Delete</button>
                         </div>
                         
                         <div class="record-body">
-                            <div class="govuk-form-group">
-                                <label class="govuk-label" for="last-updated-${index}">Last updated</label>
-                                <input class="govuk-input govuk-input--width-10" 
-                                       id="last-updated-${index}"
-                                       type="date" 
-                                       value="${record['last-updated'] || ''}"
+                            <div class="form-group">
+                                <label for="last-updated-${index}">Last updated</label>
+                                <input type="date" id="last-updated-${index}" value="${record['last-updated'] || ''}"
                                        onchange="editor.updateRecord(${index}, 'last-updated', this.value)">
                             </div>
 
                             <div class="form-row">
-                                <div class="govuk-form-group">
-                                    <label class="govuk-label" for="english-theme-${index}">English theme</label>
-                                    <select class="govuk-select" 
-                                            id="english-theme-${index}"
-                                            onchange="editor.updateRecord(${index}, 'english-theme', this.value)">
+                                <div class="form-group">
+                                    <label for="english-theme-${index}">English theme</label>
+                                    <select id="english-theme-${index}" onchange="editor.updateRecord(${index}, 'english-theme', this.value)">
                                         <option value="">Select a theme...</option>
                                         ${this.getThemeOptions(record['english-theme'], true)}
                                     </select>
                                 </div>
-                                
-                                <div class="govuk-form-group">
-                                    <label class="govuk-label" for="french-theme-${index}">French theme</label>
-                                    <select class="govuk-select" 
-                                            id="french-theme-${index}"
-                                            onchange="editor.updateRecord(${index}, 'french-theme', this.value)">
+                                <div class="form-group">
+                                    <label for="french-theme-${index}">French theme</label>
+                                    <select id="french-theme-${index}" onchange="editor.updateRecord(${index}, 'french-theme', this.value)">
                                         <option value="">Sélectionner un thème...</option>
                                         ${this.getThemeOptions(record['french-theme'], false)}
                                     </select>
@@ -953,58 +422,39 @@
                             </div>
 
                             <div class="form-row">
-                                <div class="govuk-form-group">
-                                    <label class="govuk-label" for="english-title-${index}">English title</label>
-                                    <textarea class="govuk-textarea" 
-                                              id="english-title-${index}"
-                                              rows="3"
-                                              onchange="editor.updateRecord(${index}, 'english-title', this.value)">${record['english-title'] || ''}</textarea>
+                                <div class="form-group">
+                                    <label for="english-title-${index}">English title</label>
+                                    <textarea id="english-title-${index}" rows="3" onchange="editor.updateRecord(${index}, 'english-title', this.value)">${record['english-title'] || ''}</textarea>
                                 </div>
-                                
-                                <div class="govuk-form-group">
-                                    <label class="govuk-label" for="french-title-${index}">French title</label>
-                                    <textarea class="govuk-textarea" 
-                                              id="french-title-${index}"
-                                              rows="3"
-                                              onchange="editor.updateRecord(${index}, 'french-title', this.value)">${record['french-title'] || ''}</textarea>
+                                <div class="form-group">
+                                    <label for="french-title-${index}">French title</label>
+                                    <textarea id="french-title-${index}" rows="3" onchange="editor.updateRecord(${index}, 'french-title', this.value)">${record['french-title'] || ''}</textarea>
                                 </div>
                             </div>
 
                             <div class="form-row">
-                                <div class="govuk-form-group">
-                                    <label class="govuk-label" for="english-summary-${index}">English summary</label>
-                                    <textarea class="govuk-textarea" 
-                                              id="english-summary-${index}"
-                                              rows="4"
-                                              onchange="editor.updateRecord(${index}, 'english-summary ', this.value)">${record['english-summary '] || ''}</textarea>
+                                <div class="form-group">
+                                    <label for="english-summary-${index}">English summary</label>
+                                    <textarea id="english-summary-${index}" rows="4" onchange="editor.updateRecord(${index}, 'english-summary ', this.value)">${record['english-summary '] || ''}</textarea>
                                 </div>
-                                
-                                <div class="govuk-form-group">
-                                    <label class="govuk-label" for="french-summary-${index}">French summary</label>
-                                    <textarea class="govuk-textarea" 
-                                              id="french-summary-${index}"
-                                              rows="4"
-                                              onchange="editor.updateRecord(${index}, 'french-summary', this.value)">${record['french-summary'] || ''}</textarea>
+                                <div class="form-group">
+                                    <label for="french-summary-${index}">French summary</label>
+                                    <textarea id="french-summary-${index}" rows="4" onchange="editor.updateRecord(${index}, 'french-summary', this.value)">${record['french-summary'] || ''}</textarea>
                                 </div>
                             </div>
 
                             <div class="form-row">
-                                <div class="govuk-form-group">
-                                    <label class="govuk-label" for="english-progress-${index}">English progress</label>
-                                    <select class="govuk-select" 
-                                            id="english-progress-${index}"
-                                            onchange="editor.updateRecord(${index}, 'english-progress', this.value)">
+                                <div class="form-group">
+                                    <label for="english-progress-${index}">English progress</label>
+                                    <select id="english-progress-${index}" onchange="editor.updateRecord(${index}, 'english-progress', this.value)">
                                         <option value="To be actioned" ${record['english-progress'] === 'To be actioned' ? 'selected' : ''}>To be actioned</option>
                                         <option value="In progress" ${record['english-progress'] === 'In progress' ? 'selected' : ''}>In progress</option>
                                         <option value="Complete" ${record['english-progress'] === 'Complete' ? 'selected' : ''}>Complete</option>
                                     </select>
                                 </div>
-                                
-                                <div class="govuk-form-group">
-                                    <label class="govuk-label" for="french-progress-${index}">French progress</label>
-                                    <select class="govuk-select" 
-                                            id="french-progress-${index}"
-                                            onchange="editor.updateRecord(${index}, 'french-progress', this.value)">
+                                <div class="form-group">
+                                    <label for="french-progress-${index}">French progress</label>
+                                    <select id="french-progress-${index}" onchange="editor.updateRecord(${index}, 'french-progress', this.value)">
                                         <option value="À mettre en œuvre" ${record['french-progress'] === 'À mettre en œuvre' ? 'selected' : ''}>À mettre en œuvre</option>
                                         <option value="En cours" ${record['french-progress'] === 'En cours' ? 'selected' : ''}>En cours</option>
                                         <option value="Terminé" ${record['french-progress'] === 'Terminé' ? 'selected' : ''}>Terminé</option>
@@ -1012,57 +462,38 @@
                                 </div>
                             </div>
 
-                            <div class="govuk-form-group">
-                                <label class="govuk-label" for="recommendations-${index}">Recommendations</label>
-                                <input class="govuk-input" 
-                                       id="recommendations-${index}"
-                                       type="text"
-                                       value="${record['recommendations-1'] || ''}"
+                            <div class="form-group">
+                                <label for="recommendations-${index}">Recommendations</label>
+                                <input type="text" id="recommendations-${index}" value="${record['recommendations-1'] || ''}"
                                        onchange="editor.updateRecord(${index}, 'recommendations-1', this.value)">
                             </div>
 
                             <div class="update-section">
-                                <h3 class="govuk-heading-m">Progress updates</h3>
-                                
+                                <h3>Progress Updates</h3>
                                 ${[1, 2, 3, 4, 5, 6].map(updateNum => {
                                     const hasUpdate = record[`update-${updateNum}-date`] || record[`english-update-${updateNum}`] || record[`french-update-${updateNum}`];
                                     return hasUpdate ? `
                                         <div class="update-item">
-                                            <div class="govuk-grid-row">
-                                                <div class="govuk-grid-column-two-thirds">
-                                                    <h4 class="govuk-heading-s">Update ${updateNum}</h4>
-                                                </div>
-                                                <div class="govuk-grid-column-one-third">
-                                                    <button class="govuk-button govuk-button--warning govuk-button--small" 
-                                                            onclick="editor.deleteUpdate(${index}, ${updateNum})">
-                                                        Delete update
-                                                    </button>
-                                                </div>
+                                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                                <h4>Update ${updateNum}</h4>
+                                                <button class="btn btn-danger" onclick="editor.deleteUpdate(${index}, ${updateNum})">Delete</button>
                                             </div>
                                             
-                                            <div class="govuk-form-group">
-                                                <label class="govuk-label" for="update-${updateNum}-date-${index}">Update ${updateNum} date</label>
-                                                <input class="govuk-input govuk-input--width-10" 
-                                                       id="update-${updateNum}-date-${index}"
-                                                       type="date"
-                                                       value="${record[`update-${updateNum}-date`] || ''}"
+                                            <div class="form-group">
+                                                <label for="update-${updateNum}-date-${index}">Date</label>
+                                                <input type="date" id="update-${updateNum}-date-${index}" value="${record[`update-${updateNum}-date`] || ''}"
                                                        onchange="editor.updateRecord(${index}, 'update-${updateNum}-date', this.value)">
                                             </div>
                                             
                                             <div class="form-row">
-                                                <div class="govuk-form-group">
-                                                    <label class="govuk-label" for="english-update-${updateNum}-${index}">English update ${updateNum}</label>
-                                                    <textarea class="govuk-textarea" 
-                                                              id="english-update-${updateNum}-${index}"
-                                                              rows="4"
+                                                <div class="form-group">
+                                                    <label for="english-update-${updateNum}-${index}">English update</label>
+                                                    <textarea id="english-update-${updateNum}-${index}" rows="4" 
                                                               onchange="editor.updateRecord(${index}, 'english-update-${updateNum}', this.value)">${record[`english-update-${updateNum}`] || ''}</textarea>
                                                 </div>
-                                                
-                                                <div class="govuk-form-group">
-                                                    <label class="govuk-label" for="french-update-${updateNum}-${index}">French update ${updateNum}</label>
-                                                    <textarea class="govuk-textarea" 
-                                                              id="french-update-${updateNum}-${index}"
-                                                              rows="4"
+                                                <div class="form-group">
+                                                    <label for="french-update-${updateNum}-${index}">French update</label>
+                                                    <textarea id="french-update-${updateNum}-${index}" rows="4"
                                                               onchange="editor.updateRecord(${index}, 'french-update-${updateNum}', this.value)">${record[`french-update-${updateNum}`] || ''}</textarea>
                                                 </div>
                                             </div>
@@ -1070,9 +501,7 @@
                                     ` : '';
                                 }).join('')}
                                 
-                                <button class="govuk-button govuk-button--secondary" onclick="editor.addUpdate(${index})">
-                                    Add update
-                                </button>
+                                <button class="btn btn-secondary" onclick="editor.addUpdate(${index})">Add Update</button>
                             </div>
                         </div>
                     </div>
@@ -1083,7 +512,6 @@
                 const record = this.data.data[recordIndex];
                 if (!record) return;
 
-                // Find the next available update slot
                 for (let i = 1; i <= 6; i++) {
                     if (!record[`update-${i}-date`] && !record[`english-update-${i}`] && !record[`french-update-${i}`]) {
                         record[`update-${i}-date`] = new Date().toISOString().split('T')[0];
@@ -1094,11 +522,11 @@
                         return;
                     }
                 }
-                
                 this.showAlert('Maximum number of updates (6) reached for this record.', 'error');
             }
-                deleteUpdate(recordIndex, updateNumber) {
-                if (confirm(`Are you sure you want to delete update ${updateNumber}? This action cannot be undone.`)) {
+
+            deleteUpdate(recordIndex, updateNumber) {
+                if (confirm(`Are you sure you want to delete update ${updateNumber}?`)) {
                     const record = this.data.data[recordIndex];
                     if (record) {
                         record[`update-${updateNumber}-date`] = '';
@@ -1111,24 +539,7 @@
             }
         }
 
-        // Initialize the editor
         const editor = new RCMPDataEditor();
-
-        // Add keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey || e.metaKey) {
-                switch (e.key) {
-                    case 'n':
-                        e.preventDefault();
-                        editor.addNewRecord();
-                        break;
-                    case 'd':
-                        e.preventDefault();
-                        editor.downloadData();
-                        break;
-                }
-            }
-        });
     </script>
 </body>
 </html>
