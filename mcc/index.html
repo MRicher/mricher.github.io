@@ -902,7 +902,9 @@
                         <div class="record-header">
                             <div class="govuk-grid-row">
                                 <div class="govuk-grid-column-two-thirds">
-                                    <h2 class="govuk-heading-l govuk-!-margin-bottom-2">Record ${index + 1}</h2>
+                                    <h2 class="govuk-heading-l govuk-!-margin-bottom-2">
+                                        Record ${index + 1}${record['english-title'] ? ` - ${record['english-title']}` : ''}
+                                    </h2>
                                     <div class="govuk-body">
                                         <span class="status-badge ${this.getStatusClass(record['english-progress'])}">
                                             ${record['english-progress'] || 'Unknown Status'}
