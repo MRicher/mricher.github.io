@@ -160,12 +160,27 @@
             color: #666;
         }
         
+        .load-options {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        
+        .divider {
+            padding: 0 10px;
+            color: #666;
+            font-weight: bold;
+        }
+        
         @media (max-width: 768px) {
             .form-row { grid-template-columns: 1fr; }
             .record-header { flex-direction: column; align-items: flex-start; }
             .record-header > div { margin-bottom: 10px; }
             .header-container { flex-direction: column; text-align: center; }
             .header-logo { margin-right: 0; margin-bottom: 15px; }
+            .load-options { flex-direction: column; gap: 10px; }
         }
     </style>
 </head>
@@ -179,9 +194,14 @@
         <div id="alerts-container"></div>
         
         <div class="file-upload">
-            <h3>Upload JSON File</h3>
+            <h3>Load JSON Data</h3>
             <input type="file" id="file-upload" accept=".json">
-            <p>Select a JSON file to load RCMP data records</p>
+            <div class="load-options">
+                <label for="file-upload" class="btn">Choose File</label>
+                <span class="divider">OR</span>
+                <button class="btn" id="load-from-url-btn">Load from Website</button>
+            </div>
+            <p>Select a JSON file or load directly from the RCMP website</p>
         </div>
         
         <div>
@@ -218,6 +238,7 @@
                 document.getElementById('file-upload').addEventListener('change', (e) => this.handleFileUpload(e));
                 document.getElementById('add-record-btn').addEventListener('click', () => this.addNewRecord());
                 document.getElementById('download-btn').addEventListener('click', () => this.downloadData());
+                document.getElementById('load-from-url-btn').addEventListener('click', () => this.loadFromURL());
                 this.render();
             }
 
@@ -228,6 +249,36 @@
                 alert.textContent = message;
                 container.appendChild(alert);
                 setTimeout(() => alert.remove(), 5000);
+            }
+
+            async loadFromURL() {
+                const url = 'https://mpupcdrupalwxtappcdne.azureedge.net/sites/default/files/doc/mcc.json';
+                const button = document.getElementById('load-from-url-btn');
+                const originalText = button.textContent;
+                
+                try {
+                    button.textContent = 'Loading...';
+                    button.disabled = true;
+                    
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const jsonData = await response.json();
+                    if (jsonData.data && Array.isArray(jsonData.data)) {
+                        this.data = jsonData;
+                        this.render();
+                        this.showAlert(`Successfully loaded ${jsonData.data.length} records from website!`);
+                    } else {
+                        throw new Error('Invalid JSON structure from URL');
+                    }
+                } catch (error) {
+                    this.showAlert('Error loading data from website: ' + error.message, 'error');
+                } finally {
+                    button.textContent = originalText;
+                    button.disabled = false;
+                }
             }
 
             handleFileUpload(event) {
