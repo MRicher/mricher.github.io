@@ -24,39 +24,23 @@
             border-bottom: 3px solid #af3c43;
             padding-bottom: 10px;
         }
-        .location-controls {
+        .location-status {
             background: #e8f4f8;
             padding: 15px;
             border-radius: 5px;
             margin-bottom: 20px;
             border-left: 4px solid #2e5f8a;
-        }
-        .location-status {
             font-weight: bold;
-            margin-bottom: 10px;
         }
         .location-status.enabled {
+            background: #d4edda;
+            border-left-color: #28a745;
             color: #155724;
         }
         .location-status.disabled {
+            background: #f8d7da;
+            border-left-color: #dc3545;
             color: #721c24;
-        }
-        .btn {
-            background: #2e5f8a;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            margin-right: 10px;
-        }
-        .btn:hover {
-            background: #1e4d6b;
-        }
-        .btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
         }
         .filters {
             background: #f8f9fa;
@@ -199,19 +183,8 @@
     <div class="container">
         <h1>Prince Edward Island RCMP Detachment Locations</h1>
         
-        <div class="location-controls">
-            <div class="location-status" id="locationStatus">
-                Location access: Not requested
-            </div>
-            <button class="btn" id="enableLocationBtn" onclick="requestLocation()">
-                Enable Location-Based Sorting
-            </button>
-            <button class="btn" id="disableLocationBtn" onclick="disableLocation()" style="display: none;">
-                Disable Location Sorting
-            </button>
-            <small style="display: block; margin-top: 10px; color: #6c757d;">
-                Enable location access to see detachments sorted by distance from your current location.
-            </small>
+        <div class="location-status" id="locationStatus">
+            Requesting location access...
         </div>
 
         <div class="filters">
@@ -360,21 +333,16 @@
             return R * c; // Distance in kilometers
         }
 
-        // Request user location
+        // Automatically request user location
         function requestLocation() {
-            const btn = document.getElementById('enableLocationBtn');
             const status = document.getElementById('locationStatus');
-            
-            btn.disabled = true;
-            btn.textContent = 'Requesting location...';
-            status.textContent = 'Location access: Requesting...';
-            status.className = 'location-status';
 
             if (!navigator.geolocation) {
-                status.textContent = 'Location access: Not supported by this browser';
+                status.textContent = 'Location services not supported by this browser. Showing default order.';
                 status.className = 'location-status disabled';
-                btn.disabled = false;
-                btn.textContent = 'Enable Location-Based Sorting';
+                // Use original order
+                detachments = [...detachmentData].sort((a, b) => a.order - b.order || a.name.localeCompare(b.name));
+                renderDetachments();
                 return;
             }
 
@@ -384,10 +352,8 @@
                         lat: position.coords.latitude,
                         lng: position.coords.longitude
                     };
-                    status.textContent = 'Location access: Enabled - Showing detachments sorted by distance';
+                    status.textContent = 'Location detected - Detachments sorted by distance from your location';
                     status.className = 'location-status enabled';
-                    btn.style.display = 'none';
-                    document.getElementById('disableLocationBtn').style.display = 'inline-block';
                     
                     // Add distances to detachments and sort
                     detachments = detachmentData.map(d => ({
@@ -398,44 +364,29 @@
                     renderDetachments();
                 },
                 (error) => {
-                    let errorMessage = 'Location access: ';
+                    let errorMessage = 'Location access unavailable';
                     switch(error.code) {
                         case error.PERMISSION_DENIED:
-                            errorMessage += 'Access denied by user';
+                            errorMessage = 'Location access denied. Showing default order.';
                             break;
                         case error.POSITION_UNAVAILABLE:
-                            errorMessage += 'Location information unavailable';
+                            errorMessage = 'Location information unavailable. Showing default order.';
                             break;
                         case error.TIMEOUT:
-                            errorMessage += 'Request timed out';
+                            errorMessage = 'Location request timed out. Showing default order.';
                             break;
                         default:
-                            errorMessage += 'Unknown error occurred';
+                            errorMessage = 'Location error occurred. Showing default order.';
                             break;
                     }
                     status.textContent = errorMessage;
                     status.className = 'location-status disabled';
-                    btn.disabled = false;
-                    btn.textContent = 'Enable Location-Based Sorting';
                     
                     // Use original order
                     detachments = [...detachmentData].sort((a, b) => a.order - b.order || a.name.localeCompare(b.name));
                     renderDetachments();
                 }
             );
-        }
-
-        // Disable location sorting
-        function disableLocation() {
-            userLocation = null;
-            document.getElementById('locationStatus').textContent = 'Location access: Disabled';
-            document.getElementById('locationStatus').className = 'location-status disabled';
-            document.getElementById('enableLocationBtn').style.display = 'inline-block';
-            document.getElementById('disableLocationBtn').style.display = 'none';
-            
-            // Reset to original order
-            detachments = [...detachmentData].sort((a, b) => a.order - b.order || a.name.localeCompare(b.name));
-            renderDetachments();
         }
 
         // Filter detachments based on selected criteria
@@ -534,7 +485,9 @@
             // Set up initial data in original order
             detachments = [...detachmentData].sort((a, b) => a.order - b.order || a.name.localeCompare(b.name));
             originalOrder = [...detachments];
-            renderDetachments();
+            
+            // Automatically request location on page load
+            requestLocation();
         }
 
         // Initialize when page loads
