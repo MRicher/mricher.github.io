@@ -1,131 +1,354 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Location Distance Calculator</title>
+    <title>Prince Edward Island RCMP detachment locations | Royal Canadian Mounted Police</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
+            margin: 0;
             padding: 20px;
             background-color: #f5f5f5;
         }
         .container {
+            max-width: 1200px;
+            margin: 0 auto;
             background: white;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        button {
-            background-color: #007bff;
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #af3c43;
+            padding-bottom: 10px;
+        }
+        .location-controls {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2e5f8a;
+        }
+        .location-status {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .location-status.enabled {
+            color: #155724;
+        }
+        .location-status.disabled {
+            color: #721c24;
+        }
+        .btn {
+            background: #2e5f8a;
             color: white;
-            padding: 10px 20px;
             border: none;
+            padding: 10px 20px;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 14px;
+            margin-right: 10px;
         }
-        button:hover {
-            background-color: #0056b3;
+        .btn:hover {
+            background: #1e4d6b;
         }
-        button:disabled {
-            background-color: #ccc;
+        .btn:disabled {
+            background: #ccc;
             cursor: not-allowed;
         }
-        .status {
-            margin: 10px 0;
-            padding: 10px;
-            border-radius: 4px;
-        }
-        .success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        .info {
-            background-color: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
-        }
-        .location-item {
-            margin: 10px 0;
-            padding: 15px;
+        .filters {
             background: #f8f9fa;
-            border-radius: 4px;
-            border-left: 4px solid #007bff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
         }
-        .distance {
-            font-weight: bold;
-            color: #007bff;
+        .form-group {
+            margin-bottom: 15px;
         }
-        .closest {
-            border-left-color: #28a745;
-            background-color: #d4edda;
-        }
-        dl {
-            margin: 10px 0;
-        }
-        dt {
-            font-weight: bold;
+        label {
+            display: block;
             margin-bottom: 5px;
+            font-weight: bold;
         }
-        dd {
-            margin: 0 0 10px 0;
+        select, input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
         }
-        .user-location {
-            background: #fff3cd;
+        .detachment-grid {
+            display: grid;
+            gap: 20px;
+        }
+        .detachment-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            background: white;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .detachment-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .detachment-card.closest {
+            border-left: 4px solid #28a745;
+            background: #f8fff9;
+        }
+        .detachment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        .detachment-name {
+            color: #2e5f8a;
+            margin: 0;
+            font-size: 1.3em;
+        }
+        .distance-badge {
+            background: #28a745;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            white-space: nowrap;
+        }
+        .closest-badge {
+            background: #dc3545;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        .language-badge {
+            background: #6c757d;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.75em;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+        .emergency-alert {
+            background: #f8d7da;
+            color: #721c24;
             padding: 10px;
             border-radius: 4px;
-            margin-bottom: 20px;
+            border: 1px solid #f5c6cb;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .info-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .info-group h4 {
+            margin: 0 0 8px 0;
+            color: #495057;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .info-group p {
+            margin: 0 0 5px 0;
+            line-height: 1.4;
+        }
+        .location-link {
+            color: #2e5f8a;
+            text-decoration: none;
+        }
+        .location-link:hover {
+            text-decoration: underline;
+        }
+        .services-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 5px;
+            margin-top: 10px;
+        }
+        .services-list li {
+            background: #e9ecef;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+        }
+        @media (max-width: 768px) {
+            .info-section {
+                grid-template-columns: 1fr;
+            }
+            .detachment-header {
+                flex-direction: column;
+                gap: 10px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Location Distance Calculator</h1>
+        <h1>Prince Edward Island RCMP Detachment Locations</h1>
         
-        <button id="getLocationBtn">Get My Location & Calculate Distances</button>
-        
-        <div id="status"></div>
-        
-        <div id="userLocation"></div>
-        
-        <div id="results"></div>
-        
-        <!-- Sample location data -->
-        <div id="locations" style="display: none;">
-            <dl>
-                <dt>Location</dt>
-                <dd>
-                    <a href="https://www.google.ca/maps?q=46.35234020362602,-62.23930930390567&hl=en-CA" target="_blank">198 Main Street<br> Souris, Prince Edward Island</a>
-                </dd>
-            </dl>
-            <dl>
-                <dt>Location</dt>
-                <dd>
-                    <a href="https://www.google.ca/maps?q=46.2382,-63.1311&hl=en-CA" target="_blank">123 University Ave<br> Charlottetown, Prince Edward Island</a>
-                </dd>
-            </dl>
-            <dl>
-                <dt>Location</dt>
-                <dd>
-                    <a href="https://www.google.ca/maps?q=46.4047,-63.2755&hl=en-CA" target="_blank">456 Water Street<br> Summerside, Prince Edward Island</a>
-                </dd>
-            </dl>
+        <div class="location-controls">
+            <div class="location-status" id="locationStatus">
+                Location access: Not requested
+            </div>
+            <button class="btn" id="enableLocationBtn" onclick="requestLocation()">
+                Enable Location-Based Sorting
+            </button>
+            <button class="btn" id="disableLocationBtn" onclick="disableLocation()" style="display: none;">
+                Disable Location Sorting
+            </button>
+            <small style="display: block; margin-top: 10px; color: #6c757d;">
+                Enable location access to see detachments sorted by distance from your current location.
+            </small>
+        </div>
+
+        <div class="filters">
+            <h2 style="margin-top: 0;">Filters</h2>
+            <div class="form-group">
+                <label for="languageFilter">Language designation</label>
+                <select id="languageFilter" onchange="filterDetachments()">
+                    <option value="">All</option>
+                    <option value="English and French">English and French</option>
+                    <option value="English only">English only</option>
+                    <option value="French only">French only</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="serviceFilter">Service availability</label>
+                <select id="serviceFilter" onchange="filterDetachments()">
+                    <option value="">All services</option>
+                    <option value="Fingerprints">Fingerprints available</option>
+                    <option value="Criminal records check">Criminal records check</option>
+                    <option value="Police certificate">Police certificate</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="detachmentsList" class="detachment-grid">
+            <div class="loading">Loading detachments...</div>
         </div>
     </div>
 
     <script>
         let userLocation = null;
-        
-        // Function to calculate distance between two points using Haversine formula
+        let detachments = [];
+        let originalOrder = [];
+
+        // Detachment data extracted from the HTML
+        const detachmentData = [
+            {
+                id: "2059",
+                name: "L Division Headquarters",
+                language: "English and French",
+                coordinates: { lat: 46.250372780570935, lng: -63.1370318628669 },
+                address: "450 University Avenue, Charlottetown, Prince Edward Island",
+                mailing: "450 University Ave, Charlottetown PE C1A 0H3",
+                phone: "902-566-7112",
+                fax: "",
+                hours: "",
+                fingerprints: "",
+                services: [],
+                order: 1
+            },
+            {
+                id: "67878",
+                name: "Kings District Detachment",
+                language: "English only",
+                coordinates: { lat: 46.18123376975163, lng: -62.64904025629062 },
+                address: "5199 AA MacDonald Highway, Montague, Prince Edward Island",
+                mailing: "5199 AA MacDonald Hwy, Montague PE C0A 1R0",
+                phone: "902-838-9300",
+                fax: "902-838-3882",
+                hours: "Monday to Friday 8 am to 4 pm",
+                fingerprints: "Monday to Friday 8 am to 3:30 pm",
+                services: ["Criminal records check", "Fingerprints", "General information", "Non-emergency complaints", "Outside detachment emergency phone", "Police certificate", "Report a crime", "Vulnerable sector check"],
+                order: 2
+            },
+            {
+                id: "27002",
+                name: "Stratford Detachment",
+                language: "English only",
+                coordinates: { lat: 46.217121171042, lng: -63.07848580471206 },
+                address: "4 Georgetown Road, Stratford, Prince Edward Island",
+                mailing: "4 Georgetown Rd, Stratford PE C1B 4H3",
+                phone: "902-367-9300",
+                fax: "902-566-7199",
+                hours: "Monday to Friday 8 am to 4 pm",
+                fingerprints: "Call the detachment to book an appointment.",
+                services: ["Criminal records check", "Fingerprints", "General information", "Non-emergency complaints", "Outside detachment emergency phone", "Police certificate", "Report a crime", "Vulnerable sector check"],
+                order: 2
+            },
+            {
+                id: "8480",
+                name: "Souris Detachment",
+                language: "English only",
+                coordinates: { lat: 46.35234020362602, lng: -62.23930930390567 },
+                address: "198 Main Street, Souris, Prince Edward Island",
+                mailing: "198 Main St, Souris PE C0A 2B0",
+                phone: "902-687-9300",
+                fax: "902-687-4377",
+                hours: "Monday to Friday 8 am to 4 pm",
+                fingerprints: "Fingerprint services are not available at this detachment.",
+                services: ["Criminal records check", "General information", "Non-emergency complaints", "Outside detachment emergency phone", "Police certificate", "Report a crime", "Vulnerable sector check"],
+                order: 2
+            },
+            {
+                id: "68107",
+                name: "East Prince Detachment",
+                language: "English and French",
+                coordinates: { lat: 46.386066598547046, lng: -63.740653236438064 },
+                address: "29 Schurmans Point Road, North Bedeque, Prince Edward Island",
+                mailing: "29 Schurmans Point Rd, Summerside PE C1N 4J9",
+                phone: "902-436-9300",
+                fax: "902-432-6515",
+                hours: "Monday to Friday 8 am to 4 pm",
+                fingerprints: "Call the detachment to book an appointment.",
+                services: ["Criminal records check", "Fingerprints", "General information", "Non-emergency complaints", "Outside detachment emergency phone", "Police certificate", "Report a crime", "Vulnerable sector check"],
+                order: 2
+            },
+            {
+                id: "37028",
+                name: "West Prince Detachment",
+                language: "English and French",
+                coordinates: { lat: 46.80570138757905, lng: -64.14833242972685 },
+                address: "39544 Route 2, Rosebank, Prince Edward Island",
+                mailing: "39544 Route 2, Rosebank PE C0B 1K0",
+                phone: "902-853-9300",
+                fax: "902-853-4324",
+                hours: "Monday to Friday 8 am to 4 pm",
+                fingerprints: "Call the detachment to book an appointment.",
+                services: ["Criminal records check", "Fingerprints", "General information", "Non-emergency complaints", "Outside detachment emergency phone", "Police certificate", "Report a crime", "Vulnerable sector check"],
+                order: 2
+            },
+            {
+                id: "27277",
+                name: "Queens District Detachment",
+                language: "English and French",
+                coordinates: { lat: 46.23516113109465, lng: -63.20775622957108 },
+                address: "28 Mercedes Drive, Cornwall, Prince Edward Island",
+                mailing: "PO Box 250, Cornwall PE C0A 1H0",
+                phone: "902-368-9300",
+                fax: "902-566-7199",
+                hours: "Monday to Friday 8 am to 4 pm",
+                fingerprints: "Wednesday 9 am to 11 am by appointment only. Call the detachment to book an appointment.",
+                services: ["Criminal records check", "Fingerprints", "General information", "Non-emergency complaints", "Outside detachment emergency phone", "Police certificate", "Report a crime", "Vulnerable sector check"],
+                order: 2
+            }
+        ];
+
+        // Calculate distance between two coordinates using Haversine formula
         function calculateDistance(lat1, lon1, lat2, lon2) {
             const R = 6371; // Earth's radius in kilometers
             const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -134,166 +357,188 @@
                       Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
                       Math.sin(dLon/2) * Math.sin(dLon/2);
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            return R * c;
+            return R * c; // Distance in kilometers
         }
-        
-        // Function to extract coordinates from Google Maps URL
-        function extractCoordinates(url) {
-            const match = url.match(/q=([+-]?\d+\.?\d*),([+-]?\d+\.?\d*)/);
-            if (match) {
-                return {
-                    lat: parseFloat(match[1]),
-                    lng: parseFloat(match[2])
-                };
-            }
-            return null;
-        }
-        
-        // Function to get all location data from the page
-        function getLocationData() {
-            const locations = [];
-            const dls = document.querySelectorAll('#locations dl');
+
+        // Request user location
+        function requestLocation() {
+            const btn = document.getElementById('enableLocationBtn');
+            const status = document.getElementById('locationStatus');
             
-            dls.forEach(dl => {
-                const link = dl.querySelector('a[href*="google.ca/maps"]');
-                if (link) {
-                    const coords = extractCoordinates(link.href);
-                    if (coords) {
-                        const address = link.innerHTML.replace('<br>', ', ');
-                        locations.push({
-                            address: address,
-                            lat: coords.lat,
-                            lng: coords.lng,
-                            url: link.href
-                        });
-                    }
-                }
-            });
-            
-            return locations;
-        }
-        
-        // Function to display status messages
-        function showStatus(message, type = 'info') {
-            const statusDiv = document.getElementById('status');
-            statusDiv.innerHTML = `<div class="status ${type}">${message}</div>`;
-        }
-        
-        // Function to display user location
-        function displayUserLocation(lat, lng) {
-            const userLocationDiv = document.getElementById('userLocation');
-            userLocationDiv.innerHTML = `
-                <div class="user-location">
-                    <strong>Your Location:</strong><br>
-                    Latitude: ${lat.toFixed(6)}<br>
-                    Longitude: ${lng.toFixed(6)}
-                </div>
-            `;
-        }
-        
-        // Function to display results
-        function displayResults(locations) {
-            const resultsDiv = document.getElementById('results');
-            
-            if (locations.length === 0) {
-                resultsDiv.innerHTML = '<p>No locations found on this page.</p>';
-                return;
-            }
-            
-            // Sort by distance
-            locations.sort((a, b) => a.distance - b.distance);
-            
-            let html = '<h3>Locations sorted by distance:</h3>';
-            
-            locations.forEach((location, index) => {
-                const isClosest = index === 0;
-                html += `
-                    <div class="location-item ${isClosest ? 'closest' : ''}">
-                        <div class="distance">
-                            ${isClosest ? '🎯 CLOSEST: ' : ''}
-                            ${location.distance.toFixed(2)} km away
-                        </div>
-                        <div><strong>Address:</strong> ${location.address}</div>
-                        <div><strong>Coordinates:</strong> ${location.lat.toFixed(6)}, ${location.lng.toFixed(6)}</div>
-                        <div><a href="${location.url}" target="_blank">View on Google Maps</a></div>
-                    </div>
-                `;
-            });
-            
-            resultsDiv.innerHTML = html;
-        }
-        
-        // Function to get user location and calculate distances
-        function getUserLocationAndCalculate() {
-            const btn = document.getElementById('getLocationBtn');
             btn.disabled = true;
-            btn.textContent = 'Getting location...';
-            
-            showStatus('Requesting your location...', 'info');
-            
+            btn.textContent = 'Requesting location...';
+            status.textContent = 'Location access: Requesting...';
+            status.className = 'location-status';
+
             if (!navigator.geolocation) {
-                showStatus('Geolocation is not supported by this browser.', 'error');
+                status.textContent = 'Location access: Not supported by this browser';
+                status.className = 'location-status disabled';
                 btn.disabled = false;
-                btn.textContent = 'Get My Location & Calculate Distances';
+                btn.textContent = 'Enable Location-Based Sorting';
                 return;
             }
-            
+
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     userLocation = {
                         lat: position.coords.latitude,
                         lng: position.coords.longitude
                     };
+                    status.textContent = 'Location access: Enabled - Showing detachments sorted by distance';
+                    status.className = 'location-status enabled';
+                    btn.style.display = 'none';
+                    document.getElementById('disableLocationBtn').style.display = 'inline-block';
                     
-                    showStatus('Location found! Calculating distances...', 'success');
-                    displayUserLocation(userLocation.lat, userLocation.lng);
+                    // Add distances to detachments and sort
+                    detachments = detachmentData.map(d => ({
+                        ...d,
+                        distance: calculateDistance(userLocation.lat, userLocation.lng, d.coordinates.lat, d.coordinates.lng)
+                    })).sort((a, b) => a.distance - b.distance);
                     
-                    // Get all locations from the page
-                    const locations = getLocationData();
-                    
-                    // Calculate distances
-                    locations.forEach(location => {
-                        location.distance = calculateDistance(
-                            userLocation.lat,
-                            userLocation.lng,
-                            location.lat,
-                            location.lng
-                        );
-                    });
-                    
-                    displayResults(locations);
-                    
-                    btn.disabled = false;
-                    btn.textContent = 'Recalculate Distances';
+                    renderDetachments();
                 },
                 (error) => {
-                    let errorMessage = 'Unable to get your location. ';
+                    let errorMessage = 'Location access: ';
                     switch(error.code) {
                         case error.PERMISSION_DENIED:
-                            errorMessage += 'Location access denied by user.';
+                            errorMessage += 'Access denied by user';
                             break;
                         case error.POSITION_UNAVAILABLE:
-                            errorMessage += 'Location information unavailable.';
+                            errorMessage += 'Location information unavailable';
                             break;
                         case error.TIMEOUT:
-                            errorMessage += 'Location request timed out.';
+                            errorMessage += 'Request timed out';
                             break;
                         default:
-                            errorMessage += 'Unknown error occurred.';
+                            errorMessage += 'Unknown error occurred';
+                            break;
                     }
-                    
-                    showStatus(errorMessage, 'error');
+                    status.textContent = errorMessage;
+                    status.className = 'location-status disabled';
                     btn.disabled = false;
-                    btn.textContent = 'Get My Location & Calculate Distances';
+                    btn.textContent = 'Enable Location-Based Sorting';
+                    
+                    // Use original order
+                    detachments = [...detachmentData].sort((a, b) => a.order - b.order || a.name.localeCompare(b.name));
+                    renderDetachments();
                 }
             );
         }
-        
-        // Event listener
-        document.getElementById('getLocationBtn').addEventListener('click', getUserLocationAndCalculate);
-        
-        // You can also call this function directly if you want to auto-run it
-        // getUserLocationAndCalculate();
+
+        // Disable location sorting
+        function disableLocation() {
+            userLocation = null;
+            document.getElementById('locationStatus').textContent = 'Location access: Disabled';
+            document.getElementById('locationStatus').className = 'location-status disabled';
+            document.getElementById('enableLocationBtn').style.display = 'inline-block';
+            document.getElementById('disableLocationBtn').style.display = 'none';
+            
+            // Reset to original order
+            detachments = [...detachmentData].sort((a, b) => a.order - b.order || a.name.localeCompare(b.name));
+            renderDetachments();
+        }
+
+        // Filter detachments based on selected criteria
+        function filterDetachments() {
+            const languageFilter = document.getElementById('languageFilter').value;
+            const serviceFilter = document.getElementById('serviceFilter').value;
+            
+            let filtered = detachments.filter(d => {
+                const languageMatch = !languageFilter || d.language === languageFilter;
+                const serviceMatch = !serviceFilter || d.services.includes(serviceFilter);
+                return languageMatch && serviceMatch;
+            });
+            
+            renderDetachments(filtered);
+        }
+
+        // Render detachments
+        function renderDetachments(filteredDetachments = null) {
+            const container = document.getElementById('detachmentsList');
+            const toRender = filteredDetachments || detachments;
+            
+            if (toRender.length === 0) {
+                container.innerHTML = '<div class="loading">No detachments match your criteria.</div>';
+                return;
+            }
+
+            container.innerHTML = toRender.map((d, index) => `
+                <div class="detachment-card ${index === 0 && userLocation ? 'closest' : ''}">
+                    <div class="detachment-header">
+                        <h3 class="detachment-name">${d.name}</h3>
+                        <div>
+                            ${userLocation && d.distance !== undefined ? 
+                                `<span class="distance-badge">${d.distance.toFixed(1)} km away</span>` : 
+                                ''
+                            }
+                            ${index === 0 && userLocation ? 
+                                `<span class="closest-badge">Closest</span>` : 
+                                ''
+                            }
+                        </div>
+                    </div>
+                    
+                    <div class="language-badge">${d.language}</div>
+                    
+                    <div class="emergency-alert">
+                        <strong>For emergency assistance:</strong> Dial 9-1-1
+                    </div>
+                    
+                    <div class="info-section">
+                        <div class="info-group">
+                            <h4>Location</h4>
+                            <p>
+                                <a href="https://www.google.ca/maps?q=${d.coordinates.lat},${d.coordinates.lng}&hl=en-CA" 
+                                   target="_blank" class="location-link">
+                                    ${d.address}
+                                </a>
+                            </p>
+                            <p><strong>Mailing:</strong> ${d.mailing}</p>
+                        </div>
+                        
+                        <div class="info-group">
+                            <h4>Contact Information</h4>
+                            <p><strong>Phone:</strong> ${d.phone}</p>
+                            ${d.fax ? `<p><strong>Fax:</strong> ${d.fax}</p>` : ''}
+                        </div>
+                        
+                        ${d.hours ? `
+                        <div class="info-group">
+                            <h4>Hours of Operation</h4>
+                            <p>${d.hours}</p>
+                        </div>
+                        ` : ''}
+                        
+                        ${d.fingerprints ? `
+                        <div class="info-group">
+                            <h4>Fingerprints</h4>
+                            <p>${d.fingerprints}</p>
+                        </div>
+                        ` : ''}
+                    </div>
+                    
+                    ${d.services.length > 0 ? `
+                    <div class="info-group">
+                        <h4>Services Available</h4>
+                        <ul class="services-list">
+                            ${d.services.map(service => `<li>${service}</li>`).join('')}
+                        </ul>
+                    </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        // Initialize the page
+        function init() {
+            // Set up initial data in original order
+            detachments = [...detachmentData].sort((a, b) => a.order - b.order || a.name.localeCompare(b.name));
+            originalOrder = [...detachments];
+            renderDetachments();
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
