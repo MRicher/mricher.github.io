@@ -43,11 +43,11 @@
               const currentLang = document.documentElement.lang.split('-')[0];
               
               if (theme === 'dark') {
-                  const lightModeText = currentLang === 'fr' ? 'Mode clair' : 'Light Mode';
+                  const lightModeText = currentLang === 'fr' ? 'Mode clair' : 'Light mode';
                   themeText.textContent = lightModeText;
                   themeToggle.setAttribute('aria-label', 'Switch to light mode');
               } else {
-                  const darkModeText = currentLang === 'fr' ? 'Mode sombre' : 'Dark Mode';
+                  const darkModeText = currentLang === 'fr' ? 'Mode sombre' : 'Dark mode';
                   themeText.textContent = darkModeText;
                   themeToggle.setAttribute('aria-label', 'Switch to dark mode');
               }
