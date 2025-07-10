@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en-CA">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-en="Bilingual Web Application" data-fr="Application Web Bilingue">Bilingual Web Application</title>
+    <meta name="description" data-en="A bilingual web application template with Bootstrap 5.3" data-fr="Un modèle d'application web bilingue avec Bootstrap 5.3" content="A bilingual web application template with Bootstrap 5.3">
+    
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS for accessibility and styling -->
+    <style>
+        /* Skip to content link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 6px;
+            background: #000;
+            color: #fff;
+            padding: 8px;
+            text-decoration: none;
+            z-index: 1050;
+            border-radius: 0 0 4px 4px;
+        }
+        
+        .skip-link:focus {
+            top: 0;
+        }
+        
+        /* Enhanced focus indicators */
+        .btn:focus,
+        .nav-link:focus,
+        .navbar-brand:focus {
+            outline: 3px solid #0d6efd;
+            outline-offset: 2px;
+        }
+        
+        /* Language switcher styling */
+        .language-switcher {
+            display: flex;
+            align-items: center;
+        }
+        
+        .language-switcher .btn {
+            font-size: 0.875rem;
+            padding: 0.25rem 0.5rem;
+            min-width: 40px;
+        }
+        
+        /* Ensure proper spacing for navbar items */
+        .navbar-nav .nav-item {
+            margin-right: 1rem;
+        }
+        
+        /* Main content spacing */
+        main {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+        
+        /* Hero section styling */
+        .hero {
+            background-color: #f8f9fa;
+            padding: 3rem 0;
+            border-radius: 0.375rem;
+            margin-bottom: 2rem;
+        }
+        
+        /* Footer styling */
+        footer {
+            background-color: #343a40;
+            color: #fff;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        
+        /* Ensure all interactive elements are accessible */
+        .btn, .nav-link, .navbar-brand {
+            cursor: pointer;
+        }
+        
+        /* Screen reader only text */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip to content link for accessibility -->
+    <a href="#main-content" class="skip-link" data-en="Skip to main content" data-fr="Passer au contenu principal">Skip to main content</a>
+    
+    <!-- Navigation Header -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark" role="navigation" aria-label="Main navigation">
+            <div class="container">
+                <!-- Brand/Logo -->
+                <a class="navbar-brand" href="#" aria-label="Home" data-en="Brand" data-fr="Marque">Brand</a>
+                
+                <!-- Mobile menu toggle button -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation menu">
+                    <span class="navbar-toggler-icon"></span>
+                    <span class="sr-only" data-en="Toggle navigation menu" data-fr="Basculer le menu de navigation">Toggle navigation menu</span>
+                </button>
+                
+                <!-- Navigation menu -->
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0" role="menubar">
+                        <li class="nav-item" role="none">
+                            <a class="nav-link active" href="#" role="menuitem" aria-current="page" 
+                               data-en="Home" data-fr="Accueil">Home</a>
+                        </li>
+                        <li class="nav-item" role="none">
+                            <a class="nav-link" href="#" role="menuitem" 
+                               data-en="About" data-fr="À propos">About</a>
+                        </li>
+                        <li class="nav-item" role="none">
+                            <a class="nav-link" href="#" role="menuitem" 
+                               data-en="Services" data-fr="Services">Services</a>
+                        </li>
+                        <li class="nav-item" role="none">
+                            <a class="nav-link" href="#" role="menuitem" 
+                               data-en="Contact" data-fr="Contact">Contact</a>
+                        </li>
+                    </ul>
+                    
+                    <!-- Language Switcher -->
+                    <div class="language-switcher" role="group" aria-label="Language selection">
+                        <button type="button" class="btn btn-outline-light btn-sm" 
+                                data-lang="fr-CA" aria-pressed="false" 
+                                aria-label="Passer au français" 
+                                id="lang-fr-btn" style="display: none;">FR</button>
+                        <button type="button" class="btn btn-outline-light btn-sm" 
+                                data-lang="en-CA" aria-pressed="false" 
+                                aria-label="Switch to English" 
+                                id="lang-en-btn">EN</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    
+    <!-- Main Content -->
+    <main id="main-content" class="container" role="main">
+        <!-- Hero Section -->
+        <section class="hero text-center" aria-labelledby="hero-heading">
+            <h1 id="hero-heading" class="display-4 mb-4" 
+                data-en="Welcome to Our Bilingual Application" 
+                data-fr="Bienvenue dans notre application bilingue">
+                Welcome to Our Bilingual Application
+            </h1>
+            <p class="lead mb-4" 
+               data-en="This template demonstrates a fully accessible, bilingual web application built with Bootstrap 5.3." 
+               data-fr="Ce modèle démontre une application web bilingue entièrement accessible construite avec Bootstrap 5.3.">
+                This template demonstrates a fully accessible, bilingual web application built with Bootstrap 5.3.
+            </p>
+            <button type="button" class="btn btn-primary btn-lg" 
+                    data-en="Get Started" data-fr="Commencer">
+                Get Started
+            </button>
+        </section>
+        
+        <!-- Content Section -->
+        <section aria-labelledby="content-heading">
+            <h2 id="content-heading" class="mb-4" 
+                data-en="Key Features" data-fr="Caractéristiques principales">
+                Key Features
+            </h2>
+            
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h3 class="card-title h5" 
+                                data-en="Accessibility First" data-fr="Accessibilité d'abord">
+                                Accessibility First
+                            </h3>
+                            <p class="card-text" 
+                               data-en="Built following WCAG 2.2 AA standards with semantic HTML, proper ARIA labels, and keyboard navigation support." 
+                               data-fr="Construit selon les normes WCAG 2.2 AA avec du HTML sémantique, des étiquettes ARIA appropriées et un support de navigation au clavier.">
+                                Built following WCAG 2.2 AA standards with semantic HTML, proper ARIA labels, and keyboard navigation support.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h3 class="card-title h5" 
+                                data-en="Bilingual Support" data-fr="Support bilingue">
+                                Bilingual Support
+                            </h3>
+                            <p class="card-text" 
+                               data-en="Seamless language switching between English and French Canadian with proper locale support." 
+                               data-fr="Basculement fluide entre l'anglais et le français canadien avec un support de locale approprié.">
+                                Seamless language switching between English and French Canadian with proper locale support.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h3 class="card-title h5" 
+                                data-en="Responsive Design" data-fr="Conception réactive">
+                                Responsive Design
+                            </h3>
+                            <p class="card-text" 
+                               data-en="Mobile-first responsive design that works perfectly on all devices and screen sizes." 
+                               data-fr="Conception réactive mobile-first qui fonctionne parfaitement sur tous les appareils et tailles d'écran.">
+                                Mobile-first responsive design that works perfectly on all devices and screen sizes.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Additional Content Section -->
+        <section class="mt-5" aria-labelledby="additional-content-heading">
+            <h2 id="additional-content-heading" class="mb-4" 
+                data-en="About This Template" data-fr="À propos de ce modèle">
+                About This Template
+            </h2>
+            <div class="row">
+                <div class="col-lg-8">
+                    <p data-en="This template serves as a starting point for building accessible, bilingual web applications. It includes all the necessary components for a modern web application while maintaining compliance with accessibility standards." 
+                       data-fr="Ce modèle sert de point de départ pour créer des applications web accessibles et bilingues. Il comprend tous les composants nécessaires pour une application web moderne tout en maintenant la conformité aux normes d'accessibilité.">
+                        This template serves as a starting point for building accessible, bilingual web applications. It includes all the necessary components for a modern web application while maintaining compliance with accessibility standards.
+                    </p>
+                    <p data-en="Feel free to customize the content, styling, and functionality to meet your specific needs." 
+                       data-fr="N'hésitez pas à personnaliser le contenu, le style et les fonctionnalités selon vos besoins spécifiques.">
+                        Feel free to customize the content, styling, and functionality to meet your specific needs.
+                    </p>
+                </div>
+                <div class="col-lg-4">
+                    <div class="alert alert-info" role="alert">
+                        <h4 class="alert-heading" data-en="Note" data-fr="Remarque">Note</h4>
+                        <p class="mb-0" data-en="This template uses Bootstrap 5.3 and vanilla JavaScript for maximum compatibility and performance." 
+                           data-fr="Ce modèle utilise Bootstrap 5.3 et JavaScript vanilla pour une compatibilité et des performances maximales.">
+                            This template uses Bootstrap 5.3 and vanilla JavaScript for maximum compatibility and performance.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="mt-auto" role="contentinfo">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 data-en="Bilingual Web Application" data-fr="Application Web Bilingue">
+                        Bilingual Web Application
+                    </h5>
+                    <p data-en="A template for building accessible, bilingual web applications." 
+                       data-fr="Un modèle pour créer des applications web accessibles et bilingues.">
+                        A template for building accessible, bilingual web applications.
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <h5 data-en="Quick Links" data-fr="Liens rapides">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light" data-en="Privacy Policy" data-fr="Politique de confidentialité">Privacy Policy</a></li>
+                        <li><a href="#" class="text-light" data-en="Terms of Service" data-fr="Conditions d'utilisation">Terms of Service</a></li>
+                        <li><a href="#" class="text-light" data-en="Support" data-fr="Support">Support</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="text-center">
+                <p class="mb-0" data-en="© 2025 Bilingual Web Application. All rights reserved." 
+                   data-fr="© 2025 Application Web Bilingue. Tous droits réservés.">
+                    © 2025 Bilingual Web Application. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Bootstrap 5.3 JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Language Switching JavaScript -->
+    <script>
+        // Language switching functionality
+        class LanguageSwitcher {
+            constructor() {
+                this.currentLang = document.documentElement.lang || 'en-CA';
+                this.init();
+            }
+            
+            init() {
+                const langButtons = document.querySelectorAll('[data-lang]');
+                langButtons.forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const targetLang = e.target.getAttribute('data-lang');
+                        this.switchLanguage(targetLang);
+                    });
+                });
+                
+                // Set initial active state
+                this.updateActiveButton();
+            }
+            
+            switchLanguage(lang) {
+                this.currentLang = lang;
+                
+                // Update document language
+                document.documentElement.lang = lang;
+                
+                // Update all elements with language data attributes
+                const elements = document.querySelectorAll('[data-en][data-fr]');
+                elements.forEach(element => {
+                    const text = element.getAttribute(`data-${lang.split('-')[0]}`);
+                    if (text) {
+                        // Handle different element types
+                        if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                            element.placeholder = text;
+                        } else if (element.tagName === 'IMG') {
+                            element.alt = text;
+                        } else if (element.hasAttribute('aria-label')) {
+                            element.setAttribute('aria-label', text);
+                        } else if (element.hasAttribute('title')) {
+                            element.title = text;
+                        } else if (element.hasAttribute('content')) {
+                            element.setAttribute('content', text);
+                        } else {
+                            element.textContent = text;
+                        }
+                    }
+                });
+                
+                // Update language button visibility
+                this.updateLanguageButtons();
+                
+                // Announce language change to screen readers
+                this.announceLanguageChange(lang);
+            }
+            
+            updateLanguageButtons() {
+                const frBtn = document.getElementById('lang-fr-btn');
+                const enBtn = document.getElementById('lang-en-btn');
+                
+                if (this.currentLang === 'en-CA') {
+                    // Show French button when in English
+                    frBtn.style.display = 'block';
+                    enBtn.style.display = 'none';
+                } else {
+                    // Show English button when in French
+                    frBtn.style.display = 'none';
+                    enBtn.style.display = 'block';
+                }
+            }
+            
+            updateActiveButton() {
+                // This method is no longer needed since we're hiding/showing buttons
+                // but keeping it for compatibility
+            }
+            
+            announceLanguageChange(lang) {
+                // Create a temporary element to announce the language change
+                const announcement = document.createElement('div');
+                announcement.setAttribute('aria-live', 'polite');
+                announcement.setAttribute('aria-atomic', 'true');
+                announcement.className = 'sr-only';
+                
+                const message = lang === 'en-CA' ? 
+                    'Language switched to English' : 
+                    'Langue changée en français';
+                
+                announcement.textContent = message;
+                document.body.appendChild(announcement);
+                
+                // Remove the announcement after a brief delay
+                setTimeout(() => {
+                    document.body.removeChild(announcement);
+                }, 1000);
+            }
+        }
+        
+        // Initialize language switcher when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            new LanguageSwitcher();
+        });
+        
+        // Enhanced keyboard navigation
+        document.addEventListener('DOMContentLoaded', () => {
+            // Handle escape key to close mobile menu
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    const mobileMenu = document.querySelector('.navbar-collapse.show');
+                    if (mobileMenu) {
+                        const toggleButton = document.querySelector('.navbar-toggler');
+                        if (toggleButton) {
+                            toggleButton.click();
+                            toggleButton.focus();
+                        }
+                    }
+                }
+            });
+            
+            // Ensure proper focus management for mobile menu
+            const navbarToggler = document.querySelector('.navbar-toggler');
+            if (navbarToggler) {
+                navbarToggler.addEventListener('click', () => {
+                    // Small delay to ensure the menu is fully expanded/collapsed
+                    setTimeout(() => {
+                        const isExpanded = navbarToggler.getAttribute('aria-expanded') === 'true';
+                        if (isExpanded) {
+                            const firstNavLink = document.querySelector('.navbar-nav .nav-link');
+                            if (firstNavLink) {
+                                firstNavLink.focus();
+                            }
+                        }
+                    }, 100);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
