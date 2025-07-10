@@ -11,6 +11,108 @@
     
     <!-- Custom CSS for accessibility and styling -->
     <style>
+        /* Theme variables */
+        :root {
+            --navbar-bg: #ffffff;
+            --navbar-border: #dee2e6;
+            --navbar-text: #212529;
+            --navbar-text-hover: #0d6efd;
+            --body-bg: #ffffff;
+            --body-color: #212529;
+            --card-bg: #ffffff;
+            --card-border: #dee2e6;
+            --hero-bg: #f8f9fa;
+            --footer-bg: #f8f9fa;
+            --footer-color: #212529;
+            --link-color: #0d6efd;
+            --border-color: #dee2e6;
+        }
+        
+        [data-theme="dark"] {
+            --navbar-bg: #212529;
+            --navbar-border: #343a40;
+            --navbar-text: #ffffff;
+            --navbar-text-hover: #6ea8fe;
+            --body-bg: #121212;
+            --body-color: #ffffff;
+            --card-bg: #1e1e1e;
+            --card-border: #343a40;
+            --hero-bg: #1a1a1a;
+            --footer-bg: #1a1a1a;
+            --footer-color: #ffffff;
+            --link-color: #6ea8fe;
+            --border-color: #343a40;
+        }
+        
+        /* Apply theme variables */
+        body {
+            background-color: var(--body-bg);
+            color: var(--body-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        .navbar {
+            background-color: var(--navbar-bg) !important;
+            border-bottom: 1px solid var(--navbar-border);
+            transition: background-color 0.3s ease;
+        }
+        
+        .navbar-brand,
+        .navbar-nav .nav-link {
+            color: var(--navbar-text) !important;
+            transition: color 0.3s ease;
+        }
+        
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .nav-link:focus {
+            color: var(--navbar-text-hover) !important;
+        }
+        
+        .navbar-toggler {
+            border-color: var(--navbar-text);
+        }
+        
+        .navbar-toggler:focus {
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+        
+        /* Default light theme hamburger icon (dark lines) */
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23212529' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+        
+        /* Dark theme hamburger icon (light lines) */
+        [data-theme="dark"] .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23ffffff' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+        
+        .card {
+            background-color: var(--card-bg);
+            border-color: var(--card-border);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .hero {
+            background-color: var(--hero-bg);
+            transition: background-color 0.3s ease;
+        }
+        
+        footer {
+            background-color: var(--footer-bg);
+            color: var(--footer-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        .text-light {
+            color: var(--link-color) !important;
+        }
+        
+        .alert-info {
+            background-color: var(--hero-bg);
+            border-color: var(--border-color);
+            color: var(--body-color);
+        }
+        
         /* Skip to content link */
         .skip-link {
             position: absolute;
@@ -40,12 +142,30 @@
         .language-switcher {
             display: flex;
             align-items: center;
+            gap: 0.5rem;
         }
         
         .language-switcher .btn {
             font-size: 0.875rem;
             padding: 0.25rem 0.5rem;
             min-width: 40px;
+        }
+        
+        /* Theme toggle button */
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--navbar-text);
+            color: var(--navbar-text);
+            border-radius: 0.375rem;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .theme-toggle:hover {
+            background-color: var(--navbar-text-hover);
+            color: var(--navbar-bg);
         }
         
         /* Ensure proper spacing for navbar items */
@@ -61,7 +181,6 @@
         
         /* Hero section styling */
         .hero {
-            background-color: #f8f9fa;
             padding: 3rem 0;
             border-radius: 0.375rem;
             margin-bottom: 2rem;
@@ -69,10 +188,9 @@
         
         /* Footer styling */
         footer {
-            background-color: #343a40;
-            color: #fff;
             padding: 2rem 0;
             margin-top: 3rem;
+            border-top: 1px solid var(--border-color);
         }
         
         /* Ensure all interactive elements are accessible */
@@ -92,6 +210,17 @@
             white-space: nowrap;
             border: 0;
         }
+        
+        /* Custom button styling for theme */
+        .btn-outline-primary {
+            border-color: var(--link-color);
+            color: var(--link-color);
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--link-color);
+            border-color: var(--link-color);
+        }
     </style>
 </head>
 <body>
@@ -100,12 +229,12 @@
     
     <!-- Navigation Header -->
     <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark" role="navigation" aria-label="Main navigation">
+        <nav class="navbar navbar-expand-lg" role="navigation" aria-label="Main navigation">
             <div class="container">
                 <!-- Brand/Logo -->
                 <a class="navbar-brand d-flex align-items-center" href="#" aria-label="Home">
+                    <img src="https://maruchinu.ca/mcc/beaver.png" alt="Beaver logo" class="me-2" style="height: 80px; width: auto;">
                     <span data-en="Créavia" data-fr="Créavia">Créavia</span>
-                    <img src="https://maruchinu.ca/mcc/beaver.png" alt="Beaver logo" class="ms-2" style="height: 30px; width: auto;">
                 </a>
                 
                 <!-- Mobile menu toggle button -->
@@ -128,13 +257,24 @@
                         </li>
                     </ul>
                     
-                    <!-- Language Switcher -->
-                    <div class="language-switcher" role="group" aria-label="Language selection">
-                        <button type="button" class="btn btn-outline-light btn-sm" 
+                    <!-- Theme Toggle and Language Switcher -->
+                    <div class="language-switcher" role="group" aria-label="Settings">
+                        <!-- Theme toggle -->
+                        <button type="button" class="theme-toggle" id="theme-toggle" 
+                                aria-label="Toggle dark/light theme" 
+                                data-en-light="Switch to dark mode" 
+                                data-fr-light="Passer au mode sombre"
+                                data-en-dark="Switch to light mode" 
+                                data-fr-dark="Passer au mode clair">
+                            <span id="theme-icon">🌙</span>
+                        </button>
+                        
+                        <!-- Language Switcher -->
+                        <button type="button" class="btn btn-outline-primary btn-sm" 
                                 data-lang="fr-CA" aria-pressed="false" 
                                 aria-label="Passer au français" 
                                 id="lang-fr-btn" style="display: none;">FR</button>
-                        <button type="button" class="btn btn-outline-light btn-sm" 
+                        <button type="button" class="btn btn-outline-primary btn-sm" 
                                 data-lang="en-CA" aria-pressed="false" 
                                 aria-label="Switch to English" 
                                 id="lang-en-btn">EN</button>
@@ -208,13 +348,13 @@
                     <div class="card h-100">
                         <div class="card-body">
                             <h3 class="card-title h5" 
-                                data-en="Responsive Design" data-fr="Conception réactive">
-                                Responsive Design
+                                data-en="Dark/Light Theme" data-fr="Thème sombre/clair">
+                                Dark/Light Theme
                             </h3>
                             <p class="card-text" 
-                               data-en="Mobile-first responsive design that works perfectly on all devices and screen sizes." 
-                               data-fr="Conception réactive mobile-first qui fonctionne parfaitement sur tous les appareils et tailles d'écran.">
-                                Mobile-first responsive design that works perfectly on all devices and screen sizes.
+                               data-en="Toggle between dark and light themes with smooth transitions and accessibility support." 
+                               data-fr="Basculez entre les thèmes sombre et clair avec des transitions fluides et un support d'accessibilité.">
+                                Toggle between dark and light themes with smooth transitions and accessibility support.
                             </p>
                         </div>
                     </div>
@@ -242,9 +382,9 @@
                 <div class="col-lg-4">
                     <div class="alert alert-info" role="alert">
                         <h4 class="alert-heading" data-en="Note" data-fr="Remarque">Note</h4>
-                        <p class="mb-0" data-en="This template uses Bootstrap 5.3 and vanilla JavaScript for maximum compatibility and performance." 
-                           data-fr="Ce modèle utilise Bootstrap 5.3 et JavaScript vanilla pour une compatibilité et des performances maximales.">
-                            This template uses Bootstrap 5.3 and vanilla JavaScript for maximum compatibility and performance.
+                        <p class="mb-0" data-en="This template now includes dark/light theme support with CSS custom properties for easy customization." 
+                           data-fr="Ce modèle inclut maintenant le support des thèmes sombre/clair avec des propriétés CSS personnalisées pour une personnalisation facile.">
+                            This template now includes dark/light theme support with CSS custom properties for easy customization.
                         </p>
                     </div>
                 </div>
@@ -260,9 +400,9 @@
                     <h5 data-en="Bilingual Web Application" data-fr="Application Web Bilingue">
                         Bilingual Web Application
                     </h5>
-                    <p data-en="A template for building accessible, bilingual web applications." 
-                       data-fr="Un modèle pour créer des applications web accessibles et bilingues.">
-                        A template for building accessible, bilingual web applications.
+                    <p data-en="A template for building accessible, bilingual web applications with theme support." 
+                       data-fr="Un modèle pour créer des applications web accessibles et bilingues avec support de thèmes.">
+                        A template for building accessible, bilingual web applications with theme support.
                     </p>
                 </div>
                 <div class="col-md-6">
@@ -287,8 +427,79 @@
     <!-- Bootstrap 5.3 JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     
-    <!-- Language Switching JavaScript -->
+    <!-- Enhanced JavaScript with Theme Support -->
     <script>
+        // Theme management
+        class ThemeManager {
+            constructor() {
+                this.currentTheme = this.getStoredTheme() || 'light';
+                this.init();
+            }
+            
+            getStoredTheme() {
+                // Since we can't use localStorage, we'll use a simple variable
+                return this.currentTheme || 'light';
+            }
+            
+            init() {
+                this.applyTheme(this.currentTheme);
+                this.setupThemeToggle();
+            }
+            
+            setupThemeToggle() {
+                const themeToggle = document.getElementById('theme-toggle');
+                if (themeToggle) {
+                    themeToggle.addEventListener('click', () => {
+                        this.toggleTheme();
+                    });
+                }
+            }
+            
+            toggleTheme() {
+                this.currentTheme = this.currentTheme === 'light' ? 'dark' : 'light';
+                this.applyTheme(this.currentTheme);
+                this.announceThemeChange();
+            }
+            
+            applyTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                this.updateThemeButton(theme);
+            }
+            
+            updateThemeButton(theme) {
+                const themeToggle = document.getElementById('theme-toggle');
+                const themeIcon = document.getElementById('theme-icon');
+                
+                if (themeToggle && themeIcon) {
+                    if (theme === 'dark') {
+                        themeIcon.textContent = '☀️';
+                        themeToggle.setAttribute('aria-label', 'Switch to light mode');
+                    } else {
+                        themeIcon.textContent = '🌙';
+                        themeToggle.setAttribute('aria-label', 'Switch to dark mode');
+                    }
+                }
+            }
+            
+            announceThemeChange() {
+                const announcement = document.createElement('div');
+                announcement.setAttribute('aria-live', 'polite');
+                announcement.setAttribute('aria-atomic', 'true');
+                announcement.className = 'sr-only';
+                
+                const message = this.currentTheme === 'dark' ? 
+                    'Dark theme activated' : 
+                    'Light theme activated';
+                
+                announcement.textContent = message;
+                document.body.appendChild(announcement);
+                
+                setTimeout(() => {
+                    document.body.removeChild(announcement);
+                }, 1000);
+            }
+        }
+        
         // Language switching functionality
         class LanguageSwitcher {
             constructor() {
@@ -300,7 +511,6 @@
                 const urlParams = new URLSearchParams(window.location.search);
                 const lang = urlParams.get('lang');
                 
-                // Validate language parameter
                 if (lang === 'en' || lang === 'en-CA') {
                     return 'en-CA';
                 } else if (lang === 'fr' || lang === 'fr-CA') {
@@ -312,10 +522,8 @@
             
             updateUrl(lang) {
                 const url = new URL(window.location);
-                const shortLang = lang.split('-')[0]; // Convert 'en-CA' to 'en', 'fr-CA' to 'fr'
+                const shortLang = lang.split('-')[0];
                 url.searchParams.set('lang', shortLang);
-                
-                // Update URL without reloading the page
                 window.history.replaceState({}, '', url);
             }
             
@@ -328,22 +536,17 @@
                     });
                 });
                 
-                // Set initial language based on URL or default
                 this.switchLanguage(this.currentLang);
             }
             
             switchLanguage(lang) {
                 this.currentLang = lang;
-                
-                // Update document language
                 document.documentElement.lang = lang;
                 
-                // Update all elements with language data attributes
                 const elements = document.querySelectorAll('[data-en][data-fr]');
                 elements.forEach(element => {
                     const text = element.getAttribute(`data-${lang.split('-')[0]}`);
                     if (text) {
-                        // Handle different element types
                         if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
                             element.placeholder = text;
                         } else if (element.tagName === 'IMG') {
@@ -360,10 +563,7 @@
                     }
                 });
                 
-                // Update language button visibility
                 this.updateLanguageButtons();
-                
-                // Announce language change to screen readers
                 this.announceLanguageChange(lang);
             }
             
@@ -372,23 +572,15 @@
                 const enBtn = document.getElementById('lang-en-btn');
                 
                 if (this.currentLang === 'en-CA') {
-                    // Show French button when in English
                     frBtn.style.display = 'block';
                     enBtn.style.display = 'none';
                 } else {
-                    // Show English button when in French
                     frBtn.style.display = 'none';
                     enBtn.style.display = 'block';
                 }
             }
             
-            updateActiveButton() {
-                // This method is no longer needed since we're hiding/showing buttons
-                // but keeping it for compatibility
-            }
-            
             announceLanguageChange(lang) {
-                // Create a temporary element to announce the language change
                 const announcement = document.createElement('div');
                 announcement.setAttribute('aria-live', 'polite');
                 announcement.setAttribute('aria-atomic', 'true');
@@ -401,20 +593,17 @@
                 announcement.textContent = message;
                 document.body.appendChild(announcement);
                 
-                // Remove the announcement after a brief delay
                 setTimeout(() => {
                     document.body.removeChild(announcement);
                 }, 1000);
             }
         }
         
-        // Initialize language switcher when DOM is ready
+        // Initialize everything when DOM is ready
         document.addEventListener('DOMContentLoaded', () => {
+            new ThemeManager();
             new LanguageSwitcher();
-        });
-        
-        // Enhanced keyboard navigation
-        document.addEventListener('DOMContentLoaded', () => {
+            
             // Handle escape key to close mobile menu
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
@@ -433,7 +622,6 @@
             const navbarToggler = document.querySelector('.navbar-toggler');
             if (navbarToggler) {
                 navbarToggler.addEventListener('click', () => {
-                    // Small delay to ensure the menu is fully expanded/collapsed
                     setTimeout(() => {
                         const isExpanded = navbarToggler.getAttribute('aria-expanded') === 'true';
                         if (isExpanded) {
