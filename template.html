@@ -493,30 +493,10 @@
     <!-- Footer -->
     <footer class="mt-auto" role="contentinfo">
         <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <h5 data-en="Bilingual Web Application" data-fr="Application Web Bilingue">
-                        Bilingual Web Application
-                    </h5>
-                    <p data-en="A template for building accessible, bilingual web applications with theme support." 
-                       data-fr="Un modèle pour créer des applications web accessibles et bilingues avec support de thèmes.">
-                        A template for building accessible, bilingual web applications with theme support.
-                    </p>
-                </div>
-                <div class="col-md-6">
-                    <h5 data-en="Quick Links" data-fr="Liens rapides">Quick Links</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="#" class="text-light" data-en="Privacy Policy" data-fr="Politique de confidentialité">Privacy Policy</a></li>
-                        <li><a href="#" class="text-light" data-en="Terms of Service" data-fr="Conditions d'utilisation">Terms of Service</a></li>
-                        <li><a href="#" class="text-light" data-en="Support" data-fr="Support">Support</a></li>
-                    </ul>
-                </div>
-            </div>
-            <hr class="my-4">
             <div class="text-center">
-                <p class="mb-0" data-en="© 2025 Bilingual Web Application. All rights reserved." 
-                   data-fr="© 2025 Application Web Bilingue. Tous droits réservés.">
-                    © 2025 Bilingual Web Application. All rights reserved.
+                <p class="mb-0" data-en="Web Communications Team tool" 
+                   data-fr="Outil de l'équipe de communication Web">
+                    Web Communications Team tool
                 </p>
             </div>
         </div>
@@ -633,7 +613,7 @@
                 const langButtons = document.querySelectorAll('[data-lang]');
                 langButtons.forEach(button => {
                     button.addEventListener('click', (e) => {
-                        const targetLang = e.target.getAttribute('data-lang');
+                        const targetLang = e.currentTarget.getAttribute('data-lang');
                         this.switchLanguage(targetLang);
                     });
                 });
