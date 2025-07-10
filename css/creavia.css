@@ -69,6 +69,7 @@ body {
 }
 
 .navbar-brand {
+    pointer-events: none;
     text-decoration: none;
 }
 
