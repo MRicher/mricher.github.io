@@ -165,7 +165,8 @@ class LanguageSwitcher {
         
         const elements = document.querySelectorAll('[data-en][data-fr]');
         elements.forEach(element => {
-            const text = element.getAttribute(`data-${lang.split('-')[0]}`);
+            const shortLang = lang.split('-')[0]; // Get 'en' or 'fr'
+            const text = element.getAttribute(`data-${shortLang}`);
             if (text) {
                 if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
                     element.placeholder = text;
@@ -178,7 +179,7 @@ class LanguageSwitcher {
                 } else if (element.hasAttribute('content')) {
                     element.setAttribute('content', text);
                 } else {
-                    element.textContent = text;
+                    element.innerHTML = text;
                 }
             }
         });
