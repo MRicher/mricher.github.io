@@ -103,7 +103,7 @@
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark" role="navigation" aria-label="Main navigation">
             <div class="container">
                 <!-- Brand/Logo -->
-                <a class="navbar-brand" href="#" aria-label="Home" data-en="Brand" data-fr="Marque">Brand</a>
+                <a class="navbar-brand" href="#" aria-label="Home" data-en="Créavia" data-fr="Créavia">Créavia</a>
                 
                 <!-- Mobile menu toggle button -->
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
@@ -122,14 +122,6 @@
                         <li class="nav-item" role="none">
                             <a class="nav-link" href="#" role="menuitem" 
                                data-en="About" data-fr="À propos">About</a>
-                        </li>
-                        <li class="nav-item" role="none">
-                            <a class="nav-link" href="#" role="menuitem" 
-                               data-en="Services" data-fr="Services">Services</a>
-                        </li>
-                        <li class="nav-item" role="none">
-                            <a class="nav-link" href="#" role="menuitem" 
-                               data-en="Contact" data-fr="Contact">Contact</a>
                         </li>
                     </ul>
                     
@@ -297,8 +289,31 @@
         // Language switching functionality
         class LanguageSwitcher {
             constructor() {
-                this.currentLang = document.documentElement.lang || 'en-CA';
+                this.currentLang = this.getLanguageFromUrl() || document.documentElement.lang || 'en-CA';
                 this.init();
+            }
+            
+            getLanguageFromUrl() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const lang = urlParams.get('lang');
+                
+                // Validate language parameter
+                if (lang === 'en' || lang === 'en-CA') {
+                    return 'en-CA';
+                } else if (lang === 'fr' || lang === 'fr-CA') {
+                    return 'fr-CA';
+                }
+                
+                return null;
+            }
+            
+            updateUrl(lang) {
+                const url = new URL(window.location);
+                const shortLang = lang.split('-')[0]; // Convert 'en-CA' to 'en', 'fr-CA' to 'fr'
+                url.searchParams.set('lang', shortLang);
+                
+                // Update URL without reloading the page
+                window.history.replaceState({}, '', url);
             }
             
             init() {
@@ -310,8 +325,8 @@
                     });
                 });
                 
-                // Set initial active state
-                this.updateActiveButton();
+                // Set initial language based on URL or default
+                this.switchLanguage(this.currentLang);
             }
             
             switchLanguage(lang) {
