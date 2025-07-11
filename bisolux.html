@@ -395,6 +395,10 @@
         function setPresetSize(width, height) {
             if (!cropper) return;
             
+            // Store the preset dimensions for later use
+            cropper.presetWidth = width;
+            cropper.presetHeight = height;
+            
             // Set aspect ratio
             cropper.setAspectRatio(width / height);
             
@@ -423,11 +427,16 @@
             if (!cropper) return;
             
             const imageData = cropper.getImageData();
-            cropper.scaleX(-imageData.scaleX);
+            const currentScaleX = imageData.scaleX || 1;
+            cropper.scaleX(-currentScaleX);
         }
         
         function resetCrop() {
             if (!cropper) return;
+            
+            // Clear stored preset dimensions
+            cropper.presetWidth = null;
+            cropper.presetHeight = null;
             
             cropper.reset();
         }
@@ -435,14 +444,23 @@
         function cropImage() {
             if (!cropper) return;
             
-            // Get cropped canvas
-            const canvas = cropper.getCroppedCanvas({
-                maxWidth: 2000,
-                maxHeight: 2000,
+            // Get cropped canvas with exact dimensions if preset was used
+            const canvasOptions = {
                 fillColor: '#fff',
                 imageSmoothingEnabled: true,
                 imageSmoothingQuality: 'high'
-            });
+            };
+            
+            // If we have stored preset dimensions, use them
+            if (cropper.presetWidth && cropper.presetHeight) {
+                canvasOptions.width = cropper.presetWidth;
+                canvasOptions.height = cropper.presetHeight;
+            } else {
+                canvasOptions.maxWidth = 2000;
+                canvasOptions.maxHeight = 2000;
+            }
+            
+            const canvas = cropper.getCroppedCanvas(canvasOptions);
             
             if (!canvas) {
                 alert('Failed to crop image. Please try again.');
