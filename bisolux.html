@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en-CA">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-en="Bilingual Web Application" data-fr="Application Web Bilingue">Bilingual Web Application</title>
+    <meta name="description" data-en="A bilingual web application template with Bootstrap 5.3" data-fr="Un modèle d'application web bilingue avec Bootstrap 5.3" content="A bilingual web application template with Bootstrap 5.3">
+    
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Cropper.js CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS for accessibility and styling -->
+    <link href="https://maruchinu.ca/css/creavia.css" rel="stylesheet">
+
+    <style>
+        .upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            transition: border-color 0.3s ease;
+            background-color: var(--hero-bg);
+        }
+
+        .upload-area:hover {
+            border-color: var(--button-primary-bg);
+        }
+
+        .upload-area.dragover {
+            border-color: var(--button-primary-bg);
+            background-color: var(--alert-info-bg);
+        }
+
+        .cropper-container {
+            max-height: 500px;
+            margin: 20px 0;
+        }
+
+        .preset-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .preset-buttons .btn {
+            font-size: 0.875rem;
+            padding: 0.5rem 1rem;
+        }
+
+        .preview-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 300px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        .compression-info {
+            margin-top: 10px;
+            font-size: 0.875rem;
+            color: var(--body-color);
+        }
+
+        .download-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 991px) {
+            .language-switcher {
+                flex-direction: column;
+                gap: 0.25rem;
+                width: 100%;
+                margin-top: 1rem;
+            }
+            
+            .language-switcher .btn,
+            .theme-toggle {
+                width: 100%;
+            }
+
+            .preset-buttons {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip to content link for accessibility -->
+    <a href="#main-content" class="skip-link" data-en="Skip to main content" data-fr="Passer au contenu principal">Skip to main content</a>
+    
+    <!-- Navigation Header -->
+    <header>
+        <nav class="navbar navbar-expand-lg" role="navigation" aria-label="Main navigation">
+            <div class="container">
+                <!-- Brand/Logo -->
+                <div class="navbar-brand d-flex align-items-center">
+                    <img src="https://maruchinu.ca/img/bison.png" alt="" class="me-2" style="height: 50px; width: auto;">
+                    <span data-en="Bisolux" data-fr="Bisolux">Bisolux</span>
+                </div>
+                
+                <!-- Mobile menu toggle button -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation menu">
+                    <span class="navbar-toggler-icon"></span>
+                    <span class="sr-only" data-en="Toggle navigation menu" data-fr="Basculer le menu de navigation">Toggle navigation menu</span>
+                </button>
+                
+                <!-- Navigation menu -->
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0" role="menubar">
+                        <li class="nav-item" role="none">
+                            <a class="nav-link active" href="index.html" role="menuitem" aria-current="page" data-en="Home" data-fr="Accueil">Home</a>
+                        </li>
+                        <li class="nav-item" role="none">
+                            <a class="nav-link" href="#" role="menuitem" 
+                               data-en="About" data-fr="À propos">About</a>
+                        </li>
+                    </ul>
+                    
+                    <!-- Theme Toggle and Language Switcher -->
+                    <div class="language-switcher" role="group" aria-label="Settings">
+                        <!-- Theme toggle -->
+                        <button type="button" class="theme-toggle" id="theme-toggle" 
+                                aria-label="Toggle dark/light theme" 
+                                data-en-light="Switch to Dark mode" 
+                                data-fr-light="Passer au mode sombre"
+                                data-en-dark="Switch to Light mode" 
+                                data-fr-dark="Passer au mode clair">
+                            <span id="theme-text" data-en="Dark mode" data-fr="Mode sombre">Dark mode</span>
+                        </button>
+                        
+                        <!-- Language Switcher -->
+                        <button type="button" class="btn btn-outline-primary btn-sm" 
+                                data-lang="fr-CA" aria-pressed="false" 
+                                aria-label="Passer au français" 
+                                id="lang-fr-btn" style="display: none;">
+                                <span data-en="Français" data-fr="Français">Français</span>
+                        </button>
+                        <button type="button" class="btn btn-outline-primary btn-sm" 
+                                data-lang="en-CA" aria-pressed="false" 
+                                aria-label="Switch to English" 
+                                id="lang-en-btn">
+                                <span data-en="English" data-fr="English">English</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    
+    <!-- Main Content -->
+    <main id="main-content" class="container" role="main">
+        <section aria-labelledby="main-heading">
+       <!-- Hero Section -->
+        <section class="hero text-center">
+            <h1 data-en="Professional Image Crop & Resize Tool" data-fr="Outil Professionnel de Recadrage et Redimensionnement d'Images">Professional Image Crop & Resize Tool</h1>
+            <p class="lead" data-en="Upload, crop, and resize your images with precision. Supports PNG and JPG formats with optimized compression." data-fr="Téléchargez, recadrez et redimensionnez vos images avec précision. Prend en charge les formats PNG et JPG avec compression optimisée.">Upload, crop, and resize your images with precision. Supports PNG and JPG formats with optimized compression.</p>
+        </section>
+
+        <!-- Upload Section -->
+        <section class="card mb-4">
+            <div class="card-body">
+                <h2 class="card-title" data-en="Upload Image" data-fr="Télécharger une Image">Upload Image</h2>
+                <div class="upload-area" id="upload-area">
+                    <p data-en="Drop your image here or click to browse" data-fr="Déposez votre image ici ou cliquez pour parcourir">Drop your image here or click to browse</p>
+                    <input type="file" id="image-input" accept="image/png,image/jpeg,image/jpg" style="display: none;">
+                    <button type="button" class="btn btn-primary" onclick="document.getElementById('image-input').click()">
+                        <span data-en="Select Image" data-fr="Sélectionner une Image">Select Image</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cropper Section -->
+        <section class="card mb-4" id="cropper-section" style="display: none;">
+            <div class="card-body">
+                <h2 class="card-title" data-en="Crop & Resize" data-fr="Recadrer et Redimensionner">Crop & Resize</h2>
+                
+                <!-- Preset Size Buttons -->
+                <div class="preset-buttons">
+                    <button type="button" class="btn btn-outline-primary" onclick="setPresetSize(825, 200)">
+                        <span data-en="Landing (825×200)" data-fr="Accueil (825×200)">Landing (825×200)</span>
+                    </button>
+                    <button type="button" class="btn btn-outline-primary" onclick="setPresetSize(480, 480)">
+                        <span data-en="Square (480×480)" data-fr="Carré (480×480)">Square (480×480)</span>
+                    </button>
+                    <button type="button" class="btn btn-outline-primary" onclick="setPresetSize(480, 600)">
+                        <span data-en="Portrait (480×600)" data-fr="Portrait (480×600)">Portrait (480×600)</span>
+                    </button>
+                    <button type="button" class="btn btn-outline-primary" onclick="setPresetSize(480, 300)">
+                        <span data-en="Landscape (480×300)" data-fr="Paysage (480×300)">Landscape (480×300)</span>
+                    </button>
+                    <button type="button" class="btn btn-outline-primary" onclick="setPresetSize(360, 200)">
+                        <span data-en="Feature (360×200)" data-fr="Fonctionnalité (360×200)">Feature (360×200)</span>
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" onclick="flipHorizontal()">
+                        <span data-en="Flip Horizontal" data-fr="Retourner Horizontalement">Flip Horizontal</span>
+                    </button>
+                </div>
+                
+                <!-- Cropper Container -->
+                <div class="cropper-container">
+                    <img id="cropper-image" src="" alt="Image to crop">
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="text-center mt-3">
+                    <button type="button" class="btn btn-success" onclick="cropImage()">
+                        <span data-en="Apply Crop" data-fr="Appliquer le Recadrage">Apply Crop</span>
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="resetCrop()">
+                        <span data-en="Reset" data-fr="Réinitialiser">Reset</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Preview Section -->
+        <section class="card mb-4" id="preview-section" style="display: none;">
+            <div class="card-body">
+                <h2 class="card-title" data-en="Preview & Download" data-fr="Aperçu et Téléchargement">Preview & Download</h2>
+                
+                <div class="preview-container">
+                    <img id="preview-image" src="" alt="Cropped image preview" class="preview-image">
+                    <div class="compression-info">
+                        <p id="compression-details" data-en="Compression: 75% (optimized for web)" data-fr="Compression: 75% (optimisée pour le web)">Compression: 75% (optimized for web)</p>
+                        <p id="image-dimensions"></p>
+                    </div>
+                </div>
+                
+                <div class="download-buttons">
+                    <button type="button" class="btn btn-primary" onclick="downloadImage('png')">
+                        <span data-en="Download PNG" data-fr="Télécharger PNG">Download PNG</span>
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="downloadImage('jpg')">
+                        <span data-en="Download JPG" data-fr="Télécharger JPG">Download JPG</span>
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" onclick="startOver()">
+                        <span data-en="Start Over" data-fr="Recommencer">Start Over</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="mt-auto" role="contentinfo">
+        <div class="container">
+            <div class="text-center">
+                <p class="mb-0" data-en="Web Communications Team" 
+                   data-fr="Équipe des communications Web">
+                    Web Communications Team
+                </p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Bootstrap 5.3 JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Enhanced JavaScript with Theme Support -->
+    <script src="https://maruchinu.ca/js/creavia.js"></script>
+
+    <!-- Cropper.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+</body>
+</html>
