@@ -7,13 +7,13 @@
     <meta name="description" data-en="Easily crop, resize, and optimize images for web publishing. This tool supports PNG and JPG formats and uses smart compression to reduce file size while maintaining image quality." data-fr="Recadrez, redimensionnez et optimisez facilement vos images pour la publication web. Cet outil prend en charge les formats PNG et JPG et applique une compression intelligente pour réduire la taille des fichiers tout en conservant la qualité des images." content="Easily crop, resize, and optimize images for web publishing. This tool supports PNG and JPG formats and uses smart compression to reduce file size while maintaining image quality.">
     
     <!-- Bootstrap 5.3 CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Cropper.js CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+    <link href="css/cropper.min.css" rel="stylesheet">
     
     <!-- Custom CSS for accessibility and styling -->
-    <link href="https://maruchinu.ca/css/creavia.css" rel="stylesheet">
+    <link href="css/creavia.css" rel="stylesheet">
 
     <style>
         .upload-area {
@@ -105,7 +105,7 @@
             <div class="container">
                 <!-- Brand/Logo -->
                 <div class="navbar-brand d-flex align-items-center">
-                    <img src="https://maruchinu.ca/img/bison.png" alt="" class="me-2" style="height: 50px; width: auto;">
+                    <img src="img/bison.png" alt="" class="me-2" style="height: 50px; width: auto;">
                     <span data-en="Bisolux" data-fr="Bisolux">Bisolux</span>
                 </div>
                 
@@ -226,7 +226,7 @@
                     <h3 class="card-title" data-en="Infoweb preset size" data-fr="Format prédéfini Infoweb">Infoweb preset size</h3>
                     <div class="preset-buttons">
                         <button type="button" class="btn btn-outline-primary" onclick="setPresetSize(745, 319)">
-                            <span data-en="Rotator (716x475)" data-fr="Carrousel (716x475)">Rotator (716x475)</span>
+                            <span data-en="Rotator (745x319)" data-fr="Carrousel (745x319)">Rotator (745x319)</span>
                         </button>
                     </div>
                 </section>
@@ -289,13 +289,13 @@
     </footer>
     
     <!-- Bootstrap 5.3 JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
     
     <!-- Enhanced JavaScript with Theme Support -->
-    <script src="https://maruchinu.ca/js/creavia.js"></script>
+    <script src="js/creavia.js"></script>
 
     <!-- Cropper.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <script src="js/cropper.min.js"></script>
 
     <script>
         // Image Cropper JavaScript
@@ -464,8 +464,8 @@
             cropper.presetWidth = null;
             cropper.presetHeight = null;
             
-            // Set preset name to None
-            selectedPreset = 'None';
+            // Set preset name to nothing
+            selectedPreset = '';
             
             // Remove aspect ratio constraint (free crop)
             cropper.setAspectRatio(NaN);
@@ -474,13 +474,13 @@
         function getPresetName(width, height) {
             // Map dimensions to preset names
             const presetMap = {
-                '825x200': 'Landing',
-                '480x480': 'Square',
-                '480x600': 'Portrait',
-                '480x300': 'Landscape',
-                '360x203': 'Feature',
-                '716x475': 'Gazette-article',
-                '745x319': 'Rotator'
+                '825x200': '825x200',
+                '480x480': '480x480',
+                '480x600': '480x600',
+                '480x300': '480x300',
+                '360x203': '360x203',
+                '716x475': '716x475',
+                '745x319': '745x319'
             };
             
             const key = `${width}x${height}`;
