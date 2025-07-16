@@ -189,6 +189,9 @@
                 <section>
                     <h3 class="card-title" data-en="General function" data-fr="Fonction générale">General function</h2>
                     <div class="preset-buttons">
+                        <button type="button" class="btn btn-outline-secondary" onclick="setNonePreset()">
+                            <span data-en="None (free crop)" data-fr="Aucun (recadrage libre)">None (free crop)</span>
+                        </button>
                         <button type="button" class="btn btn-outline-secondary" onclick="flipHorizontal()">
                             <span data-en="Flip horizontal" data-fr="Retourner horizontalement">Flip horizontal</span>
                         </button>
@@ -298,6 +301,7 @@
         // Image Cropper JavaScript
         let cropper = null;
         let originalImageData = null;
+        let selectedPreset = null; // Track the selected preset
         
         // Initialize when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
@@ -426,6 +430,9 @@
             cropper.presetWidth = width;
             cropper.presetHeight = height;
             
+            // Determine preset name based on dimensions
+            selectedPreset = getPresetName(width, height);
+            
             // Set aspect ratio
             cropper.setAspectRatio(width / height);
             
@@ -450,6 +457,36 @@
             });
         }
         
+        function setNonePreset() {
+            if (!cropper) return;
+            
+            // Clear preset dimensions
+            cropper.presetWidth = null;
+            cropper.presetHeight = null;
+            
+            // Set preset name to None
+            selectedPreset = 'None';
+            
+            // Remove aspect ratio constraint (free crop)
+            cropper.setAspectRatio(NaN);
+        }
+        
+        function getPresetName(width, height) {
+            // Map dimensions to preset names
+            const presetMap = {
+                '825x200': 'Landing',
+                '480x480': 'Square',
+                '480x600': 'Portrait',
+                '480x300': 'Landscape',
+                '360x203': 'Feature',
+                '716x475': 'Gazette-article',
+                '745x319': 'Rotator'
+            };
+            
+            const key = `${width}x${height}`;
+            return presetMap[key] || 'Custom';
+        }
+        
         function flipHorizontal() {
             if (!cropper) return;
             
@@ -461,9 +498,10 @@
         function resetCrop() {
             if (!cropper) return;
             
-            // Clear stored preset dimensions
+            // Clear stored preset dimensions and selected preset
             cropper.presetWidth = null;
             cropper.presetHeight = null;
+            selectedPreset = null;
             
             cropper.reset();
         }
@@ -530,17 +568,20 @@
                 return;
             }
             
+            // Generate filename based on preset
+            const baseFilename = selectedPreset ? `image-${selectedPreset}` : 'cropped-image';
+            
             // Set quality and mime type based on format
             let mimeType, quality, filename;
             
             if (format === 'png') {
                 mimeType = 'image/png';
                 quality = 1.0; // PNG doesn't use quality parameter, but keep for consistency
-                filename = 'cropped-image.png';
+                filename = `${baseFilename}.png`;
             } else {
                 mimeType = 'image/jpeg';
                 quality = 0.85;
-                filename = 'cropped-image.jpg';
+                filename = `${baseFilename}.jpg`;
                 
                 // For JPEG, we need to add white background since JPEG doesn't support transparency
                 const jpegCanvas = document.createElement('canvas');
@@ -598,8 +639,9 @@
             // Reset file input
             document.getElementById('image-input').value = '';
             
-            // Clear original image data
+            // Clear original image data and selected preset
             originalImageData = null;
+            selectedPreset = null;
             
             // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
