@@ -320,6 +320,7 @@
                 this.reversedThemeMapping = Object.fromEntries(
                     Object.entries(this.themeMapping).map(([key, value]) => [value, key])
                 );
+                document.documentElement.setAttribute('lang', 'en-CA');
                 this.init();
             }
 
@@ -686,7 +687,7 @@
                     }
                 }
             }
-
+            
             updateCalendarLanguage() {
                 const currentLang = document.documentElement.lang || 'en-CA';
                 const dateInputs = document.querySelectorAll('input[type="date"]');
@@ -695,10 +696,10 @@
                     // Set the lang attribute for the input
                     input.setAttribute('lang', currentLang);
                     
-                    // Force re-render of the date picker
-                    const value = input.value;
-                    input.value = '';
-                    input.value = value;
+                    // Force browser to recognize language change
+                    input.blur();
+                    input.focus();
+                    input.blur();
                 });
             }
         }
