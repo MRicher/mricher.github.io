@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-en="Bilingual Web Application" data-fr="Application Web Bilingue">Bilingual Web Application</title>
+    <title data-en="Create and edit MCC JSON files" data-fr="Créer et modifier des fichiers JSON de la CPM">Create and edit MCC JSON files</title>
     <meta name="description" data-en="Use this simple tool to create, edit, and check Mass Casualty Commission (MCC) JSON files. Orcavia helps you build complex files faster with a clear and easy-to-use interface." data-fr="Utilisez cet outil simple pour créer, modifier et vérifier les fichiers JSON de la Commission des pertes massives (CPM). Orcavia vous aide à créer des fichiers complexes plus rapidement grâce à une interface claire et facile à utiliser." content="Use this simple tool to create, edit, and check Mass Casualty Commission (MCC) JSON files. Orcavia helps you build complex files faster with a clear and easy-to-use interface.">
 
     <script>
@@ -248,7 +248,7 @@
     <!-- Main Content -->
     <main id="main-content" class="container" role="main">
         <section aria-labelledby="main-heading">
-            <h1 data-en="Mass Casualty Commission Data Management Tool" data-fr="Gestionnaire de données JSON – Commission sur les pertes massives">Mass Casualty Commission Data Management Tool</h1>
+            <h1 data-en="Create and edit <abbr>MCC</abbr> JSON files" data-fr="Créer et modifier des fichiers JSON de la <abbr>CPM</abbr>">Create and edit <abbr>MCC<abbr> JSON files</h1>
         </section>
 
         <div class="row">
@@ -257,20 +257,20 @@
                 
                 <!-- File Upload Section -->
                 <div class="file-upload">
-                    <h3 data-en="Load JSON Data" data-fr="Charger les données JSON">Load JSON Data</h3>
+                    <h3 data-en="Load JSON data" data-fr="Charger les données JSON">Load JSON data</h3>
                     <input type="file" id="file-upload" accept=".json">
                     <div class="load-options">
-                        <label for="file-upload" class="btn btn-primary" data-en="Choose File" data-fr="Choisir le fichier">Choose File</label>
-                        <span class="divider" data-en="OR" data-fr="OU">OR</span>
-                        <button class="btn btn-secondary" id="load-from-url-btn" data-en="Load from Website" data-fr="Charger depuis le site web">Load from Website</button>
+                        <label for="file-upload" class="btn btn-primary" data-en="Choose file" data-fr="Choisir le fichier">Choose file</label>
+                        <span class="divider" data-en="or" data-fr="ou">or</span>
+                        <button class="btn btn-secondary" id="load-from-url-btn" data-en="Load from website" data-fr="Charger depuis le site web">Load from website</button>
                     </div>
-                    <p class="text-muted" data-en="Select a JSON file or load directly from the RCMP website" data-fr="Sélectionner un fichier JSON ou charger directement depuis le site web de la GRC">Select a JSON file or load directly from the RCMP website</p>
+                    <p class="text-muted" data-en="Select a JSON file or load one from the server" data-fr="Sélectionnez un fichier JSON ou chargez-en un à partir du serveur">Select a JSON file or load one from the server</p>
                 </div>
                 
                 <!-- Action Buttons -->
                 <div class="mb-4">
-                    <button class="btn btn-success me-2" id="add-record-btn" data-en="Add New Record" data-fr="Ajouter un nouvel enregistrement">Add New Record</button>
-                    <button class="btn btn-outline-primary" id="download-btn" data-en="Download JSON" data-fr="Télécharger JSON">Download JSON</button>
+                    <button class="btn btn-success me-2" id="add-record-btn" data-en="Add new record" data-fr="Ajouter un nouvel enregistrement">Add new record</button>
+                    <button class="btn btn-outline-primary" id="download-btn" data-en="Save and download JSON" data-fr="Enregistrer et télécharger le JSON">Save and download JSON</button>
                 </div>
                 
                 <!-- Records Container -->
@@ -529,7 +529,7 @@
                     <div class="record-card">
                         <div class="record-header">
                             <div>
-                                <h2 class="h4 mb-1">Record ${index + 1}${record['english-title'] ? ` - ${record['english-title']}` : ''}</h2>
+                                <h2 class="h4 mb-1" data-en="Record ${index + 1}${record['english-title'] ? ` - ${record['english-title']}` : ''}" data-fr="Enregistrement ${index + 1}${record['french-title'] ? ` - ${record['french-title']}` : ''}">Record ${index + 1}${record['english-title'] ? ` - ${record['english-title']}` : ''}</h2>
                                 <span class="status-badge ${this.getStatusClass(record['english-progress'])}">
                                     ${record['english-progress'] || 'Unknown Status'}
                                 </span>
