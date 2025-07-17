@@ -189,7 +189,7 @@
                 <section>
                     <h3 class="card-title" data-en="General function" data-fr="Fonction générale">General function</h2>
                     <div class="preset-buttons">
-                        <button type="button" class="btn btn-outline-secondary" onclick="setNonePreset()">
+                        <button type="button" class="btn btn-outline-secondary" id="none-preset" onclick="setNonePreset()">
                             <span data-en="None (free crop)" data-fr="Aucun (recadrage libre)">None (free crop)</span>
                         </button>
                         <button type="button" class="btn btn-outline-secondary" onclick="flipHorizontal()">
@@ -304,11 +304,14 @@
         // Image Cropper JavaScript
         let cropper = null;
         let originalImageData = null;
-        let selectedPreset = null; // Track the selected preset
+        let selectedPreset = null;
+        let activePresetButton = null;
         
         // Initialize when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
             initializeImageCropper();
+            initializeThemeToggle();
+            initializeLanguageSwitcher();
         });
         
         function initializeImageCropper() {
@@ -322,6 +325,7 @@
             uploadArea.addEventListener('dragover', handleDragOver);
             uploadArea.addEventListener('dragleave', handleDragLeave);
             uploadArea.addEventListener('drop', handleDrop);
+            uploadArea.addEventListener('click', () => imageInput.click());
             
             // Remove the onclick from HTML button and handle it here
             const selectButton = uploadArea.querySelector('button');
@@ -331,6 +335,60 @@
                     imageInput.click();
                 });
             }
+        }
+        
+        function initializeThemeToggle() {
+            const themeToggle = document.getElementById('theme-toggle');
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            
+            // Set initial theme
+            document.documentElement.setAttribute('data-bs-theme', currentTheme);
+            updateThemeToggleText(currentTheme);
+            
+            themeToggle.addEventListener('click', function() {
+                const currentTheme = document.documentElement.getAttribute('data-bs-theme');
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                
+                document.documentElement.setAttribute('data-bs-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                updateThemeToggleText(newTheme);
+            });
+        }
+        
+        function updateThemeToggleText(theme) {
+            const themeText = document.getElementById('theme-text');
+            if (theme === 'light') {
+                themeText.textContent = 'Dark mode';
+            } else {
+                themeText.textContent = 'Light mode';
+            }
+        }
+        
+        function initializeLanguageSwitcher() {
+            const langButtons = document.querySelectorAll('[data-lang]');
+            
+            langButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const lang = this.getAttribute('data-lang');
+                    switchLanguage(lang);
+                });
+            });
+        }
+        
+        function switchLanguage(lang) {
+            document.documentElement.lang = lang;
+            
+            // Update all elements with language attributes
+            const elements = document.querySelectorAll('[data-' + lang + ']');
+            elements.forEach(element => {
+                element.textContent = element.getAttribute('data-' + lang);
+            });
+            
+            // Update button visibility
+            const langButtons = document.querySelectorAll('[data-lang]');
+            langButtons.forEach(button => {
+                button.style.display = button.getAttribute('data-lang') === lang ? 'none' : 'inline-block';
+            });
         }
         
         function handleFileSelect(event) {
@@ -410,7 +468,7 @@
             
             // Initialize cropper
             cropper = new Cropper(cropperImage, {
-                aspectRatio: NaN, // Free aspect ratio
+                aspectRatio: NaN,
                 viewMode: 1,
                 dragMode: 'move',
                 autoCropArea: 0.8,
@@ -422,12 +480,35 @@
                 cropBoxResizable: true,
                 toggleDragModeOnDblclick: false,
                 responsive: true,
-                checkOrientation: false
+                checkOrientation: false,
+                ready: function() {
+                    // Set default "None" preset as active
+                    const noneButton = document.getElementById('none-preset');
+                    if (noneButton) {
+                        setActivePresetButton(noneButton);
+                        selectedPreset = 'None';
+                    }
+                }
             });
         }
         
-        function setPresetSize(width, height) {
+        function setActivePresetButton(button) {
+            // Remove active class from all preset buttons
+            const allButtons = document.querySelectorAll('.preset-buttons .btn');
+            allButtons.forEach(btn => btn.classList.remove('active'));
+            
+            // Add active class to clicked button
+            if (button) {
+                button.classList.add('active');
+                activePresetButton = button;
+            }
+        }
+        
+        function setPresetSize(width, height, buttonElement) {
             if (!cropper) return;
+            
+            // Set active button
+            setActivePresetButton(buttonElement);
             
             // Store the preset dimensions for later use
             cropper.presetWidth = width;
@@ -439,22 +520,27 @@
             // Set aspect ratio
             cropper.setAspectRatio(width / height);
             
-            // Get current crop box data
-            const cropBoxData = cropper.getCropBoxData();
-            
-            // Calculate new dimensions maintaining aspect ratio
+            // Get container and current crop box data
+            const containerData = cropper.getContainerData();
             const aspectRatio = width / height;
-            let newWidth = cropBoxData.width;
-            let newHeight = cropBoxData.width / aspectRatio;
             
-            // Adjust if height exceeds container
-            if (newHeight > cropper.getContainerData().height - 20) {
-                newHeight = cropper.getContainerData().height - 20;
+            // Calculate new dimensions that fit within the container
+            let newWidth, newHeight;
+            
+            if (containerData.width / containerData.height > aspectRatio) {
+                // Container is wider than aspect ratio, height is limiting
+                newHeight = Math.min(containerData.height - 40, 400);
                 newWidth = newHeight * aspectRatio;
+            } else {
+                // Container is taller than aspect ratio, width is limiting
+                newWidth = Math.min(containerData.width - 40, 600);
+                newHeight = newWidth / aspectRatio;
             }
             
-            // Set new crop box
+            // Set new crop box centered in container
             cropper.setCropBoxData({
+                left: (containerData.width - newWidth) / 2,
+                top: (containerData.height - newHeight) / 2,
                 width: newWidth,
                 height: newHeight
             });
@@ -462,6 +548,10 @@
         
         function setNonePreset() {
             if (!cropper) return;
+            
+            // Set active button
+            const noneButton = document.getElementById('none-preset');
+            setActivePresetButton(noneButton);
             
             // Clear preset dimensions
             cropper.presetWidth = null;
@@ -474,7 +564,19 @@
             cropper.setAspectRatio(NaN);
         }
         
-
+        function getPresetName(width, height) {
+            const presetMap = {
+                '825x200': 'Landing',
+                '480x480': 'Square',
+                '480x600': 'Portrait',
+                '480x300': 'Landscape',
+                '360x203': 'Feature',
+                '716x475': 'Gazette',
+                '745x319': 'Rotator'
+            };
+            
+            return presetMap[`${width}x${height}`] || `${width}x${height}`;
+        }
         
         function flipHorizontal() {
             if (!cropper) return;
@@ -482,6 +584,14 @@
             const imageData = cropper.getImageData();
             const currentScaleX = imageData.scaleX || 1;
             cropper.scaleX(-currentScaleX);
+        }
+        
+        function flipVertical() {
+            if (!cropper) return;
+            
+            const imageData = cropper.getImageData();
+            const currentScaleY = imageData.scaleY || 1;
+            cropper.scaleY(-currentScaleY);
         }
         
         function resetCrop() {
@@ -492,7 +602,17 @@
             cropper.presetHeight = null;
             selectedPreset = null;
             
+            // Remove active class from all buttons
+            const allButtons = document.querySelectorAll('.preset-buttons .btn');
+            allButtons.forEach(btn => btn.classList.remove('active'));
+            
+            // Reset cropper and set None as active
             cropper.reset();
+            
+            // Wait for reset to complete, then set None as active
+            setTimeout(() => {
+                setNonePreset();
+            }, 100);
         }
         
         function cropImage() {
@@ -502,7 +622,6 @@
             const canvasOptions = {
                 imageSmoothingEnabled: true,
                 imageSmoothingQuality: 'high'
-                // Remove fillColor to preserve transparency
             };
             
             // If we have stored preset dimensions, use them
@@ -570,7 +689,7 @@
             
             if (format === 'png') {
                 mimeType = 'image/png';
-                quality = 1.0; // PNG doesn't use quality parameter, but keep for consistency
+                quality = 1.0;
                 filename = `${baseFilename}.png`;
             } else {
                 mimeType = 'image/jpeg';
@@ -636,6 +755,11 @@
             // Clear original image data and selected preset
             originalImageData = null;
             selectedPreset = null;
+            activePresetButton = null;
+            
+            // Remove active class from all buttons
+            const allButtons = document.querySelectorAll('.preset-buttons .btn');
+            allButtons.forEach(btn => btn.classList.remove('active'));
             
             // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
