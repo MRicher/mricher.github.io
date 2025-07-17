@@ -320,8 +320,9 @@
                 this.reversedThemeMapping = Object.fromEntries(
                     Object.entries(this.themeMapping).map(([key, value]) => [value, key])
                 );
-                document.documentElement.setAttribute('lang', 'en-CA');
-                this.init();
+                
+                // Wait for language switcher to initialize first
+                this.waitForLanguageInitialization();
             }
 
             init() {
@@ -529,6 +530,11 @@
                             <p data-en="Upload a JSON file or add a new record to get started." data-fr="Téléversez un fichier JSON ou ajoutez un nouvel enregistrement pour commencer.">Upload a JSON file or add a new record to get started.</p>
                         </div>
                     `;
+                    
+                    // Apply current language to the newly rendered content
+                    if (window.languageSwitcher) {
+                        window.languageSwitcher.switchLanguage(window.languageSwitcher.currentLang);
+                    }
                     return;
                 }
 
@@ -701,6 +707,16 @@
                     input.focus();
                     input.blur();
                 });
+            }
+
+            waitForLanguageInitialization() {
+                // Check if language switcher is ready
+                if (window.languageSwitcher) {
+                    this.init();
+                } else {
+                    // Wait for language switcher to be initialized
+                    setTimeout(() => this.waitForLanguageInitialization(), 50);
+                }
             }
         }
       
