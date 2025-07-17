@@ -195,8 +195,6 @@ class LanguageSwitcher {
             window.themeManager.updateThemeButton(window.themeManager.currentTheme);
         }
 
-        document.documentElement.setAttribute('lang', newLang);
-
         setTimeout(() => {
             if (window.editor && typeof window.editor.updateCalendarLanguage === 'function') {
                 window.editor.updateCalendarLanguage();
