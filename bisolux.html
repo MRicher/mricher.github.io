@@ -474,22 +474,7 @@
             cropper.setAspectRatio(NaN);
         }
         
-        function getPresetName(width, height) {
-            // This function is no longer needed since we use dimensions directly
-            // Keeping it for backward compatibility if needed elsewhere
-            const presetMap = {
-                '825x200': 'Landing',
-                '480x480': 'Square',
-                '480x600': 'Portrait',
-                '480x300': 'Landscape',
-                '360x203': 'Feature',
-                '716x475': 'Gazette-article',
-                '745x319': 'Rotator'
-            };
-            
-            const key = `${width}x${height}`;
-            return presetMap[key] || 'Custom';
-        }
+
         
         function flipHorizontal() {
             if (!cropper) return;
