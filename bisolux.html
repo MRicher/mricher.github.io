@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title data-en="Image cropping and resizing tool" data-fr="Outil de recadrage et de redimensionnement d'images">Image cropping and resizing tool</title>
     <meta name="description" data-en="Easily crop, resize, and optimize images for web publishing. This tool supports PNG and JPG formats and uses smart compression to reduce file size while maintaining image quality." data-fr="Recadrez, redimensionnez et optimisez facilement vos images pour la publication web. Cet outil prend en charge les formats PNG et JPG et applique une compression intelligente pour réduire la taille des fichiers tout en conservant la qualité des images." content="Easily crop, resize, and optimize images for web publishing. This tool supports PNG and JPG formats and uses smart compression to reduce file size while maintaining image quality.">
+
+    <script>
+        const APP_VERSION = "1.0.2";
+        const BUILD_DATE = "2025-07-17";
+        const VERSION_STRING = `Version ${APP_VERSION} | Build ${BUILD_DATE}`;
+    </script>
     
     <!-- Bootstrap 5.3 CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -283,10 +289,7 @@
     <footer class="mt-auto" role="contentinfo">
         <div class="container">
             <div class="text-center">
-                <p class="mb-0" data-en="Web Communications Team" 
-                   data-fr="Équipe des communications Web">
-                    Web Communications Team
-                </p>
+                <p class="mb-0" data-en="" data-fr="" id="version-info"></p>
             </div>
         </div>
     </footer>
@@ -565,17 +568,7 @@
         }
         
         function getPresetName(width, height) {
-            const presetMap = {
-                '825x200': 'Landing',
-                '480x480': 'Square',
-                '480x600': 'Portrait',
-                '480x300': 'Landscape',
-                '360x203': 'Feature',
-                '716x475': 'Gazette',
-                '745x319': 'Rotator'
-            };
-            
-            return presetMap[`${width}x${height}`] || `${width}x${height}`;
+            return `${width}x${height}`;
         }
         
         function flipHorizontal() {
