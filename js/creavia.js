@@ -1,7 +1,5 @@
 // Update version info dynamically
 document.getElementById('version-info').textContent = VERSION_STRING;
-document.getElementById('version-info').setAttribute('data-en', VERSION_STRING);
-document.getElementById('version-info').setAttribute('data-fr', VERSION_STRING);
 
 // Cookie utility functions
 class CookieManager {
