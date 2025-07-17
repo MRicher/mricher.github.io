@@ -195,6 +195,9 @@
                         <button type="button" class="btn btn-outline-secondary" onclick="flipHorizontal()">
                             <span data-en="Flip horizontal" data-fr="Retourner horizontalement">Flip horizontal</span>
                         </button>
+                        <button type="button" class="btn btn-outline-secondary" onclick="flipVertical()">
+                            <span data-en="Flip vertical" data-fr="Retourner verticalement">Flip vertical</span>
+                        </button>
                     </div>
                 </section>
                 
@@ -464,23 +467,24 @@
             cropper.presetWidth = null;
             cropper.presetHeight = null;
             
-            // Set preset name to nothing
-            selectedPreset = '';
+            // Set preset name to None
+            selectedPreset = 'None';
             
             // Remove aspect ratio constraint (free crop)
             cropper.setAspectRatio(NaN);
         }
         
         function getPresetName(width, height) {
-            // Map dimensions to preset names
+            // This function is no longer needed since we use dimensions directly
+            // Keeping it for backward compatibility if needed elsewhere
             const presetMap = {
-                '825x200': '825x200',
-                '480x480': '480x480',
-                '480x600': '480x600',
-                '480x300': '480x300',
-                '360x203': '360x203',
-                '716x475': '716x475',
-                '745x319': '745x319'
+                '825x200': 'Landing',
+                '480x480': 'Square',
+                '480x600': 'Portrait',
+                '480x300': 'Landscape',
+                '360x203': 'Feature',
+                '716x475': 'Gazette-article',
+                '745x319': 'Rotator'
             };
             
             const key = `${width}x${height}`;
@@ -532,6 +536,11 @@
                 return;
             }
             
+            // If "None" preset was used, update selectedPreset with actual crop dimensions
+            if (selectedPreset === 'None') {
+                selectedPreset = `${canvas.width}x${canvas.height}`;
+            }
+            
             // Show preview
             displayPreview(canvas);
             
@@ -568,8 +577,8 @@
                 return;
             }
             
-            // Generate filename based on preset
-            const baseFilename = selectedPreset ? `image-${selectedPreset}` : 'cropped-image';
+            // Generate filename based on dimensions
+            const baseFilename = selectedPreset ? `image-${selectedPreset}` : `image-${canvas.width}x${canvas.height}`;
             
             // Set quality and mime type based on format
             let mimeType, quality, filename;
