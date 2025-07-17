@@ -167,6 +167,12 @@
         .update-section h3 {
             color: var(--body-color);
         }
+
+        input[type="date"] {
+            color: var(--body-color);
+            background-color: var(--card-bg);
+            border-color: var(--card-border);
+        }
         
         @media (max-width: 768px) {
             .form-row {
@@ -540,21 +546,22 @@
                         
                         <div class="record-body">
                             <div class="mb-3">
-                                <label for="last-updated-${index}" class="form-label">Last updated</label>
+                                <label for="last-updated-${index}" class="form-label" data-en="Last updated" data-fr="Dernière mise à jour">Last updated</label>
                                 <input type="date" class="form-control" id="last-updated-${index}" value="${record['last-updated'] || ''}"
-                                       onchange="editor.updateRecord(${index}, 'last-updated', this.value)">
+                                       onchange="editor.updateRecord(${index}, 'last-updated', this.value)"
+                                       data-en-lang="en-CA" data-fr-lang="fr-CA">
                             </div>
 
                             <div class="form-row mb-3">
                                 <div>
-                                    <label for="english-theme-${index}" class="form-label">English theme</label>
+                                    <label for="english-theme-${index}" class="form-label" data-en="English theme" data-fr="Thème anglais">English theme</label>
                                     <select class="form-select" id="english-theme-${index}" onchange="editor.updateRecord(${index}, 'english-theme', this.value)">
                                         <option value="">Select a theme...</option>
                                         ${this.getThemeOptions(record['english-theme'], true)}
                                     </select>
                                 </div>
                                 <div>
-                                    <label for="french-theme-${index}" class="form-label">French theme</label>
+                                    <label for="french-theme-${index}" class="form-label" data-en="French theme" data-fr="Thème français">French theme</label>
                                     <select class="form-select" id="french-theme-${index}" onchange="editor.updateRecord(${index}, 'french-theme', this.value)">
                                         <option value="">Sélectionner un thème...</option>
                                         ${this.getThemeOptions(record['french-theme'], false)}
@@ -564,29 +571,29 @@
 
                             <div class="form-row mb-3">
                                 <div>
-                                    <label for="english-title-${index}" class="form-label">English title</label>
+                                    <label for="english-title-${index}" class="form-label" data-en="English title" data-fr="Titre anglais">English title</label>
                                     <textarea class="form-control" id="english-title-${index}" rows="3" onchange="editor.updateRecord(${index}, 'english-title', this.value)">${record['english-title'] || ''}</textarea>
                                 </div>
                                 <div>
-                                    <label for="french-title-${index}" class="form-label">French title</label>
+                                    <label for="french-title-${index}" class="form-label" data-en="French title" data-fr="Titre français">French title</label>
                                     <textarea class="form-control" id="french-title-${index}" rows="3" onchange="editor.updateRecord(${index}, 'french-title', this.value)">${record['french-title'] || ''}</textarea>
                                 </div>
                             </div>
 
                             <div class="form-row mb-3">
                                 <div>
-                                    <label for="english-summary-${index}" class="form-label">English summary</label>
+                                    <label for="english-summary-${index}" class="form-label" data-en="English summary" data-fr="Résumé anglais">English summary</label>
                                     <textarea class="form-control" id="english-summary-${index}" rows="4" onchange="editor.updateRecord(${index}, 'english-summary ', this.value)">${record['english-summary '] || ''}</textarea>
                                 </div>
                                 <div>
-                                    <label for="french-summary-${index}" class="form-label">French summary</label>
+                                    <label for="french-summary-${index}" class="form-label" data-en="French summary" data-fr="Résumé français">French summary</label>
                                     <textarea class="form-control" id="french-summary-${index}" rows="4" onchange="editor.updateRecord(${index}, 'french-summary', this.value)">${record['french-summary'] || ''}</textarea>
                                 </div>
                             </div>
 
                             <div class="form-row mb-3">
                                 <div>
-                                    <label for="english-progress-${index}" class="form-label">English progress</label>
+                                    <label for="english-progress-${index}" class="form-label" data-en="English progress" data-fr="Progrès anglais">English progress</label>
                                     <select class="form-select" id="english-progress-${index}" onchange="editor.updateRecord(${index}, 'english-progress', this.value)">
                                         <option value="To be actioned" ${record['english-progress'] === 'To be actioned' ? 'selected' : ''}>To be actioned</option>
                                         <option value="In progress" ${record['english-progress'] === 'In progress' ? 'selected' : ''}>In progress</option>
@@ -594,7 +601,7 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label for="french-progress-${index}" class="form-label">French progress</label>
+                                    <label for="french-progress-${index}" class="form-label" data-en="French progress" data-fr="Progrès français">French progress</label>
                                     <select class="form-select" id="french-progress-${index}" onchange="editor.updateRecord(${index}, 'french-progress', this.value)">
                                         <option value="À mettre en œuvre" ${record['french-progress'] === 'À mettre en œuvre' ? 'selected' : ''}>À mettre en œuvre</option>
                                         <option value="En cours" ${record['french-progress'] === 'En cours' ? 'selected' : ''}>En cours</option>
@@ -604,36 +611,37 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="recommendations-${index}" class="form-label">Recommendations</label>
+                                <label for="recommendations-${index}" class="form-label" data-en="Recommendations" data-fr="Recommandations">Recommendations</label>
                                 <input type="text" class="form-control" id="recommendations-${index}" value="${record['recommendations-1'] || ''}"
                                        onchange="editor.updateRecord(${index}, 'recommendations-1', this.value)">
                             </div>
 
                             <div class="update-section">
-                                <h3 class="h5">Progress Updates</h3>
+                                <h3 class="h5" data-en="Progress updates" data-fr="Mises à jour du progrès">Progress updates</h3>
                                 ${[1, 2, 3, 4, 5, 6].map(updateNum => {
                                     const hasUpdate = record[`update-${updateNum}-date`] || record[`english-update-${updateNum}`] || record[`french-update-${updateNum}`];
                                     return hasUpdate ? `
                                         <div class="update-item">
                                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                                <h4 class="h6 mb-0">Update ${updateNum}</h4>
+                                                <h4 class="h6 mb-0" data-en="Update ${updateNum}" data-fr="Mise à jour ${updateNum}">Update ${updateNum}</h4>
                                                 <button class="btn btn-outline-danger btn-sm" onclick="editor.deleteUpdate(${index}, ${updateNum})">Delete</button>
                                             </div>
                                             
                                             <div class="mb-3">
-                                                <label for="update-${updateNum}-date-${index}" class="form-label">Date</label>
+                                                <label for="update-${updateNum}-date-${index}" class="form-label" data-en="Date" data-fr="Date">Date</label>
                                                 <input type="date" class="form-control" id="update-${updateNum}-date-${index}" value="${record[`update-${updateNum}-date`] || ''}"
-                                                       onchange="editor.updateRecord(${index}, 'update-${updateNum}-date', this.value)">
+                                                   onchange="editor.updateRecord(${index}, 'update-${updateNum}-date', this.value)"
+                                                   data-en-lang="en-CA" data-fr-lang="fr-CA">
                                             </div>
                                             
                                             <div class="form-row">
                                                 <div>
-                                                    <label for="english-update-${updateNum}-${index}" class="form-label">English update</label>
+                                                    <label for="english-update-${updateNum}-${index}" class="form-label" data-en="English update" data-fr="Mise à jour anglaise">English update</label>
                                                     <textarea class="form-control" id="english-update-${updateNum}-${index}" rows="4" 
                                                               onchange="editor.updateRecord(${index}, 'english-update-${updateNum}', this.value)">${record[`english-update-${updateNum}`] || ''}</textarea>
                                                 </div>
                                                 <div>
-                                                    <label for="french-update-${updateNum}-${index}" class="form-label">French update</label>
+                                                    <label for="french-update-${updateNum}-${index}" class="form-label" data-en="French update" data-fr="Mise à jour française">French update</label>
                                                     <textarea class="form-control" id="french-update-${updateNum}-${index}" rows="4"
                                                               onchange="editor.updateRecord(${index}, 'french-update-${updateNum}', this.value)">${record[`french-update-${updateNum}`] || ''}</textarea>
                                                 </div>
@@ -680,6 +688,21 @@
             }
         }
 
+        updateCalendarLanguage() {
+            const currentLang = document.documentElement.lang || 'en-CA';
+            const dateInputs = document.querySelectorAll('input[type="date"]');
+            
+            dateInputs.forEach(input => {
+                // Set the lang attribute for the input
+                input.setAttribute('lang', currentLang);
+                
+                // Force re-render of the date picker
+                const value = input.value;
+                input.value = '';
+                input.value = value;
+            });
+        }
+        
         // Initialize the editor when the page loads
         document.addEventListener('DOMContentLoaded', function() {
             window.editor = new RCMPDataEditor();
