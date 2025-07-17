@@ -194,6 +194,11 @@ class LanguageSwitcher {
         if (window.themeManager) {
             window.themeManager.updateThemeButton(window.themeManager.currentTheme);
         }
+
+        // calendar switching
+        if (window.editor && typeof window.editor.updateCalendarLanguage === 'function') {
+            window.editor.updateCalendarLanguage();
+        }
     }
     
     updateLanguageButtons() {
