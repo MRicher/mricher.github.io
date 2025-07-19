@@ -185,6 +185,93 @@
                 gap: 10px;
             }
         }
+
+        /* Back to Top Button Styles */
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            font-size: 18px;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .back-to-top:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+        }
+
+        .back-to-top:focus {
+            outline: 3px solid #ffc107;
+            outline-offset: 2px;
+        }
+
+        .back-to-top:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+        }
+
+        /* Arrow icon using CSS */
+        .back-to-top::before {
+            content: '↑';
+            font-size: 20px;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .back-to-top {
+                bottom: 15px;
+                right: 15px;
+                width: 45px;
+                height: 45px;
+                font-size: 16px;
+            }
+
+            .back-to-top::before {
+                font-size: 18px;
+            }
+        }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            .back-to-top {
+                border: 2px solid;
+            }
+        }
+
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            .back-to-top {
+                transition: opacity 0.3s ease;
+            }
+            
+            .back-to-top:hover {
+                transform: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -253,6 +340,17 @@
     
     <!-- Main Content -->
     <main id="main-content" class="container" role="main">
+        <!-- Back to Top Button -->
+        <button 
+            type="button" 
+            class="back-to-top" 
+            id="backToTop" 
+            aria-label="Return to top of page"
+            data-en="Return to top of page"
+            data-fr="Retourner en haut de la page"
+            title="Return to top">
+        </button>
+        
         <section aria-labelledby="main-heading">
             <h1 data-en="Create and edit <abbr>MCC</abbr> JSON files" data-fr="Créer et modifier des fichiers JSON de la <abbr>CPM</abbr>">Create and edit <abbr>MCC<abbr> JSON files</h1>
         </section>
@@ -805,6 +903,121 @@
         // Initialize the editor when the page loads
         document.addEventListener('DOMContentLoaded', function() {
             window.editor = new RCMPDataEditor();
+        });
+
+      class BackToTopButton {
+            constructor() {
+                this.button = document.getElementById('backToTop');
+                this.scrollThreshold = 300;
+                this.isVisible = false;
+                
+                this.init();
+            }
+
+            init() {
+                if (!this.button) return;
+
+                // Add event listeners
+                window.addEventListener('scroll', this.handleScroll.bind(this), { passive: true });
+                this.button.addEventListener('click', this.scrollToTop.bind(this));
+                
+                // Handle keyboard navigation
+                this.button.addEventListener('keydown', this.handleKeydown.bind(this));
+                
+                // Initial check
+                this.handleScroll();
+                
+                // Update language if language switcher exists
+                if (window.languageSwitcher) {
+                    // Listen for language changes
+                    document.addEventListener('languageChanged', this.updateLanguage.bind(this));
+                }
+            }
+
+            handleScroll() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const shouldShow = scrollTop > this.scrollThreshold;
+
+                if (shouldShow && !this.isVisible) {
+                    this.showButton();
+                } else if (!shouldShow && this.isVisible) {
+                    this.hideButton();
+                }
+            }
+
+            showButton() {
+                this.button.classList.add('visible');
+                this.button.setAttribute('aria-hidden', 'false');
+                this.isVisible = true;
+            }
+
+            hideButton() {
+                this.button.classList.remove('visible');
+                this.button.setAttribute('aria-hidden', 'true');
+                this.isVisible = false;
+            }
+
+            scrollToTop() {
+                // Check for reduced motion preference
+                const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                
+                if (prefersReducedMotion) {
+                    // Instant scroll for users who prefer reduced motion
+                    window.scrollTo(0, 0);
+                } else {
+                    // Smooth scroll for others
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                }
+                
+                // Move focus to top of page for screen readers
+                // Create a temporary focusable element at the top
+                const focusTarget = document.createElement('div');
+                focusTarget.setAttribute('tabindex', '-1');
+                focusTarget.style.position = 'absolute';
+                focusTarget.style.top = '0';
+                focusTarget.style.left = '-9999px';
+                focusTarget.setAttribute('aria-label', 'Top of page');
+                
+                document.body.insertBefore(focusTarget, document.body.firstChild);
+                focusTarget.focus();
+                
+                // Remove the temporary element after a short delay
+                setTimeout(() => {
+                    if (focusTarget.parentNode) {
+                        focusTarget.parentNode.removeChild(focusTarget);
+                    }
+                }, 100);
+            }
+
+            handleKeydown(event) {
+                // Activate on Enter or Space
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    this.scrollToTop();
+                }
+            }
+
+            updateLanguage() {
+                if (!window.languageSwitcher) return;
+                
+                const currentLang = window.languageSwitcher.currentLang;
+                const ariaLabel = currentLang === 'fr-CA' ? 
+                    this.button.getAttribute('data-fr') : 
+                    this.button.getAttribute('data-en');
+                
+                if (ariaLabel) {
+                    this.button.setAttribute('aria-label', ariaLabel);
+                    this.button.setAttribute('title', ariaLabel);
+                }
+            }
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            new BackToTopButton();
         });
     </script>
 </body>
