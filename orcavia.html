@@ -349,6 +349,86 @@
                 }, 5000);
             }
 
+            sanitizeText(text) {
+                if (!text || typeof text !== 'string') return text;
+                
+                let sanitized = text;
+                
+                // Replace smart apostrophes with straight apostrophes
+                sanitized = sanitized.replace(/'/g, "'");
+                
+                // Handle email addresses
+                const emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g;
+                sanitized = sanitized.replace(emailRegex, (match) => {
+                    const lowercaseEmail = match.toLowerCase();
+                    // Check if it's already wrapped in a mailto link
+                    const beforeMatch = sanitized.substring(0, sanitized.indexOf(match));
+                    const afterMatch = sanitized.substring(sanitized.indexOf(match) + match.length);
+                    
+                    // Simple check if it's already in a mailto link
+                    if (beforeMatch.includes('<a href="mailto:') && !beforeMatch.includes('</a>') && afterMatch.includes('</a>')) {
+                        return lowercaseEmail;
+                    }
+                    
+                    return `<a href="mailto:${lowercaseEmail}">${lowercaseEmail}</a>`;
+                });
+                
+                // Handle RCMP acronym (not already wrapped in abbr tags)
+                sanitized = sanitized.replace(/(?<!<abbr[^>]*>)RCMP(?!<\/abbr>)/g, (match, offset, string) => {
+                    // Check if this RCMP is already inside an abbr tag
+                    const beforeText = string.substring(0, offset);
+                    const afterText = string.substring(offset + match.length);
+                    const lastAbbrOpen = beforeText.lastIndexOf('<abbr');
+                    const lastAbbrClose = beforeText.lastIndexOf('</abbr>');
+                    
+                    if (lastAbbrOpen > lastAbbrClose && afterText.includes('</abbr>')) {
+                        return match; // Already wrapped
+                    }
+                    
+                    return `<abbr>RCMP</abbr>`;
+                });
+                
+                // Handle GRC acronym (not already wrapped in abbr tags)
+                sanitized = sanitized.replace(/(?<!<abbr[^>]*>)GRC(?!<\/abbr>)/g, (match, offset, string) => {
+                    // Check if this GRC is already inside an abbr tag
+                    const beforeText = string.substring(0, offset);
+                    const afterText = string.substring(offset + match.length);
+                    const lastAbbrOpen = beforeText.lastIndexOf('<abbr');
+                    const lastAbbrClose = beforeText.lastIndexOf('</abbr>');
+                    
+                    if (lastAbbrOpen > lastAbbrClose && afterText.includes('</abbr>')) {
+                        return match; // Already wrapped
+                    }
+                    
+                    return `<abbr>GRC</abbr>`;
+                });
+                
+                return sanitized;
+            }
+
+            sanitizeRecord(record) {
+                const sanitizedRecord = {};
+                
+                for (const [key, value] of Object.entries(record)) {
+                    if (typeof value === 'string') {
+                        sanitizedRecord[key] = this.sanitizeText(value);
+                    } else {
+                        sanitizedRecord[key] = value;
+                    }
+                }
+                
+                return sanitizedRecord;
+            }
+
+            sanitizeAllData() {
+                const sanitizedData = {
+                    ...this.data,
+                    data: this.data.data.map(record => this.sanitizeRecord(record))
+                };
+                
+                return sanitizedData;
+            }
+
             async loadFromURL() {
                 const url = 'mcc.json';
                 const button = document.getElementById('load-from-url-btn');
@@ -450,7 +530,9 @@
             }
 
             downloadData() {
-                const dataStr = JSON.stringify(this.data, null, 2);
+                // Sanitize all data before downloading
+                const sanitizedData = this.sanitizeAllData();
+                const dataStr = JSON.stringify(sanitizedData, null, 2);
                 const dataBlob = new Blob([dataStr], { type: 'application/json' });
                 const url = URL.createObjectURL(dataBlob);
                 
@@ -462,7 +544,7 @@
                 document.body.removeChild(link);
                 URL.revokeObjectURL(url);
                 
-                this.showAlert('Data downloaded successfully!');
+                this.showAlert('Data downloaded successfully with sanitized formatting!');
             }
 
             updateRecord(index, field, value) {
