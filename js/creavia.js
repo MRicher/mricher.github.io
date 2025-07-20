@@ -1,5 +1,13 @@
+const APP_VERSION = "1.0.1";
+const VERSION_STRING = `Version ${APP_VERSION}`;
+
 // Update version info dynamically
-document.getElementById('version-info').textContent = VERSION_STRING;
+document.addEventListener('DOMContentLoaded', () => {
+    const versionElement = document.getElementById('version-info');
+    if (versionElement) {
+        versionElement.textContent = VERSION_STRING;
+    }
+});
 
 // Cookie utility functions
 class CookieManager {
@@ -31,13 +39,15 @@ class ThemeManager {
     }
     
     getStoredTheme() {
-        // Try to get from cookie first, then fall back to default
-        const cookieTheme = CookieManager.getCookie('preferred_theme');
-        return cookieTheme || this.currentTheme || 'light';
+        // Try cookie first, then localStorage, then default
+        return CookieManager.getCookie('preferred_theme') || 
+               localStorage.getItem('theme') || 
+               'light';
     }
     
     saveTheme(theme) {
         CookieManager.setCookie('preferred_theme', theme);
+        localStorage.setItem('theme', theme);
     }
     
     init() {
@@ -48,9 +58,7 @@ class ThemeManager {
     setupThemeToggle() {
         const themeToggle = document.getElementById('theme-toggle');
         if (themeToggle) {
-            themeToggle.addEventListener('click', () => {
-                this.toggleTheme();
-            });
+            themeToggle.addEventListener('click', () => this.toggleTheme());
         }
     }
     
@@ -63,6 +71,7 @@ class ThemeManager {
     
     applyTheme(theme) {
         document.documentElement.setAttribute('data-theme', theme);
+        document.documentElement.setAttribute('data-bs-theme', theme);
         this.updateThemeButton(theme);
     }
     
@@ -71,7 +80,7 @@ class ThemeManager {
         const themeText = document.getElementById('theme-text');
         
         if (themeToggle && themeText) {
-            const currentLang = document.documentElement.lang.split('-')[0];
+            const currentLang = document.documentElement.lang?.split('-')[0] || 'en';
             
             if (theme === 'dark') {
                 const lightModeText = currentLang === 'fr' ? 'Mode clair' : 'Light mode';
@@ -99,7 +108,9 @@ class ThemeManager {
         document.body.appendChild(announcement);
         
         setTimeout(() => {
-            document.body.removeChild(announcement);
+            if (document.body.contains(announcement)) {
+                document.body.removeChild(announcement);
+            }
         }, 1000);
     }
 }
@@ -112,7 +123,6 @@ class LanguageSwitcher {
     }
     
     getPreferredLanguage() {
-        // Priority order: URL parameter > Cookie > Document lang > Default
         const urlLang = this.getLanguageFromUrl();
         const cookieLang = CookieManager.getCookie('preferred_language');
         const documentLang = document.documentElement.lang;
@@ -160,30 +170,15 @@ class LanguageSwitcher {
         this.currentLang = lang;
         document.documentElement.lang = lang;
         
-        // Save to cookie
         this.saveLanguage(lang);
-        
-        // Update URL
         this.updateUrl(lang);
         
         const elements = document.querySelectorAll('[data-en][data-fr]');
         elements.forEach(element => {
-            const shortLang = lang.split('-')[0]; // Get 'en' or 'fr'
+            const shortLang = lang.split('-')[0];
             const text = element.getAttribute(`data-${shortLang}`);
             if (text) {
-                if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
-                    element.placeholder = text;
-                } else if (element.tagName === 'IMG') {
-                    element.alt = text;
-                } else if (element.hasAttribute('aria-label')) {
-                    element.setAttribute('aria-label', text);
-                } else if (element.hasAttribute('title')) {
-                    element.title = text;
-                } else if (element.hasAttribute('content')) {
-                    element.setAttribute('content', text);
-                } else {
-                    element.innerHTML = text;
-                }
+                this.updateElementContent(element, text);
             }
         });
         
@@ -195,15 +190,28 @@ class LanguageSwitcher {
             window.themeManager.updateThemeButton(window.themeManager.currentTheme);
         }
 
-        setTimeout(() => {
-            if (window.editor && typeof window.editor.updateCalendarLanguage === 'function') {
-                window.editor.updateCalendarLanguage();
-            }
-        }, 100);
-        
-        // calendar switching
+        // Notify other components about language change
         if (window.editor && typeof window.editor.updateCalendarLanguage === 'function') {
-            window.editor.updateCalendarLanguage();
+            setTimeout(() => window.editor.updateCalendarLanguage(), 100);
+        }
+        
+        // Dispatch custom event for language change
+        document.dispatchEvent(new CustomEvent('languageChanged', { detail: { language: lang } }));
+    }
+    
+    updateElementContent(element, text) {
+        if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+            element.placeholder = text;
+        } else if (element.tagName === 'IMG') {
+            element.alt = text;
+        } else if (element.hasAttribute('aria-label')) {
+            element.setAttribute('aria-label', text);
+        } else if (element.hasAttribute('title')) {
+            element.title = text;
+        } else if (element.hasAttribute('content')) {
+            element.setAttribute('content', text);
+        } else {
+            element.innerHTML = text;
         }
     }
     
@@ -241,44 +249,53 @@ class LanguageSwitcher {
     }
 }
 
-// Initialize everything when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-    // Make instances globally accessible for cross-component communication
-    window.themeManager = new ThemeManager();
-    window.languageSwitcher = new LanguageSwitcher();
-    
-    // Handle escape key to close mobile menu
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            const mobileMenu = document.querySelector('.navbar-collapse.show');
-            if (mobileMenu) {
-                const toggleButton = document.querySelector('.navbar-toggler');
-                if (toggleButton) {
-                    toggleButton.click();
-                    toggleButton.focus();
-                }
-            }
-        }
-    });
-    
-    // Ensure proper focus management for mobile menu
-    const navbarToggler = document.querySelector('.navbar-toggler');
-    if (navbarToggler) {
-        navbarToggler.addEventListener('click', () => {
-            setTimeout(() => {
-                const isExpanded = navbarToggler.getAttribute('aria-expanded') === 'true';
-                if (isExpanded) {
-                    const firstNavLink = document.querySelector('.navbar-nav .nav-link');
-                    if (firstNavLink) {
-                        firstNavLink.focus();
+// Utility functions
+class UIUtils {
+    static handleEscapeKey() {
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const mobileMenu = document.querySelector('.navbar-collapse.show');
+                if (mobileMenu) {
+                    const toggleButton = document.querySelector('.navbar-toggler');
+                    if (toggleButton) {
+                        toggleButton.click();
+                        toggleButton.focus();
                     }
                 }
-            }, 100);
+            }
         });
     }
     
+    static setupMobileMenuFocus() {
+        const navbarToggler = document.querySelector('.navbar-toggler');
+        if (navbarToggler) {
+            navbarToggler.addEventListener('click', () => {
+                setTimeout(() => {
+                    const isExpanded = navbarToggler.getAttribute('aria-expanded') === 'true';
+                    if (isExpanded) {
+                        const firstNavLink = document.querySelector('.navbar-nav .nav-link');
+                        if (firstNavLink) {
+                            firstNavLink.focus();
+                        }
+                    }
+                }, 100);
+            });
+        }
+    }
+}
+
+// Initialize everything when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    // Make instances globally accessible
+    window.themeManager = new ThemeManager();
+    window.languageSwitcher = new LanguageSwitcher();
+    
+    // Setup UI utilities
+    UIUtils.handleEscapeKey();
+    UIUtils.setupMobileMenuFocus();
+    
     // Debug logging (remove in production)
-    console.log('Preferences loaded:', {
+    console.log('Global preferences loaded:', {
         theme: CookieManager.getCookie('preferred_theme'),
         language: CookieManager.getCookie('preferred_language')
     });
