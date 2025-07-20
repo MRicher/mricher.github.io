@@ -202,19 +202,28 @@ class LanguageSwitcher {
     updateElementContent(element, text) {
         if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
             element.placeholder = text;
-        } else if (element.tagName === 'IMG') {
+        } 
+        else if (element.tagName === 'IMG') {
             element.alt = text;
-        } else if (element.hasAttribute('aria-label')) {
-            element.setAttribute('aria-label', text);
-        } else if (element.hasAttribute('title')) {
-            element.title = text;
-        } else if (element.hasAttribute('content')) {
+        } 
+        else if (element.hasAttribute('content')) {
             element.setAttribute('content', text);
-        } else {
+        }
+        else if (element.hasAttribute('aria-label') && element.hasAttribute('title')) {
+            element.setAttribute('aria-label', text);
+            element.title = text;
+        }
+        else if (element.hasAttribute('aria-label')) {
+            element.setAttribute('aria-label', text);
+        } 
+        else if (element.hasAttribute('title')) {
+            element.title = text;
+        } 
+        else {
             element.innerHTML = text;
         }
     }
-    
+        
     updateLanguageButtons() {
         const frBtn = document.getElementById('lang-fr-btn');
         const enBtn = document.getElementById('lang-en-btn');
