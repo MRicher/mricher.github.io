@@ -152,7 +152,10 @@ class RCMPDataEditor {
                 throw new Error('Invalid JSON structure from URL');
             }
         } catch (error) {
-            this.showAlert('Error loading data from website: ' + error.message, 'error');
+            const errorMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr' 
+                ? 'Erreur lors du chargement des données depuis le site web : ' + error.message
+                : 'Error loading data from website: ' + error.message;
+            this.showAlert(errorMsg, 'error');
         } finally {
             button.textContent = originalText;
             button.disabled = false;
@@ -175,7 +178,10 @@ class RCMPDataEditor {
                     throw new Error('Invalid JSON structure');
                 }
             } catch (error) {
-                this.showAlert('Error loading JSON file: ' + error.message, 'error');
+                const errorMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr' 
+                    ? 'Erreur lors du chargement du fichier JSON : ' + error.message
+                    : 'Error loading JSON file: ' + error.message;
+                this.showAlert(errorMsg, 'error');
             }
         };
         reader.readAsText(file);
@@ -222,10 +228,16 @@ class RCMPDataEditor {
     }
 
     deleteRecord(index) {
-        if (confirm('Are you sure you want to delete this record?')) {
+        const confirmMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr'
+            ? 'Êtes-vous sûr de vouloir supprimer cet enregistrement ?'
+            : 'Are you sure you want to delete this record?';
+        if (confirm(confirmMsg)) {
             this.data.data.splice(index, 1);
             this.render();
-            this.showAlert('Record deleted successfully!');
+            const successMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr'
+                ? 'Enregistrement supprimé avec succès !'
+                : 'Record deleted successfully!';
+            this.showAlert(successMsg);
         }
     }
 
@@ -243,7 +255,10 @@ class RCMPDataEditor {
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
         
-        this.showAlert('Data downloaded successfully with sanitized formatting!');
+        const successMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr'
+            ? 'Données téléchargées avec succès avec formatage assaini !'
+            : 'Data downloaded successfully with sanitized formatting!';
+        this.showAlert(successMsg);
     }
 
     updateRecord(index, field, value) {
@@ -328,7 +343,7 @@ class RCMPDataEditor {
                         </span>
                         <small class="text-muted d-block mt-1">Updated: ${record['last-updated'] || 'Not set'}</small>
                     </div>
-                    <button class="btn btn-danger btn-sm" onclick="editor.deleteRecord(${index})">Delete</button>
+                    <button class="btn btn-danger btn-sm" onclick="editor.deleteUpdate(${index})" data-en="Delete" data-fr="Supprimer">Delete</button>
                 </div>
                 
                 <div class="record-body">
@@ -411,7 +426,7 @@ class RCMPDataEditor {
                                 <div class="update-item">
                                     <div class="d-flex justify-content-between align-items-center mb-3">
                                         <h4 class="h6 mb-0" data-en="Update ${updateNum}" data-fr="Mise à jour ${updateNum}">Update ${updateNum}</h4>
-                                        <button class="btn btn-outline-danger btn-sm" onclick="editor.deleteUpdate(${index}, ${updateNum})">Delete</button>
+                                        <button class="btn btn-outline-danger btn-sm" onclick="editor.deleteUpdate(${index}, ${updateNum})" data-en="Delete" data-fr="Supprimer">Delete</button>
                                     </div>
                                     
                                     <div class="mb-3">
@@ -437,7 +452,7 @@ class RCMPDataEditor {
                             ` : '';
                         }).join('')}
                         
-                        <button class="btn btn-outline-secondary btn-sm" onclick="editor.addUpdate(${index})">Add Update</button>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="editor.addUpdate(${index})" data-en="Add Update" data-fr="Ajouter une mise à jour">Add Update</button>
                     </div>
                 </div>
             </div>
@@ -463,11 +478,17 @@ class RCMPDataEditor {
                 return;
             }
         }
-        this.showAlert('Maximum number of updates (6) reached for this record.', 'error');
+        const errorMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr'
+            ? 'Nombre maximum de mises à jour (6) atteint pour cet enregistrement.'
+            : 'Maximum number of updates (6) reached for this record.';
+        this.showAlert(errorMsg, 'error');
     }
 
     deleteUpdate(recordIndex, updateNumber) {
-        if (confirm(`Are you sure you want to delete update ${updateNumber}?`)) {
+        const confirmMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr'
+            ? `Êtes-vous sûr de vouloir supprimer la mise à jour ${updateNumber} ?`
+            : `Are you sure you want to delete update ${updateNumber}?`;
+        if (confirm(confirmMsg)) {
             const record = this.data.data[recordIndex];
             if (record) {
                 record[`update-${updateNumber}-date`] = '';
