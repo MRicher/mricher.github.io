@@ -1,11 +1,19 @@
-const APP_VERSION = "1.0.2";
-const VERSION_STRING = `Version ${APP_VERSION}`;
+const BISOLUX_APP_VERSION = "1.0.2";
+const BISOLUX_VERSION_STRING = `Version ${BISOLUX_APP_VERSION}`;
 
 // Image Cropper JavaScript - Page-specific functionality only
 let cropper = null;
 let originalImageData = null;
 let selectedPreset = null;
 let activePresetButton = null;
+
+// Update version info dynamically
+document.addEventListener('DOMContentLoaded', () => {
+    const versionElement = document.getElementById('version-info');
+    if (versionElement) {
+        versionElement.textContent = BISOLUX_VERSION_STRING;
+    }
+});
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
