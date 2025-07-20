@@ -258,6 +258,71 @@ class LanguageSwitcher {
     }
 }
 
+// Back to Top Button functionality
+class BackToTopButton {
+    constructor() {
+        this.button = document.getElementById('backToTop');
+        this.scrollThreshold = 300; // Show button after scrolling 300px
+        this.init();
+    }
+
+    init() {
+        if (!this.button) return;
+
+        // Add scroll event listener with throttling for better performance
+        let scrollTimeout;
+        window.addEventListener('scroll', () => {
+            if (scrollTimeout) {
+                clearTimeout(scrollTimeout);
+            }
+            scrollTimeout = setTimeout(() => this.handleScroll(), 10);
+        });
+        
+        // Add click event listener
+        this.button.addEventListener('click', () => this.scrollToTop());
+        
+        // Handle keyboard navigation
+        this.button.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.scrollToTop();
+            }
+        });
+        
+        // Initial check in case page is already scrolled
+        this.handleScroll();
+    }
+
+    handleScroll() {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        // Use 'visible' class to match your CSS
+        if (scrollTop > this.scrollThreshold) {
+            this.button.classList.add('visible');
+        } else {
+            this.button.classList.remove('visible');
+        }
+    }
+
+    scrollToTop() {
+        // Smooth scroll to top
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+        
+        // Focus management - focus on a logical element after scroll
+        setTimeout(() => {
+            // Focus on the main heading or skip to content link if available
+            const mainHeading = document.querySelector('h1, .main-heading, #main-content');
+            if (mainHeading && mainHeading.tabIndex === -1) {
+                mainHeading.tabIndex = -1;
+                mainHeading.focus();
+            }
+        }, 500);
+    }
+}
+
 // Utility functions
 class UIUtils {
     static handleEscapeKey() {
@@ -298,6 +363,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Make instances globally accessible
     window.themeManager = new ThemeManager();
     window.languageSwitcher = new LanguageSwitcher();
+    window.backToTopButton = new BackToTopButton();
     
     // Setup UI utilities
     UIUtils.handleEscapeKey();
