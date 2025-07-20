@@ -1,5 +1,13 @@
-const APP_VERSION = "1.0.0";
-const VERSION_STRING = `Version ${APP_VERSION}`;
+const ORCAVIA_APP_VERSION = "1.0.2";
+const ORCAVIA_VERSION_STRING = `Version ${ORCAVIA_APP_VERSION}`;
+
+// Update version info dynamically
+document.addEventListener('DOMContentLoaded', () => {
+    const versionElement = document.getElementById('version-info');
+    if (versionElement) {
+        versionElement.textContent = ORCAVIA_VERSION_STRING;
+    }
+});
 
 class RCMPDataEditor {
     constructor() {
