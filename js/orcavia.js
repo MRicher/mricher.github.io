@@ -161,9 +161,15 @@ class RCMPDataEditor {
                     });
                 });
                 
-                this.showAlert(`Successfully loaded ${jsonData.data.length} records from website!`);
+                const successMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr'
+                    ? `${jsonData.data.length} enregistrements chargés avec succès depuis le site web !`
+                    : `Successfully loaded ${jsonData.data.length} records from website!`;
+                this.showAlert(successMsg);
             } else {
-                throw new Error('Invalid JSON structure from URL');
+                const errorMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr'
+                    ? 'Structure JSON invalide depuis l\'URL'
+                    : 'Invalid JSON structure from URL';
+                throw new Error(errorMsg);
             }
         } catch (error) {
             const errorMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr' 
@@ -201,9 +207,15 @@ class RCMPDataEditor {
                         });
                     });
                     
-                    this.showAlert('JSON file loaded successfully!');
+                    const successMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr'
+                        ? 'Fichier JSON chargé avec succès !'
+                        : 'JSON file loaded successfully!';
+                    this.showAlert(successMsg);
                 } else {
-                    throw new Error('Invalid JSON structure');
+                    const errorMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr'
+                        ? 'Structure JSON invalide'
+                        : 'Invalid JSON structure';
+                    throw new Error(errorMsg);
                 }
             } catch (error) {
                 const errorMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr' 
@@ -252,7 +264,10 @@ class RCMPDataEditor {
         };
         this.data.data.push(newRecord);
         this.render();
-        this.showAlert('New record added successfully!');
+        const successMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr'
+            ? 'Nouvel enregistrement ajouté avec succès !'
+            : 'New record added successfully!';
+        this.showAlert(successMsg);
     }
 
     deleteRecord(index) {
@@ -502,7 +517,10 @@ class RCMPDataEditor {
                 record[`english-update-${i}`] = '';
                 record[`french-update-${i}`] = '';
                 this.render();
-                this.showAlert(`Update ${i} added to record ${recordIndex + 1}!`);
+                const successMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr'
+                    ? `Mise à jour ${i} ajoutée à l'enregistrement ${recordIndex + 1} !`
+                    : `Update ${i} added to record ${recordIndex + 1}!`;
+                this.showAlert(successMsg);
                 return;
             }
         }
@@ -523,7 +541,10 @@ class RCMPDataEditor {
                 record[`english-update-${updateNumber}`] = '';
                 record[`french-update-${updateNumber}`] = '';
                 this.render();
-                this.showAlert(`Update ${updateNumber} deleted from record ${recordIndex + 1}!`);
+                const successMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr'
+                    ? `Mise à jour ${updateNumber} supprimée de l'enregistrement ${recordIndex + 1} !`
+                    : `Update ${updateNumber} deleted from record ${recordIndex + 1}!`;
+                this.showAlert(successMsg);
             }
         }
     }
