@@ -480,7 +480,7 @@ class RCMPDataEditor {
                             ` : '';
                         }).join('')}
                         
-                        <button class="btn btn-outline-secondary btn-sm" onclick="editor.addUpdate(${index})" data-en="Add Update" data-fr="Ajouter une mise à jour">Add Update</button>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="editor.addUpdate(${index})" data-en="Add update" data-fr="Ajouter une mise à jour">Add update</button>
                     </div>
                 </div>
             </div>
