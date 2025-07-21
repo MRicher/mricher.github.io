@@ -386,7 +386,7 @@ class RCMPDataEditor {
                         </span>
                         <small class="text-muted d-block mt-1">Updated: ${record['last-updated'] || 'Not set'}</small>
                     </div>
-                    <button class="btn btn-danger btn-sm" onclick="editor.deleteUpdate(${index})" data-en="Delete" data-fr="Supprimer">Delete</button>
+                    <button class="btn btn-danger btn-sm" onclick="editor.deleteRecord(${index})" data-en="Delete" data-fr="Supprimer">Delete</button>
                 </div>
                 
                 <div class="record-body">
