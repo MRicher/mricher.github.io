@@ -151,13 +151,15 @@ class RCMPDataEditor {
                 this.data = jsonData;
                 this.render();
                 
-                // Restore scroll position after render
-                setTimeout(() => {
-                    window.scrollTo({
-                        top: currentScrollPosition,
-                        behavior: 'instant' // Use 'instant' to avoid smooth scrolling animation
+                // Use requestAnimationFrame to ensure DOM is fully rendered before restoring scroll
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        window.scrollTo({
+                            top: currentScrollPosition,
+                            behavior: 'instant'
+                        });
                     });
-                }, 0);
+                });
                 
                 this.showAlert(`Successfully loaded ${jsonData.data.length} records from website!`);
             } else {
@@ -189,13 +191,15 @@ class RCMPDataEditor {
                     this.data = jsonData;
                     this.render();
                     
-                    // Restore scroll position after render
-                    setTimeout(() => {
-                        window.scrollTo({
-                            top: currentScrollPosition,
-                            behavior: 'instant' // Use 'instant' to avoid smooth scrolling animation
+                    // Use requestAnimationFrame to ensure DOM is fully rendered before restoring scroll
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            window.scrollTo({
+                                top: currentScrollPosition,
+                                behavior: 'instant'
+                            });
                         });
-                    }, 0);
+                    });
                     
                     this.showAlert('JSON file loaded successfully!');
                 } else {
