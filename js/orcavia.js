@@ -134,6 +134,9 @@ class RCMPDataEditor {
         const button = document.getElementById('load-from-url-btn');
         const originalText = button.textContent;
         
+        // Store current scroll position
+        const currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+        
         try {
             button.textContent = 'Loading...';
             button.disabled = true;
@@ -147,6 +150,15 @@ class RCMPDataEditor {
             if (jsonData.data && Array.isArray(jsonData.data)) {
                 this.data = jsonData;
                 this.render();
+                
+                // Restore scroll position after render
+                setTimeout(() => {
+                    window.scrollTo({
+                        top: currentScrollPosition,
+                        behavior: 'instant' // Use 'instant' to avoid smooth scrolling animation
+                    });
+                }, 0);
+                
                 this.showAlert(`Successfully loaded ${jsonData.data.length} records from website!`);
             } else {
                 throw new Error('Invalid JSON structure from URL');
@@ -165,7 +177,10 @@ class RCMPDataEditor {
     handleFileUpload(event) {
         const file = event.target.files[0];
         if (!file) return;
-
+    
+        // Store current scroll position
+        const currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+    
         const reader = new FileReader();
         reader.onload = (e) => {
             try {
@@ -173,6 +188,15 @@ class RCMPDataEditor {
                 if (jsonData.data && Array.isArray(jsonData.data)) {
                     this.data = jsonData;
                     this.render();
+                    
+                    // Restore scroll position after render
+                    setTimeout(() => {
+                        window.scrollTo({
+                            top: currentScrollPosition,
+                            behavior: 'instant' // Use 'instant' to avoid smooth scrolling animation
+                        });
+                    }, 0);
+                    
                     this.showAlert('JSON file loaded successfully!');
                 } else {
                     throw new Error('Invalid JSON structure');
