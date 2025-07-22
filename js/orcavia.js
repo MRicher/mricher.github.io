@@ -39,6 +39,23 @@ class RCMPDataEditor {
         this.render();
     }
 
+	scrollToRecord(recordIndex, smooth = true) {
+		const recordCard = document.querySelector(`.record-card:nth-child(${recordIndex + 1})`);
+		if (recordCard) {
+			recordCard.scrollIntoView({
+				behavior: smooth ? 'smooth' : 'instant',
+				block: 'center',
+				inline: 'nearest'
+			});
+			
+			// Optional: Add visual highlight
+			recordCard.classList.add('updating');
+			setTimeout(() => {
+				recordCard.classList.remove('updating');
+			}, 1000);
+		}
+	}
+
     showAlert(message, type = 'success') {
         const container = document.getElementById('alerts-container');
         const alert = document.createElement('div');
@@ -175,70 +192,46 @@ class RCMPDataEditor {
 		}
 	}
 
-    handleFileUpload(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-    
-        // Store current scroll position
-        const currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
-    
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            try {
-                const jsonData = JSON.parse(e.target.result);
-                if (jsonData.data && Array.isArray(jsonData.data)) {
-                    this.data = jsonData;
-                    this.render();
-                    
-                    // Use requestAnimationFrame to ensure DOM is fully rendered before restoring scroll
-					async restoreScrollPosition(targetScrollPosition) {
-						return new Promise((resolve) => {
-							const maxAttempts = 10;
-							let attempts = 0;
-							
-							const tryRestore = () => {
-								attempts++;
-								const currentHeight = document.documentElement.scrollHeight;
-								const viewportHeight = window.innerHeight;
-								
-								// Only restore if content height allows it or we've tried enough times
-								if (targetScrollPosition <= currentHeight - viewportHeight || attempts >= maxAttempts) {
-									window.scrollTo({
-										top: Math.min(targetScrollPosition, currentHeight - viewportHeight),
-										behavior: 'instant'
-									});
-									resolve();
-								} else {
-									// Content still loading, try again
-									requestAnimationFrame(tryRestore);
-								}
-							};
-							
-							requestAnimationFrame(tryRestore);
-						});
-					}
-                    
-                    const successMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr'
-                        ? 'Fichier JSON chargé avec succès !'
-                        : 'JSON file loaded successfully!';
-                    this.showAlert(successMsg);
-                } else {
-                    const errorMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr'
-                        ? 'Structure JSON invalide'
-                        : 'Invalid JSON structure';
-                    throw new Error(errorMsg);
-                }
-            } catch (error) {
-                const errorMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr' 
-                    ? 'Erreur lors du chargement du fichier JSON : ' + error.message
-                    : 'Error loading JSON file: ' + error.message;
-                this.showAlert(errorMsg, 'error');
-            }
-        };
-        reader.readAsText(file);
-    }
+	 handleFileUpload(event) {
+		const file = event.target.files[0];
+		if (!file) return;
+
+		// Store current scroll position
+		const currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+
+		const reader = new FileReader();
+		reader.onload = async (e) => {
+			try {
+				const jsonData = JSON.parse(e.target.result);
+				if (jsonData.data && Array.isArray(jsonData.data)) {
+					this.data = jsonData;
+					this.render();
+					
+					// Enhanced scroll restoration
+					await this.restoreScrollPosition(currentScrollPosition);
+					
+					const successMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr'
+						? 'Fichier JSON chargé avec succès !'
+						: 'JSON file loaded successfully!';
+					this.showAlert(successMsg);
+				} else {
+					const errorMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr'
+						? 'Structure JSON invalide'
+						: 'Invalid JSON structure';
+					throw new Error(errorMsg);
+				}
+			} catch (error) {
+				const errorMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr' 
+					? 'Erreur lors du chargement du fichier JSON : ' + error.message
+					: 'Error loading JSON file: ' + error.message;
+				this.showAlert(errorMsg, 'error');
+			}
+		};
+		reader.readAsText(file);
+	}
 
     addNewRecord() {
+		const newRecordIndex = this.data.data.length;
         const newRecord = {
             "last-updated": new Date().toISOString().split('T')[0],
             "english-theme": "",
@@ -273,12 +266,19 @@ class RCMPDataEditor {
             "english-update-6": "",
             "french-update-6": ""
         };
-        this.data.data.push(newRecord);
-        this.render();
+		this.data.data.push(newRecord);
+		this.render();
+
+		// Scroll to new record after render
+		requestAnimationFrame(() => {
+			this.scrollToRecord(newRecordIndex);
+		});
+
         const successMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr'
             ? 'Nouvel enregistrement ajouté avec succès !'
             : 'New record added successfully!';
         this.showAlert(successMsg);
+		
     }
 
     deleteRecord(index) {
