@@ -5,95 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title data-en="Image cropping and resizing tool" data-fr="Outil de recadrage et de redimensionnement d'images">Image cropping and resizing tool</title>
     <meta name="description" data-en="Easily crop, resize, and optimize images for web publishing. This tool supports PNG and JPG formats and uses smart compression to reduce file size while maintaining image quality." data-fr="Recadrez, redimensionnez et optimisez facilement vos images pour la publication web. Cet outil prend en charge les formats PNG et JPG et applique une compression intelligente pour réduire la taille des fichiers tout en conservant la qualité des images." content="Easily crop, resize, and optimize images for web publishing. This tool supports PNG and JPG formats and uses smart compression to reduce file size while maintaining image quality.">
-    
-    <!-- Bootstrap 5.3 CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Cropper.js v1.5.13 CSS -->
     <link href="css/cropper.min.css" rel="stylesheet">
-    
-    <!-- Custom CSS for accessibility and styling -->
     <link href="css/creavia.css" rel="stylesheet">
-
-    <style>
-        .upload-area {
-            border: 2px dashed var(--border-color);
-            border-radius: 8px;
-            padding: 40px;
-            text-align: center;
-            transition: border-color 0.3s ease;
-            background-color: var(--hero-bg);
-        }
-
-        .upload-area:hover {
-            border-color: var(--button-primary-bg);
-        }
-
-        .upload-area.dragover {
-            border-color: var(--button-primary-bg);
-            background-color: var(--alert-info-bg);
-        }
-
-        .cropper-container {
-            max-height: 500px;
-            margin: 20px 0;
-        }
-
-        .preset-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin: 20px 0;
-        }
-
-        .preset-buttons .btn {
-            font-size: 0.875rem;
-            padding: 0.5rem 1rem;
-        }
-
-        .preview-container {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .preview-image {
-            max-width: 100%;
-            max-height: 300px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-        }
-
-        .compression-info {
-            margin-top: 10px;
-            font-size: 0.875rem;
-            color: var(--body-color);
-        }
-
-        .download-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-top: 20px;
-        }
-
-        @media (max-width: 991px) {
-            .language-switcher {
-                flex-direction: column;
-                gap: 0.25rem;
-                width: 100%;
-                margin-top: 1rem;
-            }
-            
-            .language-switcher .btn,
-            .theme-toggle {
-                width: 100%;
-            }
-
-            .preset-buttons {
-                justify-content: center;
-            }
-        }
-    </style>
+    <link href="css/bisolux.css" rel="stylesheet">
 </head>
 <body>
     <!-- Skip to content link for accessibility -->
