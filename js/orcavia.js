@@ -129,58 +129,51 @@ class RCMPDataEditor {
         };
     }
 
-    async loadFromURL() {
-        const url = 'mcc.json';
-        const button = document.getElementById('load-from-url-btn');
-        const originalText = button.textContent;
-        
-        // Store current scroll position
-        const currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
-        
-        try {
-            button.textContent = 'Loading...';
-            button.disabled = true;
-            
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            
-            const jsonData = await response.json();
-            if (jsonData.data && Array.isArray(jsonData.data)) {
-                this.data = jsonData;
-                this.render();
-                
-                // Use requestAnimationFrame to ensure DOM is fully rendered before restoring scroll
-                requestAnimationFrame(() => {
-                    requestAnimationFrame(() => {
-                        window.scrollTo({
-                            top: currentScrollPosition,
-                            behavior: 'instant'
-                        });
-                    });
-                });
-                
-                const successMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr'
-                    ? `${jsonData.data.length} enregistrements chargés avec succès depuis le site web !`
-                    : `Successfully loaded ${jsonData.data.length} records from website!`;
-                this.showAlert(successMsg);
-            } else {
-                const errorMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr'
-                    ? 'Structure JSON invalide depuis l\'URL'
-                    : 'Invalid JSON structure from URL';
-                throw new Error(errorMsg);
-            }
-        } catch (error) {
-            const errorMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr' 
-                ? 'Erreur lors du chargement des données depuis le site web : ' + error.message
-                : 'Error loading data from website: ' + error.message;
-            this.showAlert(errorMsg, 'error');
-        } finally {
-            button.textContent = originalText;
-            button.disabled = false;
-        }
-    }
+	async loadFromURL() {
+		const url = 'mcc.json';
+		const button = document.getElementById('load-from-url-btn');
+		const originalText = button.textContent;
+		
+		// Store current scroll position
+		const currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+		
+		try {
+			button.textContent = 'Loading...';
+			button.disabled = true;
+			
+			const response = await fetch(url);
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
+			
+			const jsonData = await response.json();
+			if (jsonData.data && Array.isArray(jsonData.data)) {
+				this.data = jsonData;
+				this.render();
+				
+				// Enhanced scroll restoration
+				await this.restoreScrollPosition(currentScrollPosition);
+				
+				const successMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr'
+					? `${jsonData.data.length} enregistrements chargés avec succès depuis le site web !`
+					: `Successfully loaded ${jsonData.data.length} records from website!`;
+				this.showAlert(successMsg);
+			} else {
+				const errorMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr'
+					? 'Structure JSON invalide depuis l\'URL'
+					: 'Invalid JSON structure from URL';
+				throw new Error(errorMsg);
+			}
+		} catch (error) {
+			const errorMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr' 
+				? 'Erreur lors du chargement des données depuis le site web : ' + error.message
+				: 'Error loading data from website: ' + error.message;
+			this.showAlert(errorMsg, 'error');
+		} finally {
+			button.textContent = originalText;
+			button.disabled = false;
+		}
+	}
 
     handleFileUpload(event) {
         const file = event.target.files[0];
@@ -198,14 +191,32 @@ class RCMPDataEditor {
                     this.render();
                     
                     // Use requestAnimationFrame to ensure DOM is fully rendered before restoring scroll
-                    requestAnimationFrame(() => {
-                        requestAnimationFrame(() => {
-                            window.scrollTo({
-                                top: currentScrollPosition,
-                                behavior: 'instant'
-                            });
-                        });
-                    });
+					async restoreScrollPosition(targetScrollPosition) {
+						return new Promise((resolve) => {
+							const maxAttempts = 10;
+							let attempts = 0;
+							
+							const tryRestore = () => {
+								attempts++;
+								const currentHeight = document.documentElement.scrollHeight;
+								const viewportHeight = window.innerHeight;
+								
+								// Only restore if content height allows it or we've tried enough times
+								if (targetScrollPosition <= currentHeight - viewportHeight || attempts >= maxAttempts) {
+									window.scrollTo({
+										top: Math.min(targetScrollPosition, currentHeight - viewportHeight),
+										behavior: 'instant'
+									});
+									resolve();
+								} else {
+									// Content still loading, try again
+									requestAnimationFrame(tryRestore);
+								}
+							};
+							
+							requestAnimationFrame(tryRestore);
+						});
+					}
                     
                     const successMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr'
                         ? 'Fichier JSON chargé avec succès !'
@@ -358,154 +369,181 @@ class RCMPDataEditor {
         ).join('');
     }
 
-    render() {
-        const container = document.getElementById('records-container');
-        
-        if (this.data.data.length === 0) {
-            container.innerHTML = `
-                <div class="no-records">
-                    <h3 data-en="No records found" data-fr="Aucun enregistrement trouvé">No records found</h3>
-                    <p data-en="Upload a JSON file or add a new record to get started." data-fr="Téléversez un fichier JSON ou ajoutez un nouvel enregistrement pour commencer.">Upload a JSON file or add a new record to get started.</p>
-                </div>
-            `;
-            
-            // Apply current language to the newly rendered content
-            if (window.languageSwitcher) {
-                window.languageSwitcher.switchLanguage(window.languageSwitcher.currentLang);
-            }
-            return;
-        }
+	render() {
+		const container = document.getElementById('records-container');
+		
+		// Store focused element to restore later
+		const activeElement = document.activeElement;
+		const focusedElementId = activeElement ? activeElement.id : null;
+		
+		if (this.data.data.length === 0) {
+			container.innerHTML = `
+				<div class="no-records">
+					<h3 data-en="No records found" data-fr="Aucun enregistrement trouvé">No records found</h3>
+					<p data-en="Upload a JSON file or add a new record to get started." data-fr="Téléversez un fichier JSON ou ajoutez un nouvel enregistrement pour commencer.">Upload a JSON file or add a new record to get started.</p>
+				</div>
+			`;
+			
+			// Apply current language to the newly rendered content
+			if (window.languageSwitcher) {
+				window.languageSwitcher.switchLanguage(window.languageSwitcher.currentLang);
+			}
+			return;
+		}
 
-        container.innerHTML = this.data.data.map((record, index) => `
-            <div class="record-card">
-                <div class="record-header">
-                    <div>
-                        <h2 class="h4 mb-1" data-en="Record ${index + 1}${record['english-title'] ? ` - ${record['english-title']}` : ''}" data-fr="Enregistrement ${index + 1}${record['french-title'] ? ` - ${record['french-title']}`  : ''}">Record ${index + 1}${record['english-title'] ? ` - ${record['english-title']}` : ''}</h2>
-                        <span class="status-badge ${this.getStatusClass(record['english-progress'])}" data-en="${record['english-progress'] || 'Unknown Status'}" data-fr="${record['french-progress'] || 'Statut inconnu'}">
-                            ${record['english-progress'] || 'Unknown Status'}
-                        </span>
-                        <small class="text-muted d-block mt-1" data-en="Updated: ${record['last-updated'] || 'Not set'}" data-fr="Mis à jour : ${record['last-updated'] || 'Non défini'}">Updated: ${record['last-updated'] || 'Not set'}</small>
-                    </div>
-                    <button class="btn btn-danger btn-sm" onclick="editor.deleteRecord(${index})" data-en="Delete" data-fr="Supprimer">Delete</button>
-                </div>
-                
-                <div class="record-body">
-                    <div class="mb-3">
-                        <label for="last-updated-${index}" class="form-label" data-en="Last updated" data-fr="Dernière mise à jour">Last updated</label>
-                        <input type="date" class="form-control" id="last-updated-${index}" value="${record['last-updated'] || ''}"
-                               onchange="editor.updateRecord(${index}, 'last-updated', this.value)"
-                               data-en-lang="en-CA" data-fr-lang="fr-CA">
-                    </div>
+		// Create document fragment to minimize reflows
+		const fragment = document.createDocumentFragment();
+		const tempDiv = document.createElement('div');
+		
+		tempDiv.innerHTML = this.data.data.map((record, index) => `
+			<div class="record-card">
+				<div class="record-header">
+					<div>
+						<h2 class="h4 mb-1" data-en="Record ${index + 1}${record['english-title'] ? ` - ${record['english-title']}` : ''}" data-fr="Enregistrement ${index + 1}${record['french-title'] ? ` - ${record['french-title']}`  : ''}">Record ${index + 1}${record['english-title'] ? ` - ${record['english-title']}` : ''}</h2>
+						<span class="status-badge ${this.getStatusClass(record['english-progress'])}" data-en="${record['english-progress'] || 'Unknown Status'}" data-fr="${record['french-progress'] || 'Statut inconnu'}">
+							${record['english-progress'] || 'Unknown Status'}
+						</span>
+						<small class="text-muted d-block mt-1" data-en="Updated: ${record['last-updated'] || 'Not set'}" data-fr="Mis à jour : ${record['last-updated'] || 'Non défini'}">Updated: ${record['last-updated'] || 'Not set'}</small>
+					</div>
+					<button class="btn btn-danger btn-sm" onclick="editor.deleteRecord(${index})" data-en="Delete" data-fr="Supprimer">Delete</button>
+				</div>
+				
+				<div class="record-body">
+					<div class="mb-3">
+						<label for="last-updated-${index}" class="form-label" data-en="Last updated" data-fr="Dernière mise à jour">Last updated</label>
+						<input type="date" class="form-control" id="last-updated-${index}" value="${record['last-updated'] || ''}"
+							   onchange="editor.updateRecord(${index}, 'last-updated', this.value)"
+							   data-en-lang="en-CA" data-fr-lang="fr-CA">
+					</div>
 
-                    <div class="form-row mb-3">
-                        <div>
-                            <label for="english-theme-${index}" class="form-label" data-en="English theme" data-fr="Thème anglais">English theme</label>
-                            <select class="form-select" id="english-theme-${index}" onchange="editor.updateRecord(${index}, 'english-theme', this.value)">
-                                <option value="">Select a theme...</option>
-                                ${this.getThemeOptions(record['english-theme'], true)}
-                            </select>
-                        </div>
-                        <div>
-                            <label for="french-theme-${index}" class="form-label" data-en="French theme" data-fr="Thème français">French theme</label>
-                            <select class="form-select" id="french-theme-${index}" onchange="editor.updateRecord(${index}, 'french-theme', this.value)">
-                                <option value="">Sélectionner un thème...</option>
-                                ${this.getThemeOptions(record['french-theme'], false)}
-                            </select>
-                        </div>
-                    </div>
+					<div class="form-row mb-3">
+						<div>
+							<label for="english-theme-${index}" class="form-label" data-en="English theme" data-fr="Thème anglais">English theme</label>
+							<select class="form-select" id="english-theme-${index}" onchange="editor.updateRecord(${index}, 'english-theme', this.value)">
+								<option value="">Select a theme...</option>
+								${this.getThemeOptions(record['english-theme'], true)}
+							</select>
+						</div>
+						<div>
+							<label for="french-theme-${index}" class="form-label" data-en="French theme" data-fr="Thème français">French theme</label>
+							<select class="form-select" id="french-theme-${index}" onchange="editor.updateRecord(${index}, 'french-theme', this.value)">
+								<option value="">Sélectionner un thème...</option>
+								${this.getThemeOptions(record['french-theme'], false)}
+							</select>
+						</div>
+					</div>
 
-                    <div class="form-row mb-3">
-                        <div>
-                            <label for="english-title-${index}" class="form-label" data-en="English title" data-fr="Titre anglais">English title</label>
-                            <textarea class="form-control" id="english-title-${index}" rows="3" onchange="editor.updateRecord(${index}, 'english-title', this.value)">${record['english-title'] || ''}</textarea>
-                        </div>
-                        <div>
-                            <label for="french-title-${index}" class="form-label" data-en="French title" data-fr="Titre français">French title</label>
-                            <textarea class="form-control" id="french-title-${index}" rows="3" onchange="editor.updateRecord(${index}, 'french-title', this.value)">${record['french-title'] || ''}</textarea>
-                        </div>
-                    </div>
+					<div class="form-row mb-3">
+						<div>
+							<label for="english-title-${index}" class="form-label" data-en="English title" data-fr="Titre anglais">English title</label>
+							<textarea class="form-control" id="english-title-${index}" rows="3" onchange="editor.updateRecord(${index}, 'english-title', this.value)">${record['english-title'] || ''}</textarea>
+						</div>
+						<div>
+							<label for="french-title-${index}" class="form-label" data-en="French title" data-fr="Titre français">French title</label>
+							<textarea class="form-control" id="french-title-${index}" rows="3" onchange="editor.updateRecord(${index}, 'french-title', this.value)">${record['french-title'] || ''}</textarea>
+						</div>
+					</div>
 
-                    <div class="form-row mb-3">
-                        <div>
-                            <label for="english-summary-${index}" class="form-label" data-en="English summary" data-fr="Résumé anglais">English summary</label>
-                            <textarea class="form-control" id="english-summary-${index}" rows="4" onchange="editor.updateRecord(${index}, 'english-summary', this.value)">${record['english-summary'] || ''}</textarea>
-                        </div>
-                        <div>
-                            <label for="french-summary-${index}" class="form-label" data-en="French summary" data-fr="Résumé français">French summary</label>
-                            <textarea class="form-control" id="french-summary-${index}" rows="4" onchange="editor.updateRecord(${index}, 'french-summary', this.value)">${record['french-summary'] || ''}</textarea>
-                        </div>
-                    </div>
+					<div class="form-row mb-3">
+						<div>
+							<label for="english-summary-${index}" class="form-label" data-en="English summary" data-fr="Résumé anglais">English summary</label>
+							<textarea class="form-control" id="english-summary-${index}" rows="4" onchange="editor.updateRecord(${index}, 'english-summary', this.value)">${record['english-summary'] || ''}</textarea>
+						</div>
+						<div>
+							<label for="french-summary-${index}" class="form-label" data-en="French summary" data-fr="Résumé français">French summary</label>
+							<textarea class="form-control" id="french-summary-${index}" rows="4" onchange="editor.updateRecord(${index}, 'french-summary', this.value)">${record['french-summary'] || ''}</textarea>
+						</div>
+					</div>
 
-                    <div class="form-row mb-3">
-                        <div>
-                            <label for="english-progress-${index}" class="form-label" data-en="English progress" data-fr="Progrès anglais">English progress</label>
-                            <select class="form-select" id="english-progress-${index}" onchange="editor.updateRecord(${index}, 'english-progress', this.value)">
-                                <option value="To be actioned" ${record['english-progress'] === 'To be actioned' ? 'selected' : ''}>To be actioned</option>
-                                <option value="In progress" ${record['english-progress'] === 'In progress' ? 'selected' : ''}>In progress</option>
-                                <option value="Complete" ${record['english-progress'] === 'Complete' ? 'selected' : ''}>Complete</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="french-progress-${index}" class="form-label" data-en="French progress" data-fr="Progrès français">French progress</label>
-                            <select class="form-select" id="french-progress-${index}" onchange="editor.updateRecord(${index}, 'french-progress', this.value)">
-                                <option value="À mettre en œuvre" ${record['french-progress'] === 'À mettre en œuvre' ? 'selected' : ''}>À mettre en œuvre</option>
-                                <option value="En cours" ${record['french-progress'] === 'En cours' ? 'selected' : ''}>En cours</option>
-                                <option value="Terminé" ${record['french-progress'] === 'Terminé' ? 'selected' : ''}>Terminé</option>
-                            </select>
-                        </div>
-                    </div>
+					<div class="form-row mb-3">
+						<div>
+							<label for="english-progress-${index}" class="form-label" data-en="English progress" data-fr="Progrès anglais">English progress</label>
+							<select class="form-select" id="english-progress-${index}" onchange="editor.updateRecord(${index}, 'english-progress', this.value)">
+								<option value="To be actioned" ${record['english-progress'] === 'To be actioned' ? 'selected' : ''}>To be actioned</option>
+								<option value="In progress" ${record['english-progress'] === 'In progress' ? 'selected' : ''}>In progress</option>
+								<option value="Complete" ${record['english-progress'] === 'Complete' ? 'selected' : ''}>Complete</option>
+							</select>
+						</div>
+						<div>
+							<label for="french-progress-${index}" class="form-label" data-en="French progress" data-fr="Progrès français">French progress</label>
+							<select class="form-select" id="french-progress-${index}" onchange="editor.updateRecord(${index}, 'french-progress', this.value)">
+								<option value="À mettre en œuvre" ${record['french-progress'] === 'À mettre en œuvre' ? 'selected' : ''}>À mettre en œuvre</option>
+								<option value="En cours" ${record['french-progress'] === 'En cours' ? 'selected' : ''}>En cours</option>
+								<option value="Terminé" ${record['french-progress'] === 'Terminé' ? 'selected' : ''}>Terminé</option>
+							</select>
+						</div>
+					</div>
 
-                    <div class="mb-3">
-                        <label for="recommendations-${index}" class="form-label" data-en="Recommendations" data-fr="Recommandations">Recommendations</label>
-                        <input type="text" class="form-control" id="recommendations-${index}" value="${record['recommendations-1'] || ''}"
-                               onchange="editor.updateRecord(${index}, 'recommendations-1', this.value)">
-                    </div>
+					<div class="mb-3">
+						<label for="recommendations-${index}" class="form-label" data-en="Recommendations" data-fr="Recommandations">Recommendations</label>
+						<input type="text" class="form-control" id="recommendations-${index}" value="${record['recommendations-1'] || ''}"
+							   onchange="editor.updateRecord(${index}, 'recommendations-1', this.value)">
+					</div>
 
-                    <div class="update-section">
-                        <h3 class="h5" data-en="Progress updates" data-fr="Mises à jour du progrès">Progress updates</h3>
-                        ${[1, 2, 3, 4, 5, 6].map(updateNum => {
-                            const hasUpdate = record[`update-${updateNum}-date`] || record[`english-update-${updateNum}`] || record[`french-update-${updateNum}`];
-                            return hasUpdate ? `
-                                <div class="update-item">
-                                    <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <h4 class="h6 mb-0" data-en="Update ${updateNum}" data-fr="Mise à jour ${updateNum}">Update ${updateNum}</h4>
-                                        <button class="btn btn-outline-danger btn-sm" onclick="editor.deleteUpdate(${index}, ${updateNum})" data-en="Delete" data-fr="Supprimer">Delete</button>
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <label for="update-${updateNum}-date-${index}" class="form-label" data-en="Date" data-fr="Date">Date</label>
-                                        <input type="date" class="form-control" id="update-${updateNum}-date-${index}" value="${record[`update-${updateNum}-date`] || ''}"
-                                           onchange="editor.updateRecord(${index}, 'update-${updateNum}-date', this.value)"
-                                           data-en-lang="en-CA" data-fr-lang="fr-CA">
-                                    </div>
-                                    
-                                    <div class="form-row">
-                                        <div>
-                                            <label for="english-update-${updateNum}-${index}" class="form-label" data-en="English update" data-fr="Mise à jour anglaise">English update</label>
-                                            <textarea class="form-control" id="english-update-${updateNum}-${index}" rows="4" 
-                                                      onchange="editor.updateRecord(${index}, 'english-update-${updateNum}', this.value)">${record[`english-update-${updateNum}`] || ''}</textarea>
-                                        </div>
-                                        <div>
-                                            <label for="french-update-${updateNum}-${index}" class="form-label" data-en="French update" data-fr="Mise à jour française">French update</label>
-                                            <textarea class="form-control" id="french-update-${updateNum}-${index}" rows="4"
-                                                      onchange="editor.updateRecord(${index}, 'french-update-${updateNum}', this.value)">${record[`french-update-${updateNum}`] || ''}</textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                            ` : '';
-                        }).join('')}
-                        
-                        <button class="btn btn-outline-secondary btn-sm" onclick="editor.addUpdate(${index})" data-en="Add update" data-fr="Ajouter une mise à jour">Add update</button>
-                    </div>
-                </div>
-            </div>
-        `).join('');
-        
-        // Apply current language to the newly rendered content
-        if (window.languageSwitcher) {
-            window.languageSwitcher.switchLanguage(window.languageSwitcher.currentLang);
-        }
-    }
+					<div class="update-section">
+						<h3 class="h5" data-en="Progress updates" data-fr="Mises à jour du progrès">Progress updates</h3>
+						${[1, 2, 3, 4, 5, 6].map(updateNum => {
+							const hasUpdate = record[`update-${updateNum}-date`] || record[`english-update-${updateNum}`] || record[`french-update-${updateNum}`];
+							return hasUpdate ? `
+								<div class="update-item">
+									<div class="d-flex justify-content-between align-items-center mb-3">
+										<h4 class="h6 mb-0" data-en="Update ${updateNum}" data-fr="Mise à jour ${updateNum}">Update ${updateNum}</h4>
+										<button class="btn btn-outline-danger btn-sm" onclick="editor.deleteUpdate(${index}, ${updateNum})" data-en="Delete" data-fr="Supprimer">Delete</button>
+									</div>
+									
+									<div class="mb-3">
+										<label for="update-${updateNum}-date-${index}" class="form-label" data-en="Date" data-fr="Date">Date</label>
+										<input type="date" class="form-control" id="update-${updateNum}-date-${index}" value="${record[`update-${updateNum}-date`] || ''}"
+										   onchange="editor.updateRecord(${index}, 'update-${updateNum}-date', this.value)"
+										   data-en-lang="en-CA" data-fr-lang="fr-CA">
+									</div>
+									
+									<div class="form-row">
+										<div>
+											<label for="english-update-${updateNum}-${index}" class="form-label" data-en="English update" data-fr="Mise à jour anglaise">English update</label>
+											<textarea class="form-control" id="english-update-${updateNum}-${index}" rows="4" 
+													  onchange="editor.updateRecord(${index}, 'english-update-${updateNum}', this.value)">${record[`english-update-${updateNum}`] || ''}</textarea>
+										</div>
+										<div>
+											<label for="french-update-${updateNum}-${index}" class="form-label" data-en="French update" data-fr="Mise à jour française">French update</label>
+											<textarea class="form-control" id="french-update-${updateNum}-${index}" rows="4"
+													  onchange="editor.updateRecord(${index}, 'french-update-${updateNum}', this.value)">${record[`french-update-${updateNum}`] || ''}</textarea>
+										</div>
+									</div>
+								</div>
+							` : '';
+						}).join('')}
+						
+						<button class="btn btn-outline-secondary btn-sm" onclick="editor.addUpdate(${index})" data-en="Add update" data-fr="Ajouter une mise à jour">Add update</button>
+					</div>
+				</div>
+			</div>
+		`).join('');
+		
+		// Move nodes from temp div to fragment
+		while (tempDiv.firstChild) {
+			fragment.appendChild(tempDiv.firstChild);
+		}
+		
+		// Batch DOM update
+		container.innerHTML = '';
+		container.appendChild(fragment);
+		
+		// Restore focus if it was on a form element
+		if (focusedElementId) {
+			requestAnimationFrame(() => {
+				const elementToFocus = document.getElementById(focusedElementId);
+				if (elementToFocus && typeof elementToFocus.focus === 'function') {
+					elementToFocus.focus();
+				}
+			});
+		}
+		
+		// Apply current language to the newly rendered content
+		if (window.languageSwitcher) {
+			window.languageSwitcher.switchLanguage(window.languageSwitcher.currentLang);
+		}
+	}
 
     addUpdate(recordIndex) {
         const record = this.data.data[recordIndex];
