@@ -567,6 +567,14 @@ class RCMPDataEditor {
         
         // Format all date inputs after rendering
         this.formatAllDateInputs();
+
+        // Force today's date for empty date fields
+        const today = this.getCurrentDateFormatted();
+        document.querySelectorAll('input[type="date"]').forEach(input => {
+            if (!input.value) {
+                input.value = today;
+            }
+        });
         
         // Restore focus if it was on a form element
         if (focusedElementId) {
