@@ -70,14 +70,6 @@ class RCMPDataEditor {
 			}
 		}, 5000);
 	}
-		container.appendChild(alert);
-		// Auto-dismiss after 5 seconds
-		setTimeout(() => {
-			if (alert.parentNode) {
-				alert.remove();
-			}
-		}, 5000);
-	}
 	sanitizeText(text) {
 		if (!text || typeof text !== 'string') return text;
 		let sanitized = text;
