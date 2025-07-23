@@ -211,8 +211,10 @@ class RCMPDataEditor {
 					this.render();
 					// Use the class method to restore scroll position
 					await this.restoreScrollPosition(currentScrollPosition);
-					const successMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr' ? 'Fichier JSON chargé avec succès !' : 'JSON file loaded successfully!';
-					this.showAlert(successMsg);
+					this.showAlert({
+						en: 'JSON file loaded successfully!',
+						fr: 'Fichier JSON chargé avec succès !'
+					});
 				} else {
 					const errorMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr' ? 'Structure JSON invalide' : 'Invalid JSON structure';
 					throw new Error(errorMsg);
@@ -261,8 +263,10 @@ class RCMPDataEditor {
 		};
 		this.data.data.push(newRecord);
 		this.render();
-		const successMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr' ? 'Nouvel enregistrement ajouté avec succès !' : 'New record added successfully!';
-		this.showAlert(successMsg);
+		this.showAlert({
+			en: 'New record added successfully!',
+			fr: 'Nouvel enregistrement ajouté avec succès !'
+		});
 	}
 	getCurrentDateFormatted() {
 		const now = new Date();
@@ -276,8 +280,10 @@ class RCMPDataEditor {
 		if (confirm(confirmMsg)) {
 			this.data.data.splice(index, 1);
 			this.render();
-			const successMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr' ? 'Enregistrement supprimé avec succès !' : 'Record deleted successfully!';
-			this.showAlert(successMsg);
+			this.showAlert({
+				en: 'Enregistrement supprimé avec succès !',
+				fr: 'Record deleted successfully!'
+			});
 		}
 	}
 	downloadData() {
