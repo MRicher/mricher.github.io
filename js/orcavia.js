@@ -40,10 +40,14 @@ class RCMPDataEditor {
 		alert.className = `alert alert-${type} alert-dismissible fade show`;
 		const closeButtonLabel = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr' ? 'Fermer' : 'Close';
 		alert.innerHTML = `
-	        ${message}
+	        <span data-en="${message}" data-fr="${message}">${message}</span>
 	        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="${closeButtonLabel}"></button>
 	    `;
 		container.appendChild(alert);
+		// Apply current language to the alert content
+		if (window.languageSwitcher) {
+			window.languageSwitcher.switchLanguage(window.languageSwitcher.currentLang);
+		}
 		setTimeout(() => {
 			if (alert.parentNode) {
 				alert.remove();
