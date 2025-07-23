@@ -172,8 +172,10 @@ class RCMPDataEditor {
 				this.render();
 				// Enhanced scroll restoration
 				await this.restoreScrollPosition(currentScrollPosition);
-				const successMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr' ? `${jsonData.data.length} enregistrements chargés avec succès depuis le site web !` : `Successfully loaded ${jsonData.data.length} records from website!`;
-				this.showAlert(successMsg);
+				this.showAlert({
+					en: `Successfully loaded ${jsonData.data.length} records from website!`,
+					fr: `${jsonData.data.length} enregistrements chargés avec succès depuis le site web !`
+				});
 			} else {
 				const errorMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr' ? 'Structure JSON invalide depuis l\'URL' : 'Invalid JSON structure from URL';
 				throw new Error(errorMsg);
