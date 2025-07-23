@@ -39,8 +39,17 @@ class RCMPDataEditor {
 		const alert = document.createElement('div');
 		alert.className = `alert alert-${type} alert-dismissible fade show`;
 		const closeButtonLabel = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr' ? 'Fermer' : 'Close';
+		// Handle both string messages and object messages with en/fr properties
+		let messageContent;
+		if (typeof message === 'object' && message.en && message.fr) {
+			const currentLang = window.languageSwitcher ? window.languageSwitcher.currentLang : 'en';
+			const displayMessage = currentLang === 'fr' ? message.fr : message.en;
+			messageContent = `<span data-en="${message.en}" data-fr="${message.fr}">${displayMessage}</span>`;
+		} else {
+			messageContent = message;
+		}
 		alert.innerHTML = `
-	        <span data-en="${message}" data-fr="${message}">${message}</span>
+	        ${messageContent}
 	        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="${closeButtonLabel}"></button>
 	    `;
 		container.appendChild(alert);
