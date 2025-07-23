@@ -50,13 +50,6 @@ class RCMPDataEditor {
 			}
 		}, 5000);
 	}
-		container.appendChild(alert);
-		setTimeout(() => {
-			if (alert.parentNode) {
-				alert.remove();
-			}
-		}, 5000);
-	}
 	showUpdateAlert(recordIndex, message, type = 'danger') {
 		const container = document.getElementById(`update-alerts-${recordIndex}`);
 		if (!container) return;
