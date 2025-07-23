@@ -638,7 +638,7 @@ class RCMPDataEditor {
 	    const errorMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr'
 	        ? 'Nombre maximum de mises à jour (6) atteint pour cet enregistrement.'
 	        : 'Maximum number of updates (6) reached for this record.';
-	    this.showAlert(errorMsg, 'error');
+	    this.showAlert(errorMsg, 'danger');
 	}
 
     deleteUpdate(recordIndex, updateNumber) {
