@@ -38,21 +38,18 @@ class RCMPDataEditor {
 		const container = document.getElementById('alerts-container');
 		const alert = document.createElement('div');
 		alert.className = `alert alert-${type} alert-dismissible fade show`;
+		const closeButtonLabel = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr' ? 'Fermer' : 'Close';
 		alert.innerHTML = `
-            ${message}
-            const closeButtonLabel = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr' 
-		    ? 'Fermer' 
-		    : 'Close';
-		
-		alert.innerHTML = `
-		$ {
-			message
-		} < button type = "button"
-		class = "btn-close"
-		data - bs - dismiss = "alert"
-		aria - label = "${closeButtonLabel}" > < /button>
+			${message}
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="${closeButtonLabel}"></button>
 		`;
-        `;
+		container.appendChild(alert);
+		setTimeout(() => {
+			if (alert.parentNode) {
+				alert.remove();
+			}
+		}, 5000);
+	}
 		container.appendChild(alert);
 		setTimeout(() => {
 			if (alert.parentNode) {
@@ -67,21 +64,19 @@ class RCMPDataEditor {
 		container.innerHTML = '';
 		const alert = document.createElement('div');
 		alert.className = `alert alert-${type} alert-dismissible fade show`;
+		const closeButtonLabel = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr' ? 'Fermer' : 'Close';
 		alert.innerHTML = `
-		${message}
-		const closeButtonLabel = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr' 
-		    ? 'Fermer' 
-		    : 'Close';
-		
-		alert.innerHTML = `
-		$ {
-			message
-		} < button type = "button"
-		class = "btn-close"
-		data - bs - dismiss = "alert"
-		aria - label = "${closeButtonLabel}" > < /button>
+			${message}
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="${closeButtonLabel}"></button>
 		`;
-	    `;
+		container.appendChild(alert);
+		// Auto-dismiss after 5 seconds
+		setTimeout(() => {
+			if (alert.parentNode) {
+				alert.remove();
+			}
+		}, 5000);
+	}
 		container.appendChild(alert);
 		// Auto-dismiss after 5 seconds
 		setTimeout(() => {
