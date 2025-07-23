@@ -55,6 +55,29 @@ class RCMPDataEditor {
         }, 5000);
     }
 
+	showUpdateAlert(recordIndex, message, type = 'danger') {
+	    const container = document.getElementById(`update-alerts-${recordIndex}`);
+	    if (!container) return;
+	    
+	    // Clear any existing alerts in this container
+	    container.innerHTML = '';
+	    
+	    const alert = document.createElement('div');
+	    alert.className = `alert alert-${type} alert-dismissible fade show`;
+	    alert.innerHTML = `
+		${message}
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	    `;
+	    container.appendChild(alert);
+	    
+	    // Auto-dismiss after 5 seconds
+	    setTimeout(() => {
+		if (alert.parentNode) {
+		    alert.remove();
+		}
+	    }, 5000);
+	}
+
     sanitizeText(text) {
         if (!text || typeof text !== 'string') return text;
         
@@ -556,6 +579,7 @@ class RCMPDataEditor {
                         }).join('')}
                         
                         <button class="btn btn-outline-secondary btn-sm" onclick="editor.addUpdate(${index})" data-en="Add update" data-fr="Ajouter une mise à jour">Add update</button>
+			<div id="update-alerts-${index}" class="mt-2"></div>
                     </div>
                 </div>
             </div>
@@ -612,6 +636,12 @@ class RCMPDataEditor {
 	    const record = this.data.data[recordIndex];
 	    if (!record) return;
 	
+	    // Clear any existing update alerts for this record first
+	    const alertContainer = document.getElementById(`update-alerts-${recordIndex}`);
+	    if (alertContainer) {
+	        alertContainer.innerHTML = '';
+	    }
+	
 	    for (let i = 1; i <= 6; i++) {
 	        if (!record[`update-${i}-date`] && !record[`english-update-${i}`] && !record[`french-update-${i}`]) {
 	            const todaysDate = this.getCurrentDateFormatted();
@@ -635,30 +665,32 @@ class RCMPDataEditor {
 	            return;
 	        }
 	    }
+	    
+	    // Show error message under the Add update button instead of at the top
 	    const errorMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr'
 	        ? 'Nombre maximum de mises à jour (6) atteint pour cet enregistrement.'
 	        : 'Maximum number of updates (6) reached for this record.';
-	    this.showAlert(errorMsg, 'danger');
+	    this.showUpdateAlert(recordIndex, errorMsg, 'danger');
 	}
-
-    deleteUpdate(recordIndex, updateNumber) {
-        const confirmMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr'
-            ? `Êtes-vous sûr de vouloir supprimer la mise à jour ${updateNumber} ?`
-            : `Are you sure you want to delete update ${updateNumber}?`;
-        if (confirm(confirmMsg)) {
-            const record = this.data.data[recordIndex];
-            if (record) {
-                record[`update-${updateNumber}-date`] = '';
-                record[`english-update-${updateNumber}`] = '';
-                record[`french-update-${updateNumber}`] = '';
-                this.render();
-                const successMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr'
-                    ? `Mise à jour ${updateNumber} supprimée de l'enregistrement ${recordIndex + 1} !`
-                    : `Update ${updateNumber} deleted from record ${recordIndex + 1}!`;
-                this.showAlert(successMsg);
-            }
-        }
-    }
+	
+	    deleteUpdate(recordIndex, updateNumber) {
+	        const confirmMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr'
+	            ? `Êtes-vous sûr de vouloir supprimer la mise à jour ${updateNumber} ?`
+	            : `Are you sure you want to delete update ${updateNumber}?`;
+	        if (confirm(confirmMsg)) {
+	            const record = this.data.data[recordIndex];
+	            if (record) {
+	                record[`update-${updateNumber}-date`] = '';
+	                record[`english-update-${updateNumber}`] = '';
+	                record[`french-update-${updateNumber}`] = '';
+	                this.render();
+	                const successMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr'
+	                    ? `Mise à jour ${updateNumber} supprimée de l'enregistrement ${recordIndex + 1} !`
+	                    : `Update ${updateNumber} deleted from record ${recordIndex + 1}!`;
+	                this.showAlert(successMsg);
+	            }
+	        }
+	    }
     
 	updateCalendarLanguage() {
 		const currentLang = document.documentElement.lang || 'en-CA';
