@@ -327,21 +327,26 @@ class RCMPDataEditor {
 
     updateRecord(index, field, value) {
         if (!this.data.data[index]) return;
-        
-        // Format date fields to ensure yyyy-mm-dd
-        if (field.includes('date') || field === 'last-updated') {
-            if (value) {
-                const date = new Date(value);
-                if (!isNaN(date.getTime())) {
-                    const year = date.getFullYear();
-                    const month = String(date.getMonth() + 1).padStart(2, '0');
-                    const day = String(date.getDate()).padStart(2, '0');
-                    value = `${year}-${month}-${day}`;
+
+        // For date fields, just store the string as-is if it matches yyyy-mm-dd
+        if ((field.includes('date') || field === 'last-updated') && value) {
+            if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+                this.data.data[index][field] = value;
+            } else {
+                // Try to parse and reformat if needed
+                const d = new Date(value);
+                if (!isNaN(d.getTime())) {
+                    const year = d.getFullYear();
+                    const month = String(d.getMonth() + 1).padStart(2, '0');
+                    const day = String(d.getDate()).padStart(2, '0');
+                    this.data.data[index][field] = `${year}-${month}-${day}`;
+                } else {
+                    this.data.data[index][field] = value;
                 }
             }
+        } else {
+            this.data.data[index][field] = value;
         }
-        
-        this.data.data[index][field] = value;
         
         // Handle theme linking
         if (field === 'english-theme' && this.themeMapping[value]) {
@@ -640,23 +645,23 @@ class RCMPDataEditor {
 
 	formatDateInput(input) {
 		if (!input) return;
-		
+
 		// Ensure the input shows yyyy-mm-dd format regardless of locale
 		input.setAttribute('pattern', '\\d{4}-\\d{2}-\\d{2}');
 		input.setAttribute('placeholder', 'YYYY-MM-DD');
-		
-		// Handle existing values
-		if (input.value) {
-			const date = new Date(input.value);
-			if (!isNaN(date.getTime())) {
-				// Format to yyyy-mm-dd
-				const year = date.getFullYear();
-				const month = String(date.getMonth() + 1).padStart(2, '0');
-				const day = String(date.getDate()).padStart(2, '0');
+
+		// Only reformat if not already in yyyy-mm-dd
+		if (input.value && !/^\d{4}-\d{2}-\d{2}$/.test(input.value)) {
+			// Try to extract yyyy-mm-dd from the value
+			const d = new Date(input.value);
+			if (!isNaN(d.getTime())) {
+				const year = d.getFullYear();
+				const month = String(d.getMonth() + 1).padStart(2, '0');
+				const day = String(d.getDate()).padStart(2, '0');
 				input.value = `${year}-${month}-${day}`;
 			}
 		}
-		
+
 		// Add event listener to maintain format on change
 		if (!input.hasAttribute('data-formatted')) {
 			input.addEventListener('change', (e) => {
@@ -668,13 +673,15 @@ class RCMPDataEditor {
 
 	ensureDateFormat(input) {
 		if (!input.value) return;
-		
-		const date = new Date(input.value);
-		if (!isNaN(date.getTime())) {
-			const year = date.getFullYear();
-			const month = String(date.getMonth() + 1).padStart(2, '0');
-			const day = String(date.getDate()).padStart(2, '0');
-			input.value = `${year}-${month}-${day}`;
+		// Only reformat if not already in yyyy-mm-dd
+		if (!/^\d{4}-\d{2}-\d{2}$/.test(input.value)) {
+			const d = new Date(input.value);
+			if (!isNaN(d.getTime())) {
+				const year = d.getFullYear();
+				const month = String(d.getMonth() + 1).padStart(2, '0');
+				const day = String(d.getDate()).padStart(2, '0');
+				input.value = `${year}-${month}-${day}`;
+			}
 		}
 	}
 
