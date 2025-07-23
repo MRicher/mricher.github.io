@@ -573,8 +573,25 @@ class RCMPDataEditor {
         // Format all date inputs after rendering
         this.formatAllDateInputs();
 
-        // Force today's date for empty date fields
-        
+	// Set today's date for new update date fields
+	const todayFormatted = this.getCurrentDateFormatted();
+	const newDateInputs = container.querySelectorAll('input[type="date"]:not([data-initialized])');
+	newDateInputs.forEach(input => {
+	    if (!input.value && input.id.includes('update-') && input.id.includes('-date-')) {
+	        // Check if this is a newly added update by looking at the record data
+	        const matches = input.id.match(/update-(\d+)-date-(\d+)/);
+	        if (matches) {
+	            const updateNum = matches[1];
+	            const recordIndex = matches[2];
+	            const record = this.data.data[recordIndex];
+	            if (record && record[`update-${updateNum}-date`] === todayFormatted) {
+	                input.value = todayFormatted;
+	            }
+	        }
+	    }
+	    input.setAttribute('data-initialized', 'true');
+	});
+  
         // Restore focus if it was on a form element
         if (focusedElementId) {
             requestAnimationFrame(() => {
@@ -591,28 +608,38 @@ class RCMPDataEditor {
 		}
 	}
 
-    addUpdate(recordIndex) {
-        const record = this.data.data[recordIndex];
-        if (!record) return;
-
-        for (let i = 1; i <= 6; i++) {
-            if (!record[`update-${i}-date`] && !record[`english-update-${i}`] && !record[`french-update-${i}`]) {
-                record[`update-${i}-date`] = this.getCurrentDateFormatted();
-                record[`english-update-${i}`] = '';
-                record[`french-update-${i}`] = '';
-                this.render();
-                const successMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr'
-                    ? `Mise à jour ${i} ajoutée à l'enregistrement ${recordIndex + 1} !`
-                    : `Update ${i} added to record ${recordIndex + 1}!`;
-                this.showAlert(successMsg);
-                return;
-            }
-        }
-        const errorMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr'
-            ? 'Nombre maximum de mises à jour (6) atteint pour cet enregistrement.'
-            : 'Maximum number of updates (6) reached for this record.';
-        this.showAlert(errorMsg, 'error');
-    }
+	addUpdate(recordIndex) {
+	    const record = this.data.data[recordIndex];
+	    if (!record) return;
+	
+	    for (let i = 1; i <= 6; i++) {
+	        if (!record[`update-${i}-date`] && !record[`english-update-${i}`] && !record[`french-update-${i}`]) {
+	            const todaysDate = this.getCurrentDateFormatted();
+	            record[`update-${i}-date`] = todaysDate;
+	            record[`english-update-${i}`] = '';
+	            record[`french-update-${i}`] = '';
+	            this.render();
+	            
+	            // Ensure the new date input gets today's date
+	            setTimeout(() => {
+	                const dateInput = document.getElementById(`update-${i}-date-${recordIndex}`);
+	                if (dateInput) {
+	                    dateInput.value = todaysDate;
+	                }
+	            }, 0);
+	            
+	            const successMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr'
+	                ? `Mise à jour ${i} ajoutée à l'enregistrement ${recordIndex + 1} !`
+	                : `Update ${i} added to record ${recordIndex + 1}!`;
+	            this.showAlert(successMsg);
+	            return;
+	        }
+	    }
+	    const errorMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr'
+	        ? 'Nombre maximum de mises à jour (6) atteint pour cet enregistrement.'
+	        : 'Maximum number of updates (6) reached for this record.';
+	    this.showAlert(errorMsg, 'error');
+	}
 
     deleteUpdate(recordIndex, updateNumber) {
         const confirmMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr'
@@ -642,33 +669,21 @@ class RCMPDataEditor {
 			this.formatDateInput(input);
 		});
 	}
-
+	
 	formatDateInput(input) {
-		if (!input) return;
-
-		// Ensure the input shows yyyy-mm-dd format regardless of locale
-		input.setAttribute('pattern', '\\d{4}-\\d{2}-\\d{2}');
-		input.setAttribute('placeholder', 'YYYY-MM-DD');
-
-		// Only reformat if not already in yyyy-mm-dd
-		if (input.value && !/^\d{4}-\d{2}-\d{2}$/.test(input.value)) {
-			// Try to extract yyyy-mm-dd from the value
-			const d = new Date(input.value);
-			if (!isNaN(d.getTime())) {
-				const year = d.getFullYear();
-				const month = String(d.getMonth() + 1).padStart(2, '0');
-				const day = String(d.getDate()).padStart(2, '0');
-				input.value = `${year}-${month}-${day}`;
-			}
-		}
-
-		// Add event listener to maintain format on change
-		if (!input.hasAttribute('data-formatted')) {
-			input.addEventListener('change', (e) => {
-				this.ensureDateFormat(e.target);
-			});
-			input.setAttribute('data-formatted', 'true');
-		}
+	    if (!input) return;
+	
+	    // Ensure the input shows yyyy-mm-dd format
+	    input.setAttribute('pattern', '\\d{4}-\\d{2}-\\d{2}');
+	    input.setAttribute('placeholder', 'YYYY-MM-DD');
+	
+	    // Only add event listener once
+	    if (!input.hasAttribute('data-formatted')) {
+	        input.addEventListener('change', (e) => {
+	            this.ensureDateFormat(e.target);
+	        });
+	        input.setAttribute('data-formatted', 'true');
+	    }
 	}
 
 	ensureDateFormat(input) {
