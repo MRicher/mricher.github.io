@@ -590,8 +590,9 @@ class RCMPDataEditor {
 				return;
 			}
 		}
-		// Show error message under the Add update button instead of at the top
-		const errorMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr' ? 'Nombre maximum de mises à jour (6) atteint pour cet enregistrement.' : 'Maximum number of updates (6) reached for this record.';
+		// More robust language detection for error message
+		const isFrench = (window.languageSwitcher && window.languageSwitcher.currentLang === 'fr') || document.documentElement.lang === 'fr' || document.documentElement.getAttribute('lang') === 'fr-CA';
+		const errorMsg = isFrench ? 'Nombre maximum de mises à jour (6) atteint pour cet enregistrement.' : 'Maximum number of updates (6) reached for this record.';
 		this.showUpdateAlert(recordIndex, errorMsg, 'danger');
 	}
 	deleteUpdate(recordIndex, updateNumber) {
