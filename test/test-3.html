@@ -117,17 +117,42 @@
         }
 
         .loader-container {
-            text-align: center;
-            position: relative;
-        }
-
-        .horse {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .horse {
             font-size: 64px;
             color: white;
+            margin-bottom: 10px;
+        }
+
+        .grass-field {
+            width: 80px;
+            height: 8px;
+            background: linear-gradient(90deg, #228B22, #32CD32, #228B22);
+            border-radius: 4px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .grass-field::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: 0;
+            right: 0;
+            height: 14px;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent 0px,
+                transparent 2px,
+                #32CD32 2px,
+                #32CD32 3px
+            );
         }
 
         .horse-body {
@@ -247,6 +272,7 @@
         <div class="horse">
             <span class="horse-body">🐎</span>
         </div>
+        <div class="grass-field"></div>
     </div>
 
     <script>
