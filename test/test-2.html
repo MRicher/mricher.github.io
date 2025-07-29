@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RCMP Digital Command Center | Next-Generation Interface</title>
+    <meta name="description" content="Revolutionary RCMP digital interface featuring hexagonal design system, adaptive accessibility, and immersive 3D navigation">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Source+Code+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --rcmp-red: #dc143c;
+            --rcmp-gold: #ffd700;
+            --dark-red: #8b0000;
+            --dark-gold: #b8860b;
+            --primary-bg: #0d1421;
+            --secondary-bg: #1a2332;
+            --accent-bg: #2d3748;
+            --text-primary: #ffffff;
+            --text-secondary: #cbd5e0;
+            --border-color: rgba(255, 215, 0, 0.3);
+            --glow-primary: 0 0 20px rgba(220, 20, 60, 0.4);
+            --glow-secondary: 0 0 20px rgba(255, 215, 0, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, var(--primary-bg) 0%, var(--secondary-bg) 50%, var(--accent-bg) 100%);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Skip to content link for screen readers */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 6px;
+            background: var(--rcmp-red);
+            color: white;
+            padding: 8px;
+            text-decoration: none;
+            border-radius: 4px;
+            z-index: 10000;
+            font-weight: 600;
+        }
+
+        .skip-link:focus {
+            top: 6px;
+        }
+
+        /* Hexagonal grid system */
+        .hex-container {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .hex-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            width: 100%;
+        }
+
+        .hex-zone {
+            position: relative;
+            height: 400px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+            border: 2px solid var(--border-color);
+            border-radius: 24px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            transform-style: preserve-3d;
+            backdrop-filter: blur(10px);
+        }
+
+        .hex-zone:hover {
+            transform: translateY(-8px) rotateX(2deg);
+            border-color: var(--rcmp-gold);
+            box-shadow: var(--glow-secondary);
+        }
+
+        .hex-zone:focus-within {
+            outline: 3px solid var(--rcmp-gold);
+            outline-offset: 4px;
+            border-color: var(--rcmp-gold);
+        }
+
+        /* Background images with accessibility overlays */
+        .hex-zone::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.3;
+            transition: opacity 0.4s ease;
+            z-index: 1;
+        }
+
+        .hex-zone:hover::before {
+            opacity: 0.2;
+        }
+
+        .zone-protect::before {
+            background-image: url('https://images.unsplash.com/photo-1583508915901-b5f84c1dcde1?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');
+        }
+
+        .zone-serve::before {
+            background-image: url('https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');
+        }
+
+        .zone-justice::before {
+            background-image: url('https://images.unsplash.com/photo-1589829545856-d10d557cf95f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');
+        }
+
+        /* High contrast overlay for WCAG compliance */
+        .hex-zone::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(13, 20, 33, 0.8) 0%, rgba(26, 35, 50, 0.7) 100%);
+            z-index: 2;
+        }
+
+        /* Zone content with proper hierarchy */
+        .hex-content {
+            position: relative;
+            z-index: 3;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 2rem;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .hex-content.animate-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .hex-header {
+            text-align: center;
+        }
+
+        .hex-icon {
+            font-size: 3.5rem;
+            color: var(--rcmp-gold);
+            margin-bottom: 1rem;
+            display: block;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+            transition: transform 0.3s ease;
+        }
+
+        .hex-zone:hover .hex-icon {
+            transform: scale(1.1) rotateY(10deg);
+        }
+
+        .hex-title {
+            font-family: 'Source Code Pro', monospace;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            letter-spacing: 2px;
+        }
+
+        .hex-subtitle {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+
+        /* Interactive data visualization */
+        .hex-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: auto;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            background: rgba(255, 215, 0, 0.1);
+            border-color: var(--rcmp-gold);
+            transform: translateY(-2px);
+        }
+
+        .stat-number {
+            font-family: 'Source Code Pro', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--rcmp-gold);
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        /* Action button with proper focus states */
+        .hex-action {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, var(--rcmp-red) 0%, var(--dark-red) 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            margin-top: 1rem;
+        }
+
+        .hex-action:hover {
+            background: linear-gradient(135deg, var(--dark-red) 0%, var(--rcmp-red) 100%);
+            transform: translateY(-2px);
+            box-shadow: var(--glow-primary);
+            color: white;
+        }
+
+        .hex-action:focus {
+            outline: 3px solid var(--rcmp-gold);
+            outline-offset: 2px;
+            border-color: var(--rcmp-gold);
+        }
+
+        /* Navigation dots for better UX */
+        .nav-dots {
+            position: fixed;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            z-index: 1000;
+        }
+
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 215, 0, 0.3);
+            border: 2px solid var(--rcmp-gold);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-dot.active {
+            background: var(--rcmp-gold);
+            box-shadow: var(--glow-secondary);
+        }
+
+        .nav-dot:hover {
+            background: var(--rcmp-gold);
+            transform: scale(1.2);
+        }
+
+        .nav-dot:focus {
+            outline: 2px solid white;
+            outline-offset: 2px;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .hex-container {
+                padding: 1rem;
+            }
+            
+            .hex-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .hex-zone {
+                height: 350px;
+            }
+            
+            .hex-content {
+                padding: 1.5rem;
+            }
+            
+            .hex-title {
+                font-size: 1.8rem;
+            }
+            
+            .hex-icon {
+                font-size: 3rem;
+            }
+            
+            .nav-dots {
+                display: none;
+            }
+            
+            .hex-stats {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+        }
+
+        /* Accessibility enhancements */
+        @media (prefers-reduced-motion: reduce) {
+            .hex-zone,
+            .hex-content,
+            .hex-icon,
+            .stat-item,
+            .hex-action {
+                transition: none !important;
+                animation: none !important;
+            }
+        }
+
+        @media (prefers-contrast: high) {
+            .hex-zone {
+                border: 3px solid var(--rcmp-gold);
+                background: rgba(0, 0, 0, 0.9);
+            }
+            
+            .hex-zone::after {
+                background: rgba(0, 0, 0, 0.95);
+            }
+            
+            .hex-title {
+                color: white;
+                text-shadow: none;
+            }
+            
+            .stat-item {
+                background: rgba(0, 0, 0, 0.8);
+                border: 2px solid var(--rcmp-gold);
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            .nav-dots,
+            .hex-action {
+                display: none;
+            }
+            
+            .hex-zone {
+                page-break-inside: avoid;
+                border: 2px solid black;
+            }
+            
+            .hex-title {
+                color: black;
+                text-shadow: none;
+            }
+        }
+
+        /* Focus management for keyboard users */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Loading animation */
+        .loading-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Announcement banner for screen readers */
+        .announcement {
+            position: absolute;
+            top: -1000px;
+            left: -1000px;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip to content link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <!-- Screen reader announcement -->
+    <div class="announcement" aria-live="polite" id="announcements"></div>
+    
+    <!-- Main content -->
+    <main id="main-content" class="hex-container" role="main">
+        <h1 class="sr-only">RCMP Digital Command Center - Protect, Serve, Justice</h1>
+        
+        <div class="hex-grid">
+            <!-- PROTECT Zone -->
+            <article class="hex-zone zone-protect" role="region" aria-labelledby="protect-title" tabindex="0">
+                <div class="hex-content loading-pulse">
+                    <header class="hex-header">
+                        <i class="hex-icon fas fa-shield-halved" aria-hidden="true"></i>
+                        <h2 class="hex-title" id="protect-title">PROTECT</h2>
+                        <p class="hex-subtitle">Advanced patrol systems ensuring community safety through intelligent monitoring and rapid response protocols</p>
+                    </header>
+                    
+                    <div class="hex-stats" role="group" aria-label="Protection statistics">
+                        <div class="stat-item">
+                            <span class="stat-number" data-target="24" aria-label="24 hours">24</span>
+                            <span class="stat-label">Hours</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" data-target="365" aria-label="365 days">365</span>
+                            <span class="stat-label">Days</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" data-target="100" aria-label="100 percent coverage">100%</span>
+                            <span class="stat-label">Coverage</span>
+                        </div>
+                    </div>
+                    
+                    <a href="#protect-details" class="hex-action" aria-describedby="protect-title">
+                        <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                        Learn More
+                    </a>
+                </div>
+            </article>
+
+            <!-- SERVE Zone -->
+            <article class="hex-zone zone-serve" role="region" aria-labelledby="serve-title" tabindex="0">
+                <div class="hex-content loading-pulse">
+                    <header class="hex-header">
+                        <i class="hex-icon fas fa-headset" aria-hidden="true"></i>
+                        <h2 class="hex-title" id="serve-title">SERVE</h2>
+                        <p class="hex-subtitle">Next-generation emergency response connecting communities through intelligent dispatch and real-time coordination</p>
+                    </header>
+                    
+                    <div class="hex-stats" role="group" aria-label="Service statistics">
+                        <div class="stat-item">
+                            <span class="stat-number" data-target="911" aria-label="911 emergency line">911</span>
+                            <span class="stat-label">Emergency</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" data-target="45" aria-label="45 seconds response">45s</span>
+                            <span class="stat-label">Response</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" data-target="99" aria-label="99 percent uptime">99%</span>
+                            <span class="stat-label">Uptime</span>
+                        </div>
+                    </div>
+                    
+                    <a href="#serve-details" class="hex-action" aria-describedby="serve-title">
+                        <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                        Learn More
+                    </a>
+                </div>
+            </article>
+
+            <!-- JUSTICE Zone -->
+            <article class="hex-zone zone-justice" role="region" aria-labelledby="justice-title" tabindex="0">
+                <div class="hex-content loading-pulse">
+                    <header class="hex-header">
+                        <i class="hex-icon fas fa-search-plus" aria-hidden="true"></i>
+                        <h2 class="hex-title" id="justice-title">JUSTICE</h2>
+                        <p class="hex-subtitle">AI-enhanced forensic investigation and evidence analysis ensuring comprehensive case resolution and legal integrity</p>
+                    </header>
+                    
+                    <div class="hex-stats" role="group" aria-label="Justice statistics">
+                        <div class="stat-item">
+                            <span class="stat-number" data-target="95" aria-label="95 percent accuracy">95%</span>
+                            <span class="stat-label">Accuracy</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" data-target="48" aria-label="48 hours processing">48h</span>
+                            <span class="stat-label">Process</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" data-target="87" aria-label="87 percent solve rate">87%</span>
+                            <span class="stat-label">Solved</span>
+                        </div>
+                    </div>
+                    
+                    <a href="#justice-details" class="hex-action" aria-describedby="justice-title">
+                        <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                        Learn More
+                    </a>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <!-- Navigation dots -->
+    <nav class="nav-dots" role="navigation" aria-label="Section navigation">
+        <button class="nav-dot active" data-target="0" aria-label="Go to Protect section"></button>
+        <button class="nav-dot" data-target="1" aria-label="Go to Serve section"></button>
+        <button class="nav-dot" data-target="2" aria-label="Go to Justice section"></button>
+    </nav>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        class RCMPInterface {
+            constructor() {
+                this.zones = document.querySelectorAll('.hex-zone');
+                this.contents = document.querySelectorAll('.hex-content');
+                this.navDots = document.querySelectorAll('.nav-dot');
+                this.announcements = document.getElementById('announcements');
+                
+                this.init();
+                this.setupAccessibility();
+                this.setupInteractions();
+                this.setupAnimations();
+            }
+
+            init() {
+                // Remove loading animation after content loads
+                setTimeout(() => {
+                    this.contents.forEach((content, index) => {
+                        setTimeout(() => {
+                            content.classList.remove('loading-pulse');
+                            content.classList.add('animate-in');
+                        }, index * 200);
+                    });
+                }, 500);
+            }
+
+            setupAccessibility() {
+                // Enhanced keyboard navigation
+                this.zones.forEach((zone, index) => {
+                    zone.addEventListener('keydown', (e) => {
+                        switch(e.key) {
+                            case 'Enter':
+                            case ' ':
+                                e.preventDefault();
+                                this.activateZone(index);
+                                break;
+                            case 'ArrowRight':
+                            case 'ArrowDown':
+                                e.preventDefault();
+                                this.focusNextZone(index);
+                                break;
+                            case 'ArrowLeft':
+                            case 'ArrowUp':
+                                e.preventDefault();
+                                this.focusPreviousZone(index);
+                                break;
+                        }
+                    });
+
+                    // Focus management
+                    zone.addEventListener('focus', () => {
+                        this.updateNavDots(index);
+                        this.announceZone(index);
+                    });
+                });
+
+                // Screen reader announcements
+                this.setupScreenReaderSupport();
+            }
+
+            setupScreenReaderSupport() {
+                const zoneNames = ['Protection Services', 'Emergency Response', 'Justice System'];
+                
+                this.zones.forEach((zone, index) => {
+                    zone.addEventListener('mouseenter', () => {
+                        this.announceZone(index);
+                    });
+                });
+            }
+
+            announceZone(index) {
+                const zoneNames = [
+                    'Protection Services: 24/7 community safety coverage',
+                    'Emergency Response: 911 dispatch with 45 second response time',
+                    'Justice System: 95% accuracy in forensic analysis'
+                ];
+                
+                this.announcements.textContent = `Focused on ${zoneNames[index]}`;
+            }
+
+            focusNextZone(currentIndex) {
+                const nextIndex = (currentIndex + 1) % this.zones.length;
+                this.zones[nextIndex].focus();
+            }
+
+            focusPreviousZone(currentIndex) {
+                const prevIndex = (currentIndex - 1 + this.zones.length) % this.zones.length;
+                this.zones[prevIndex].focus();
+            }
+
+            activateZone(index) {
+                const action = this.zones[index].querySelector('.hex-action');
+                if (action) {
+                    action.click();
+                }
+            }
+
+            updateNavDots(activeIndex) {
+                this.navDots.forEach((dot, index) => {
+                    dot.classList.toggle('active', index === activeIndex);
+                });
+            }
+
+            setupInteractions() {
+                // Navigation dots
+                this.navDots.forEach((dot, index) => {
+                    dot.addEventListener('click', () => {
+                        this.zones[index].focus();
+                        this.zones[index].scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'center' 
+                        });
+                    });
+
+                    dot.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            dot.click();
+                        }
+                    });
+                });
+
+                // Enhanced hover effects (respecting motion preferences)
+                if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                    this.zones.forEach(zone => {
+                        zone.addEventListener('mouseenter', () => {
+                            zone.style.transform = 'translateY(-8px) rotateX(2deg)';
+                        });
+
+                        zone.addEventListener('mouseleave', () => {
+                            zone.style.transform = '';
+                        });
+                    });
+                }
+
+                // Touch interactions for mobile
+                this.setupTouchInteractions();
+            }
+
+            setupTouchInteractions() {
+                this.zones.forEach(zone => {
+                    let touchStartY = 0;
+                    
+                    zone.addEventListener('touchstart', (e) => {
+                        touchStartY = e.touches[0].clientY;
+                        zone.style.transform = 'scale(0.98)';
+                    });
+
+                    zone.addEventListener('touchend', (e) => {
+                        zone.style.transform = '';
+                        
+                        const touchEndY = e.changedTouches[0].clientY;
+                        const diff = touchStartY - touchEndY;
+                        
+                        // Swipe gesture detection
+                        if (Math.abs(diff) > 50) {
+                            if (diff > 0) {
+                                // Swipe up
+                                this.announcements.textContent = 'Swiped up on zone';
+                            } else {
+                                // Swipe down
+                                this.announcements.textContent = 'Swiped down on zone';
+                            }
+                        }
+                    });
+                });
+            }
+
+            setupAnimations() {
+                // Intersection Observer for scroll animations
+                const observerOptions = {
+                    threshold: 0.3,
+                    rootMargin: '0px 0px -100px 0px'
+                };
+
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const index = Array.from(this.zones).indexOf(entry.target);
+                            this.updateNavDots(index);
+                            this.animateStats(entry.target);
+                        }
+                    });
+                }, observerOptions);
+
+                this.zones.forEach(zone => observer.observe(zone));
+            }
+
+            animateStats(zone) {
+                const stats = zone.querySelectorAll('.stat-number');
+                
+                stats.forEach(stat => {
+                    const target = parseInt(stat.dataset.target) || parseInt(stat.textContent);
+                    const duration = 2000;
+                    const start = performance.now();
+                    
+                    const animate = (currentTime) => {
+                        const elapsed = currentTime - start;
+                        const progress = Math.min(elapsed / duration, 1);
+                        
+                        // Easing function
+                        const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+                        let current = Math.floor(target * easeOutQuart);
+                        
+                        // Handle percentage values
+                        if (stat.textContent.includes('%')) {
+                            stat.textContent = current + '%';
+                        } else if (stat.textContent.includes('s')) {
+                            stat.textContent = current + 's';
+                        } else if (stat.textContent.includes('h')) {
+                            stat.textContent = current + 'h';
+                        } else {
+                            stat.textContent = current;
+                        }
+                        
+                        if (progress < 1) {
+                            requestAnimationFrame(animate);
+                        }
+                    };
+                    
+                    requestAnimationFrame(animate);
+                });
+            }
+        }
+
+        // Initialize the interface
+        document.addEventListener('DOMContentLoaded', () => {
+            new RCMPInterface();
+        });
+
+        // Handle resize events
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                // Recalculate layouts if needed
+                console.log('Layout recalculated for new viewport size');
+            }, 250);
+        });
+
+        // Service worker registration for PWA capabilities
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                // Register service worker for offline functionality
+                console.log('Ready for service worker registration');
+            });
+        }
+    </script>
+</body>
+</html>
