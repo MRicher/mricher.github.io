@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RCMP Digital Experience | Award-Winning Interactive Interface</title>
+    <meta name="description" content="Revolutionary RCMP digital interface featuring immersive 3D interactions, dynamic particle systems, and adaptive AI-driven content">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --rcmp-red: #cc0000;
+            --rcmp-gold: #ffd700;
+            --dark-red: #8b0000;
+            --dark-gold: #b8860b;
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --neon-glow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow-x: hidden;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            position: relative;
+        }
+
+        /* Animated background particles */
+        .particle-system {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--rcmp-gold);
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Main container with depth */
+        .main-container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .zone {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            perspective: 1000px;
+        }
+
+        /* Holographic glass effect */
+        .zone::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            filter: brightness(0.7) contrast(1.2) saturate(1.1);
+            transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1;
+        }
+
+        .zone::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(204, 0, 0, 0.4) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 215, 0, 0.3) 0%, transparent 50%),
+                linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.8) 100%);
+            backdrop-filter: blur(2px);
+            z-index: 2;
+        }
+
+        /* Individual zone backgrounds */
+        .zone-1::before {
+            background-image: url('https://images.unsplash.com/photo-1583508915901-b5f84c1dcde1?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');
+        }
+
+        .zone-2::before {
+            background-image: url('https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');
+        }
+
+        .zone-3::before {
+            background-image: url('https://images.unsplash.com/photo-1589829545856-d10d557cf95f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');
+        }
+
+        /* Hover effects */
+        .zone:hover::before {
+            transform: scale(1.1) rotate(1deg);
+            filter: brightness(0.9) contrast(1.4) saturate(1.3);
+        }
+
+        .zone:hover::after {
+            background: 
+                radial-gradient(circle at 50% 50%, rgba(204, 0, 0, 0.2) 0%, transparent 70%),
+                radial-gradient(circle at 30% 70%, rgba(255, 215, 0, 0.2) 0%, transparent 50%),
+                linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.7) 100%);
+        }
+
+        /* Revolutionary content cards */
+        .zone-content {
+            position: relative;
+            z-index: 3;
+            text-align: center;
+            color: #ffffff;
+            opacity: 0;
+            transform: translateY(60px) rotateX(20deg);
+            transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem 2rem;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            max-width: 400px;
+            transform-style: preserve-3d;
+        }
+
+        .zone-content.active {
+            opacity: 1;
+            transform: translateY(0) rotateX(0deg);
+        }
+
+        .zone:hover .zone-content {
+            transform: translateY(-10px) rotateX(-2deg) scale(1.02);
+            box-shadow: 
+                0 30px 60px rgba(0, 0, 0, 0.4),
+                var(--neon-glow),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        /* Futuristic icon system */
+        .zone-icon {
+            position: relative;
+            font-size: 4rem;
+            margin-bottom: 2rem;
+            color: var(--rcmp-gold);
+            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.6));
+            animation: iconFloat 4s ease-in-out infinite;
+        }
+
+        .zone-icon::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            right: -20px;
+            bottom: -20px;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: iconPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+        }
+
+        @keyframes iconPulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        /* Typography with cyber aesthetics */
+        .zone-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff 0%, var(--rcmp-gold) 50%, #ffffff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+            letter-spacing: 3px;
+            position: relative;
+        }
+
+        .zone-title::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--rcmp-gold), transparent);
+            box-shadow: 0 0 10px var(--rcmp-gold);
+        }
+
+        .zone-subtitle {
+            font-size: 1.1rem;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        /* Interactive metrics display */
+        .zone-metrics {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            gap: 1rem;
+        }
+
+        .metric {
+            text-align: center;
+            flex: 1;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s ease;
+        }
+
+        .metric:hover {
+            background: rgba(255, 215, 0, 0.1);
+            border-color: var(--rcmp-gold);
+            transform: translateY(-2px);
+        }
+
+        .metric-value {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--rcmp-gold);
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Advanced responsive design */
+        @media (max-width: 991px) {
+            .zone {
+                height: 90vh;
+            }
+            
+            .zone-content {
+                max-width: 90%;
+                padding: 2rem 1.5rem;
+            }
+            
+            .zone-title {
+                font-size: 2.2rem;
+            }
+            
+            .zone-icon {
+                font-size: 3rem;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .zone {
+                height: 80vh;
+            }
+            
+            .zone::before {
+                background-attachment: scroll;
+            }
+            
+            .zone-metrics {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .metric {
+                padding: 0.8rem;
+            }
+        }
+
+        /* Accessibility enhancements */
+        @media (prefers-reduced-motion: reduce) {
+            .zone,
+            .zone::before,
+            .zone-content,
+            .zone-icon,
+            .particle {
+                transition: none !important;
+                animation: none !important;
+            }
+            
+            .zone::before {
+                background-attachment: scroll;
+            }
+        }
+
+        @media (prefers-contrast: high) {
+            .zone::after {
+                background: rgba(0, 0, 0, 0.9);
+            }
+            
+            .zone-content {
+                background: rgba(0, 0, 0, 0.8);
+                border: 2px solid #ffffff;
+            }
+        }
+
+        /* Focus states */
+        .zone:focus-within {
+            outline: 3px solid var(--rcmp-gold);
+            outline-offset: -3px;
+        }
+
+        .zone-content:focus {
+            outline: 2px solid #ffffff;
+            outline-offset: 4px;
+        }
+
+        /* Loading animation */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            transition: opacity 1s ease;
+        }
+
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader {
+            width: 80px;
+            height: 80px;
+            border: 3px solid transparent;
+            border-top: 3px solid var(--rcmp-gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            position: relative;
+        }
+
+        .loader::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            border: 3px solid transparent;
+            border-bottom: 3px solid var(--rcmp-red);
+            border-radius: 50%;
+            animation: spin 1.5s linear infinite reverse;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Scroll indicator */
+        .scroll-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--rcmp-red), var(--rcmp-gold));
+            transform-origin: left;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Scroll Progress Indicator -->
+    <div class="scroll-indicator" id="scrollIndicator"></div>
+
+    <!-- Particle System -->
+    <div class="particle-system" id="particleSystem"></div>
+
+    <!-- Main Content -->
+    <div class="container-fluid p-0 main-container">
+        <div class="row g-0 h-100">
+            <!-- Zone 1: PROTECT -->
+            <div class="col-lg-4 col-12">
+                <div class="zone zone-1" role="region" aria-labelledby="zone1-title" tabindex="0">
+                    <div class="zone-content">
+                        <div class="zone-icon" aria-hidden="true">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h2 class="zone-title" id="zone1-title">PROTECT</h2>
+                        <p class="zone-subtitle">Advanced patrol systems and community safety initiatives powered by cutting-edge technology</p>
+                        <div class="zone-metrics">
+                            <div class="metric">
+                                <div class="metric-value" data-target="24">0</div>
+                                <div class="metric-label">Hours</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value" data-target="365">0</div>
+                                <div class="metric-label">Days</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value" data-target="100">0</div>
+                                <div class="metric-label">Coverage</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Zone 2: SERVE -->
+            <div class="col-lg-4 col-12">
+                <div class="zone zone-2" role="region" aria-labelledby="zone2-title" tabindex="0">
+                    <div class="zone-content">
+                        <div class="zone-icon" aria-hidden="true">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <h2 class="zone-title" id="zone2-title">SERVE</h2>
+                        <p class="zone-subtitle">Next-generation emergency response system connecting communities through intelligent dispatch</p>
+                        <div class="zone-metrics">
+                            <div class="metric">
+                                <div class="metric-value" data-target="911">0</div>
+                                <div class="metric-label">Emergency</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value" data-target="60">0</div>
+                                <div class="metric-label">Seconds</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value" data-target="99">0</div>
+                                <div class="metric-label">Uptime</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Zone 3: JUSTICE -->
+            <div class="col-lg-4 col-12">
+                <div class="zone zone-3" role="region" aria-labelledby="zone3-title" tabindex="0">
+                    <div class="zone-content">
+                        <div class="zone-icon" aria-hidden="true">
+                            <i class="fas fa-search-plus"></i>
+                        </div>
+                        <h2 class="zone-title" id="zone3-title">JUSTICE</h2>
+                        <p class="zone-subtitle">AI-enhanced forensic investigation and evidence analysis for comprehensive case resolution</p>
+                        <div class="zone-metrics">
+                            <div class="metric">
+                                <div class="metric-value" data-target="95">0</div>
+                                <div class="metric-label">Accuracy</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value" data-target="48">0</div>
+                                <div class="metric-label">Hours</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value" data-target="85">0</div>
+                                <div class="metric-label">Solve Rate</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        class RCMPInterface {
+            constructor() {
+                this.init();
+                this.createParticleSystem();
+                this.setupScrollEffects();
+                this.setupAnimationTimeline();
+                this.setupInteractivity();
+            }
+
+            init() {
+                // Remove loading screen after assets load
+                window.addEventListener('load', () => {
+                    setTimeout(() => {
+                        document.getElementById('loadingOverlay').classList.add('hidden');
+                        this.startAnimationSequence();
+                    }, 1500);
+                });
+            }
+
+            createParticleSystem() {
+                const particleSystem = document.getElementById('particleSystem');
+                const particleCount = window.innerWidth > 768 ? 50 : 25;
+                
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.animationDelay = Math.random() * 15 + 's';
+                    particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                    particleSystem.appendChild(particle);
+                }
+            }
+
+            setupScrollEffects() {
+                const scrollIndicator = document.getElementById('scrollIndicator');
+                
+                window.addEventListener('scroll', () => {
+                    const scrolled = (window.pageYOffset / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+                    scrollIndicator.style.transform = `scaleX(${scrolled / 100})`;
+                    
+                    this.handleParallax();
+                    this.updateVisibleElements();
+                });
+            }
+
+            handleParallax() {
+                if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+                
+                const scrollTop = window.pageYOffset;
+                const zones = document.querySelectorAll('.zone');
+                
+                zones.forEach((zone, index) => {
+                    const speed = 0.3 + (index * 0.1);
+                    const yPos = -(scrollTop * speed);
+                    
+                    if (window.innerWidth >= 992) {
+                        zone.style.transform = `translateY(${yPos}px)`;
+                    }
+                });
+            }
+
+            updateVisibleElements() {
+                const zoneContents = document.querySelectorAll('.zone-content');
+                
+                zoneContents.forEach(content => {
+                    const rect = content.getBoundingClientRect();
+                    const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+                    
+                    if (isVisible && !content.classList.contains('active')) {
+                        content.classList.add('active');
+                        this.animateMetrics(content);
+                    }
+                });
+            }
+
+            animateMetrics(content) {
+                const metrics = content.querySelectorAll('.metric-value');
+                
+                metrics.forEach(metric => {
+                    const target = parseInt(metric.dataset.target);
+                    const duration = 2000;
+                    const start = performance.now();
+                    
+                    const animate = (currentTime) => {
+                        const elapsed = currentTime - start;
+                        const progress = Math.min(elapsed / duration, 1);
+                        
+                        const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+                        const current = Math.floor(target * easeOutQuart);
+                        
+                        metric.textContent = current;
+                        
+                        if (progress < 1) {
+                            requestAnimationFrame(animate);
+                        }
+                    };
+                    
+                    requestAnimationFrame(animate);
+                });
+            }
+
+            startAnimationSequence() {
+                const contents = document.querySelectorAll('.zone-content');
+                
+                contents.forEach((content, index) => {
+                    setTimeout(() => {
+                        content.classList.add('active');
+                        this.animateMetrics(content);
+                    }, index * 300);
+                });
+            }
+
+            setupInteractivity() {
+                const zones = document.querySelectorAll('.zone');
+                
+                zones.forEach(zone => {
+                    // Enhanced hover effects
+                    zone.addEventListener('mouseenter', () => {
+                        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                            zone.style.transform += ' scale(1.02)';
+                        }
+                    });
+                    
+                    zone.addEventListener('mouseleave', () => {
+                        zone.style.transform = zone.style.transform.replace(' scale(1.02)', '');
+                    });
+                    
+                    // Keyboard navigation
+                    zone.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            zone.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                    });
+                    
+                    // Touch interactions for mobile
+                    zone.addEventListener('touchstart', () => {
+                        zone.style.transform += ' scale(0.98)';
+                    });
+                    
+                    zone.addEventListener('touchend', () => {
+                        zone.style.transform = zone.style.transform.replace(' scale(0.98)', '');
+                    });
+                });
+                
+                // Dynamic theme switching based on time
+                this.setupDynamicTheming();
+            }
+
+            setupDynamicTheming() {
+                const hour = new Date().getHours();
+                const body = document.body;
+                
+                if (hour >= 6 && hour < 18) {
+                    // Day mode - brighter particles
+                    document.querySelectorAll('.particle').forEach(particle => {
+                        particle.style.opacity = '0.4';
+                    });
+                } else {
+                    // Night mode - more visible particles
+                    document.querySelectorAll('.particle').forEach(particle => {
+                        particle.style.opacity = '0.8';
+                    });
+                }
+            }
+
+            setupAnimationTimeline() {
+                // Smooth scroll behavior
+                if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                    document.documentElement.style.scrollBehavior = 'smooth';
+                }
+                
+                // Initial visibility check
+                setTimeout(() => {
+                    this.updateVisibleElements();
+                }, 100);
+            }
+        }
+
+        // Initialize the interface
+        document.addEventListener('DOMContentLoaded', () => {
+            new RCMPInterface();
+        });
+
+        // Performance optimization
+        let ticking = false;
+        
+        function requestTick() {
+            if (!ticking) {
+                requestAnimationFrame(() => {
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        }
+
+        // Resize handler
+        window.addEventListener('resize', () => {
+            requestTick();
+        });
+    </script>
+</body>
+</html>
