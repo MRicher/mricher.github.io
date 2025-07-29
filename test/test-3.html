@@ -1,0 +1,259 @@
+.loading-text {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 30px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        .progress-bar {
+            width: 300px;
+            height: 6px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+            margin: 20px auto;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+            background-size: 200% 100%;
+            border-radius: 3px;
+            animation: progressFill 10s linear, gradientShift 2s ease-in-out infinite;
+            width: 0%;
+        }
+
+        @keyframes progressFill {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .dust-particles {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .dust {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255,255,255,0.6);
+            border-radius: 50%;
+            animation: dustFloat 1.5s ease-out infinite;
+        }
+
+        .dust:nth-child(1) { left: 0px; animation-delay: 0s; }
+        .dust:nth-child(2) { left: 20px; animation-delay: 0.2s; }
+        .dust:nth-child(3) { left: 40px; animation-delay: 0.4s; }
+        .dust:nth-child(4) { left: 60px; animation-delay: 0.6s; }
+
+        @keyframes dustFloat {
+            0% {
+                opacity: 0;
+                transform: translateY(0px) scale(0);
+            }
+            50% {
+                opacity: 1;
+                transform: translateY(-20px) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-40px) scale(0);
+            }
+        }
+
+        .completion-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            opacity: 0;
+            animation: showCompletion 1s ease-in-out 10s forwards;
+        }
+
+        @keyframes showCompletion {
+            0% { 
+                opacity: 0; 
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+            100% { 
+                opacity: 1; 
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horse Galloping Loader</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: #000000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+
+        .loader-container {
+            text-align: center;
+            position: relative;
+        }
+
+        .horse {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 64px;
+            color: white;
+        }
+
+        .horse-body {
+            display: inline-block;
+            animation: bounce 0.25s ease-in-out infinite alternate;
+        }
+
+        @keyframes bounce {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-12px); }
+        }
+
+        .loading-text {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 30px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        .progress-bar {
+            width: 300px;
+            height: 6px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+            margin: 20px auto;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+            background-size: 200% 100%;
+            border-radius: 3px;
+            animation: progressFill 10s linear, gradientShift 2s ease-in-out infinite;
+            width: 0%;
+        }
+
+        @keyframes progressFill {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .dust-particles {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .dust {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255,255,255,0.6);
+            border-radius: 50%;
+            animation: dustFloat 1.5s ease-out infinite;
+        }
+
+        .dust:nth-child(1) { left: 0px; animation-delay: 0s; }
+        .dust:nth-child(2) { left: 20px; animation-delay: 0.2s; }
+        .dust:nth-child(3) { left: 40px; animation-delay: 0.4s; }
+        .dust:nth-child(4) { left: 60px; animation-delay: 0.6s; }
+
+        @keyframes dustFloat {
+            0% {
+                opacity: 0;
+                transform: translateY(0px) scale(0);
+            }
+            50% {
+                opacity: 1;
+                transform: translateY(-20px) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-40px) scale(0);
+            }
+        }
+
+        .completion-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            opacity: 0;
+            animation: showCompletion 1s ease-in-out 10s forwards;
+        }
+
+        @keyframes showCompletion {
+            0% { 
+                opacity: 0; 
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+            100% { 
+                opacity: 1; 
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="loader-container">
+        <div class="horse">
+            <span class="horse-body">🐎</span>
+        </div>
+    </div>
+
+    <script>
+        // Animation runs for 10 seconds
+        setTimeout(() => {
+            console.log('Loading complete');
+        }, 10000);
+    </script>
+</body>
+</html>
