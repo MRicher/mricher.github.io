@@ -52,7 +52,6 @@
             overflow: hidden;
             position: relative;
             /* Ensure decorative images don't interfere with screen readers */
-            aria-hidden: true;
         }
 
         .hero-content {
@@ -87,35 +86,42 @@
             height: var(--hero-height);
             position: fixed;
             z-index: -1;
+            top: 0;
+            left: 0;
             /* Hide from screen readers as these are decorative */
-            aria-hidden: true;
         }
 
         /* Specific layer backgrounds */
         .layer-bg {
             background-image: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/272781/ilu_bg.jpg");
+            height: 120vh;
         }
 
         .layer-1 {
             background-image: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/272781/ilu_03.png");
             background-position: left bottom;
+            height: 120vh;
         }
 
         .layer-2 {
             background-image: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/272781/ilu_02.png");
+            height: 120vh;
         }
 
         .layer-3 {
             background-image: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/272781/ilu_man.png");
             background-position: right bottom;
+            height: 120vh;
         }
 
         .layer-4 {
             background-image: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/272781/ilu_01.png");
+            height: 120vh;
         }
 
         .layer-overlay {
             background-image: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/272781/ilu_overlay.png");
+            height: 120vh;
         }
 
         /* Mobile hero */
@@ -131,6 +137,8 @@
             background-color: var(--bronze);
             position: relative;
             z-index: 1;
+            min-height: 100vh;
+            margin-top: var(--hero-height);
         }
 
         .container {
