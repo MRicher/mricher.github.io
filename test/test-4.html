@@ -1,18 +1,4 @@
-        /* Print styles */
-        @media print {
-            .skip-link {
-                display: none;
-            }
-            
-            .layer {
-                display: none;
-            }
-            
-            body {
-                background: white;
-                color: black;
-            }
-        }<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -59,8 +45,6 @@
         .skip-link:focus {
             top: 6px;
         }
-
-
 
         /* Hero section */
         #hero {
@@ -248,8 +232,6 @@
             outline-offset: 2px;
         }
 
-
-
         /* Mobile styles */
         @media only screen and (max-width: 768px) {
             #hero {
@@ -259,11 +241,36 @@
             #hero-mobile {
                 display: block;
             }
-
-
         }
 
+        /* Screen reader only class */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
 
+        /* Print styles */
+        @media print {
+            .skip-link {
+                display: none;
+            }
+            
+            .layer {
+                display: none;
+            }
+            
+            body {
+                background: white;
+                color: black;
+            }
+        }
     </style>
 </head>
 <body>
@@ -399,23 +406,6 @@
         document.addEventListener('DOMContentLoaded', () => {
             new AccessibleParallax();
         });
-
-        // Add screen reader only class
-        const style = document.createElement('style');
-        style.textContent = `
-            .sr-only {
-                position: absolute;
-                width: 1px;
-                height: 1px;
-                padding: 0;
-                margin: -1px;
-                overflow: hidden;
-                clip: rect(0, 0, 0, 0);
-                white-space: nowrap;
-                border: 0;
-            }
-        `;
-        document.head.appendChild(style);
     </script>
 </body>
 </html>
