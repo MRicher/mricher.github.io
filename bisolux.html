@@ -102,7 +102,7 @@
                 
                 <!-- Preset Size Buttons -->
                 <section>
-                    <h3 class="card-title" data-en="General function" data-fr="Fonction générale">General function</h2>
+                    <h3 class="card-title" data-en="General function" data-fr="Fonction générale">General function</h3>
                     <div class="preset-buttons">
                         <button type="button" class="btn btn-outline-secondary" id="none-preset" onclick="setNonePreset()">
                             <span data-en="None (free crop)" data-fr="Aucun (recadrage libre)">None (free crop)</span>
@@ -112,6 +112,60 @@
                         </button>
                         <button type="button" class="btn btn-outline-secondary" onclick="flipVertical()">
                             <span data-en="Flip vertical" data-fr="Retourner verticalement">Flip vertical</span>
+                        </button>
+                    </div>
+                </section>
+                
+                <!-- Zoom Controls -->
+                <section>
+                    <h3 class="card-title" data-en="Zoom controls" data-fr="Contrôles de zoom">Zoom controls</h3>
+                    <div class="preset-buttons">
+                        <button type="button" class="btn btn-outline-info" onclick="zoomIn()">
+                            <span data-en="Zoom in (+)" data-fr="Zoom avant (+)">Zoom in (+)</span>
+                        </button>
+                        <button type="button" class="btn btn-outline-info" onclick="zoomOut()">
+                            <span data-en="Zoom out (-)" data-fr="Zoom arrière (-)">Zoom out (-)</span>
+                        </button>
+                        <button type="button" class="btn btn-outline-info" onclick="resetZoom()">
+                            <span data-en="Reset zoom" data-fr="Réinitialiser le zoom">Reset zoom</span>
+                        </button>
+                    </div>
+                </section>
+                
+                <!-- Image Movement Controls -->
+                <section>
+                    <h3 class="card-title" data-en="Move image" data-fr="Déplacer l'image">Move image</h3>
+                    <div class="preset-buttons">
+                        <button type="button" class="btn btn-outline-warning" onclick="moveImage('up')">
+                            <span data-en="↑ Up" data-fr="↑ Haut">↑ Up</span>
+                        </button>
+                        <button type="button" class="btn btn-outline-warning" onclick="moveImage('down')">
+                            <span data-en="↓ Down" data-fr="↓ Bas">↓ Down</span>
+                        </button>
+                        <button type="button" class="btn btn-outline-warning" onclick="moveImage('left')">
+                            <span data-en="← Left" data-fr="← Gauche">← Left</span>
+                        </button>
+                        <button type="button" class="btn btn-outline-warning" onclick="moveImage('right')">
+                            <span data-en="→ Right" data-fr="→ Droite">→ Right</span>
+                        </button>
+                    </div>
+                </section>
+                
+                <!-- Crop Box Movement Controls -->
+                <section>
+                    <h3 class="card-title" data-en="Move crop area" data-fr="Déplacer la zone de recadrage">Move crop area</h3>
+                    <div class="preset-buttons">
+                        <button type="button" class="btn btn-outline-success" onclick="moveCropBox('up')">
+                            <span data-en="↑ Up" data-fr="↑ Haut">↑ Up</span>
+                        </button>
+                        <button type="button" class="btn btn-outline-success" onclick="moveCropBox('down')">
+                            <span data-en="↓ Down" data-fr="↓ Bas">↓ Down</span>
+                        </button>
+                        <button type="button" class="btn btn-outline-success" onclick="moveCropBox('left')">
+                            <span data-en="← Left" data-fr="← Gauche">← Left</span>
+                        </button>
+                        <button type="button" class="btn btn-outline-success" onclick="moveCropBox('right')">
+                            <span data-en="→ Right" data-fr="→ Droite">→ Right</span>
                         </button>
                     </div>
                 </section>
