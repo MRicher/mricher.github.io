@@ -1,4 +1,4 @@
-const BISOLUX_APP_VERSION = "1.0.2";
+const BISOLUX_APP_VERSION = "1.1.0";
 const BISOLUX_VERSION_STRING = `Version ${BISOLUX_APP_VERSION}`;
 
 // Image Cropper JavaScript - Page-specific functionality only
@@ -269,17 +269,32 @@ function resetCrop() {
 function cropImage() {
     if (!cropper) return;
     
+    // Get crop box data to ensure precise dimensions
+    const cropBoxData = cropper.getCropBoxData();
+    const imageData = cropper.getImageData();
+    
     // Get cropped canvas with exact dimensions if preset was used
     const canvasOptions = {
         imageSmoothingEnabled: true,
-        imageSmoothingQuality: 'high'
+        imageSmoothingQuality: 'high',
+        fillColor: 'transparent'
     };
     
-    // If we have stored preset dimensions, use them
+    // If we have stored preset dimensions, use them with precise scaling
     if (cropper.presetWidth && cropper.presetHeight) {
-        canvasOptions.width = cropper.presetWidth;
-        canvasOptions.height = cropper.presetHeight;
+        canvasOptions.width = Math.floor(cropper.presetWidth);
+        canvasOptions.height = Math.floor(cropper.presetHeight);
+        
+        // Ensure the canvas dimensions are exactly what we expect
+        canvasOptions.minWidth = canvasOptions.width;
+        canvasOptions.minHeight = canvasOptions.height;
+        canvasOptions.maxWidth = canvasOptions.width;
+        canvasOptions.maxHeight = canvasOptions.height;
     } else {
+        // For free crop, ensure integer dimensions
+        const naturalRatio = imageData.naturalWidth / imageData.width;
+        canvasOptions.width = Math.floor(cropBoxData.width * naturalRatio);
+        canvasOptions.height = Math.floor(cropBoxData.height * naturalRatio);
         canvasOptions.maxWidth = 2000;
         canvasOptions.maxHeight = 2000;
     }
