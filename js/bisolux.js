@@ -269,22 +269,12 @@ function resetCrop() {
 function cropImage() {
     if (!cropper) return;
     
-    // Get cropped canvas with exact dimensions if preset was used
-    const canvasOptions = {
+    let canvas = cropper.getCroppedCanvas({
         imageSmoothingEnabled: true,
-        imageSmoothingQuality: 'high'
-    };
-    
-    // If we have stored preset dimensions, use them
-    if (cropper.presetWidth && cropper.presetHeight) {
-        canvasOptions.width = cropper.presetWidth;
-        canvasOptions.height = cropper.presetHeight;
-    } else {
-        canvasOptions.maxWidth = 2000;
-        canvasOptions.maxHeight = 2000;
-    }
-    
-    let canvas = cropper.getCroppedCanvas(canvasOptions);
+        imageSmoothingQuality: 'high',
+        maxWidth: cropper.presetWidth || 2000,
+        maxHeight: cropper.presetHeight || 2000
+    });
     
     if (!canvas) {
         alert('Failed to crop image. Please try again.');
