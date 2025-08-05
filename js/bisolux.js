@@ -1,4 +1,4 @@
-const BISOLUX_APP_VERSION = "1.1.0";
+const BISOLUX_APP_VERSION = "1.2.0";
 const BISOLUX_VERSION_STRING = `Version ${BISOLUX_APP_VERSION}`;
 
 // Image Cropper JavaScript - Page-specific functionality only
@@ -130,7 +130,7 @@ function initializeCropper(imageSrc) {
     // Initialize cropper
     cropper = new Cropper(cropperImage, {
         aspectRatio: NaN,
-        viewMode: 1,
+        viewMode: 0, // Changed from 1 to 0 to allow crop area to extend beyond image
         dragMode: 'move',
         autoCropArea: 0.8,
         restore: false,
@@ -142,6 +142,8 @@ function initializeCropper(imageSrc) {
         toggleDragModeOnDblclick: false,
         responsive: true,
         checkOrientation: false,
+        minCropBoxWidth: 50,
+        minCropBoxHeight: 50,
         ready: function() {
             // Set default "None" preset as active
             const noneButton = document.getElementById('none-preset');
@@ -416,6 +418,87 @@ function startOver() {
     
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Zoom control functions
+function zoomIn() {
+    if (!cropper) return;
+    cropper.zoom(0.1);
+}
+
+function zoomOut() {
+    if (!cropper) return;
+    cropper.zoom(-0.1);
+}
+
+function resetZoom() {
+    if (!cropper) return;
+    cropper.zoomTo(1);
+}
+
+// Image movement functions (moves the image within the crop area)
+function moveImage(direction) {
+    if (!cropper) return;
+    
+    const moveStep = 10; // pixels to move
+    
+    switch(direction) {
+        case 'up':
+            cropper.move(0, -moveStep);
+            break;
+        case 'down':
+            cropper.move(0, moveStep);
+            break;
+        case 'left':
+            cropper.move(-moveStep, 0);
+            break;
+        case 'right':
+            cropper.move(moveStep, 0);
+            break;
+    }
+}
+
+// Crop box movement functions (moves the crop area)
+function moveCropBox(direction) {
+    if (!cropper) return;
+    
+    const moveStep = 10; // pixels to move
+    const cropBoxData = cropper.getCropBoxData();
+    
+    switch(direction) {
+        case 'up':
+            cropper.setCropBoxData({
+                left: cropBoxData.left,
+                top: cropBoxData.top - moveStep,
+                width: cropBoxData.width,
+                height: cropBoxData.height
+            });
+            break;
+        case 'down':
+            cropper.setCropBoxData({
+                left: cropBoxData.left,
+                top: cropBoxData.top + moveStep,
+                width: cropBoxData.width,
+                height: cropBoxData.height
+            });
+            break;
+        case 'left':
+            cropper.setCropBoxData({
+                left: cropBoxData.left - moveStep,
+                top: cropBoxData.top,
+                width: cropBoxData.width,
+                height: cropBoxData.height
+            });
+            break;
+        case 'right':
+            cropper.setCropBoxData({
+                left: cropBoxData.left + moveStep,
+                top: cropBoxData.top,
+                width: cropBoxData.width,
+                height: cropBoxData.height
+            });
+            break;
+    }
 }
 
 // Helper function to get file size in human readable format
