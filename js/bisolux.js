@@ -269,41 +269,41 @@ function resetCrop() {
 function cropImage() {
     if (!cropper) return;
     
-    // Get crop box data to ensure precise dimensions
-    const cropBoxData = cropper.getCropBoxData();
-    const imageData = cropper.getImageData();
-    
     // Get cropped canvas with exact dimensions if preset was used
     const canvasOptions = {
         imageSmoothingEnabled: true,
-        imageSmoothingQuality: 'high',
-        fillColor: 'transparent'
+        imageSmoothingQuality: 'high'
     };
     
-    // If we have stored preset dimensions, use them with precise scaling
+    // If we have stored preset dimensions, use them
     if (cropper.presetWidth && cropper.presetHeight) {
-        canvasOptions.width = Math.floor(cropper.presetWidth);
-        canvasOptions.height = Math.floor(cropper.presetHeight);
-        
-        // Ensure the canvas dimensions are exactly what we expect
-        canvasOptions.minWidth = canvasOptions.width;
-        canvasOptions.minHeight = canvasOptions.height;
-        canvasOptions.maxWidth = canvasOptions.width;
-        canvasOptions.maxHeight = canvasOptions.height;
+        canvasOptions.width = cropper.presetWidth;
+        canvasOptions.height = cropper.presetHeight;
     } else {
-        // For free crop, ensure integer dimensions
-        const naturalRatio = imageData.naturalWidth / imageData.width;
-        canvasOptions.width = Math.floor(cropBoxData.width * naturalRatio);
-        canvasOptions.height = Math.floor(cropBoxData.height * naturalRatio);
         canvasOptions.maxWidth = 2000;
         canvasOptions.maxHeight = 2000;
     }
     
-    const canvas = cropper.getCroppedCanvas(canvasOptions);
+    let canvas = cropper.getCroppedCanvas(canvasOptions);
     
     if (!canvas) {
         alert('Failed to crop image. Please try again.');
         return;
+    }
+    
+    // If we have preset dimensions and the canvas doesn't match exactly, 
+    // create a new canvas with exact dimensions and draw the cropped image
+    if (cropper.presetWidth && cropper.presetHeight && 
+        (canvas.width !== cropper.presetWidth || canvas.height !== cropper.presetHeight)) {
+        
+        const exactCanvas = document.createElement('canvas');
+        const ctx = exactCanvas.getContext('2d');
+        exactCanvas.width = cropper.presetWidth;
+        exactCanvas.height = cropper.presetHeight;
+        
+        // Draw the cropped image, scaling it to fit exactly
+        ctx.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, cropper.presetWidth, cropper.presetHeight);
+        canvas = exactCanvas;
     }
     
     // If "None" preset was used, update selectedPreset with actual crop dimensions
