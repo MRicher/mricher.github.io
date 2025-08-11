@@ -1,7 +1,18 @@
+/**
+ * CREAVIA.JS - Global Utilities and Theme Management
+ * Handles theme switching, language management, and UI utilities
+ */
+
+// ===================================================================
+// CONSTANTS AND VERSION INFO
+// ===================================================================
+
 const APP_VERSION = "1.0.1";
 const VERSION_STRING = `Version ${APP_VERSION}`;
 
-// Update version info dynamically
+/**
+ * Update version info dynamically on page load
+ */
 document.addEventListener('DOMContentLoaded', () => {
     const versionElement = document.getElementById('version-info');
     if (versionElement) {
@@ -9,14 +20,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Cookie utility functions
+// ===================================================================
+// COOKIE MANAGEMENT UTILITY
+// ===================================================================
+
+/**
+ * Cookie management utility class
+ * Provides methods for setting, getting, and deleting cookies
+ */
 class CookieManager {
+    /**
+     * Set a cookie with specified name, value, and expiration
+     * @param {string} name - Cookie name
+     * @param {string} value - Cookie value
+     * @param {number} days - Days until expiration (default: 365)
+     */
     static setCookie(name, value, days = 365) {
         const expires = new Date();
         expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
         document.cookie = `${name}=${value}; expires=${expires.toUTCString()}; path=/; SameSite=Strict`;
     }
     
+    /**
+     * Get a cookie value by name
+     * @param {string} name - Cookie name
+     * @returns {string|null} Cookie value or null if not found
+     */
     static getCookie(name) {
         const cookies = document.cookie.split(';');
         for (let cookie of cookies) {
@@ -26,35 +55,60 @@ class CookieManager {
         return null;
     }
     
+    /**
+     * Delete a cookie by name
+     * @param {string} name - Cookie name to delete
+     */
     static deleteCookie(name) {
         document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
     }
 }
 
-// Theme management
+// ===================================================================
+// THEME MANAGEMENT
+// ===================================================================
+
+/**
+ * Theme management class
+ * Handles light/dark theme switching and persistence
+ */
 class ThemeManager {
     constructor() {
         this.currentTheme = this.getStoredTheme() || 'light';
         this.init();
     }
     
+    /**
+     * Get the stored theme preference
+     * Checks cookies first, then localStorage, then defaults to light
+     * @returns {string} Theme preference ('light' or 'dark')
+     */
     getStoredTheme() {
-        // Try cookie first, then localStorage, then default
         return CookieManager.getCookie('preferred_theme') || 
                localStorage.getItem('theme') || 
                'light';
     }
     
+    /**
+     * Save theme preference to both cookie and localStorage
+     * @param {string} theme - Theme to save ('light' or 'dark')
+     */
     saveTheme(theme) {
         CookieManager.setCookie('preferred_theme', theme);
         localStorage.setItem('theme', theme);
     }
     
+    /**
+     * Initialize theme manager
+     */
     init() {
         this.applyTheme(this.currentTheme);
         this.setupThemeToggle();
     }
     
+    /**
+     * Setup theme toggle button event listener
+     */
     setupThemeToggle() {
         const themeToggle = document.getElementById('theme-toggle');
         if (themeToggle) {
@@ -62,6 +116,9 @@ class ThemeManager {
         }
     }
     
+    /**
+     * Toggle between light and dark themes
+     */
     toggleTheme() {
         this.currentTheme = this.currentTheme === 'light' ? 'dark' : 'light';
         this.applyTheme(this.currentTheme);
@@ -69,12 +126,20 @@ class ThemeManager {
         this.announceThemeChange();
     }
     
+    /**
+     * Apply theme to the document
+     * @param {string} theme - Theme to apply ('light' or 'dark')
+     */
     applyTheme(theme) {
         document.documentElement.setAttribute('data-theme', theme);
         document.documentElement.setAttribute('data-bs-theme', theme);
         this.updateThemeButton(theme);
     }
     
+    /**
+     * Update theme button text and aria-label
+     * @param {string} theme - Current theme ('light' or 'dark')
+     */
     updateThemeButton(theme) {
         const themeToggle = document.getElementById('theme-toggle');
         const themeText = document.getElementById('theme-text');
@@ -94,6 +159,9 @@ class ThemeManager {
         }
     }
     
+    /**
+     * Announce theme change to screen readers
+     */
     announceThemeChange() {
         const announcement = document.createElement('div');
         announcement.setAttribute('aria-live', 'polite');
@@ -107,6 +175,7 @@ class ThemeManager {
         announcement.textContent = message;
         document.body.appendChild(announcement);
         
+        // Remove announcement after screen reader has time to read it
         setTimeout(() => {
             if (document.body.contains(announcement)) {
                 document.body.removeChild(announcement);
@@ -115,13 +184,24 @@ class ThemeManager {
     }
 }
 
-// Language switching functionality
+// ===================================================================
+// LANGUAGE SWITCHING
+// ===================================================================
+
+/**
+ * Language switching functionality
+ * Handles bilingual content switching between English and French
+ */
 class LanguageSwitcher {
     constructor() {
         this.currentLang = this.getPreferredLanguage();
         this.init();
     }
     
+    /**
+     * Get preferred language from various sources
+     * @returns {string} Language code (e.g., 'en-CA', 'fr-CA')
+     */
     getPreferredLanguage() {
         const urlLang = this.getLanguageFromUrl();
         const cookieLang = CookieManager.getCookie('preferred_language');
@@ -130,6 +210,10 @@ class LanguageSwitcher {
         return urlLang || cookieLang || documentLang || 'en-CA';
     }
     
+    /**
+     * Extract language preference from URL parameters
+     * @returns {string|null} Language code or null if not found
+     */
     getLanguageFromUrl() {
         const urlParams = new URLSearchParams(window.location.search);
         const lang = urlParams.get('lang');
@@ -143,10 +227,18 @@ class LanguageSwitcher {
         return null;
     }
     
+    /**
+     * Save language preference to cookie
+     * @param {string} lang - Language code to save
+     */
     saveLanguage(lang) {
         CookieManager.setCookie('preferred_language', lang);
     }
     
+    /**
+     * Update URL with language parameter
+     * @param {string} lang - Language code
+     */
     updateUrl(lang) {
         const url = new URL(window.location);
         const shortLang = lang.split('-')[0];
@@ -154,6 +246,9 @@ class LanguageSwitcher {
         window.history.replaceState({}, '', url);
     }
     
+    /**
+     * Initialize language switcher
+     */
     init() {
         const langButtons = document.querySelectorAll('[data-lang]');
         langButtons.forEach(button => {
@@ -166,6 +261,10 @@ class LanguageSwitcher {
         this.switchLanguage(this.currentLang);
     }
     
+    /**
+     * Switch to specified language
+     * @param {string} lang - Target language code
+     */
     switchLanguage(lang) {
         this.currentLang = lang;
         document.documentElement.lang = lang;
@@ -173,6 +272,7 @@ class LanguageSwitcher {
         this.saveLanguage(lang);
         this.updateUrl(lang);
         
+        // Update all bilingual elements
         const elements = document.querySelectorAll('[data-en][data-fr]');
         elements.forEach(element => {
             const shortLang = lang.split('-')[0];
@@ -196,9 +296,16 @@ class LanguageSwitcher {
         }
         
         // Dispatch custom event for language change
-        document.dispatchEvent(new CustomEvent('languageChanged', { detail: { language: lang } }));
+        document.dispatchEvent(new CustomEvent('languageChanged', { 
+            detail: { language: lang } 
+        }));
     }
     
+    /**
+     * Update element content based on element type
+     * @param {Element} element - DOM element to update
+     * @param {string} text - New text content
+     */
     updateElementContent(element, text) {
         if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
             element.placeholder = text;
@@ -223,7 +330,10 @@ class LanguageSwitcher {
             element.innerHTML = text;
         }
     }
-        
+    
+    /**
+     * Update visibility of language toggle buttons
+     */
     updateLanguageButtons() {
         const frBtn = document.getElementById('lang-fr-btn');
         const enBtn = document.getElementById('lang-en-btn');
@@ -237,6 +347,10 @@ class LanguageSwitcher {
         }
     }
     
+    /**
+     * Announce language change to screen readers
+     * @param {string} lang - New language code
+     */
     announceLanguageChange(lang) {
         const announcement = document.createElement('div');
         announcement.setAttribute('aria-live', 'polite');
@@ -250,6 +364,7 @@ class LanguageSwitcher {
         announcement.textContent = message;
         document.body.appendChild(announcement);
         
+        // Remove announcement after screen reader has time to read it
         setTimeout(() => {
             if (document.body.contains(announcement)) {
                 document.body.removeChild(announcement);
@@ -258,7 +373,14 @@ class LanguageSwitcher {
     }
 }
 
-// Back to Top Button functionality
+// ===================================================================
+// BACK TO TOP BUTTON
+// ===================================================================
+
+/**
+ * Back to Top Button functionality
+ * Shows/hides button based on scroll position and handles smooth scrolling
+ */
 class BackToTopButton {
     constructor() {
         this.button = document.getElementById('backToTop');
@@ -266,6 +388,9 @@ class BackToTopButton {
         this.init();
     }
 
+    /**
+     * Initialize back to top button functionality
+     */
     init() {
         if (!this.button) return;
 
@@ -293,10 +418,13 @@ class BackToTopButton {
         this.handleScroll();
     }
 
+    /**
+     * Handle scroll events to show/hide button
+     */
     handleScroll() {
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
         
-        // Use 'visible' class to match your CSS
+        // Toggle 'visible' class based on scroll position
         if (scrollTop > this.scrollThreshold) {
             this.button.classList.add('visible');
         } else {
@@ -304,6 +432,9 @@ class BackToTopButton {
         }
     }
 
+    /**
+     * Scroll smoothly to top of page
+     */
     scrollToTop() {
         // Smooth scroll to top
         window.scrollTo({
@@ -313,7 +444,6 @@ class BackToTopButton {
         
         // Focus management - focus on a logical element after scroll
         setTimeout(() => {
-            // Focus on the main heading or skip to content link if available
             const mainHeading = document.querySelector('h1, .main-heading, #main-content');
             if (mainHeading && mainHeading.tabIndex === -1) {
                 mainHeading.tabIndex = -1;
@@ -323,8 +453,18 @@ class BackToTopButton {
     }
 }
 
-// Utility functions
+// ===================================================================
+// UI UTILITIES
+// ===================================================================
+
+/**
+ * General UI utility functions
+ * Handles keyboard navigation and mobile menu interactions
+ */
 class UIUtils {
+    /**
+     * Handle Escape key press to close mobile menu
+     */
     static handleEscapeKey() {
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
@@ -340,6 +480,9 @@ class UIUtils {
         });
     }
     
+    /**
+     * Setup focus management for mobile menu
+     */
     static setupMobileMenuFocus() {
         const navbarToggler = document.querySelector('.navbar-toggler');
         if (navbarToggler) {
@@ -358,9 +501,15 @@ class UIUtils {
     }
 }
 
-// Initialize everything when DOM is ready
+// ===================================================================
+// INITIALIZATION
+// ===================================================================
+
+/**
+ * Initialize all components when DOM is ready
+ */
 document.addEventListener('DOMContentLoaded', () => {
-    // Make instances globally accessible
+    // Create and make instances globally accessible
     window.themeManager = new ThemeManager();
     window.languageSwitcher = new LanguageSwitcher();
     window.backToTopButton = new BackToTopButton();

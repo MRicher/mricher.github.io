@@ -7,7 +7,9 @@ let originalImageData = null;
 let selectedPreset = null;
 let activePresetButton = null;
 
-// Update version info dynamically
+/**
+ * Initialize version info display
+ */
 document.addEventListener('DOMContentLoaded', () => {
     const versionElement = document.getElementById('version-info');
     if (versionElement) {
@@ -15,11 +17,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Initialize when DOM is loaded
+/**
+ * Initialize image cropper when DOM is loaded
+ */
 document.addEventListener('DOMContentLoaded', function() {
     initializeImageCropper();
 });
 
+/**
+ * Initialize the image cropper functionality
+ */
 function initializeImageCropper() {
     const uploadArea = document.getElementById('upload-area');
     const imageInput = document.getElementById('image-input');
@@ -45,6 +52,9 @@ function initializeImageCropper() {
     }
 }
 
+/**
+ * Handle file selection from input
+ */
 function handleFileSelect(event) {
     const file = event.target.files[0];
     if (file) {
@@ -52,18 +62,27 @@ function handleFileSelect(event) {
     }
 }
 
+/**
+ * Handle drag over event
+ */
 function handleDragOver(event) {
     event.preventDefault();
     event.stopPropagation();
     event.currentTarget.classList.add('dragover');
 }
 
+/**
+ * Handle drag leave event
+ */
 function handleDragLeave(event) {
     event.preventDefault();
     event.stopPropagation();
     event.currentTarget.classList.remove('dragover');
 }
 
+/**
+ * Handle file drop event
+ */
 function handleDrop(event) {
     event.preventDefault();
     event.stopPropagation();
@@ -78,6 +97,9 @@ function handleDrop(event) {
     }
 }
 
+/**
+ * Load and validate image file
+ */
 function loadImage(file) {
     // Validate file type
     if (!file.type.match(/^image\/(png|jpe?g)$/i)) {
@@ -115,6 +137,9 @@ function loadImage(file) {
     reader.readAsDataURL(file);
 }
 
+/**
+ * Initialize the Cropper.js instance
+ */
 function initializeCropper(imageSrc) {
     const cropperImage = document.getElementById('cropper-image');
     if (!cropperImage) return;
@@ -155,6 +180,9 @@ function initializeCropper(imageSrc) {
     });
 }
 
+/**
+ * Set the active preset button
+ */
 function setActivePresetButton(button) {
     // Remove active class from all preset buttons
     const allButtons = document.querySelectorAll('.preset-buttons .btn');
@@ -167,6 +195,9 @@ function setActivePresetButton(button) {
     }
 }
 
+/**
+ * Set preset size for cropping
+ */
 function setPresetSize(width, height, buttonElement) {
     if (!cropper) return;
     
@@ -209,6 +240,9 @@ function setPresetSize(width, height, buttonElement) {
     });
 }
 
+/**
+ * Set "None" preset for free cropping
+ */
 function setNonePreset() {
     if (!cropper) return;
     
@@ -227,10 +261,16 @@ function setNonePreset() {
     cropper.setAspectRatio(NaN);
 }
 
+/**
+ * Get preset name based on dimensions
+ */
 function getPresetName(width, height) {
     return `${width}x${height}`;
 }
 
+/**
+ * Flip image horizontally
+ */
 function flipHorizontal() {
     if (!cropper) return;
     
@@ -239,6 +279,9 @@ function flipHorizontal() {
     cropper.scaleX(-currentScaleX);
 }
 
+/**
+ * Flip image vertically
+ */
 function flipVertical() {
     if (!cropper) return;
     
@@ -247,6 +290,9 @@ function flipVertical() {
     cropper.scaleY(-currentScaleY);
 }
 
+/**
+ * Reset crop settings to default
+ */
 function resetCrop() {
     if (!cropper) return;
     
@@ -268,6 +314,9 @@ function resetCrop() {
     }, 100);
 }
 
+/**
+ * Crop the image with the current settings
+ */
 function cropImage() {
     if (!cropper) return;
     
@@ -308,6 +357,9 @@ function cropImage() {
     }
 }
 
+/**
+ * Display the cropped image preview
+ */
 function displayPreview(canvas) {
     const previewImage = document.getElementById('preview-image');
     const dimensionsElement = document.getElementById('image-dimensions');
@@ -331,6 +383,9 @@ function displayPreview(canvas) {
     previewImage.canvas = canvas;
 }
 
+/**
+ * Download the processed image
+ */
 function downloadImage(format) {
     const previewImage = document.getElementById('preview-image');
     const canvas = previewImage?.canvas;
@@ -341,7 +396,9 @@ function downloadImage(format) {
     }
     
     // Generate filename based on dimensions
-    const baseFilename = selectedPreset ? `image-${selectedPreset}` : `image-${canvas.width}x${canvas.height}`;
+    const baseFilename = selectedPreset ? 
+        `image-${selectedPreset}` : 
+        `image-${canvas.width}x${canvas.height}`;
     
     // Set quality and mime type based on format
     let mimeType, quality, filename;
@@ -381,6 +438,9 @@ function downloadImage(format) {
     }, mimeType, quality);
 }
 
+/**
+ * Download blob as file
+ */
 function downloadBlob(blob, filename) {
     // Create download link
     const url = URL.createObjectURL(blob);
@@ -397,6 +457,9 @@ function downloadBlob(blob, filename) {
     URL.revokeObjectURL(url);
 }
 
+/**
+ * Reset the application to initial state
+ */
 function startOver() {
     // Hide sections
     const cropperSection = document.getElementById('cropper-section');
@@ -428,23 +491,41 @@ function startOver() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Zoom control functions
+// ===================================================================
+// ZOOM CONTROL FUNCTIONS
+// ===================================================================
+
+/**
+ * Zoom in on the image
+ */
 function zoomIn() {
     if (!cropper) return;
     cropper.zoom(0.1);
 }
 
+/**
+ * Zoom out on the image
+ */
 function zoomOut() {
     if (!cropper) return;
     cropper.zoom(-0.1);
 }
 
+/**
+ * Reset zoom to default level
+ */
 function resetZoom() {
     if (!cropper) return;
     cropper.zoomTo(1);
 }
 
-// Image movement functions (moves the image within the crop area)
+// ===================================================================
+// IMAGE MOVEMENT FUNCTIONS
+// ===================================================================
+
+/**
+ * Move the image within the crop area
+ */
 function moveImage(direction) {
     if (!cropper) return;
     
@@ -466,7 +547,9 @@ function moveImage(direction) {
     }
 }
 
-// Crop box movement functions (moves the crop area)
+/**
+ * Move the crop box/area
+ */
 function moveCropBox(direction) {
     if (!cropper) return;
     
@@ -509,11 +592,19 @@ function moveCropBox(direction) {
     }
 }
 
-// Helper function to get file size in human readable format
+// ===================================================================
+// UTILITY FUNCTIONS
+// ===================================================================
+
+/**
+ * Format file size in human readable format
+ */
 function formatFileSize(bytes) {
     if (bytes === 0) return '0 Bytes';
+    
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
+    
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }

@@ -1,9 +1,17 @@
+/**
+ * =================================================================
+ * BISOLUX.CSS - Image Processing Tool Specific Styles
+ * Styles unique to the Bisolux image compression/cropping page
+ * =================================================================
+ */
+
 /* =================================================================
-   BISOLUX.CSS - Image Processing Tool Specific Styles
-   Styles unique to the Bisolux image compression/cropping page
+   FILE UPLOAD INTERFACE
    ================================================================= */
 
-/* File Upload Area */
+/**
+ * Main upload area with drag and drop functionality
+ */
 .upload-area {
     border: 2px dashed var(--border-color);
     border-radius: 8px;
@@ -11,67 +19,331 @@
     text-align: center;
     transition: border-color 0.3s ease;
     background-color: var(--hero-bg);
+    cursor: pointer;
 }
 
+/**
+ * Upload area hover state
+ */
 .upload-area:hover {
     border-color: var(--button-primary-bg);
 }
 
+/**
+ * Upload area drag over state
+ */
 .upload-area.dragover {
     border-color: var(--button-primary-bg);
     background-color: var(--alert-info-bg);
 }
 
-/* Image Cropper Container */
+/* =================================================================
+   IMAGE CROPPING INTERFACE
+   ================================================================= */
+
+/**
+ * Container for the image cropper component
+ */
 .cropper-container {
     max-height: 500px;
     margin: 20px 0;
+    overflow: hidden;
+    border-radius: 4px;
 }
 
-/* Preset Buttons for Image Formats */
+/**
+ * Preset button container layout
+ */
 .preset-buttons {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
     margin: 20px 0;
+    justify-content: flex-start;
+    align-items: center;
 }
 
+/**
+ * Individual preset button styling
+ */
 .preset-buttons .btn {
     font-size: 0.875rem;
     padding: 0.5rem 1rem;
+    white-space: nowrap;
+    transition: all 0.2s ease-in-out;
 }
 
-/* Image Preview Section */
+/**
+ * Active preset button state
+ */
+.preset-buttons .btn.active {
+    background-color: var(--button-primary-bg);
+    border-color: var(--button-primary-bg);
+    color: var(--button-primary-color);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/**
+ * Preset button hover state
+ */
+.preset-buttons .btn:hover:not(.active) {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* =================================================================
+   IMAGE PREVIEW SECTION
+   ================================================================= */
+
+/**
+ * Container for image preview and information
+ */
 .preview-container {
     text-align: center;
     margin-top: 20px;
+    padding: 20px;
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
+/**
+ * Preview image styling
+ */
 .preview-image {
     max-width: 100%;
     max-height: 300px;
     border: 1px solid var(--border-color);
     border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
 }
 
-/* Compression Information Display */
+/**
+ * Preview image hover effect
+ */
+.preview-image:hover {
+    transform: scale(1.02);
+}
+
+/**
+ * Compression information display
+ */
 .compression-info {
     margin-top: 10px;
     font-size: 0.875rem;
     color: var(--body-color);
+    opacity: 0.8;
+    line-height: 1.5;
 }
 
-/* Download Action Buttons */
+/**
+ * Individual compression info paragraphs
+ */
+.compression-info p {
+    margin-bottom: 0.5rem;
+}
+
+.compression-info p:last-child {
+    margin-bottom: 0;
+}
+
+/* =================================================================
+   DOWNLOAD ACTIONS
+   ================================================================= */
+
+/**
+ * Download button container
+ */
 .download-buttons {
     display: flex;
     gap: 10px;
     justify-content: center;
     margin-top: 20px;
+    flex-wrap: wrap;
 }
 
-/* Mobile Responsive Adjustments */
+/**
+ * Individual download buttons
+ */
+.download-buttons .btn {
+    min-width: 120px;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+
+/**
+ * Primary download buttons
+ */
+.download-buttons .btn-primary {
+    background: linear-gradient(45deg, var(--button-primary-bg), #007bff);
+}
+
+/**
+ * Download button hover effects
+ */
+.download-buttons .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* =================================================================
+   RESPONSIVE DESIGN
+   ================================================================= */
+
+/**
+ * Tablet and mobile adjustments
+ */
 @media (max-width: 991px) {
     .preset-buttons {
         justify-content: center;
+    }
+    
+    .upload-area {
+        padding: 30px 20px;
+    }
+    
+    .download-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .download-buttons .btn {
+        width: 100%;
+        max-width: 200px;
+    }
+}
+
+/**
+ * Mobile phone specific adjustments
+ */
+@media (max-width: 576px) {
+    .cropper-container {
+        max-height: 300px;
+        margin: 15px 0;
+    }
+    
+    .preset-buttons {
+        gap: 8px;
+        margin: 15px 0;
+    }
+    
+    .preset-buttons .btn {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
+    }
+    
+    .preview-container {
+        margin-top: 15px;
+        padding: 15px;
+    }
+    
+    .preview-image {
+        max-height: 200px;
+    }
+    
+    .upload-area {
+        padding: 20px 15px;
+        font-size: 0.9rem;
+    }
+}
+
+/* =================================================================
+   ACCESSIBILITY ENHANCEMENTS
+   ================================================================= */
+
+/**
+ * Focus styles for keyboard navigation
+ */
+.upload-area:focus-within,
+.preset-buttons .btn:focus,
+.download-buttons .btn:focus {
+    outline: 2px solid var(--button-primary-bg);
+    outline-offset: 2px;
+}
+
+/**
+ * Reduced motion preferences
+ */
+@media (prefers-reduced-motion: reduce) {
+    .upload-area,
+    .preset-buttons .btn,
+    .preview-image,
+    .download-buttons .btn {
+        transition: none;
+    }
+    
+    .preset-buttons .btn:hover:not(.active),
+    .download-buttons .btn:hover,
+    .preview-image:hover {
+        transform: none;
+    }
+}
+
+/**
+ * High contrast mode support
+ */
+@media (prefers-contrast: high) {
+    .upload-area {
+        border-width: 3px;
+    }
+    
+    .preset-buttons .btn.active {
+        border-width: 2px;
+    }
+    
+    .preview-image {
+        border-width: 2px;
+    }
+}
+
+/* =================================================================
+   DARK THEME SPECIFIC ADJUSTMENTS
+   ================================================================= */
+
+/**
+ * Dark theme upload area adjustments
+ */
+[data-theme="dark"] .upload-area.dragover {
+    background-color: rgba(var(--alert-info-rgb), 0.1);
+}
+
+/**
+ * Dark theme preview container
+ */
+[data-theme="dark"] .preview-container {
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+/**
+ * Dark theme button shadows
+ */
+[data-theme="dark"] .preset-buttons .btn:hover:not(.active),
+[data-theme="dark"] .download-buttons .btn:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* =================================================================
+   PRINT STYLES
+   ================================================================= */
+
+/**
+ * Print-specific styles
+ */
+@media print {
+    .upload-area,
+    .preset-buttons,
+    .download-buttons {
+        display: none;
+    }
+    
+    .preview-container {
+        box-shadow: none;
+        border: 1px solid #000;
+    }
+    
+    .preview-image {
+        max-height: none;
+        box-shadow: none;
     }
 }
