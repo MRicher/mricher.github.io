@@ -271,13 +271,21 @@ function resetCrop() {
 function cropImage() {
     if (!cropper) return;
     
-    // Always get the natural cropped canvas without forcing dimensions
-    const canvas = cropper.getCroppedCanvas({
+    // Determine if we should force exact dimensions based on preset
+    let canvasOptions = {
         imageSmoothingEnabled: true,
         imageSmoothingQuality: 'high',
         maxWidth: 2000,
         maxHeight: 2000
-    });
+    };
+    
+    // If a specific preset size was selected (not "None"), force those exact dimensions
+    if (cropper.presetWidth && cropper.presetHeight && selectedPreset !== 'None') {
+        canvasOptions.width = cropper.presetWidth;
+        canvasOptions.height = cropper.presetHeight;
+    }
+    
+    const canvas = cropper.getCroppedCanvas(canvasOptions);
     
     if (!canvas) {
         alert('Failed to crop image. Please try again.');
