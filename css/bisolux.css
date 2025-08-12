@@ -148,44 +148,6 @@
     margin-bottom: 0;
 }
 
-/* =================================================================
-   DOWNLOAD ACTIONS
-   ================================================================= */
-
-/**
- * Download button container
- */
-.download-buttons {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    margin-top: 20px;
-    flex-wrap: wrap;
-}
-
-/**
- * Individual download buttons
- */
-.download-buttons .btn {
-    min-width: 120px;
-    font-weight: 500;
-    transition: all 0.2s ease-in-out;
-}
-
-/**
- * Primary download buttons
- */
-.download-buttons .btn-primary {
-    background: linear-gradient(45deg, var(--button-primary-bg), #007bff);
-}
-
-/**
- * Download button hover effects
- */
-.download-buttons .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
 
 /* =================================================================
    RESPONSIVE DESIGN
