@@ -120,13 +120,6 @@
 }
 
 /**
- * Preview image hover effect
- */
-.preview-image:hover {
-    transform: scale(1.02);
-}
-
-/**
  * Compression information display
  */
 .compression-info {
@@ -148,6 +141,20 @@
     margin-bottom: 0;
 }
 
+/* =================================================================
+   DOWNLOAD ACTIONS
+   ================================================================= */
+
+/**
+ * Download button container
+ */
+.download-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
 
 /* =================================================================
    RESPONSIVE DESIGN
