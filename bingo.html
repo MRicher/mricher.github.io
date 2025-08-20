@@ -549,17 +549,8 @@
 <body>
     <div class="container">
         <header class="header">
-            <h1>🦜 Parrot Bingo Caller</h1>
-            <p class="subtitle">Multi-Card Bingo System - Squawk your way to victory!</p>
-            <svg class="parrot-decoration" viewBox="0 0 100 100">
-                <circle cx="30" cy="30" r="20" fill="#FF6B35"/>
-                <circle cx="35" cy="25" r="3" fill="white"/>
-                <circle cx="37" cy="25" r="1" fill="black"/>
-                <path d="M45 30 L55 25 L50 35 Z" fill="#FFD23F"/>
-                <ellipse cx="30" cy="50" rx="15" ry="25" fill="#4CAF50"/>
-                <path d="M15 70 Q25 65 35 70 Q25 75 15 70" fill="#2E7D32"/>
-                <path d="M25 75 Q30 80 35 75" fill="#2E7D32"/>
-            </svg>
+            <h1>🦜 Parrot Partners Bingo Caller</h1>
+            <p class="subtitle">Squawk your way to victory!</p>
         </header>
 
         <!-- Card Links Section -->
@@ -949,7 +940,7 @@
 
             // Show squawk animation
             function showSquawk() {
-                const messages = ['Squawk!', 'BINGO!', 'Tweet!', 'Chirp!'];
+                const messages = ['Squawk!', 'Tweet!', 'Chirp!'];
                 const randomMessage = messages[Math.floor(Math.random() * messages.length)];
                 elements.squawkBubble.textContent = randomMessage;
                 elements.squawkBubble.classList.add('show');
