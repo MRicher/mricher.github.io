@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🦜 Parrot Bingo Caller</title>
+    <title>🦜 Parrot Bingo Caller - Multi-Card System</title>
     <style>
         * {
             margin: 0;
@@ -20,7 +20,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             background: white;
             border-radius: 20px;
@@ -58,6 +58,87 @@
             width: 60px;
             height: 60px;
             opacity: 0.8;
+        }
+
+        /* Card links section */
+        .card-links {
+            background: linear-gradient(135deg, #E8F5E8, #F1F8E9);
+            padding: 1rem;
+            border-bottom: 2px solid #4CAF50;
+        }
+
+        .card-links h3 {
+            text-align: center;
+            color: #2E7D32;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .card-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .card-link {
+            background: linear-gradient(45deg, #4CAF50, #66BB6A);
+            color: white;
+            text-decoration: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .card-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        /* Winner alerts */
+        .winner-alerts {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            padding: 1rem;
+            margin: 1rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+            display: none;
+        }
+
+        .winner-alerts.show {
+            display: block;
+            animation: winnerPulse 2s infinite alternate;
+        }
+
+        @keyframes winnerPulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.02); }
+        }
+
+        .winner-title {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .winner-list {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .winner-card {
+            background: white;
+            padding: 0.8rem 1.2rem;
+            border-radius: 10px;
+            font-weight: bold;
+            color: #2E7D32;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
 
         /* Main content area */
@@ -453,6 +534,15 @@
             .parrot-decoration {
                 display: none;
             }
+
+            .card-buttons {
+                justify-content: center;
+            }
+
+            .card-link {
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
@@ -460,7 +550,7 @@
     <div class="container">
         <header class="header">
             <h1>🦜 Parrot Bingo Caller</h1>
-            <p class="subtitle">Squawk your way to victory!</p>
+            <p class="subtitle">Multi-Card Bingo System - Squawk your way to victory!</p>
             <svg class="parrot-decoration" viewBox="0 0 100 100">
                 <circle cx="30" cy="30" r="20" fill="#FF6B35"/>
                 <circle cx="35" cy="25" r="3" fill="white"/>
@@ -471,6 +561,24 @@
                 <path d="M25 75 Q30 80 35 75" fill="#2E7D32"/>
             </svg>
         </header>
+
+        <!-- Card Links Section -->
+        <div class="card-links">
+            <h3>🎯 Open Bingo Cards (Right-click to open in new tab)</h3>
+            <div class="card-buttons">
+                <a href="bingo-card-PARRT.html" target="_blank" class="card-link">Card PARRT</a>
+                <a href="bingo-card-SQAWK.html" target="_blank" class="card-link">Card SQAWK</a>
+                <a href="bingo-card-WINGS.html" target="_blank" class="card-link">Card WINGS</a>
+                <a href="bingo-card-FLYER.html" target="_blank" class="card-link">Card FLYER</a>
+                <a href="bingo-card-BIRDY.html" target="_blank" class="card-link">Card BIRDY</a>
+            </div>
+        </div>
+
+        <!-- Winner Alerts -->
+        <div class="winner-alerts" id="winnerAlerts">
+            <div class="winner-title">🎉 BINGO WINNERS! 🎉</div>
+            <div class="winner-list" id="winnerList"></div>
+        </div>
 
         <main class="main-content">
             <div class="left-panel">
@@ -562,7 +670,47 @@
             let calledNumbers = [];
             let currentNumber = null;
             let isResetting = false;
-            let resetStep = 0; // 0 = not resetting, 1 = first confirm, 2 = second confirm
+            let resetStep = 0;
+            let winners = new Set();
+
+            // Bingo card definitions with unique 5-letter IDs
+            const bingoCards = {
+                'PARRT': {
+                    B: [7, 14, 2, 9, 12],
+                    I: [22, 29, 16, 25, 18],
+                    N: [31, 44, 'FREE', 33, 41],
+                    G: [56, 49, 52, 47, 60],
+                    O: [61, 74, 67, 71, 63]
+                },
+                'SQAWK': {
+                    B: [5, 11, 8, 15, 3],
+                    I: [28, 17, 24, 30, 19],
+                    N: [34, 45, 'FREE', 38, 32],
+                    G: [58, 51, 46, 54, 59],
+                    O: [65, 72, 68, 75, 64]
+                },
+                'WINGS': {
+                    B: [13, 6, 10, 4, 1],
+                    I: [21, 26, 20, 23, 27],
+                    N: [37, 42, 'FREE', 35, 43],
+                    G: [50, 57, 48, 53, 55],
+                    O: [69, 66, 73, 62, 70]
+                },
+                'FLYER': {
+                    B: [9, 15, 1, 11, 6],
+                    I: [18, 30, 23, 16, 28],
+                    N: [39, 31, 'FREE', 44, 36],
+                    G: [52, 60, 47, 55, 49],
+                    O: [74, 61, 70, 68, 65]
+                },
+                'BIRDY': {
+                    B: [8, 2, 14, 7, 13],
+                    I: [25, 19, 27, 21, 24],
+                    N: [40, 35, 'FREE', 42, 38],
+                    G: [56, 48, 59, 51, 46],
+                    O: [67, 75, 62, 71, 69]
+                }
+            };
 
             // DOM elements
             const elements = {
@@ -582,17 +730,19 @@
                 modalTitle: document.getElementById('modalTitle'),
                 modalMessage: document.getElementById('modalMessage'),
                 modalYes: document.getElementById('modalYes'),
-                modalNo: document.getElementById('modalNo')
+                modalNo: document.getElementById('modalNo'),
+                winnerAlerts: document.getElementById('winnerAlerts'),
+                winnerList: document.getElementById('winnerList')
             };
 
             // Initialize the game
             function initializeGame() {
-                // Reset all state
                 remainingNumbers = [];
                 calledNumbers = [];
                 currentNumber = null;
                 isResetting = false;
                 resetStep = 0;
+                winners.clear();
 
                 // Fill remaining numbers array with 1-75
                 for (let i = 1; i <= 75; i++) {
@@ -604,11 +754,15 @@
                 elements.currentLetter.textContent = 'Ready to play!';
                 elements.gameComplete.style.display = 'none';
                 elements.drawButton.disabled = false;
+                elements.winnerAlerts.classList.remove('show');
                 
                 updateCounters();
                 updateHistoryUI();
                 createNumbersGrid();
                 hideModal();
+
+                // Broadcast reset to all card windows
+                broadcastToCards({ type: 'reset' });
             }
 
             // Get letter group for a number
@@ -619,6 +773,114 @@
                 if (num >= 46 && num <= 60) return 'G';
                 if (num >= 61 && num <= 75) return 'O';
                 return '';
+            }
+
+            // Check for bingo on a specific card
+            function checkBingo(cardId) {
+                const card = bingoCards[cardId];
+                if (!card) return false;
+
+                // Check rows
+                for (let row = 0; row < 5; row++) {
+                    let rowComplete = true;
+                    const letters = ['B', 'I', 'N', 'G', 'O'];
+                    for (let col = 0; col < 5; col++) {
+                        const cellValue = card[letters[col]][row];
+                        if (cellValue !== 'FREE' && !calledNumbers.includes(cellValue)) {
+                            rowComplete = false;
+                            break;
+                        }
+                    }
+                    if (rowComplete) return true;
+                }
+
+                // Check columns
+                const letters = ['B', 'I', 'N', 'G', 'O'];
+                for (let col = 0; col < 5; col++) {
+                    let colComplete = true;
+                    for (let row = 0; row < 5; row++) {
+                        const cellValue = card[letters[col]][row];
+                        if (cellValue !== 'FREE' && !calledNumbers.includes(cellValue)) {
+                            colComplete = false;
+                            break;
+                        }
+                    }
+                    if (colComplete) return true;
+                }
+
+                // Check diagonals
+                // Top-left to bottom-right
+                let diagonal1Complete = true;
+                for (let i = 0; i < 5; i++) {
+                    const cellValue = card[letters[i]][i];
+                    if (cellValue !== 'FREE' && !calledNumbers.includes(cellValue)) {
+                        diagonal1Complete = false;
+                        break;
+                    }
+                }
+                if (diagonal1Complete) return true;
+
+                // Top-right to bottom-left
+                let diagonal2Complete = true;
+                for (let i = 0; i < 5; i++) {
+                    const cellValue = card[letters[i]][4 - i];
+                    if (cellValue !== 'FREE' && !calledNumbers.includes(cellValue)) {
+                        diagonal2Complete = false;
+                        break;
+                    }
+                }
+                if (diagonal2Complete) return true;
+
+                return false;
+            }
+
+            // Check all cards for winners
+            function checkAllCardsForWinners() {
+                const newWinners = [];
+                
+                Object.keys(bingoCards).forEach(cardId => {
+                    if (!winners.has(cardId) && checkBingo(cardId)) {
+                        winners.add(cardId);
+                        newWinners.push(cardId);
+                    }
+                });
+
+                if (newWinners.length > 0) {
+                    updateWinnerDisplay();
+                    // Announce new winners
+                    elements.announcer.textContent = `BINGO! Winners: ${Array.from(winners).join(', ')}`;
+                }
+            }
+
+            // Update winner display
+            function updateWinnerDisplay() {
+                if (winners.size > 0) {
+                    elements.winnerList.innerHTML = Array.from(winners).map(cardId => 
+                        `<div class="winner-card">Card ${cardId}</div>`
+                    ).join('');
+                    elements.winnerAlerts.classList.add('show');
+                } else {
+                    elements.winnerAlerts.classList.remove('show');
+                }
+            }
+
+            // Broadcast message to all card windows
+            function broadcastToCards(message) {
+                // Use localStorage to communicate with card windows
+                const timestamp = Date.now();
+                const messageWithTimestamp = { ...message, timestamp };
+                localStorage.setItem('bingoCallerMessage', JSON.stringify(messageWithTimestamp));
+                
+                // Clean up old message after a short delay
+                setTimeout(() => {
+                    const current = localStorage.getItem('bingoCallerMessage');
+                    if (current) {
+                        const parsed = JSON.parse(current);
+                        if (parsed.timestamp === timestamp) {
+                            localStorage.removeItem('bingoCallerMessage');
+                        }
+                    }
+                }, 1000);
             }
 
             // Draw the next number
@@ -660,6 +922,19 @@
                 updateHistoryUI();
                 updateGridUI();
 
+                // Broadcast to card windows
+                broadcastToCards({ 
+                    type: 'numberCalled', 
+                    number: drawnNumber, 
+                    letter: letter,
+                    calledNumbers: [...calledNumbers]
+                });
+
+                // Check for winners
+                setTimeout(() => {
+                    checkAllCardsForWinners();
+                }, 500);
+
                 // Check if game is complete
                 if (remainingNumbers.length === 0) {
                     elements.gameComplete.style.display = 'block';
@@ -674,6 +949,9 @@
 
             // Show squawk animation
             function showSquawk() {
+                const messages = ['Squawk!', 'BINGO!', 'Tweet!', 'Chirp!'];
+                const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+                elements.squawkBubble.textContent = randomMessage;
                 elements.squawkBubble.classList.add('show');
                 setTimeout(() => {
                     elements.squawkBubble.classList.remove('show');
@@ -785,7 +1063,7 @@
                         resetStep = 2;
                         showModal(
                             'Really Reset?',
-                            'Really reset? This will clear all history.',
+                            'Really reset? This will clear all history and winners.',
                             () => {
                                 initializeGame();
                             }
