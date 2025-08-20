@@ -12,7 +12,7 @@
         }
         
         body {
-            font-family: 'Georgia', serif;
+            font-family: 'Arial Black', 'Helvetica Neue', 'Roboto', 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
             background: linear-gradient(135deg, #ffeaa7, #fab1a0, #fd79a8);
             min-height: 100vh;
             display: flex;
@@ -35,36 +35,7 @@
             overflow: hidden;
         }
         
-        .language-toggle {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            z-index: 10;
-        }
-        
-        .lang-btn {
-            background: #ff7675;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            margin: 0 2px;
-            transition: all 0.3s ease;
-        }
-        
-        .lang-btn:hover, .lang-btn:focus {
-            background: #e84393;
-            transform: scale(1.05);
-            outline: 2px solid #fff;
-            outline-offset: 2px;
-        }
-        
-        .lang-btn.active {
-            background: #00b894;
-        }
+
         
         .header {
             background: linear-gradient(45deg, #a8e6cf, #dcedc8);
@@ -96,20 +67,25 @@
             font-size: clamp(1.8rem, 5vw, 2.5rem);
             color: #2d3436;
             margin-bottom: 10px;
-            font-weight: bold;
+            font-weight: 900;
+            font-family: 'Arial Black', 'Helvetica Neue', 'Roboto', sans-serif;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            letter-spacing: -0.02em;
         }
         
         .subtitle {
             font-size: clamp(1rem, 3vw, 1.3rem);
             color: #636e72;
             margin-bottom: 5px;
+            font-weight: 700;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
         }
         
         .from-text {
             font-size: clamp(0.9rem, 2.5vw, 1.1rem);
             color: #74b9ff;
-            font-weight: bold;
+            font-weight: 800;
+            font-family: 'Helvetica Neue', 'Roboto', Arial, sans-serif;
         }
         
         .content {
@@ -125,69 +101,60 @@
             width: 120px;
             height: 150px;
             margin: 20px 0;
-            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
-        .big-bean {
-            width: 80px;
-            height: 120px;
-            background: linear-gradient(135deg, #55a3ff, #667eea);
-            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-            position: absolute;
-            left: 20px;
-            top: 15px;
-            animation: pulse 2s ease-in-out infinite;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        .bean-illustration img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
         }
         
-        .baby-bean {
-            width: 40px;
-            height: 60px;
-            background: linear-gradient(135deg, #fd79a8, #fdcb6e);
-            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-            position: absolute;
-            left: 45px;
-            top: 70px;
-            animation: pulse 2s ease-in-out infinite 0.5s;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-        
-        .message-container {
+        .messages-container {
             width: 100%;
-            margin: 20px 0;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 0 10px;
+            margin-top: 20px;
         }
         
-        .message-label {
-            display: block;
-            font-size: 1.1rem;
-            color: #2d3436;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-        
-        .message-input {
-            width: 100%;
-            min-height: 120px;
+        .message-item {
+            background: #f8f9fa;
+            border-radius: 12px;
             padding: 15px;
-            border: 2px solid #ddd;
-            border-radius: 15px;
-            font-size: 1rem;
-            font-family: inherit;
-            resize: vertical;
-            transition: border-color 0.3s ease;
-            background: #fafafa;
+            margin-bottom: 15px;
+            border-left: 4px solid #74b9ff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
-        .message-input:focus {
-            outline: none;
-            border-color: #74b9ff;
-            box-shadow: 0 0 0 3px rgba(116, 185, 255, 0.2);
-            background: white;
+        .message-text {
+            font-size: 0.95rem;
+            color: #2d3436;
+            line-height: 1.5;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-family: 'Helvetica Neue', 'Arial', sans-serif;
+        }
+        
+        .message-text-fr {
+            font-size: 0.95rem;
+            color: #636e72;
+            line-height: 1.5;
+            font-style: italic;
+            margin-bottom: 10px;
+            font-weight: 500;
+            font-family: 'Helvetica Neue', 'Arial', sans-serif;
+        }
+        
+        .message-author {
+            display: block;
+            font-size: 0.85rem;
+            color: #74b9ff;
+            font-weight: 700;
+            text-align: right;
+            font-family: 'Arial Black', 'Franklin Gothic Medium', Arial, sans-serif;
         }
         
         .footer {
@@ -201,6 +168,8 @@
             font-size: clamp(0.9rem, 2.5vw, 1.1rem);
             color: #2d3436;
             font-style: italic;
+            font-weight: 600;
+            font-family: 'Helvetica Neue', 'Arial', sans-serif;
         }
         
         .hearts {
@@ -236,20 +205,6 @@
                 height: 120px;
             }
             
-            .big-bean {
-                width: 65px;
-                height: 100px;
-                left: 15px;
-                top: 10px;
-            }
-            
-            .baby-bean {
-                width: 35px;
-                height: 50px;
-                left: 35px;
-                top: 60px;
-            }
-            
             .footer {
                 padding: 20px 15px;
             }
@@ -274,8 +229,6 @@
         /* Reduced motion support */
         @media (prefers-reduced-motion: reduce) {
             .bean-decoration,
-            .big-bean,
-            .baby-bean,
             .hearts {
                 animation: none;
             }
@@ -296,117 +249,128 @@
 </head>
 <body>
     <div class="card-container" role="main" aria-label="Baby congratulations card">
-        <div class="language-toggle">
-            <button class="lang-btn active" onclick="setLanguage('en')" aria-label="Switch to English">EN</button>
-            <button class="lang-btn" onclick="setLanguage('fr')" aria-label="Passer au français">FR</button>
-        </div>
         
         <header class="header">
             <div class="bean-decoration bean-1" aria-hidden="true"></div>
             <div class="bean-decoration bean-2" aria-hidden="true"></div>
             <div class="bean-decoration bean-3" aria-hidden="true"></div>
             
-            <h1 class="main-title" id="main-title">Congratulations!</h1>
-            <p class="subtitle" id="subtitle">On Your New Little Bean</p>
-            <p class="from-text" id="from-text">From All of Us</p>
+            <h1 class="main-title">Congratulations! / Félicitations!</h1>
+            <p class="subtitle">On Your New Little Bean / Pour Votre Petit Haricot</p>
+            <p class="from-text">From All of Us / De Nous Tous</p>
         </header>
         
         <div class="content">
             <div class="bean-illustration" aria-label="Illustration of parent and baby beans">
-                <img alt="" src="bean.svg" width="200px">
+                <img alt="" src="bean.svg">
             </div>
             
-            <div class="message-container">
-                <label for="personal-message" class="message-label" id="message-label">Write your personal message:</label>
-                <textarea 
-                    id="personal-message" 
-                    class="message-input" 
-                    placeholder="Share your warm wishes and congratulations..."
-                    rows="5"
-                    aria-describedby="message-label"
-                ></textarea>
+            <div class="messages-container">
+                <div class="message-item">
+                    <p class="message-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                    <p class="message-text-fr">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed faucibus lorem vel nulla tempor, ut vestibulum magna cursus.</p>
+                    <span class="message-author">- Sarah & John</span>
+                </div>
+                
+                <div class="message-item">
+                    <p class="message-text">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                    <p class="message-text-fr">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                    <span class="message-author">- Marie & Pierre</span>
+                </div>
+                
+                <div class="message-item">
+                    <p class="message-text">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+                    <p class="message-text-fr">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+                    <span class="message-author">- The Johnson Family</span>
+                </div>
+                
+                <div class="message-item">
+                    <p class="message-text">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                    <p class="message-text-fr">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                    <span class="message-author">- Emma & David</span>
+                </div>
+                
+                <div class="message-item">
+                    <p class="message-text">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.</p>
+                    <p class="message-text-fr">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.</p>
+                    <span class="message-author">- The Martinez Family</span>
+                </div>
+                
+                <div class="message-item">
+                    <p class="message-text">Totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt.</p>
+                    <p class="message-text-fr">Totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt.</p>
+                    <span class="message-author">- Lisa & Michael</span>
+                </div>
+                
+                <div class="message-item">
+                    <p class="message-text">Explicabo nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni.</p>
+                    <p class="message-text-fr">Explicabo nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni.</p>
+                    <span class="message-author">- The Chen Family</span>
+                </div>
+                
+                <div class="message-item">
+                    <p class="message-text">Dolores eos qui ratione voluptatem sequi nesciunt neque porro quisquam est, qui dolorem ipsum quia dolor.</p>
+                    <p class="message-text-fr">Dolores eos qui ratione voluptatem sequi nesciunt neque porro quisquam est, qui dolorem ipsum quia dolor.</p>
+                    <span class="message-author">- Anna & Robert</span>
+                </div>
+                
+                <div class="message-item">
+                    <p class="message-text">Sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore.</p>
+                    <p class="message-text-fr">Sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore.</p>
+                    <span class="message-author">- The Williams Family</span>
+                </div>
+                
+                <div class="message-item">
+                    <p class="message-text">Magnam aliquam quaerat voluptatem ut enim ad minima veniam, quis nostrum exercitationem ullam corporis.</p>
+                    <p class="message-text-fr">Magnam aliquam quaerat voluptatem ut enim ad minima veniam, quis nostrum exercitationem ullam corporis.</p>
+                    <span class="message-author">- Sophie & Thomas</span>
+                </div>
+                
+                <div class="message-item">
+                    <p class="message-text">Suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur quis autem vel eum iure reprehenderit qui in ea.</p>
+                    <p class="message-text-fr">Suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur quis autem vel eum iure reprehenderit qui in ea.</p>
+                    <span class="message-author">- The Thompson Family</span>
+                </div>
+                
+                <div class="message-item">
+                    <p class="message-text">Voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur.</p>
+                    <p class="message-text-fr">Voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur.</p>
+                    <span class="message-author">- Julie & Mark</span>
+                </div>
             </div>
         </div>
         
         <footer class="footer">
-            <p class="footer-text" id="footer-text">
+            <p class="footer-text">
                 <span class="hearts" aria-hidden="true">💕</span>
-                <span id="footer-message">Wishing you joy, love, and sweet moments ahead</span>
+                <span>Wishing you joy, love, and sweet moments ahead / Nous vous souhaitons joie, amour et de doux moments à venir</span>
                 <span class="hearts" aria-hidden="true">💕</span>
             </p>
         </footer>
     </div>
     
     <script>
-        const translations = {
-            en: {
-                mainTitle: "Congratulations!",
-                subtitle: "On Your New Little Bean",
-                fromText: "From All of Us",
-                messageLabel: "Write your personal message:",
-                placeholder: "Share your warm wishes and congratulations...",
-                footerMessage: "Wishing you joy, love, and sweet moments ahead"
-            },
-            fr: {
-                mainTitle: "Félicitations!",
-                subtitle: "Pour Votre Petit Haricot",
-                fromText: "De Nous Tous",
-                messageLabel: "Écrivez votre message personnel:",
-                placeholder: "Partagez vos vœux chaleureux et félicitations...",
-                footerMessage: "Nous vous souhaitons joie, amour et de doux moments à venir"
-            }
-        };
+        // Smooth scrolling for messages container
+        const messagesContainer = document.querySelector('.messages-container');
         
-        function setLanguage(lang) {
-            // Update active button
-            document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
+        // Auto-scroll through messages slowly
+        let scrollDirection = 1;
+        let scrollSpeed = 0.2;
+        
+        function autoScroll() {
+            if (messagesContainer.scrollTop >= (messagesContainer.scrollHeight - messagesContainer.clientHeight)) {
+                scrollDirection = -1;
+            } else if (messagesContainer.scrollTop <= 0) {
+                scrollDirection = 1;
+            }
             
-            // Update content
-            const texts = translations[lang];
-            document.getElementById('main-title').textContent = texts.mainTitle;
-            document.getElementById('subtitle').textContent = texts.subtitle;
-            document.getElementById('from-text').textContent = texts.fromText;
-            document.getElementById('message-label').textContent = texts.messageLabel;
-            document.getElementById('personal-message').placeholder = texts.placeholder;
-            document.getElementById('footer-message').textContent = texts.footerMessage;
-            
-            // Update document language
-            document.documentElement.lang = lang;
+            messagesContainer.scrollTop += scrollDirection * scrollSpeed;
         }
         
-        // Auto-resize textarea
-        const textarea = document.getElementById('personal-message');
-        textarea.addEventListener('input', function() {
-            this.style.height = 'auto';
-            this.style.height = Math.max(120, this.scrollHeight) + 'px';
-        });
-        
-        // Save message to session (since localStorage isn't available)
-        let savedMessage = '';
-        textarea.addEventListener('input', function() {
-            savedMessage = this.value;
-        });
-        
-        // Focus management for accessibility
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Tab') {
-                // Ensure proper tab order
-                const focusableElements = document.querySelectorAll('button, textarea, [tabindex]:not([tabindex="-1"])');
-                const firstElement = focusableElements[0];
-                const lastElement = focusableElements[focusableElements.length - 1];
-                
-                if (e.shiftKey && document.activeElement === firstElement) {
-                    e.preventDefault();
-                    lastElement.focus();
-                } else if (!e.shiftKey && document.activeElement === lastElement) {
-                    e.preventDefault();
-                    firstElement.focus();
-                }
-            }
-        });
+        // Start auto-scroll after a delay
+        setTimeout(() => {
+            setInterval(autoScroll, 50);
+        }, 3000);
     </script>
 </body>
 </html>
