@@ -9,9 +9,9 @@
     <title>Sweet Dreams Candy Store | Premium Artisanal Confections Online</title>
     
     <!-- Bootstrap 5.3 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css" rel="stylesheet">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     
@@ -79,6 +79,12 @@
         @keyframes wave {
             0% { transform: translateX(0); }
             100% { transform: translateX(-1000px); }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
         }
 
         .hero-content {
@@ -195,6 +201,7 @@
             background: linear-gradient(135deg, #4ecdc4, #ff69b4);
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            color: white;
         }
 
         /* About Section */
@@ -386,7 +393,7 @@
                 <i class="bi bi-heart-fill"></i> Sweet Dreams
             </a>
             
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             
@@ -428,823 +435,6 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6 hero-content">
-                    <h1 class="hero-title display-3">
-                        <i class="bi bi-star-fill"></i> Sweet Dreams Candy Store
-                    </h1>
-                    <p class="hero-subtitle lead">
-                        Premium artisanal confections crafted with love since 1995. 
-                        From traditional chocolates to innovative candy creations, 
-                        we bring sweetness to your special moments.
-                    </p>
-                    <div class="d-flex gap-3 flex-wrap">
-                        <a href="#products" class="btn btn-light btn-lg">
-                            <i class="bi bi-grid"></i> Shop Now
-                        </a>
-                        <a href="#about" class="btn btn-outline-light btn-lg">
-                            <i class="bi bi-info-circle"></i> Our Story
-                        </a>
-                    </div>
-                </div>
-                <div class="col-lg-6 text-center mt-5 mt-lg-0">
-                    <div class="display-1" style="font-size: 8rem; animation: bounce 2s ease-in-out infinite;">
-                        🍭
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Cart Modal -->
-    <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="cartModalLabel">
-                        <i class="bi bi-cart"></i> Your Shopping Cart
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" id="cartItems">
-                    <div class="text-center py-5 text-muted">
-                        <i class="bi bi-cart-x display-1"></i>
-                        <h5>Your cart is empty</h5>
-                        <p>Add some sweet treats to get started!</p>
-                    </div>
-                </div>
-                <div class="modal-footer" id="cartFooter" style="display: none;">
-                    <div class="me-auto">
-                        <h4 class="mb-0" id="cartTotal">Total: $0.00</h4>
-                    </div>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Continue Shopping</button>
-                    <button type="button" class="btn btn-primary" onclick="proceedToCheckout()">
-                        <i class="bi bi-credit-card"></i> Checkout
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bootstrap 5.3 JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script>
-        // Product Database with comprehensive information
-        const products = [
-            {
-                id: 1,
-                name: "Artisan Chocolate Truffles",
-                price: 24.99,
-                category: "chocolates",
-                emoji: "🍫",
-                description: "Hand-crafted Belgian chocolate truffles with premium cocoa. Available in dark, milk, and white chocolate varieties.",
-                ingredients: "Dark chocolate (70% cocoa), cream, butter, natural flavors",
-                allergens: "Contains dairy, may contain nuts",
-                nutritional: "Per piece: 45 calories, 3g fat, 4g carbs, 1g protein",
-                inStock: true,
-                rating: 4.9,
-                reviews: 156
-            },
-            {
-                id: 2,
-                name: "Rainbow Gummy Bears",
-                price: 12.99,
-                category: "gummies",
-                emoji: "🐻",
-                description: "Classic gummy bears in assorted fruit flavors. Made with natural fruit juices and no artificial colors.",
-                ingredients: "Glucose syrup, sugar, gelatin, natural fruit flavors, natural colors",
-                allergens: "Gelatin (pork), may contain traces of wheat",
-                nutritional: "Per 30g serving: 110 calories, 0g fat, 26g carbs, 2g protein",
-                inStock: true,
-                rating: 4.7,
-                reviews: 203
-            },
-            {
-                id: 3,
-                name: "Cotton Candy Clouds",
-                price: 8.99,
-                category: "specialty",
-                emoji: "🍭",
-                description: "Light and airy cotton candy in classic pink and blue flavors. Made fresh daily with organic sugar.",
-                ingredients: "Organic cane sugar, natural flavoring, food coloring",
-                allergens: "None",
-                nutritional: "Per container: 120 calories, 0g fat, 30g carbs, 0g protein",
-                inStock: true,
-                rating: 4.5,
-                reviews: 89
-            },
-            {
-                id: 4,
-                name: "Sour Patch Extreme",
-                price: 6.99,
-                category: "sour",
-                emoji: "🍬",
-                description: "Extra sour gummy candies that pack a punch. Perfect for sour candy enthusiasts.",
-                ingredients: "Sugar, glucose syrup, modified corn starch, citric acid, natural flavors",
-                allergens: "May contain gluten",
-                nutritional: "Per 45g serving: 140 calories, 0g fat, 35g carbs, 0g protein",
-                inStock: true,
-                rating: 4.3,
-                reviews: 112
-            },
-            {
-                id: 5,
-                name: "Gourmet Cupcake Selection",
-                price: 18.99,
-                category: "baked",
-                emoji: "🧁",
-                description: "Assorted mini cupcakes with buttercream frosting. Flavors include vanilla, chocolate, strawberry, and lemon.",
-                ingredients: "Flour, sugar, eggs, butter, cream cheese, natural flavors",
-                allergens: "Contains gluten, dairy, eggs",
-                nutritional: "Per cupcake: 180 calories, 8g fat, 25g carbs, 3g protein",
-                inStock: true,
-                rating: 4.8,
-                reviews: 94
-            },
-            {
-                id: 6,
-                name: "Candy Cane Collection",
-                price: 9.99,
-                category: "seasonal",
-                emoji: "🍭",
-                description: "Traditional peppermint candy canes in various sizes. Handmade with pure peppermint oil.",
-                ingredients: "Sugar, corn syrup, peppermint oil, red food coloring",
-                allergens: "None",
-                nutritional: "Per candy cane: 55 calories, 0g fat, 14g carbs, 0g protein",
-                inStock: true,
-                rating: 4.6,
-                reviews: 67
-            },
-            {
-                id: 7,
-                name: "Chocolate Chip Cookie Jar",
-                price: 14.99,
-                category: "baked",
-                emoji: "🍪",
-                description: "Soft-baked chocolate chip cookies made with premium Belgian chocolate chips and real butter.",
-                ingredients: "Flour, chocolate chips, butter, brown sugar, eggs, vanilla",
-                allergens: "Contains gluten, dairy, eggs, may contain nuts",
-                nutritional: "Per cookie: 160 calories, 8g fat, 22g carbs, 2g protein",
-                inStock: true,
-                rating: 4.9,
-                reviews: 178
-            },
-            {
-                id: 8,
-                name: "Birthday Cake Pops",
-                price: 22.99,
-                category: "specialty",
-                emoji: "🍰",
-                description: "Decorated cake pops perfect for celebrations. Available in various designs and flavors.",
-                ingredients: "Cake mix, frosting, chocolate coating, sprinkles, natural flavors",
-                allergens: "Contains gluten, dairy, eggs",
-                nutritional: "Per cake pop: 120 calories, 6g fat, 16g carbs, 1g protein",
-                inStock: true,
-                rating: 4.7,
-                reviews: 85
-            },
-            {
-                id: 9,
-                name: "Premium Jelly Bean Mix",
-                price: 11.99,
-                category: "gummies",
-                emoji: "🫘",
-                description: "Gourmet jelly beans in 20 unique flavors including exotic fruits and dessert-inspired varieties.",
-                ingredients: "Sugar, corn syrup, modified food starch, natural and artificial flavors",
-                allergens: "May contain traces of nuts",
-                nutritional: "Per 28g serving: 100 calories, 0g fat, 25g carbs, 0g protein",
-                inStock: true,
-                rating: 4.4,
-                reviews: 134
-            },
-            {
-                id: 10,
-                name: "Caramel Apple Treats",
-                price: 16.99,
-                category: "specialty",
-                emoji: "🍎",
-                description: "Fresh Granny Smith apples dipped in homemade caramel and rolled in chopped pecans.",
-                ingredients: "Granny Smith apples, caramel (sugar, butter, cream), pecans",
-                allergens: "Contains dairy, tree nuts",
-                nutritional: "Per apple: 320 calories, 12g fat, 54g carbs, 3g protein",
-                inStock: true,
-                rating: 4.8,
-                reviews: 76
-            },
-            {
-                id: 11,
-                name: "Marshmallow Dreams",
-                price: 13.99,
-                category: "specialty",
-                emoji: "🤍",
-                description: "Artisanal marshmallows in vanilla, strawberry, and chocolate flavors. Perfect for hot chocolate or s'mores.",
-                ingredients: "Sugar, corn syrup, gelatin, vanilla extract, natural flavors",
-                allergens: "Contains gelatin (pork)",
-                nutritional: "Per marshmallow: 25 calories, 0g fat, 6g carbs, 0g protein",
-                inStock: true,
-                rating: 4.5,
-                reviews: 92
-            },
-            {
-                id: 12,
-                name: "Lollipop Paradise Pack",
-                price: 19.99,
-                category: "lollipops",
-                emoji: "🍭",
-                description: "Assorted gourmet lollipops including swirl designs, fruit flavors, and sugar-free options.",
-                ingredients: "Sugar, corn syrup, citric acid, natural flavors, food coloring",
-                allergens: "May contain traces of nuts",
-                nutritional: "Per lollipop: 70 calories, 0g fat, 18g carbs, 0g protein",
-                inStock: true,
-                rating: 4.6,
-                reviews: 108
-            }
-        ];
-
-        // Shopping cart functionality
-        let cart = [];
-        let cartTotal = 0;
-
-        // Initialize the website
-        document.addEventListener('DOMContentLoaded', function() {
-            renderProducts();
-            updateCartDisplay();
-            initializeSearchFunctionality();
-            initializeFormValidation();
-        });
-
-        // Render products with search and filter capabilities
-        function renderProducts(filterText = '') {
-            const productGrid = document.getElementById('productGrid');
-            const filteredProducts = products.filter(product => 
-                product.name.toLowerCase().includes(filterText.toLowerCase()) ||
-                product.category.toLowerCase().includes(filterText.toLowerCase()) ||
-                product.description.toLowerCase().includes(filterText.toLowerCase())
-            );
-
-            if (filteredProducts.length === 0) {
-                productGrid.innerHTML = `
-                    <div class="col-12 text-center py-5">
-                        <i class="bi bi-search display-1 text-muted"></i>
-                        <h3 class="text-muted mt-3">No products found</h3>
-                        <p class="text-muted">Try searching with different keywords</p>
-                    </div>
-                `;
-                return;
-            }
-
-            productGrid.innerHTML = filteredProducts.map(product => `
-                <div class="col-lg-3 col-md-6">
-                    <div class="product-card">
-                        <div class="product-emoji">${product.emoji}</div>
-                        <div class="product-body">
-                            <h5 class="card-title">${product.name}</h5>
-                            <p class="card-text text-muted">${product.description.substring(0, 80)}...</p>
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <div class="product-price">${product.price}</div>
-                                <div class="text-warning">
-                                    ${'<i class="bi bi-star-fill"></i>'.repeat(Math.floor(product.rating))}
-                                    <small class="text-muted">(${product.reviews})</small>
-                                </div>
-                            </div>
-                            <div class="d-flex gap-2">
-                                <button class="btn btn-outline-primary btn-sm flex-fill" onclick="viewProductDetails(${product.id})" 
-                                        data-bs-toggle="tooltip" title="View product details">
-                                    <i class="bi bi-info-circle"></i> Details
-                                </button>
-                                <button class="btn btn-add-cart btn-sm flex-fill" onclick="addToCart(${product.id})"
-                                        ${!product.inStock ? 'disabled' : ''}>
-                                    <i class="bi bi-cart-plus"></i> ${product.inStock ? 'Add to Cart' : 'Out of Stock'}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-
-            // Initialize tooltips
-            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            tooltipTriggerList.map(function (tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl);
-            });
-        }
-
-        // Product search functionality
-        function filterProducts() {
-            const searchTerm = document.getElementById('productSearch').value;
-            renderProducts(searchTerm);
-        }
-
-        // Initialize search with debouncing for better performance
-        function initializeSearchFunctionality() {
-            let searchTimeout;
-            const searchInput = document.getElementById('productSearch');
-            
-            searchInput.addEventListener('input', function() {
-                clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(() => {
-                    filterProducts();
-                }, 300);
-            });
-        }
-
-        // View product details modal
-        function viewProductDetails(productId) {
-            const product = products.find(p => p.id === productId);
-            if (!product) return;
-
-            // Create modal content
-            const modalContent = `
-                <div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header" style="background: var(--candy-gradient); color: white;">
-                                <h5 class="modal-title">${product.emoji} ${product.name}</h5>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="row">
-                                    <div class="col-md-4 text-center">
-                                        <div style="font-size: 6rem; margin-bottom: 1rem;">${product.emoji}</div>
-                                        <div class="text-warning mb-2">
-                                            ${'<i class="bi bi-star-fill"></i>'.repeat(Math.floor(product.rating))}
-                                            <span class="ms-2">${product.rating}/5</span>
-                                        </div>
-                                        <p class="text-muted">${product.reviews} customer reviews</p>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <h3 class="text-primary mb-3">${product.price}</h3>
-                                        <p><strong>Description:</strong> ${product.description}</p>
-                                        <p><strong>Category:</strong> <span class="badge bg-primary">${product.category}</span></p>
-                                        <p><strong>Ingredients:</strong> ${product.ingredients}</p>
-                                        <p><strong>Allergens:</strong> ${product.allergens}</p>
-                                        <p><strong>Nutritional Info:</strong> ${product.nutritional}</p>
-                                        <div class="alert alert-${product.inStock ? 'success' : 'warning'}" role="alert">
-                                            <i class="bi bi-${product.inStock ? 'check-circle' : 'exclamation-triangle'}"></i>
-                                            ${product.inStock ? 'In Stock - Ready to ship!' : 'Currently out of stock'}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary" onclick="addToCart(${product.id}); bootstrap.Modal.getInstance(document.getElementById('productModal')).hide();"
-                                        ${!product.inStock ? 'disabled' : ''}>
-                                    <i class="bi bi-cart-plus"></i> Add to Cart
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            // Remove existing modal if any
-            const existingModal = document.getElementById('productModal');
-            if (existingModal) {
-                existingModal.remove();
-            }
-
-            // Add modal to DOM and show
-            document.body.insertAdjacentHTML('beforeend', modalContent);
-            const modal = new bootstrap.Modal(document.getElementById('productModal'));
-            modal.show();
-        }
-
-        // Add to cart with enhanced feedback
-        function addToCart(productId) {
-            const product = products.find(p => p.id === productId);
-            if (!product || !product.inStock) return;
-
-            const existingItem = cart.find(item => item.id === productId);
-            if (existingItem) {
-                existingItem.quantity += 1;
-            } else {
-                cart.push({ ...product, quantity: 1 });
-            }
-
-            updateCartDisplay();
-            showSuccessToast(`${product.name} added to cart!`);
-            animateCartIcon();
-        }
-
-        // Remove from cart
-        function removeFromCart(productId) {
-            cart = cart.filter(item => item.id !== productId);
-            updateCartDisplay();
-        }
-
-        // Update item quantity in cart
-        function updateQuantity(productId, change) {
-            const item = cart.find(item => item.id === productId);
-            if (item) {
-                item.quantity = Math.max(1, item.quantity + change);
-                updateCartDisplay();
-            }
-        }
-
-        // Update cart display with enhanced UI
-        function updateCartDisplay() {
-            const cartCount = document.getElementById('cartCount');
-            const cartItems = document.getElementById('cartItems');
-            const cartFooter = document.getElementById('cartFooter');
-            const cartTotal = document.getElementById('cartTotal');
-
-            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-
-            cartCount.textContent = totalItems;
-
-            if (cart.length === 0) {
-                cartItems.innerHTML = `
-                    <div class="text-center py-5 text-muted">
-                        <i class="bi bi-cart-x display-1"></i>
-                        <h5>Your cart is empty</h5>
-                        <p>Add some sweet treats to get started!</p>
-                    </div>
-                `;
-                cartFooter.style.display = 'none';
-            } else {
-                cartItems.innerHTML = cart.map(item => `
-                    <div class="cart-item">
-                        <div class="row align-items-center">
-                            <div class="col-2 text-center">
-                                <span style="font-size: 2rem;">${item.emoji}</span>
-                            </div>
-                            <div class="col-4">
-                                <h6 class="mb-1">${item.name}</h6>
-                                <small class="text-muted">${item.price.toFixed(2)} each</small>
-                            </div>
-                            <div class="col-3 text-center">
-                                <div class="btn-group" role="group">
-                                    <button class="btn btn-outline-secondary btn-sm quantity-btn" onclick="updateQuantity(${item.id}, -1)">
-                                        <i class="bi bi-dash"></i>
-                                    </button>
-                                    <span class="btn btn-outline-secondary btn-sm disabled">${item.quantity}</span>
-                                    <button class="btn btn-outline-secondary btn-sm quantity-btn" onclick="updateQuantity(${item.id}, 1)">
-                                        <i class="bi bi-plus"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="col-2 text-center">
-                                <strong>${(item.price * item.quantity).toFixed(2)}</strong>
-                            </div>
-                            <div class="col-1 text-center">
-                                <button class="btn btn-outline-danger btn-sm" onclick="removeFromCart(${item.id})" 
-                                        data-bs-toggle="tooltip" title="Remove item">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-
-                cartTotal.textContent = `Total: ${totalPrice.toFixed(2)}`;
-                cartFooter.style.display = 'flex';
-
-                // Re-initialize tooltips
-                const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-                tooltipTriggerList.map(function (tooltipTriggerEl) {
-                    return new bootstrap.Tooltip(tooltipTriggerEl);
-                });
-            }
-        }
-
-        // Proceed to checkout
-        function proceedToCheckout() {
-            if (cart.length === 0) return;
-
-            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-            
-            // Simulate checkout process
-            showLoadingState();
-            
-            setTimeout(() => {
-                hideLoadingState();
-                showSuccessAlert(`
-                    <div class="text-center">
-                        <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
-                        <h4 class="mt-3">Order Placed Successfully!</h4>
-                        <p class="mb-1">Thank you for your order!</p>
-                        <p><strong>Order Total:</strong> ${total.toFixed(2)}</p>
-                        <p><strong>Items:</strong> ${itemCount}</p>
-                        <p class="text-muted">Order confirmation will be sent to your email.</p>
-                        <small class="text-muted">This is a demonstration store - no actual payment was processed.</small>
-                    </div>
-                `);
-                
-                // Clear cart and close modal
-                cart = [];
-                updateCartDisplay();
-                bootstrap.Modal.getInstance(document.getElementById('cartModal')).hide();
-            }, 2000);
-        }
-
-        // Show success toast notification
-        function showSuccessToast(message) {
-            const toastHtml = `
-                <div class="toast success-toast align-items-center text-white bg-success border-0" role="alert">
-                    <div class="d-flex">
-                        <div class="toast-body">
-                            <i class="bi bi-check-circle-fill me-2"></i>${message}
-                        </div>
-                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-                    </div>
-                </div>
-            `;
-
-            document.body.insertAdjacentHTML('beforeend', toastHtml);
-            const toastElement = document.querySelector('.success-toast:last-child');
-            const toast = new bootstrap.Toast(toastElement, { autohide: true, delay: 3000 });
-            toast.show();
-
-            toastElement.addEventListener('hidden.bs.toast', () => {
-                toastElement.remove();
-            });
-        }
-
-        // Show success alert modal
-        function showSuccessAlert(content) {
-            const alertModal = `
-                <div class="modal fade" id="successModal" tabindex="-1">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-body p-4">
-                                ${content}
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Continue Shopping</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            document.body.insertAdjacentHTML('beforeend', alertModal);
-            const modal = new bootstrap.Modal(document.getElementById('successModal'));
-            modal.show();
-
-            document.getElementById('successModal').addEventListener('hidden.bs.modal', () => {
-                document.getElementById('successModal').remove();
-            });
-        }
-
-        // Animate cart icon
-        function animateCartIcon() {
-            const cartIcon = document.querySelector('[data-bs-target="#cartModal"]');
-            cartIcon.classList.add('animate__animated', 'animate__bounce');
-            setTimeout(() => {
-                cartIcon.classList.remove('animate__animated', 'animate__bounce');
-            }, 1000);
-        }
-
-        // Show/hide loading states
-        function showLoadingState() {
-            const checkoutBtn = document.querySelector('#cartModal .modal-footer .btn-primary');
-            checkoutBtn.innerHTML = '<span class="loading"></span> Processing...';
-            checkoutBtn.disabled = true;
-        }
-
-        function hideLoadingState() {
-            const checkoutBtn = document.querySelector('#cartModal .modal-footer .btn-primary');
-            checkoutBtn.innerHTML = '<i class="bi bi-credit-card"></i> Checkout';
-            checkoutBtn.disabled = false;
-        }
-
-        // Contact form submission
-        function submitContactForm(event) {
-            event.preventDefault();
-            
-            const form = document.getElementById('contactForm');
-            const formData = new FormData(form);
-            
-            // Simulate form submission
-            const submitBtn = form.querySelector('button[type="submit"]');
-            submitBtn.innerHTML = '<span class="loading"></span> Sending...';
-            submitBtn.disabled = true;
-            
-            setTimeout(() => {
-                showSuccessToast('Message sent successfully! We\'ll respond within 24 hours.');
-                form.reset();
-                submitBtn.innerHTML = '<i class="bi bi-send"></i> Send Message';
-                submitBtn.disabled = false;
-            }, 1500);
-        }
-
-        // Form validation
-        function initializeFormValidation() {
-            const form = document.getElementById('contactForm');
-            form.addEventListener('submit', function(event) {
-                if (!form.checkValidity()) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
-                form.classList.add('was-validated');
-            });
-        }
-
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-
-        // Initialize Bootstrap tooltips globally
-        document.addEventListener('DOMContentLoaded', function () {
-            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            tooltipTriggerList.map(function (tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl);
-            });
-        });
-
-        // Educational Research Citations and Sources (Curriculum Requirement A5 & BTDL.SE.5.5)
-        const websiteReferences = {
-            businessModel: "E-commerce best practices from Statistics Canada Business Registry (2024)",
-            designPrinciples: "Web Content Accessibility Guidelines (WCAG) 2.1 AA standards",
-            technicalFramework: "Bootstrap 5.3 Documentation - getbootstrap.com (2024)",
-            businessData: "Ontario Business Registry and Food Safety Guidelines (2024)",
-            marketResearch: "Canadian Retail Council - Confectionery Market Analysis (2024)"
-        };
-
-        // Website Analytics and Performance Tracking (Business Studies Expectation)
-        function trackUserInteraction(action, category, label) {
-            // Simulate analytics tracking for educational purposes
-            console.log(`Analytics: ${action} | ${category} | ${label} | ${new Date().toISOString()}`);
-            
-            // In a real implementation, this would send data to Google Analytics, etc.
-            // This demonstrates understanding of digital marketing and business intelligence
-        }
-
-        // Enhanced search functionality demonstrating Boolean logic (BTDL.SE.5.3)
-        function advancedProductSearch(query) {
-            const searchTerms = query.toLowerCase().split(' ');
-            
-            return products.filter(product => {
-                // Demonstrate Boolean AND logic
-                const matchesAllTerms = searchTerms.every(term => 
-                    product.name.toLowerCase().includes(term) ||
-                    product.description.toLowerCase().includes(term) ||
-                    product.category.toLowerCase().includes(term) ||
-                    product.ingredients.toLowerCase().includes(term)
-                );
-                
-                // Demonstrate Boolean OR logic for categories
-                const categoryMatch = searchTerms.some(term => 
-                    product.category.toLowerCase().includes(term)
-                );
-                
-                return matchesAllTerms || categoryMatch;
-            });
-        }
-
-        // Website evaluation criteria demonstrating BTDL.SE.5.4
-        const websiteEvaluationCriteria = {
-            usefulness: {
-                score: 9,
-                criteria: "Provides comprehensive product information, pricing, and business details"
-            },
-            accuracy: {
-                score: 9,
-                criteria: "All business information verified, ingredients listed, nutritional data provided"
-            },
-            validity: {
-                score: 8,
-                criteria: "Legitimate business with proper licensing, contact information, and policies"
-            },
-            bias: {
-                score: 7,
-                criteria: "Promotional content balanced with factual product information"
-            },
-            appropriateness: {
-                score: 9,
-                criteria: "Professional design suitable for target audience, family-friendly content"
-            },
-            currency: {
-                score: 10,
-                criteria: "Website created in 2025 with current web standards and technologies"
-            }
-        };
-
-        // Demonstrate understanding of target audiences (BTDS.SE.3.1)
-        const targetAudienceAnalysis = {
-            primary: {
-                demographic: "Families with children aged 5-15",
-                purpose: "Purchase treats for special occasions and everyday enjoyment",
-                needs: "Safe, quality products with clear ingredient information"
-            },
-            secondary: {
-                demographic: "Gift buyers aged 25-55",
-                purpose: "Corporate gifts, holiday presents, special occasion treats",
-                needs: "Premium presentation, customization options, bulk ordering"
-            },
-            tertiary: {
-                demographic: "Health-conscious consumers",
-                purpose: "Find allergen-free and organic candy options",
-                needs: "Detailed nutritional and ingredient information"
-            }
-        };
-
-        // Website design guidelines implementation (BTDS.SE.3.2)
-        const designGuidelines = {
-            technical: {
-                responsive: "Mobile-first design using Bootstrap 5.3 grid system",
-                loading: "Optimized images and lazy loading for performance",
-                accessibility: "WCAG 2.1 AA compliance with semantic HTML and ARIA labels",
-                browser: "Cross-browser compatibility with modern web standards"
-            },
-            visual: {
-                colorScheme: "High contrast ratios for readability, colorblind-friendly palette",
-                typography: "Readable fonts (Poppins) with appropriate sizing and spacing",
-                imagery: "Emoji-based product representations for universal understanding",
-                layout: "Clear visual hierarchy with consistent spacing and alignment"
-            },
-            content: {
-                language: "Clear, professional Canadian English with industry terminology",
-                inclusion: "Diverse representation in testimonials and inclusive messaging",
-                information: "Complete business information including legal requirements",
-                navigation: "Intuitive menu structure with clear calls-to-action"
-            }
-        };
-
-        // Business communication effectiveness (BTBC.OE.2)
-        function demonstrateCommunicationEffectiveness() {
-            return {
-                channels: [
-                    "Website with detailed product information",
-                    "Contact form with categorized inquiries",
-                    "Phone support with business hours",
-                    "Email with guaranteed response time",
-                    "Social media integration for customer engagement"
-                ],
-                messaging: {
-                    clarity: "Plain language product descriptions and policies",
-                    consistency: "Unified brand voice across all content",
-                    professionalism: "Business-appropriate tone and presentation",
-                    accessibility: "Multiple communication options for different preferences"
-                },
-                effectiveness: {
-                    userExperience: "Intuitive navigation and clear information architecture",
-                    conversion: "Strategic placement of call-to-action buttons",
-                    retention: "Newsletter signup and customer account features",
-                    support: "Comprehensive FAQ and multiple contact methods"
-                }
-            };
-        }
-
-        // Citation format examples (BTDL.SE.5.5 - MLA and APA format demonstrations)
-        const citationExamples = {
-            mla: {
-                website: 'Statistics Canada. "Canadian Retail Trade." Government of Canada, 15 Mar. 2024, www.statcan.gc.ca/retail-trade. Accessed 25 Aug. 2024.',
-                article: 'Smith, Jennifer. "E-commerce Trends in Canadian Food Retail." Canadian Business Journal, vol. 45, no. 3, 2024, pp. 23-31.',
-                email: 'Johnson, Mark. "Re: Wholesale Candy Pricing." Received by Sweet Dreams Store, 20 Aug. 2024.'
-            },
-            apa: {
-                website: 'Statistics Canada. (2024, March 15). Canadian retail trade. Government of Canada. Retrieved August 25, 2024, from https://www.statcan.gc.ca/retail-trade',
-                article: 'Smith, J. (2024). E-commerce trends in Canadian food retail. Canadian Business Journal, 45(3), 23-31.',
-                email: 'Johnson, M. (2024, August 20). Re: Wholesale candy pricing [Email message].'
-            }
-        };
-
-        // Business website purpose comparison (BTDS.SE.3.1)
-        const websitePurposeComparison = {
-            sweetDreams: {
-                purpose: "E-commerce platform for direct consumer sales",
-                audience: "Individual consumers and gift buyers",
-                features: ["Product catalog", "Shopping cart", "Secure checkout", "Customer reviews"]
-            },
-            competitorA: {
-                purpose: "Brand awareness and retail location promotion",
-                audience: "Local customers seeking store locations",
-                features: ["Store locator", "Brand information", "Social media integration"]
-            },
-            industryStandard: {
-                purpose: "B2B wholesale platform for retailers",
-                audience: "Retail buyers and distributors",
-                features: ["Bulk pricing", "Trade accounts", "Order management", "Inventory systems"]
-            }
-        };
-
-        // Log educational compliance on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🎓 CURRICULUM COMPLIANCE DEMONSTRATION:');
-            console.log('A1 - ICT Terminology:', Object.keys(designGuidelines));
-            console.log('A5 - Research Techniques:', websiteReferences);
-            console.log('C3 - Website Design:', designGuidelines);
-            console.log('D2 - Communication Technology:', demonstrateCommunicationEffectiveness());
-            console.log('Website Evaluation Criteria:', websiteEvaluationCriteria);
-            console.log('Target Audience Analysis:', targetAudienceAnalysis);
-            console.log('Citation Examples:', citationExamples);
-        });
-    </script>
-</body>
-</html>6 hero-content">
                     <h1 class="hero-title display-3">
                         <i class="bi bi-star-fill"></i> Sweet Dreams Candy Store
                     </h1>
@@ -1364,8 +554,7 @@
             <div class="row mb-4">
                 <div class="col-md-6 mx-auto">
                     <div class="input-group">
-                        <input type="text" class="form-control" id="productSearch" placeholder="Search products..." 
-                               onkeyup="filterProducts()">
+                        <input type="text" class="form-control" id="productSearch" placeholder="Search products...">
                         <button class="btn btn-outline-secondary" type="button">
                             <i class="bi bi-search"></i>
                         </button>
@@ -1481,7 +670,7 @@
                     <div class="card shadow">
                         <div class="card-body p-4">
                             <h4 class="card-title text-center mb-4">Send Us a Message</h4>
-                            <form id="contactForm" onsubmit="submitContactForm(event)">
+                            <form id="contactForm">
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <label for="firstName" class="form-label">First Name *</label>
@@ -1541,10 +730,10 @@
                     </div>
                     <p class="text-muted">Premium artisanal confections crafted with love since 1995. Bringing sweetness to your special moments.</p>
                     <div class="d-flex gap-3">
-                        <a href="#" class="footer-link"><i class="bi bi-facebook fs-4"></i></a>
-                        <a href="#" class="footer-link"><i class="bi bi-instagram fs-4"></i></a>
-                        <a href="#" class="footer-link"><i class="bi bi-twitter fs-4"></i></a>
-                        <a href="#" class="footer-link"><i class="bi bi-youtube fs-4"></i></a>
+                        <a href="#" class="footer-link" aria-label="Facebook"><i class="bi bi-facebook fs-4"></i></a>
+                        <a href="#" class="footer-link" aria-label="Instagram"><i class="bi bi-instagram fs-4"></i></a>
+                        <a href="#" class="footer-link" aria-label="Twitter"><i class="bi bi-twitter fs-4"></i></a>
+                        <a href="#" class="footer-link" aria-label="YouTube"><i class="bi bi-youtube fs-4"></i></a>
                     </div>
                 </div>
                 <div class="col-lg-2 col-md-3">
@@ -1565,4 +754,373 @@
                         <li><a href="#" class="footer-link">Gift Boxes</a></li>
                     </ul>
                 </div>
-                <div class="col-lg-
+                <div class="col-lg-2 col-md-3">
+                    <h6 class="text-white mb-3">Support</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="footer-link">FAQ</a></li>
+                        <li><a href="#" class="footer-link">Shipping</a></li>
+                        <li><a href="#" class="footer-link">Returns</a></li>
+                        <li><a href="#" class="footer-link">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-3">
+                    <h6 class="text-white mb-3">Newsletter</h6>
+                    <p class="text-muted small">Subscribe for sweet deals and new arrivals!</p>
+                    <div class="input-group input-group-sm">
+                        <input type="email" class="form-control" placeholder="Your email" aria-label="Email subscription">
+                        <button class="btn btn-primary" type="button">
+                            <i class="bi bi-send"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="text-muted small mb-0">&copy; 2025 Sweet Dreams Candy Store. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="text-muted small mb-0">
+                        Made with <i class="bi bi-heart-fill text-danger"></i> in Toronto, Canada
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Shopping Cart Modal -->
+    <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cartModalLabel">
+                        <i class="bi bi-cart"></i> Shopping Cart
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="cartItems">
+                        <div class="text-center py-5">
+                            <i class="bi bi-cart-x display-1 text-muted"></i>
+                            <h5 class="text-muted mt-3">Your cart is empty</h5>
+                            <p class="text-muted">Add some sweet treats to get started!</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="d-flex justify-content-between w-100 align-items-center">
+                        <div>
+                            <strong>Total: $<span id="cartTotal">0.00</span></strong>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Continue Shopping</button>
+                            <button type="button" class="btn btn-primary" id="checkoutBtn" disabled>
+                                <i class="bi bi-credit-card"></i> Checkout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Toast Template -->
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;">
+        <div id="successToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-success text-white">
+                <i class="bi bi-check-circle me-2"></i>
+                <strong class="me-auto">Success!</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                Item added to cart successfully!
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5.3 JS Bundle -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Products Data
+        const products = [
+            {
+                id: 1,
+                name: "Premium Chocolate Truffles",
+                emoji: "🍫",
+                price: 24.99,
+                description: "Handcrafted Belgian chocolate truffles with various fillings including raspberry, caramel, and dark chocolate ganache."
+            },
+            {
+                id: 2,
+                name: "Gummy Bear Paradise",
+                emoji: "🐻",
+                price: 12.99,
+                description: "Assorted fruit-flavored gummy bears made with natural ingredients and real fruit juices."
+            },
+            {
+                id: 3,
+                name: "Artisan Lollipops",
+                emoji: "🍭",
+                price: 8.99,
+                description: "Hand-pulled lollipops in unique flavors like lavender honey, rose petal, and champagne."
+            },
+            {
+                id: 4,
+                name: "Classic Rock Candy",
+                emoji: "💎",
+                price: 15.99,
+                description: "Traditional rock candy crystals available in multiple colors and flavors."
+            },
+            {
+                id: 5,
+                name: "Caramel Delights",
+                emoji: "🍯",
+                price: 18.99,
+                description: "Soft and chewy caramels made with real butter and cream, some dipped in premium chocolate."
+            },
+            {
+                id: 6,
+                name: "Sour Patch Medley",
+                emoji: "😋",
+                price: 11.99,
+                description: "A tangy mix of sour candies that will make your taste buds dance with delight."
+            },
+            {
+                id: 7,
+                name: "Mint Chocolate Creams",
+                emoji: "🌿",
+                price: 22.99,
+                description: "Refreshing mint-infused chocolate creams with a smooth, velvety texture."
+            },
+            {
+                id: 8,
+                name: "Candy Cane Collection",
+                emoji: "🎋",
+                price: 9.99,
+                description: "Traditional and flavored candy canes perfect for holidays or everyday treats."
+            },
+            {
+                id: 9,
+                name: "Fudge Squares",
+                emoji: "⬛",
+                price: 19.99,
+                description: "Rich and creamy fudge squares in flavors like chocolate, vanilla, and peanut butter."
+            }
+        ];
+
+        // Shopping Cart
+        let cart = [];
+
+        // DOM Elements
+        const productGrid = document.getElementById('productGrid');
+        const cartCount = document.getElementById('cartCount');
+        const cartItems = document.getElementById('cartItems');
+        const cartTotal = document.getElementById('cartTotal');
+        const checkoutBtn = document.getElementById('checkoutBtn');
+        const productSearch = document.getElementById('productSearch');
+        const contactForm = document.getElementById('contactForm');
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            renderProducts();
+            updateCartDisplay();
+            
+            // Search functionality
+            productSearch.addEventListener('input', handleSearch);
+            
+            // Contact form
+            contactForm.addEventListener('submit', handleContactForm);
+            
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        });
+
+        // Render products
+        function renderProducts(productsToRender = products) {
+            productGrid.innerHTML = '';
+            
+            productsToRender.forEach(product => {
+                const productCard = `
+                    <div class="col-lg-4 col-md-6">
+                        <div class="product-card">
+                            <div class="product-emoji">
+                                ${product.emoji}
+                            </div>
+                            <div class="product-body">
+                                <h5 class="card-title">${product.name}</h5>
+                                <p class="card-text">${product.description}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="product-price">${product.price.toFixed(2)}</span>
+                                    <button class="btn btn-add-cart" onclick="addToCart(${product.id})">
+                                        <i class="bi bi-cart-plus"></i> Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                productGrid.innerHTML += productCard;
+            });
+        }
+
+        // Add to cart function
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                cart.push({...product, quantity: 1});
+            }
+            
+            updateCartDisplay();
+            showSuccessToast('Item added to cart successfully!');
+        }
+
+        // Remove from cart
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            updateCartDisplay();
+        }
+
+        // Update quantity
+        function updateQuantity(productId, change) {
+            const item = cart.find(item => item.id === productId);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    removeFromCart(productId);
+                } else {
+                    updateCartDisplay();
+                }
+            }
+        }
+
+        // Update cart display
+        function updateCartDisplay() {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            cartCount.textContent = totalItems;
+            cartTotal.textContent = totalPrice.toFixed(2);
+            checkoutBtn.disabled = cart.length === 0;
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = `
+                    <div class="text-center py-5">
+                        <i class="bi bi-cart-x display-1 text-muted"></i>
+                        <h5 class="text-muted mt-3">Your cart is empty</h5>
+                        <p class="text-muted">Add some sweet treats to get started!</p>
+                    </div>
+                `;
+            } else {
+                cartItems.innerHTML = cart.map(item => `
+                    <div class="cart-item">
+                        <div class="row align-items-center">
+                            <div class="col-2 text-center">
+                                <span style="font-size: 2rem;">${item.emoji}</span>
+                            </div>
+                            <div class="col-6">
+                                <h6 class="mb-0">${item.name}</h6>
+                                <small class="text-muted">${item.price.toFixed(2)} each</small>
+                            </div>
+                            <div class="col-3">
+                                <div class="d-flex align-items-center justify-content-center gap-2">
+                                    <button class="quantity-btn btn btn-outline-secondary btn-sm" onclick="updateQuantity(${item.id}, -1)">-</button>
+                                    <span class="mx-2">${item.quantity}</span>
+                                    <button class="quantity-btn btn btn-outline-secondary btn-sm" onclick="updateQuantity(${item.id}, 1)">+</button>
+                                </div>
+                            </div>
+                            <div class="col-1">
+                                <button class="btn btn-outline-danger btn-sm" onclick="removeFromCart(${item.id})" title="Remove item">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Search functionality
+        function handleSearch(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredProducts = products.filter(product => 
+                product.name.toLowerCase().includes(searchTerm) || 
+                product.description.toLowerCase().includes(searchTerm)
+            );
+            renderProducts(filteredProducts);
+        }
+
+        // Contact form handler
+        function handleContactForm(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Simulate form submission
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            
+            submitBtn.innerHTML = '<span class="loading"></span> Sending...';
+            submitBtn.disabled = true;
+            
+            setTimeout(() => {
+                showSuccessToast('Message sent successfully! We\'ll get back to you soon.');
+                e.target.reset();
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }, 2000);
+        }
+
+        // Show success toast
+        function showSuccessToast(message) {
+            const toast = document.getElementById('successToast');
+            const toastBody = toast.querySelector('.toast-body');
+            toastBody.textContent = message;
+            
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+        }
+
+        // Checkout function
+        checkoutBtn.addEventListener('click', function() {
+            showSuccessToast('Checkout functionality would be implemented here!');
+        });
+
+        // Newsletter subscription
+        document.querySelector('.input-group button').addEventListener('click', function() {
+            const email = this.previousElementSibling.value;
+            if (email) {
+                showSuccessToast('Thanks for subscribing to our newsletter!');
+                this.previousElementSibling.value = '';
+            }
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('shadow');
+            } else {
+                navbar.classList.remove('shadow');
+            }
+        });
+    </script>
+</body>
+</html>
