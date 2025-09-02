@@ -593,6 +593,16 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Protect against extension errors
+        window.addEventListener('error', function(e) {
+            // Only log extension errors, don't let them break our app
+            if (e.filename && e.filename.includes('moz-extension://')) {
+                console.warn('Browser extension error detected and ignored:', e.message);
+                e.preventDefault();
+                return false;
+            }
+        });
+
         (() => {
             'use strict';
 
@@ -692,12 +702,13 @@
                 const card = bingoCards[cardId];
                 if (!card) return false;
 
+                const LETTERS = ['B', 'I', 'N', 'G', 'O'];
+
                 // Check rows
                 for (let row = 0; row < 5; row++) {
                     let rowComplete = true;
-                    const letters = ['B', 'I', 'N', 'G', 'O'];
                     for (let col = 0; col < 5; col++) {
-                        const cellValue = card[letters[col]][row];
+                        const cellValue = card[LETTERS[col]][row];
                         if (cellValue !== 'FREE' && !calledNumbers.includes(cellValue)) {
                             rowComplete = false;
                             break;
@@ -707,11 +718,10 @@
                 }
 
                 // Check columns
-                const letters = ['B', 'I', 'N', 'G', 'O'];
                 for (let col = 0; col < 5; col++) {
                     let colComplete = true;
                     for (let row = 0; row < 5; row++) {
-                        const cellValue = card[letters[col]][row];
+                        const cellValue = card[LETTERS[col]][row];
                         if (cellValue !== 'FREE' && !calledNumbers.includes(cellValue)) {
                             colComplete = false;
                             break;
@@ -723,9 +733,8 @@
                 // Check diagonals
                 // Top-left to bottom-right
                 let diagonal1Complete = true;
-                const letters = ['B', 'I', 'N', 'G', 'O'];
                 for (let i = 0; i < 5; i++) {
-                    const cellValue = card[letters[i]][i];
+                    const cellValue = card[LETTERS[i]][i];
                     if (cellValue !== 'FREE' && !calledNumbers.includes(cellValue)) {
                         diagonal1Complete = false;
                         break;
@@ -736,7 +745,7 @@
                 // Top-right to bottom-left
                 let diagonal2Complete = true;
                 for (let i = 0; i < 5; i++) {
-                    const cellValue = card[letters[i]][4 - i];
+                    const cellValue = card[LETTERS[i]][4 - i];
                     if (cellValue !== 'FREE' && !calledNumbers.includes(cellValue)) {
                         diagonal2Complete = false;
                         break;
