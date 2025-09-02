@@ -672,7 +672,7 @@
                 
                 updateCounters();
                 updateHistoryUI();
-                createNumbersGrid();
+                createNumbersGrid(); // This will create a fresh grid
                 hideModal();
 
                 // Broadcast reset to all card windows
@@ -911,6 +911,12 @@
                     cell.setAttribute('aria-label', `${getLetterForNumber(i)} ${i}`);
                     elements.numbersGrid.appendChild(cell);
                 }
+                
+                // Ensure all cells are in default state
+                const allCells = elements.numbersGrid.querySelectorAll('.number-cell');
+                allCells.forEach(cell => {
+                    cell.classList.remove('called', 'current');
+                });
             }
 
             // Update grid visual state
