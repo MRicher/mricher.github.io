@@ -4,112 +4,75 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🦜 Parrot Bingo Caller - Multi-Card System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #4CAF50, #2E7D32, #1B5E20);
-            color: #333;
-            min-height: 100vh;
-            padding: 1rem;
+            background: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            overflow: hidden;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            overflow: hidden;
+        .main-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         /* Header */
-        .header {
-            background: linear-gradient(45deg, #FF6B35, #F7931E, #FFD23F);
-            padding: 2rem 1rem;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .header h1 {
-            font-size: 2.5rem;
+        .header-section {
+            background: linear-gradient(135deg, #007bff, #0056b3);
             color: white;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            margin-bottom: 0.5rem;
-        }
-
-        .header .subtitle {
-            font-size: 1.2rem;
-            color: #fff;
-            opacity: 0.9;
-        }
-
-        /* Parrot SVG decoration */
-        .parrot-decoration {
-            position: absolute;
-            top: 10px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            opacity: 0.8;
-        }
-
-        /* Card links section */
-        .card-links {
-            background: linear-gradient(135deg, #E8F5E8, #F1F8E9);
-            padding: 1rem;
-            border-bottom: 2px solid #4CAF50;
-        }
-
-        .card-links h3 {
+            padding: 0.5rem 0;
             text-align: center;
-            color: #2E7D32;
-            margin-bottom: 1rem;
-            font-size: 1.3rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        .card-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            flex-wrap: wrap;
+        .header-section h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .header-section .subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin: 0;
+        }
+
+        /* Card links */
+        .card-links-section {
+            background: #e9ecef;
+            border-bottom: 1px solid #dee2e6;
+            padding: 0.4rem 0;
         }
 
         .card-link {
-            background: linear-gradient(45deg, #4CAF50, #66BB6A);
+            background: #28a745;
             color: white;
             text-decoration: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 10px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+            font-weight: 600;
+            font-size: 0.75rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            transition: all 0.2s ease;
         }
 
         .card-link:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+            background: #218838;
+            color: white;
+            transform: translateY(-1px);
         }
 
         /* Winner alerts */
         .winner-alerts {
-            background: linear-gradient(45deg, #FFD700, #FFA500);
-            padding: 1rem;
-            margin: 1rem;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
-            display: none;
+            background: linear-gradient(45deg, #ffc107, #fd7e14);
+            border-radius: 6px;
+            animation: winnerPulse 2s infinite alternate;
         }
 
         .winner-alerts.show {
-            display: block;
-            animation: winnerPulse 2s infinite alternate;
+            display: block !important;
         }
 
         @keyframes winnerPulse {
@@ -117,83 +80,61 @@
             100% { transform: scale(1.02); }
         }
 
-        .winner-title {
-            text-align: center;
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 1rem;
-        }
-
-        .winner-list {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
         .winner-card {
             background: white;
-            padding: 0.8rem 1.2rem;
-            border-radius: 10px;
+            border-radius: 4px;
             font-weight: bold;
-            color: #2E7D32;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            color: #495057;
+            font-size: 0.8rem;
         }
 
         /* Main content area */
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 300px;
-            gap: 2rem;
-            padding: 2rem;
-        }
-
-        .left-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
+        .content-area {
+            flex: 1;
+            padding: 0.5rem;
+            overflow: hidden;
         }
 
         /* Current number display */
         .current-number-section {
+            background: white;
+            border: 2px solid #007bff;
+            border-radius: 8px;
             text-align: center;
-            background: linear-gradient(135deg, #E8F5E8, #F1F8E9);
-            border-radius: 15px;
-            padding: 2rem;
-            border: 3px solid #4CAF50;
+            padding: 0.8rem;
             position: relative;
+            box-shadow: 0 2px 8px rgba(0,123,255,0.15);
         }
 
         .current-number {
-            font-size: 4rem;
-            font-weight: bold;
-            color: #2E7D32;
-            margin: 1rem 0;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #007bff;
+            margin: 0.3rem 0;
+            text-shadow: 0 2px 4px rgba(0,123,255,0.2);
         }
 
         .current-letter {
-            font-size: 1.5rem;
-            color: #FF6B35;
-            font-weight: bold;
-            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            color: #6c757d;
+            font-weight: 600;
+            margin: 0;
         }
 
         .squawk-bubble {
             position: absolute;
-            top: -15px;
-            right: 20px;
-            background: #FFD23F;
-            border-radius: 20px;
-            padding: 0.5rem 1rem;
-            font-size: 0.9rem;
+            top: -8px;
+            right: 10px;
+            background: #ffc107;
+            border-radius: 12px;
+            padding: 0.2rem 0.6rem;
+            font-size: 0.7rem;
             font-weight: bold;
-            color: #333;
+            color: #212529;
             opacity: 0;
             transform: scale(0);
             transition: all 0.3s ease;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
         .squawk-bubble.show {
@@ -201,141 +142,118 @@
             transform: scale(1);
         }
 
-        .squawk-bubble::before {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 20px;
-            width: 0;
-            height: 0;
-            border-left: 8px solid transparent;
-            border-right: 8px solid transparent;
-            border-top: 8px solid #FFD23F;
-        }
-
         /* Buttons */
-        .button-section {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
+        .control-buttons {
+            gap: 0.5rem;
         }
 
-        .btn {
-            padding: 1rem 2rem;
-            font-size: 1.2rem;
-            font-weight: bold;
+        .btn-draw {
+            background: #28a745;
             border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            outline: none;
-            position: relative;
-        }
-
-        .btn:focus {
-            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.5);
-        }
-
-        .btn-primary {
-            background: linear-gradient(45deg, #4CAF50, #66BB6A);
             color: white;
-            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
         }
 
-        .btn-primary:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        .btn-draw:hover:not(:disabled) {
+            background: #218838;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(40,167,69,0.3);
         }
 
-        .btn-primary:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .btn-secondary {
-            background: linear-gradient(45deg, #FF6B35, #F7931E);
+        .btn-reset {
+            background: #dc3545;
+            border: none;
             color: white;
-            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
         }
 
-        .btn-secondary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+        .btn-reset:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(220,53,69,0.3);
         }
 
-        .btn-tertiary {
-            background: linear-gradient(45deg, #9C27B0, #BA68C8);
+        .btn-copy {
+            background: #6f42c1;
+            border: none;
             color: white;
-            box-shadow: 0 4px 15px rgba(156, 39, 176, 0.3);
-            font-size: 1rem;
-            padding: 0.8rem 1.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
         }
 
-        .btn-tertiary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(156, 39, 176, 0.4);
+        .btn-copy:hover {
+            background: #5a32a3;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(111,66,193,0.3);
         }
 
         /* Counters */
-        .counters {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin: 1rem 0;
-        }
-
-        .counter {
+        .counter-card {
             background: white;
-            padding: 1rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
             text-align: center;
-            border: 2px solid #4CAF50;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 0.6rem;
         }
 
         .counter-number {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #2E7D32;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #007bff;
+            margin: 0;
+            line-height: 1;
         }
 
         .counter-label {
-            font-size: 0.9rem;
-            color: #666;
-            margin-top: 0.5rem;
+            font-size: 0.75rem;
+            color: #6c757d;
+            font-weight: 500;
+            margin: 0;
+            text-transform: uppercase;
         }
 
-        /* BINGO Grid */
-        .bingo-grid {
+        /* BINGO Grid - Ultra compact like letsplaybingo.io */
+        .bingo-board {
             background: white;
-            border-radius: 15px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            padding: 0.4rem;
+            box-shadow: 0 2px 8px rgba(0,123,255,0.15);
         }
 
-        .grid-header {
+        .bingo-headers {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 0.5rem;
-            margin-bottom: 1rem;
+            gap: 2px;
+            margin-bottom: 0.3rem;
         }
 
         .letter-header {
-            background: linear-gradient(45deg, #FF6B35, #F7931E);
+            background: #007bff;
             color: white;
-            font-size: 1.5rem;
-            font-weight: bold;
+            font-size: 0.8rem;
+            font-weight: 700;
             text-align: center;
-            padding: 0.8rem;
-            border-radius: 8px;
+            padding: 0.3rem;
+            border-radius: 3px;
         }
 
         .numbers-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 0.3rem;
+            gap: 1px;
         }
 
         .number-cell {
@@ -343,304 +261,324 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            font-size: 0.9rem;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-            background: #f0f0f0;
-            color: #333;
-            border: 1px solid #ddd;
+            font-weight: 600;
+            font-size: 0.4rem;
+            border-radius: 2px;
+            transition: all 0.2s ease;
+            background: #f8f9fa;
+            color: #495057;
+            border: 1px solid #e9ecef;
+            height: 14px;
+            min-height: 14px;
+            max-height: 14px;
         }
 
         .number-cell.called {
-            background: linear-gradient(45deg, #4CAF50, #66BB6A);
+            background: #28a745;
             color: white;
-            transform: scale(1.05);
-            box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);
+            font-weight: 700;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.2);
         }
 
         .number-cell.current {
-            background: linear-gradient(45deg, #FFD23F, #FFA726);
-            color: #333;
-            animation: pulse 1s infinite alternate;
-            transform: scale(1.1);
-            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.6);
+            background: #ffc107;
+            color: #212529;
+            font-weight: 700;
+            animation: currentPulse 1s infinite alternate;
+            box-shadow: 0 0 8px rgba(255,193,7,0.8);
+            z-index: 10;
+            position: relative;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1.1); }
-            100% { transform: scale(1.15); }
+        @keyframes currentPulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
         }
 
-        /* Right panel - History */
-        .right-panel {
-            background: #f8f9fa;
-            border-radius: 15px;
-            padding: 1.5rem;
-            border: 2px solid #e9ecef;
+        /* History panel */
+        .history-panel {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
         .history-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .history-title {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #2E7D32;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            padding: 0.6rem;
+            border-radius: 8px 8px 0 0;
         }
 
         .history-list {
-            max-height: 400px;
+            flex: 1;
             overflow-y: auto;
-            background: white;
-            border-radius: 10px;
-            padding: 1rem;
-            border: 1px solid #ddd;
+            padding: 0.4rem;
         }
 
         .history-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(90deg, #E8F5E8, #F1F8E9);
-            border-radius: 8px;
-            border-left: 4px solid #4CAF50;
+            background: #f8f9fa;
+            border-left: 3px solid #007bff;
+            border-radius: 3px;
+            padding: 0.3rem 0.6rem;
+            margin-bottom: 0.2rem;
+            font-size: 0.8rem;
         }
 
         .history-number {
-            font-weight: bold;
-            font-size: 1.1rem;
-            color: #2E7D32;
+            font-weight: 600;
+            color: #007bff;
+        }
+
+        /* Game complete */
+        .game-complete {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            border-radius: 8px;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            box-shadow: 0 2px 8px rgba(40,167,69,0.3);
         }
 
         /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal.show {
-            display: flex;
-        }
-
         .modal-content {
-            background: white;
-            padding: 2rem;
-            border-radius: 15px;
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
+            border-radius: 8px;
+            border: none;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
-        .modal h3 {
-            margin-bottom: 1rem;
-            color: #2E7D32;
+        .modal-header {
+            background: #007bff;
+            color: white;
+            border-radius: 8px 8px 0 0;
+            border-bottom: none;
         }
 
-        .modal-buttons {
+        .modal-header .btn-close {
+            filter: invert(1);
+        }
+
+        /* Ensure everything fits on screen */
+        .row.main-row {
+            height: calc(100vh - 120px);
+            margin: 0;
+        }
+
+        .left-panel {
+            height: 100%;
             display: flex;
-            gap: 1rem;
-            justify-content: center;
-            margin-top: 1.5rem;
+            flex-direction: column;
         }
 
-        /* Game complete message */
-        .game-complete {
-            text-align: center;
-            background: linear-gradient(135deg, #FFD23F, #FFA726);
-            padding: 2rem;
-            border-radius: 15px;
-            margin: 1rem 0;
-            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+        .bingo-board {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
         }
 
-        .game-complete h2 {
-            color: #333;
-            margin-bottom: 1rem;
+        .numbers-grid {
+            flex: 1;
         }
 
         /* Screen reader only */
         .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border: 0;
+            position: absolute !important;
+            width: 1px !important;
+            height: 1px !important;
+            padding: 0 !important;
+            margin: -1px !important;
+            overflow: hidden !important;
+            clip: rect(0, 0, 0, 0) !important;
+            white-space: nowrap !important;
+            border: 0 !important;
         }
 
-        /* Responsive design */
+        /* Mobile responsive */
         @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-                padding: 1rem;
+            .header-section h1 {
+                font-size: 1.2rem;
+            }
+            
+            .current-number {
+                font-size: 2.5rem;
+            }
+            
+            .number-cell {
+                font-size: 0.35rem;
+                height: 12px;
+                min-height: 12px;
+                max-height: 12px;
+            }
+            
+            .letter-header {
+                font-size: 0.7rem;
+                padding: 0.2rem;
             }
 
-            .header h1 {
-                font-size: 2rem;
+            .row.main-row {
+                height: calc(100vh - 140px);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .number-cell {
+                font-size: 0.3rem;
+                height: 10px;
+                min-height: 10px;
+                max-height: 10px;
+            }
+
+            .letter-header {
+                font-size: 0.6rem;
             }
 
             .current-number {
-                font-size: 3rem;
-            }
-
-            .counters {
-                flex-direction: column;
-                gap: 1rem;
-                align-items: center;
-            }
-
-            .counter {
-                width: 200px;
-            }
-
-            .button-section {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .btn {
-                width: 100%;
-                max-width: 300px;
-            }
-
-            .numbers-grid {
-                gap: 0.2rem;
-            }
-
-            .number-cell {
-                font-size: 0.8rem;
-            }
-
-            .parrot-decoration {
-                display: none;
-            }
-
-            .card-buttons {
-                justify-content: center;
-            }
-
-            .card-link {
-                padding: 0.6rem 1rem;
-                font-size: 0.9rem;
+                font-size: 2rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <h1>🦜 Parrot Partners Bingo Caller</h1>
-            <p class="subtitle">Squawk your way to victory!</p>
+    <div class="main-container">
+        <!-- Header -->
+        <header class="header-section">
+            <div class="container-fluid">
+                <h1>🦜 Parrot Partners Bingo Caller</h1>
+                <p class="subtitle">Professional Bingo Game Management</p>
+            </div>
         </header>
 
         <!-- Card Links Section -->
-        <div class="card-links">
-            <h3>🎯 Open Bingo Cards (Right-click to open in new tab)</h3>
-            <div class="card-buttons">
-                <a href="parrt.html" target="_blank" class="card-link">Card PARRT</a>
-                <a href="sqawk.html" target="_blank" class="card-link">Card SQAWK</a>
-                <a href="bingo-card-WINGS.html" target="_blank" class="card-link">Card WINGS</a>
-                <a href="bingo-card-FLYER.html" target="_blank" class="card-link">Card FLYER</a>
-                <a href="bingo-card-BIRDY.html" target="_blank" class="card-link">Card BIRDY</a>
+        <div class="card-links-section">
+            <div class="container-fluid">
+                <div class="d-flex justify-content-center gap-2 flex-wrap align-items-center">
+                    <span class="text-dark fw-bold small">🎯 Bingo Cards:</span>
+                    <a href="parrt.html" target="_blank" class="card-link">PARRT</a>
+                    <a href="sqawk.html" target="_blank" class="card-link">SQAWK</a>
+                    <a href="bingo-card-WINGS.html" target="_blank" class="card-link">WINGS</a>
+                    <a href="bingo-card-FLYER.html" target="_blank" class="card-link">FLYER</a>
+                    <a href="bingo-card-BIRDY.html" target="_blank" class="card-link">BIRDY</a>
+                </div>
             </div>
         </div>
 
         <!-- Winner Alerts -->
-        <div class="winner-alerts" id="winnerAlerts">
-            <div class="winner-title">🎉 BINGO WINNERS! 🎉</div>
-            <div class="winner-list" id="winnerList"></div>
+        <div class="winner-alerts p-2 mx-2 d-none" id="winnerAlerts">
+            <div class="text-center fw-bold mb-1">🎉 BINGO WINNERS! 🎉</div>
+            <div class="d-flex justify-content-center gap-2 flex-wrap" id="winnerList"></div>
         </div>
 
-        <main class="main-content">
-            <div class="left-panel">
-                <section class="current-number-section" aria-live="polite" aria-atomic="true">
-                    <div class="squawk-bubble" id="squawkBubble">Squawk!</div>
-                    <div class="current-letter" id="currentLetter">Ready to play!</div>
-                    <div class="current-number" id="currentNumber">--</div>
-                    <div id="announcer" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
-                </section>
+        <!-- Main Content -->
+        <div class="content-area">
+            <div class="container-fluid h-100">
+                <div class="row g-2 main-row">
+                    <!-- Left Panel -->
+                    <div class="col-lg-9">
+                        <div class="left-panel">
+                            <div class="row g-2 mb-2">
+                                <!-- Current Number Display -->
+                                <div class="col-md-5">
+                                    <div class="current-number-section position-relative">
+                                        <div class="squawk-bubble" id="squawkBubble">Squawk!</div>
+                                        <div class="current-letter" id="currentLetter">Ready to play!</div>
+                                        <div class="current-number" id="currentNumber">--</div>
+                                        <div id="announcer" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+                                    </div>
+                                </div>
 
-                <div class="button-section">
-                    <button class="btn btn-primary" id="drawButton" aria-describedby="drawHelp">
-                        🎯 Draw Number
-                    </button>
-                    <button class="btn btn-secondary" id="resetButton" aria-describedby="resetHelp">
-                        🔄 Reset Game
-                    </button>
-                    <button class="btn btn-tertiary" id="copyButton" aria-describedby="copyHelp">
-                        📋 Copy History
-                    </button>
-                </div>
+                                <!-- Controls -->
+                                <div class="col-md-4">
+                                    <div class="d-flex flex-column gap-2 h-100">
+                                        <button class="btn btn-draw flex-fill" id="drawButton">
+                                            🎯 Draw Number
+                                        </button>
+                                        <div class="d-flex gap-1">
+                                            <button class="btn btn-reset flex-fill" id="resetButton">
+                                                🔄 Reset
+                                            </button>
+                                            <button class="btn btn-copy flex-fill" id="copyButton">
+                                                📋 Copy
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
 
-                <div class="counters">
-                    <div class="counter">
-                        <div class="counter-number" id="drawnCount">0</div>
-                        <div class="counter-label">Drawn</div>
+                                <!-- Counters -->
+                                <div class="col-md-3">
+                                    <div class="row g-1 h-100">
+                                        <div class="col-6">
+                                            <div class="counter-card h-100 d-flex flex-column justify-content-center">
+                                                <div class="counter-number" id="drawnCount">0</div>
+                                                <div class="counter-label">Drawn</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="counter-card h-100 d-flex flex-column justify-content-center">
+                                                <div class="counter-number" id="remainingCount">75</div>
+                                                <div class="counter-label">Left</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Game Complete Message -->
+                            <div id="gameComplete" class="game-complete mb-2 d-none">
+                                <h6 class="mb-1">🎉 All Numbers Called!</h6>
+                                <p class="mb-0 small">Game complete! Ready for a new round.</p>
+                            </div>
+
+                            <!-- BINGO Board -->
+                            <div class="bingo-board">
+                                <div class="bingo-headers">
+                                    <div class="letter-header">B</div>
+                                    <div class="letter-header">I</div>
+                                    <div class="letter-header">N</div>
+                                    <div class="letter-header">G</div>
+                                    <div class="letter-header">O</div>
+                                </div>
+                                <div class="numbers-grid" id="numbersGrid"></div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="counter">
-                        <div class="counter-number" id="remainingCount">75</div>
-                        <div class="counter-label">Remaining</div>
+
+                    <!-- Right Panel - History -->
+                    <div class="col-lg-3">
+                        <div class="history-panel">
+                            <div class="history-header">
+                                <h6 class="text-primary fw-bold mb-0">📜 Call History</h6>
+                            </div>
+                            <div class="history-list" id="historyList">
+                                <p class="text-center text-muted small mb-0 p-2">
+                                    Numbers will appear here as they're called
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-
-                <div id="gameComplete" class="game-complete" style="display: none;">
-                    <h2>🎉 All numbers called!</h2>
-                    <p>Great job, caller! Time for a new game.</p>
-                </div>
-
-                <section class="bingo-grid">
-                    <div class="grid-header">
-                        <div class="letter-header">B</div>
-                        <div class="letter-header">I</div>
-                        <div class="letter-header">N</div>
-                        <div class="letter-header">G</div>
-                        <div class="letter-header">O</div>
-                    </div>
-                    <div class="numbers-grid" id="numbersGrid"></div>
-                </section>
             </div>
-
-            <aside class="right-panel">
-                <div class="history-header">
-                    <h2 class="history-title">📜 Call History</h2>
-                </div>
-                <div class="history-list" id="historyList">
-                    <p style="text-align: center; color: #666; font-style: italic;">
-                        Numbers will appear here as they're called
-                    </p>
-                </div>
-            </aside>
-        </main>
+        </div>
     </div>
 
     <!-- Confirmation Modal -->
-    <div class="modal" id="confirmModal">
-        <div class="modal-content">
-            <h3 id="modalTitle">Confirm Reset</h3>
-            <p id="modalMessage">Are you sure you want to reset the game?</p>
-            <div class="modal-buttons">
-                <button class="btn btn-primary" id="modalYes">Yes</button>
-                <button class="btn btn-secondary" id="modalNo">No</button>
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title" id="modalTitle">Confirm Reset</h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="modalMessage" class="mb-0">Are you sure you want to reset the game?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="modalNo">No</button>
+                    <button type="button" class="btn btn-primary" id="modalYes">Yes</button>
+                </div>
             </div>
         </div>
     </div>
@@ -652,6 +590,7 @@
         <div id="copyHelp">Copy the call history to clipboard</div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <script>
         (() => {
             'use strict';
@@ -663,6 +602,7 @@
             let isResetting = false;
             let resetStep = 0;
             let winners = new Set();
+            let modalInstance = null;
 
             // Bingo card definitions with unique 5-letter IDs
             const bingoCards = {
@@ -743,7 +683,7 @@
                 // Reset UI
                 elements.currentNumber.textContent = '--';
                 elements.currentLetter.textContent = 'Ready to play!';
-                elements.gameComplete.style.display = 'none';
+                elements.gameComplete.classList.add('d-none');
                 elements.drawButton.disabled = false;
                 elements.winnerAlerts.classList.remove('show');
                 
@@ -802,6 +742,7 @@
                 // Check diagonals
                 // Top-left to bottom-right
                 let diagonal1Complete = true;
+                const letters = ['B', 'I', 'N', 'G', 'O'];
                 for (let i = 0; i < 5; i++) {
                     const cellValue = card[letters[i]][i];
                     if (cellValue !== 'FREE' && !calledNumbers.includes(cellValue)) {
@@ -847,29 +788,25 @@
             function updateWinnerDisplay() {
                 if (winners.size > 0) {
                     elements.winnerList.innerHTML = Array.from(winners).map(cardId => 
-                        `<div class="winner-card">Card ${cardId}</div>`
+                        `<div class="winner-card p-1 px-2">Card ${cardId}</div>`
                     ).join('');
                     elements.winnerAlerts.classList.add('show');
+                    elements.winnerAlerts.classList.remove('d-none');
                 } else {
                     elements.winnerAlerts.classList.remove('show');
+                    elements.winnerAlerts.classList.add('d-none');
                 }
             }
 
             // Broadcast message to all card windows
             function broadcastToCards(message) {
-                // Use localStorage to communicate with card windows
-                const timestamp = Date.now();
-                const messageWithTimestamp = { ...message, timestamp };
-                localStorage.setItem('bingoCallerMessage', JSON.stringify(messageWithTimestamp));
+                // Use a simple variable to communicate with card windows
+                window.bingoCallerMessage = { ...message, timestamp: Date.now() };
                 
-                // Clean up old message after a short delay
+                // Clean up after a short delay
                 setTimeout(() => {
-                    const current = localStorage.getItem('bingoCallerMessage');
-                    if (current) {
-                        const parsed = JSON.parse(current);
-                        if (parsed.timestamp === timestamp) {
-                            localStorage.removeItem('bingoCallerMessage');
-                        }
+                    if (window.bingoCallerMessage && window.bingoCallerMessage.timestamp === message.timestamp) {
+                        delete window.bingoCallerMessage;
                     }
                 }, 1000);
             }
@@ -928,7 +865,7 @@
 
                 // Check if game is complete
                 if (remainingNumbers.length === 0) {
-                    elements.gameComplete.style.display = 'block';
+                    elements.gameComplete.classList.remove('d-none');
                     elements.drawButton.disabled = true;
                 } else {
                     // Re-enable button after short delay to prevent spam
@@ -959,7 +896,7 @@
             function updateHistoryUI() {
                 if (calledNumbers.length === 0) {
                     elements.historyList.innerHTML = `
-                        <p style="text-align: center; color: #666; font-style: italic;">
+                        <p class="text-center text-muted small mb-0 p-2">
                             Numbers will appear here as they're called
                         </p>
                     `;
@@ -1015,14 +952,21 @@
                 }
             }
 
-            // Show modal
+            // Show modal with Bootstrap
             function showModal(title, message, onYes) {
                 elements.modalTitle.textContent = title;
                 elements.modalMessage.textContent = message;
-                elements.confirmModal.classList.add('show');
+                
+                if (!modalInstance) {
+                    modalInstance = new bootstrap.Modal(elements.confirmModal);
+                }
+                
+                modalInstance.show();
                 
                 // Focus the Yes button for accessibility
-                elements.modalYes.focus();
+                setTimeout(() => {
+                    elements.modalYes.focus();
+                }, 200);
                 
                 // Set up event handlers
                 elements.modalYes.onclick = () => {
@@ -1035,7 +979,9 @@
 
             // Hide modal
             function hideModal() {
-                elements.confirmModal.classList.remove('show');
+                if (modalInstance) {
+                    modalInstance.hide();
+                }
                 resetStep = 0;
                 isResetting = false;
             }
@@ -1081,7 +1027,7 @@
                     // Visual feedback
                     const originalText = elements.copyButton.textContent;
                     elements.copyButton.textContent = '✅ Copied!';
-                    elements.copyButton.style.background = 'linear-gradient(45deg, #4CAF50, #66BB6A)';
+                    elements.copyButton.style.background = '#28a745';
                     
                     setTimeout(() => {
                         elements.copyButton.textContent = originalText;
@@ -1130,16 +1076,15 @@
 
             // Close modal on Escape key
             document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && elements.confirmModal.classList.contains('show')) {
+                if (e.key === 'Escape' && modalInstance && elements.confirmModal.classList.contains('show')) {
                     hideModal();
                 }
             });
 
-            // Close modal when clicking outside
-            elements.confirmModal.addEventListener('click', (e) => {
-                if (e.target === elements.confirmModal) {
-                    hideModal();
-                }
+            // Initialize Bootstrap modal instance
+            elements.confirmModal.addEventListener('hidden.bs.modal', () => {
+                resetStep = 0;
+                isResetting = false;
             });
 
             // Initialize the game on load
