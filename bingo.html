@@ -243,7 +243,7 @@
             text-transform: uppercase;
         }
 
-        /* BINGO Grid - Ultra compact like letsplaybingo.io */
+        /* BINGO Grid - Shows proper 5x5 layout with ranges per column */
         .bingo-board {
             background: white;
             border: 2px solid #007bff;
@@ -278,11 +278,15 @@
         .number-cell {
             background: #f8f9fa;
             color: #495057;
-            font-size: 1rem;
+            font-size: 0.7rem;
             font-weight: 600;
             text-align: center;
-            padding: 0.3rem;
+            padding: 0.2rem;
             border-radius: 3px;
+            min-height: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .number-cell.called {
@@ -402,10 +406,8 @@
             }
             
             .number-cell {
-                font-size: 0.35rem;
-                height: 12px;
-                min-height: 12px;
-                max-height: 12px;
+                font-size: 0.5rem;
+                min-height: 1.2rem;
             }
             
             .letter-header {
@@ -425,10 +427,8 @@
 
         @media (max-width: 576px) {
             .number-cell {
-                font-size: 0.3rem;
-                height: 10px;
-                min-height: 10px;
-                max-height: 10px;
+                font-size: 0.4rem;
+                min-height: 1rem;
             }
 
             .letter-header {
@@ -1006,17 +1006,25 @@
                 }).join('');
             }
 
-            // Create the numbers grid
+            // Create the numbers grid - FIXED VERSION
             function createNumbersGrid() {
                 elements.numbersGrid.innerHTML = '';
                 
-                for (let i = 1; i <= 75; i++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'number-cell';
-                    cell.textContent = i;
-                    cell.setAttribute('data-number', i);
-                    cell.setAttribute('aria-label', `${getLetterForNumber(i)} ${i}`);
-                    elements.numbersGrid.appendChild(cell);
+                // Create a proper 5x5 BINGO grid with correct number ranges
+                for (let row = 0; row < 5; row++) {
+                    for (let col = 0; col < 5; col++) {
+                        const cell = document.createElement('div');
+                        cell.className = 'number-cell';
+                        
+                        // Calculate the actual number for this position
+                        // B: 1-15, I: 16-30, N: 31-45, G: 46-60, O: 61-75
+                        const baseNumber = (col * 15) + (row + 1);
+                        
+                        cell.textContent = baseNumber;
+                        cell.setAttribute('data-number', baseNumber);
+                        cell.setAttribute('aria-label', `${getLetterForNumber(baseNumber)} ${baseNumber}`);
+                        elements.numbersGrid.appendChild(cell);
+                    }
                 }
             }
 
