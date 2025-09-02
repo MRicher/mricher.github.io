@@ -88,6 +88,28 @@
             font-size: 0.8rem;
         }
 
+        /* Game mode display */
+        .game-mode-display {
+            background: linear-gradient(135deg, #6f42c1, #5a32a3);
+            color: white;
+            border-radius: 6px;
+            padding: 0.5rem;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .game-mode-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .game-mode-desc {
+            font-size: 0.7rem;
+            opacity: 0.9;
+            margin: 0;
+        }
+
         /* Main content area */
         .content-area {
             flex: 1;
@@ -169,23 +191,6 @@
             color: white;
         }
 
-        .btn-reset {
-            background: #dc3545;
-            border: none;
-            color: white;
-            font-weight: 600;
-            font-size: 0.9rem;
-            padding: 0.6rem 1.2rem;
-            border-radius: 6px;
-            transition: all 0.2s ease;
-        }
-
-        .btn-reset:hover {
-            background: #c82333;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(220,53,69,0.3);
-        }
-
         .btn-copy {
             background: #6f42c1;
             border: none;
@@ -201,6 +206,39 @@
             background: #5a32a3;
             transform: translateY(-1px);
             box-shadow: 0 4px 8px rgba(111,66,193,0.3);
+        }
+
+        /* Game mode buttons */
+        .game-mode-buttons {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn-game {
+            background: #17a2b8;
+            border: none;
+            color: white;
+            font-weight: 600;
+            font-size: 0.6rem;
+            padding: 0.3rem 0.2rem;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            text-align: center;
+            line-height: 1.1;
+        }
+
+        .btn-game:hover {
+            background: #138496;
+            transform: translateY(-1px);
+            color: white;
+        }
+
+        .btn-game.active {
+            background: #ffc107;
+            color: #212529;
+            font-weight: 700;
         }
 
         /* Counters */
@@ -314,6 +352,7 @@
             flex: 1;
             overflow-y: auto;
             padding: 0.4rem;
+            max-height: calc(100vh - 400px);
         }
 
         .history-item {
@@ -338,24 +377,6 @@
             text-align: center;
             padding: 1rem;
             box-shadow: 0 2px 8px rgba(40,167,69,0.3);
-        }
-
-        /* Modal */
-        .modal-content {
-            border-radius: 8px;
-            border: none;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
-        .modal-header {
-            background: #007bff;
-            color: white;
-            border-radius: 8px 8px 0 0;
-            border-bottom: none;
-        }
-
-        .modal-header .btn-close {
-            filter: invert(1);
         }
 
         /* Ensure everything fits on screen */
@@ -419,6 +440,11 @@
             .row.main-row {
                 height: calc(100vh - 140px);
             }
+
+            .btn-game {
+                font-size: 0.5rem;
+                padding: 0.2rem 0.1rem;
+            }
         }
 
         @media (max-width: 576px) {
@@ -435,6 +461,10 @@
 
             .current-number {
                 font-size: 2rem;
+            }
+
+            .btn-game {
+                font-size: 0.45rem;
             }
         }
     </style>
@@ -465,6 +495,12 @@
             <div class="d-flex justify-content-center gap-2 flex-wrap" id="winnerList"></div>
         </div>
 
+        <!-- Game Mode Display -->
+        <div class="game-mode-display mx-2 d-none" id="gameModeDisplay">
+            <div class="game-mode-title" id="gameModeTitle">Game Mode</div>
+            <div class="game-mode-desc" id="gameModeDesc">Select a game mode to begin</div>
+        </div>
+
         <!-- Main Content -->
         <div class="content-area">
             <div class="container-fluid h-100">
@@ -474,29 +510,24 @@
                         <div class="left-panel">
                             <div class="row g-2 mb-2">
                                 <!-- Current Number Display -->
-                                <div class="col-md-5">
+                                <div class="col-md-6">
                                     <div class="current-number-section position-relative">
                                         <div class="squawk-bubble" id="squawkBubble">Squawk!</div>
-                                        <div class="current-letter" id="currentLetter">Ready to play!</div>
+                                        <div class="current-letter" id="currentLetter">Select a game mode!</div>
                                         <div class="current-number" id="currentNumber">--</div>
                                         <div id="announcer" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
                                     </div>
                                 </div>
 
                                 <!-- Controls -->
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <div class="d-flex flex-column gap-2 h-100">
-                                        <button class="btn btn-draw flex-fill" id="drawButton">
+                                        <button class="btn btn-draw flex-fill" id="drawButton" disabled>
                                             🎯 Draw Number
                                         </button>
-                                        <div class="d-flex gap-1">
-                                            <button class="btn btn-reset flex-fill" id="resetButton">
-                                                🔄 Reset
-                                            </button>
-                                            <button class="btn btn-copy flex-fill" id="copyButton">
-                                                📋 Copy
-                                            </button>
-                                        </div>
+                                        <button class="btn btn-copy flex-fill" id="copyButton">
+                                            📋 Copy History
+                                        </button>
                                     </div>
                                 </div>
 
@@ -522,7 +553,7 @@
                             <!-- Game Complete Message -->
                             <div id="gameComplete" class="game-complete mb-2 d-none">
                                 <h6 class="mb-1">🎉 All Numbers Called!</h6>
-                                <p class="mb-0 small">Game complete! Ready for a new round.</p>
+                                <p class="mb-0 small">Game complete! Select a new game mode to start over.</p>
                             </div>
 
                             <!-- BINGO Board -->
@@ -539,15 +570,40 @@
                         </div>
                     </div>
 
-                    <!-- Right Panel - History -->
+                    <!-- Right Panel - Game Modes & History -->
                     <div class="col-lg-3">
                         <div class="history-panel">
+                            <!-- Game Mode Buttons -->
+                            <div class="p-2 border-bottom">
+                                <h6 class="text-primary fw-bold mb-2 text-center">🎮 Game Modes</h6>
+                                <div class="game-mode-buttons">
+                                    <button class="btn-game" data-game="corners" title="4 Corners - Win with all 4 corner spots">
+                                        4<br>Corners
+                                    </button>
+                                    <button class="btn-game" data-game="twolines" title="2 Lines - Win with any 2 complete lines">
+                                        2<br>Lines
+                                    </button>
+                                    <button class="btn-game" data-game="postage" title="Postage Stamp - Win with any 2x2 corner square">
+                                        Postage<br>Stamp
+                                    </button>
+                                    <button class="btn-game" data-game="inner" title="Inner Square - Win with the 3x3 center square">
+                                        Inner<br>Square
+                                    </button>
+                                    <button class="btn-game" data-game="fullcard" title="Full Card - Win with complete card">
+                                        Full<br>Card
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- History Header -->
                             <div class="history-header">
                                 <h6 class="text-primary fw-bold mb-0">📜 Call History</h6>
                             </div>
+
+                            <!-- History List (Scrollable) -->
                             <div class="history-list" id="historyList">
                                 <p class="text-center text-muted small mb-0 p-2">
-                                    Numbers will appear here as they're called
+                                    Select a game mode and start calling numbers
                                 </p>
                             </div>
                         </div>
@@ -557,29 +613,9 @@
         </div>
     </div>
 
-    <!-- Confirmation Modal -->
-    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-sm">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h6 class="modal-title" id="modalTitle">Confirm Reset</h6>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p id="modalMessage" class="mb-0">Are you sure you want to reset the game?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="modalNo">No</button>
-                    <button type="button" class="btn btn-primary" id="modalYes">Yes</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Hidden help text for screen readers -->
     <div class="sr-only">
         <div id="drawHelp">Press Space or Enter to draw a number</div>
-        <div id="resetHelp">Press R to reset the game</div>
         <div id="copyHelp">Copy the call history to clipboard</div>
     </div>
 
@@ -602,10 +638,140 @@
             let remainingNumbers = [];
             let calledNumbers = [];
             let currentNumber = null;
-            let isResetting = false;
-            let resetStep = 0;
             let winners = new Set();
-            let modalInstance = null;
+            let currentGameMode = null;
+
+            // Game mode definitions
+            const gameModes = {
+                corners: {
+                    name: "4 Corners",
+                    description: "Win with all 4 corner spots",
+                    checkWin: (card) => {
+                        const corners = [
+                            card.B[0], card.B[4], card.O[0], card.O[4]
+                        ];
+                        return corners.every(num => num === 'FREE' || calledNumbers.includes(num));
+                    }
+                },
+                twolines: {
+                    name: "2 Lines",
+                    description: "Win with any 2 complete lines (rows, columns, or diagonals)",
+                    checkWin: (card) => {
+                        const LETTERS = ['B', 'I', 'N', 'G', 'O'];
+                        let linesComplete = 0;
+
+                        // Check rows
+                        for (let row = 0; row < 5; row++) {
+                            let rowComplete = true;
+                            for (let col = 0; col < 5; col++) {
+                                const cellValue = card[LETTERS[col]][row];
+                                if (cellValue !== 'FREE' && !calledNumbers.includes(cellValue)) {
+                                    rowComplete = false;
+                                    break;
+                                }
+                            }
+                            if (rowComplete) linesComplete++;
+                        }
+
+                        // Check columns
+                        for (let col = 0; col < 5; col++) {
+                            let colComplete = true;
+                            for (let row = 0; row < 5; row++) {
+                                const cellValue = card[LETTERS[col]][row];
+                                if (cellValue !== 'FREE' && !calledNumbers.includes(cellValue)) {
+                                    colComplete = false;
+                                    break;
+                                }
+                            }
+                            if (colComplete) linesComplete++;
+                        }
+
+                        // Check diagonals
+                        let diagonal1Complete = true;
+                        for (let i = 0; i < 5; i++) {
+                            const cellValue = card[LETTERS[i]][i];
+                            if (cellValue !== 'FREE' && !calledNumbers.includes(cellValue)) {
+                                diagonal1Complete = false;
+                                break;
+                            }
+                        }
+                        if (diagonal1Complete) linesComplete++;
+
+                        let diagonal2Complete = true;
+                        for (let i = 0; i < 5; i++) {
+                            const cellValue = card[LETTERS[i]][4 - i];
+                            if (cellValue !== 'FREE' && !calledNumbers.includes(cellValue)) {
+                                diagonal2Complete = false;
+                                break;
+                            }
+                        }
+                        if (diagonal2Complete) linesComplete++;
+
+                        return linesComplete >= 2;
+                    }
+                },
+                postage: {
+                    name: "Postage Stamp",
+                    description: "Win with any 2x2 corner square",
+                    checkWin: (card) => {
+                        const LETTERS = ['B', 'I', 'N', 'G', 'O'];
+                        
+                        // Check all four 2x2 corners
+                        const corners = [
+                            // Top-left
+                            [[0,0], [0,1], [1,0], [1,1]],
+                            // Top-right
+                            [[0,3], [0,4], [1,3], [1,4]],
+                            // Bottom-left
+                            [[3,0], [3,1], [4,0], [4,1]],
+                            // Bottom-right
+                            [[3,3], [3,4], [4,3], [4,4]]
+                        ];
+
+                        return corners.some(corner => {
+                            return corner.every(([col, row]) => {
+                                const cellValue = card[LETTERS[col]][row];
+                                return cellValue === 'FREE' || calledNumbers.includes(cellValue);
+                            });
+                        });
+                    }
+                },
+                inner: {
+                    name: "Inner Square",
+                    description: "Win with the 3x3 center square (9 spots including FREE)",
+                    checkWin: (card) => {
+                        const LETTERS = ['B', 'I', 'N', 'G', 'O'];
+                        
+                        // Check the 3x3 inner square (columns 1-3, rows 1-3)
+                        for (let col = 1; col <= 3; col++) {
+                            for (let row = 1; row <= 3; row++) {
+                                const cellValue = card[LETTERS[col]][row];
+                                if (cellValue !== 'FREE' && !calledNumbers.includes(cellValue)) {
+                                    return false;
+                                }
+                            }
+                        }
+                        return true;
+                    }
+                },
+                fullcard: {
+                    name: "Full Card",
+                    description: "Win with complete card (all 25 spots including FREE)",
+                    checkWin: (card) => {
+                        const LETTERS = ['B', 'I', 'N', 'G', 'O'];
+                        
+                        for (let col = 0; col < 5; col++) {
+                            for (let row = 0; row < 5; row++) {
+                                const cellValue = card[LETTERS[col]][row];
+                                if (cellValue !== 'FREE' && !calledNumbers.includes(cellValue)) {
+                                    return false;
+                                }
+                            }
+                        }
+                        return true;
+                    }
+                }
+            };
 
             // Bingo card definitions with unique 5-letter IDs
             const bingoCards = {
@@ -628,7 +794,6 @@
             // DOM elements
             const elements = {
                 drawButton: document.getElementById('drawButton'),
-                resetButton: document.getElementById('resetButton'),
                 copyButton: document.getElementById('copyButton'),
                 currentNumber: document.getElementById('currentNumber'),
                 currentLetter: document.getElementById('currentLetter'),
@@ -639,13 +804,11 @@
                 gameComplete: document.getElementById('gameComplete'),
                 squawkBubble: document.getElementById('squawkBubble'),
                 announcer: document.getElementById('announcer'),
-                confirmModal: document.getElementById('confirmModal'),
-                modalTitle: document.getElementById('modalTitle'),
-                modalMessage: document.getElementById('modalMessage'),
-                modalYes: document.getElementById('modalYes'),
-                modalNo: document.getElementById('modalNo'),
                 winnerAlerts: document.getElementById('winnerAlerts'),
-                winnerList: document.getElementById('winnerList')
+                winnerList: document.getElementById('winnerList'),
+                gameModeDisplay: document.getElementById('gameModeDisplay'),
+                gameModeTitle: document.getElementById('gameModeTitle'),
+                gameModeDesc: document.getElementById('gameModeDesc')
             };
 
             // Initialize the game
@@ -653,8 +816,6 @@
                 remainingNumbers = [];
                 calledNumbers = [];
                 currentNumber = null;
-                isResetting = false;
-                resetStep = 0;
                 winners.clear();
 
                 // Fill remaining numbers array with 1-75
@@ -664,19 +825,46 @@
 
                 // Reset UI
                 elements.currentNumber.textContent = '--';
-                elements.currentLetter.textContent = 'Ready to play!';
+                elements.currentLetter.textContent = currentGameMode ? 'Ready to play!' : 'Select a game mode!';
                 elements.gameComplete.classList.add('d-none');
-                elements.drawButton.disabled = false;
+                elements.drawButton.disabled = !currentGameMode;
                 elements.winnerAlerts.classList.remove('show');
                 elements.winnerAlerts.classList.add('d-none');
                 
                 updateCounters();
                 updateHistoryUI();
-                createNumbersGrid(); // This will create a fresh grid
-                hideModal();
+                createNumbersGrid();
 
                 // Broadcast reset to all card windows
-                broadcastToCards({ type: 'reset' });
+                broadcastToCards({ type: 'reset', gameMode: currentGameMode });
+            }
+
+            // Set game mode
+            function setGameMode(mode) {
+                currentGameMode = mode;
+                const gameMode = gameModes[mode];
+                
+                // Update game mode display
+                elements.gameModeTitle.textContent = gameMode.name;
+                elements.gameModeDesc.textContent = gameMode.description;
+                elements.gameModeDisplay.classList.remove('d-none');
+                
+                // Update active button
+                document.querySelectorAll('.btn-game').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelector(`[data-game="${mode}"]`).classList.add('active');
+                
+                // Reset and start new game
+                initializeGame();
+                
+                // Broadcast game mode to cards
+                broadcastToCards({ 
+                    type: 'gameMode', 
+                    mode: mode,
+                    name: gameMode.name,
+                    description: gameMode.description
+                });
             }
 
             // Get letter group for a number
@@ -689,67 +877,20 @@
                 return '';
             }
 
-            // Check for bingo on a specific card
+            // Check for bingo on a specific card using current game mode
             function checkBingo(cardId) {
+                if (!currentGameMode) return false;
+                
                 const card = bingoCards[cardId];
                 if (!card) return false;
 
-                const LETTERS = ['B', 'I', 'N', 'G', 'O'];
-
-                // Check rows
-                for (let row = 0; row < 5; row++) {
-                    let rowComplete = true;
-                    for (let col = 0; col < 5; col++) {
-                        const cellValue = card[LETTERS[col]][row];
-                        if (cellValue !== 'FREE' && !calledNumbers.includes(cellValue)) {
-                            rowComplete = false;
-                            break;
-                        }
-                    }
-                    if (rowComplete) return true;
-                }
-
-                // Check columns
-                for (let col = 0; col < 5; col++) {
-                    let colComplete = true;
-                    for (let row = 0; row < 5; row++) {
-                        const cellValue = card[LETTERS[col]][row];
-                        if (cellValue !== 'FREE' && !calledNumbers.includes(cellValue)) {
-                            colComplete = false;
-                            break;
-                        }
-                    }
-                    if (colComplete) return true;
-                }
-
-                // Check diagonals
-                // Top-left to bottom-right
-                let diagonal1Complete = true;
-                for (let i = 0; i < 5; i++) {
-                    const cellValue = card[LETTERS[i]][i];
-                    if (cellValue !== 'FREE' && !calledNumbers.includes(cellValue)) {
-                        diagonal1Complete = false;
-                        break;
-                    }
-                }
-                if (diagonal1Complete) return true;
-
-                // Top-right to bottom-left
-                let diagonal2Complete = true;
-                for (let i = 0; i < 5; i++) {
-                    const cellValue = card[LETTERS[i]][4 - i];
-                    if (cellValue !== 'FREE' && !calledNumbers.includes(cellValue)) {
-                        diagonal2Complete = false;
-                        break;
-                    }
-                }
-                if (diagonal2Complete) return true;
-
-                return false;
+                return gameModes[currentGameMode].checkWin(card);
             }
 
             // Check all cards for winners
             function checkAllCardsForWinners() {
+                if (!currentGameMode) return;
+                
                 const newWinners = [];
                 
                 Object.keys(bingoCards).forEach(cardId => {
@@ -799,7 +940,7 @@
 
             // Draw the next number
             function drawNextNumber() {
-                if (remainingNumbers.length === 0 || isResetting) return;
+                if (remainingNumbers.length === 0 || !currentGameMode) return;
 
                 // Prevent double clicks
                 elements.drawButton.disabled = true;
@@ -841,7 +982,8 @@
                     type: 'numberCalled', 
                     number: drawnNumber, 
                     letter: letter,
-                    calledNumbers: [...calledNumbers]
+                    calledNumbers: [...calledNumbers],
+                    gameMode: currentGameMode
                 });
 
                 // Check for winners
@@ -883,7 +1025,7 @@
                 if (calledNumbers.length === 0) {
                     elements.historyList.innerHTML = `
                         <p class="text-center text-muted small mb-0 p-2">
-                            Numbers will appear here as they're called
+                            ${currentGameMode ? 'Numbers will appear here as they\'re called' : 'Select a game mode and start calling numbers'}
                         </p>
                     `;
                     return;
@@ -911,12 +1053,6 @@
                     cell.setAttribute('aria-label', `${getLetterForNumber(i)} ${i}`);
                     elements.numbersGrid.appendChild(cell);
                 }
-                
-                // Ensure all cells are in default state
-                const allCells = elements.numbersGrid.querySelectorAll('.number-cell');
-                allCells.forEach(cell => {
-                    cell.classList.remove('called', 'current');
-                });
             }
 
             // Update grid visual state
@@ -942,68 +1078,6 @@
                         }, 3000);
                     }
                 }
-            }
-
-            // Show modal with Bootstrap
-            function showModal(title, message, onYes) {
-                elements.modalTitle.textContent = title;
-                elements.modalMessage.textContent = message;
-                
-                if (!modalInstance) {
-                    modalInstance = new bootstrap.Modal(elements.confirmModal, {
-                        backdrop: 'static',
-                        keyboard: true
-                    });
-                }
-                
-                modalInstance.show();
-                
-                // Set up event handlers (remove old ones first)
-                const newYesHandler = () => {
-                    modalInstance.hide();
-                    if (onYes) onYes();
-                };
-                
-                elements.modalYes.removeEventListener('click', elements.modalYes._currentHandler);
-                elements.modalYes.addEventListener('click', newYesHandler);
-                elements.modalYes._currentHandler = newYesHandler;
-                
-                // Focus the Yes button for accessibility
-                setTimeout(() => {
-                    elements.modalYes.focus();
-                }, 200);
-            }
-
-            // Hide modal
-            function hideModal() {
-                if (modalInstance) {
-                    modalInstance.hide();
-                }
-                resetStep = 0;
-                isResetting = false;
-            }
-
-            // Double confirmation reset
-            function resetWithDoubleConfirm() {
-                if (isResetting) return;
-                
-                isResetting = true;
-                resetStep = 1;
-
-                showModal(
-                    'Confirm Reset',
-                    'Are you sure you want to reset the game?',
-                    () => {
-                        resetStep = 2;
-                        showModal(
-                            'Really Reset?',
-                            'Really reset? This will clear all history and winners.',
-                            () => {
-                                initializeGame();
-                            }
-                        );
-                    }
-                );
             }
 
             // Copy history to clipboard
@@ -1059,15 +1133,20 @@
 
             // Event listeners
             elements.drawButton.addEventListener('click', drawNextNumber);
-            elements.resetButton.addEventListener('click', resetWithDoubleConfirm);
             elements.copyButton.addEventListener('click', copyHistoryToClipboard);
+
+            // Game mode button event listeners
+            document.addEventListener('click', (e) => {
+                if (e.target.classList.contains('btn-game')) {
+                    const gameMode = e.target.getAttribute('data-game');
+                    setGameMode(gameMode);
+                }
+            });
 
             // Keyboard shortcuts
             document.addEventListener('keydown', (e) => {
-                // Ignore if modal is open or user is typing in an input
-                if (document.querySelector('.modal.show') || 
-                    e.target.tagName === 'INPUT' || 
-                    e.target.tagName === 'TEXTAREA') {
+                // Ignore if user is typing in an input
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
                     return;
                 }
 
@@ -1079,39 +1158,31 @@
                             drawNextNumber();
                         }
                         break;
-                    case 'r':
-                        e.preventDefault();
-                        resetWithDoubleConfirm();
-                        break;
                     case 'c':
                         e.preventDefault();
                         copyHistoryToClipboard();
                         break;
+                    case '1':
+                        e.preventDefault();
+                        setGameMode('corners');
+                        break;
+                    case '2':
+                        e.preventDefault();
+                        setGameMode('twolines');
+                        break;
+                    case '3':
+                        e.preventDefault();
+                        setGameMode('postage');
+                        break;
+                    case '4':
+                        e.preventDefault();
+                        setGameMode('inner');
+                        break;
+                    case '5':
+                        e.preventDefault();
+                        setGameMode('fullcard');
+                        break;
                 }
-            });
-
-            // Close modal on Escape key
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && document.querySelector('.modal.show')) {
-                    hideModal();
-                }
-            });
-
-            // Handle modal events properly
-            elements.confirmModal.addEventListener('hidden.bs.modal', () => {
-                resetStep = 0;
-                isResetting = false;
-            });
-
-            // Handle modal No button
-            elements.modalNo.addEventListener('click', () => {
-                modalInstance.hide();
-            });
-
-            // Handle modal close button
-            elements.confirmModal.addEventListener('hide.bs.modal', () => {
-                resetStep = 0;
-                isResetting = false;
             });
 
             // Initialize the game on load
