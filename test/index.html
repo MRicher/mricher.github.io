@@ -1,326 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RCMP Three-Zone Responsive Layout</title>
-    <meta name="description" content="Responsive three-zone layout featuring RCMP colors and professional imagery">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <title>Accessible Loader Example</title>
+  <style>
+    /* Loader overlay */
+    #loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
 
-        body {
-            overflow-x: hidden;
-        }
+    #loader img {
+      max-width: 150px;
+      height: auto;
+    }
 
-        .zone {
-            position: relative;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            transition: transform 0.3s ease;
-        }
+    #loader p {
+      margin-top: 1rem;
+      font-size: 1.2rem;
+      color: #222;
+    }
 
-        .zone::before {
-            content: '';
-            position: absolute;
-            top: -10%;
-            left: -10%;
-            right: -10%;
-            bottom: -10%;
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            transition: transform 0.6s ease;
-            z-index: 1;
-        }
+    #skipLoader {
+      margin-top: 1rem;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      border: 2px solid #222;
+      background: #fff;
+      cursor: pointer;
+      border-radius: 0.5rem;
+    }
 
-        .zone::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 2;
-        }
-        
-        .zone-1::before {
-            background-image: linear-gradient(135deg, rgba(204, 0, 0, 0.7) 0%, rgba(139, 0, 0, 0.8) 100%),
-                              url('https://images.unsplash.com/photo-1583508915901-b5f84c1dcde1?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');
-        }
+    /* Fade-out animation */
+    .fade-out {
+      opacity: 0;
+      transition: opacity 0.8s ease-out;
+      pointer-events: none;
+    }
 
-        .zone-2::before {
-            background-image: linear-gradient(135deg, rgba(255, 215, 0, 0.7) 0%, rgba(218, 165, 32, 0.8) 100%),
-                              url('https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');
-        }
+    /* Hidden (after fade) */
+    .hidden {
+      display: none;
+    }
 
-        .zone-3::before {
-            background-image: linear-gradient(135deg, rgba(204, 0, 0, 0.7) 0%, rgba(255, 215, 0, 0.7) 100%),
-                              url('https://images.unsplash.com/photo-1589829545856-d10d557cf95f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');
-        }
-
-        .zone:hover::before {
-            transform: scale(1.05);
-        }
-
-        .zone-content {
-            position: relative;
-            z-index: 3;
-            text-align: center;
-            color: white;
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s ease;
-        }
-
-        .zone-content.fade-in {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .zone-icon {
-            font-size: 4rem;
-            margin-bottom: 1.5rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
-            color: #ffffff;
-        }
-
-        .zone-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
-            letter-spacing: 2px;
-            color: #ffffff;
-        }
-
-        .zone-subtitle {
-            font-size: 1.2rem;
-            font-weight: 300;
-            color: #ffffff;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9);
-        }
-
-        /* Parallax effect for desktop */
-        @media (min-width: 992px) {
-            .zone::before {
-                background-attachment: fixed;
-            }
-            
-            .zone-content {
-                transform: translateY(50px) scale(0.9);
-            }
-            
-            .zone-content.fade-in {
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        /* Mobile optimizations */
-        @media (max-width: 767px) {
-            .zone {
-                min-height: 80vh;
-            }
-            
-            .zone::before {
-                background-attachment: scroll;
-                top: -5%;
-                left: -5%;
-                right: -5%;
-                bottom: -5%;
-            }
-            
-            .zone-icon {
-                font-size: 3rem;
-            }
-            
-            .zone-title {
-                font-size: 2rem;
-            }
-            
-            .zone-subtitle {
-                font-size: 1rem;
-            }
-        }
-
-        /* Custom scrollbar with RCMP colors */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, #cc0000 0%, #ffd700 100%);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(135deg, #8b0000 0%, #daa520 100%);
-        }
-
-        /* Focus styles for accessibility */
-        .zone:focus-within {
-            outline: 3px solid #ffffff;
-            outline-offset: -3px;
-        }
-
-        .zone-content:focus {
-            outline: 2px solid #ffffff;
-            outline-offset: 4px;
-        }
-
-        /* Ensure text remains readable on all backgrounds */
-        @media (prefers-contrast: high) {
-            .zone::after {
-                background: rgba(0, 0, 0, 0.8);
-            }
-            
-            .zone-icon,
-            .zone-title,
-            .zone-subtitle {
-                text-shadow: 3px 3px 6px rgba(0, 0, 0, 1);
-            }
-        }
-
-        /* Respect user motion preferences */
-        @media (prefers-reduced-motion: reduce) {
-            .zone,
-            .zone::before,
-            .zone-content,
-            .zone-content::before {
-                transition: none;
-                animation: none;
-            }
-            
-            .zone::before {
-                background-attachment: scroll;
-            }
-        }
-    </style>
+    /* Main content */
+    #content {
+      padding: 2rem;
+      max-width: 800px;
+      margin: auto;
+      font-family: sans-serif;
+      line-height: 1.6;
+      display: none; /* hidden until loaded */
+    }
+  </style>
 </head>
 <body>
-    <div class="container-fluid p-0">
-        <div class="row g-0 h-100">
-            <!-- Zone 1 -->
-            <div class="col-lg-4 col-12">
-                <div class="zone zone-1" role="region" aria-labelledby="zone1-title">
-                    <div class="zone-content">
-                        <div class="zone-icon" aria-hidden="true">
-                            <i class="fas fa-shield-alt"></i>
-                        </div>
-                        <h2 class="zone-title" id="zone1-title">POLICE OFFICER</h2>
-                        <p class="zone-subtitle">Serving and protecting communities</p>
-                    </div>
-                </div>
-            </div>
+  <!-- Loader -->
+  <div id="loader" role="status" aria-live="polite">
+    <img 
+      src="https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif" 
+      alt="Animated illustration of a galloping horse with a rider carrying a flag">
+    <p id="loadingMessage">Loading content, please wait…</p>
+    <button id="skipLoader">Skip loading</button>
+  </div>
 
-            <!-- Zone 2 -->
-            <div class="col-lg-4 col-12">
-                <div class="zone zone-2" role="region" aria-labelledby="zone2-title">
-                    <div class="zone-content">
-                        <div class="zone-icon" aria-hidden="true">
-                            <i class="fas fa-handshake"></i>
-                        </div>
-                        <h2 class="zone-title" id="zone2-title">CIVILIAN</h2>
-                        <p class="zone-subtitle">Dedicated to public safety</p>
-                    </div>
-                </div>
-            </div>
+  <!-- Page Content -->
+  <main id="content">
+    <h1>Lorem Ipsum</h1>
+    <p>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. 
+      Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. 
+      Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi.
+    </p>
+    <p>
+      Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. 
+      Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. 
+      Pellentesque congue. Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue.
+    </p>
+  </main>
 
-            <!-- Zone 3 -->
-            <div class="col-lg-4 col-12">
-                <div class="zone zone-3" role="region" aria-labelledby="zone3-title">
-                    <div class="zone-content">
-                        <div class="zone-icon" aria-hidden="true">
-                            <i class="fas fa-balance-scale"></i>
-                        </div>
-                        <h2 class="zone-title" id="zone3-title">OTHER</h2>
-                        <p class="zone-subtitle">Upholding law and order</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+  <script>
+    const loader = document.getElementById('loader');
+    const content = document.getElementById('content');
+    const skipBtn = document.getElementById('skipLoader');
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Smooth scroll and fade-in animation
-        function isElementInViewport(el) {
-            const rect = el.getBoundingClientRect();
-            return (
-                rect.top >= 0 &&
-                rect.left >= 0 &&
-                rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-                rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-            );
-        }
+    // Show content after page load
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        hideLoader();
+      }, 1500); // small delay to show loader
+    });
 
-        function isElementPartiallyInViewport(el) {
-            const rect = el.getBoundingClientRect();
-            return (
-                rect.bottom >= 0 &&
-                rect.right >= 0 &&
-                rect.top <= (window.innerHeight || document.documentElement.clientHeight) &&
-                rect.left <= (window.innerWidth || document.documentElement.clientWidth)
-            );
-        }
+    // Skip button
+    skipBtn.addEventListener('click', hideLoader);
 
-        function handleScrollAnimation() {
-            const zoneContents = document.querySelectorAll('.zone-content');
-            
-            zoneContents.forEach(content => {
-                if (isElementPartiallyInViewport(content)) {
-                    content.classList.add('fade-in');
-                }
-            });
-        }
+    function hideLoader() {
+      loader.classList.add('fade-out');
+      setTimeout(() => {
+        loader.classList.add('hidden');
+        content.style.display = 'block';
+      }, 800); // match fade-out duration
+    }
 
-        // Parallax effect for desktop
-        function handleParallax() {
-            if (window.innerWidth >= 992) {
-                const scrollTop = window.pageYOffset;
-                const zones = document.querySelectorAll('.zone');
-                
-                zones.forEach((zone, index) => {
-                    const speed = 0.5 + (index * 0.1);
-                    const yPos = -(scrollTop * speed);
-                    zone.style.transform = `translateY(${yPos}px)`;
-                });
-            }
-        }
-
-        // Event listeners
-        window.addEventListener('scroll', () => {
-            handleScrollAnimation();
-            handleParallax();
-        });
-
-        window.addEventListener('resize', () => {
-            handleScrollAnimation();
-        });
-
-        // Initial animation check
-        document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                handleScrollAnimation();
-            }, 100);
-        });
-
-        // Smooth scroll for better UX
-        document.documentElement.style.scrollBehavior = 'smooth';
-    </script>
+    // Accessibility: respect reduced motion
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const img = loader.querySelector('img');
+      img.src = "https://via.placeholder.com/150?text=Horse+Loader"; // static fallback
+    }
+  </script>
 </body>
 </html>
