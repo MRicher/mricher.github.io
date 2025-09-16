@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilingual Newsletter Generator</title>
+    <style>
+        /* Main UI Styles - Modern CSS for the form interface */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: #f5f7fa;
+            color: #2d3748;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #4a5568;
+            color: white;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            padding: 24px;
+        }
+
+        .form-section {
+            padding-right: 12px;
+        }
+
+        .preview-section {
+            padding-left: 12px;
+            border-left: 2px solid #e2e8f0;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #2d3748;
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .month-year-display {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 12px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        /* Article Management */
+        .article-container {
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 16px;
+            background: #f8f9fa;
+            position: relative;
+        }
+
+        .article-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .article-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .article-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn:focus {
+            outline: 2px solid #4299e1;
+            outline-offset: 2px;
+        }
+
+        .btn-primary {
+            background: #4299e1;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #3182ce;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .btn-danger {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c53030;
+        }
+
+        .btn-large {
+            padding: 16px 32px;
+            font-size: 1.1rem;
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* Validation Messages */
+        .error-message {
+            color: #e53e3e;
+            font-size: 0.9rem;
+            margin-top: 4px;
+            padding: 8px;
+            background: #fed7d7;
+            border-radius: 4px;
+            border-left: 4px solid #e53e3e;
+        }
+
+        .success-message {
+            color: #38a169;
+            font-size: 0.9rem;
+            margin-top: 4px;
+            padding: 8px;
+            background: #c6f6d5;
+            border-radius: 4px;
+            border-left: 4px solid #38a169;
+        }
+
+        /* Preview Section */
+        .preview-tabs {
+            display: flex;
+            margin-bottom: 16px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .tab-button {
+            background: none;
+            border: none;
+            padding: 12px 24px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #718096;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab-button.active {
+            color: #4299e1;
+            border-bottom-color: #4299e1;
+        }
+
+        .tab-button:focus {
+            outline: 2px solid #4299e1;
+            outline-offset: -2px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .code-output {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 16px;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 13px;
+            line-height: 1.4;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .preview-frame {
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            width: 100%;
+            height: 400px;
+            background: white;
+        }
+
+        .copy-button {
+            margin-top: 12px;
+        }
+
+        /* Accessibility improvements */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .preview-section {
+                border-left: none;
+                border-top: 2px solid #e2e8f0;
+                padding-left: 0;
+                padding-top: 24px;
+            }
+        }
+
+        /* Focus indicators for better accessibility */
+        *:focus-visible {
+            outline: 2px solid #4299e1;
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Bilingual Newsletter Generator</h1>
+            <p>Create professional bilingual newsletters for Microsoft Outlook</p>
+        </header>
+
+        <main class="main-content">
+            <!-- Form Section -->
+            <section class="form-section" aria-label="Newsletter Form">
+                <form id="newsletterForm" novalidate>
+                    <!-- Newsletter Headers -->
+                    <div class="form-group">
+                        <h2>Newsletter Information</h2>
+                        
+                        <div class="form-row">
+                            <div>
+                                <label for="titleEn">Title of newsletter *</label>
+                                <input 
+                                    type="text" 
+                                    id="titleEn" 
+                                    name="titleEn" 
+                                    required 
+                                    aria-describedby="titleEn-error"
+                                    placeholder="Monthly Tech Update"
+                                    value="Monthly Tech Update">
+                                <div id="titleEn-error" class="error-message" role="alert" style="display: none;"></div>
+                            </div>
+                            <div>
+                                <label for="titleFr">Titre du bulletin *</label>
+                                <input 
+                                    type="text" 
+                                    id="titleFr" 
+                                    name="titleFr" 
+                                    required 
+                                    aria-describedby="titleFr-error"
+                                    placeholder="Mise à jour technologique mensuelle"
+                                    value="Mise à jour technologique mensuelle">
+                                <div id="titleFr-error" class="error-message" role="alert" style="display: none;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Month and Year Selector -->
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div>
+                                <label for="monthSelect">Month *</label>
+                                <select id="monthSelect" name="month" required aria-describedby="month-error">
+                                    <option value="">Select month</option>
+                                    <option value="0">January / janvier</option>
+                                    <option value="1">February / février</option>
+                                    <option value="2">March / mars</option>
+                                    <option value="3">April / avril</option>
+                                    <option value="4">May / mai</option>
+                                    <option value="5">June / juin</option>
+                                    <option value="6">July / juillet</option>
+                                    <option value="7">August / août</option>
+                                    <option value="8" selected>September / septembre</option>
+                                    <option value="9">October / octobre</option>
+                                    <option value="10">November / novembre</option>
+                                    <option value="11">December / décembre</option>
+                                </select>
+                                <div id="month-error" class="error-message" role="alert" style="display: none;"></div>
+                            </div>
+                            <div>
+                                <label for="yearSelect">Year *</label>
+                                <select id="yearSelect" name="year" required aria-describedby="year-error">
+                                    <option value="">Select year</option>
+                                    <option value="2024">2024</option>
+                                    <option value="2025" selected>2025</option>
+                                    <option value="2026">2026</option>
+                                </select>
+                                <div id="year-error" class="error-message" role="alert" style="display: none;"></div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 12px;">
+                            <label>Date Display:</label>
+                            <div id="dateDisplay" class="month-year-display" aria-live="polite">
+                                September 2025 / septembre 2025
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- First Article -->
+                    <div class="form-group">
+                        <h2>First Article</h2>
+                        <div class="article-container">
+                            <div class="form-row">
+                                <div>
+                                    <label for="firstArticleTitleEn">Title (English) *</label>
+                                    <input 
+                                        type="text" 
+                                        id="firstArticleTitleEn" 
+                                        name="firstArticleTitleEn" 
+                                        required 
+                                        aria-describedby="firstArticleTitleEn-error"
+                                        placeholder="New AI Features Released"
+                                        value="New AI Features Released">
+                                    <div id="firstArticleTitleEn-error" class="error-message" role="alert" style="display: none;"></div>
+                                </div>
+                                <div>
+                                    <label for="firstArticleTitleFr">Titre (French) *</label>
+                                    <input 
+                                        type="text" 
+                                        id="firstArticleTitleFr" 
+                                        name="firstArticleTitleFr" 
+                                        required 
+                                        aria-describedby="firstArticleTitleFr-error"
+                                        placeholder="Nouvelles fonctionnalités IA publiées"
+                                        value="Nouvelles fonctionnalités IA publiées">
+                                    <div id="firstArticleTitleFr-error" class="error-message" role="alert" style="display: none;"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row" style="margin-top: 16px;">
+                                <div>
+                                    <label for="firstArticleBodyEn">Body/Content (English) *</label>
+                                    <textarea 
+                                        id="firstArticleBodyEn" 
+                                        name="firstArticleBodyEn" 
+                                        required 
+                                        aria-describedby="firstArticleBodyEn-error"
+                                        placeholder="Write your English content here...">We're excited to announce the launch of our latest AI-powered features that will revolutionize how you work with data. These new capabilities include automated reporting, intelligent data analysis, and predictive insights that help you make better decisions faster.</textarea>
+                                    <div id="firstArticleBodyEn-error" class="error-message" role="alert" style="display: none;"></div>
+                                </div>
+                                <div>
+                                    <label for="firstArticleBodyFr">Corps (French) *</label>
+                                    <textarea 
+                                        id="firstArticleBodyFr" 
+                                        name="firstArticleBodyFr" 
+                                        required 
+                                        aria-describedby="firstArticleBodyFr-error"
+                                        placeholder="Rédigez votre contenu français ici...">Nous sommes ravis d'annoncer le lancement de nos dernières fonctionnalités alimentées par l'IA qui révolutionneront votre façon de travailler avec les données. Ces nouvelles capacités incluent des rapports automatisés, une analyse intelligente des données et des insights prédictifs qui vous aident à prendre de meilleures décisions plus rapidement.</textarea>
+                                    <div id="firstArticleBodyFr-error" class="error-message" role="alert" style="display: none;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Articles -->
+                    <div class="form-group">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                            <h2>Additional Articles</h2>
+                            <button type="button" id="addArticleBtn" class="btn btn-primary" aria-describedby="addArticleDesc">
+                                ➕ Add Article
+                            </button>
+                            <div id="addArticleDesc" class="sr-only">Add a new article to the newsletter</div>
+                        </div>
+                        
+                        <div id="additionalArticles" role="list" aria-label="Additional articles">
+                            <!-- Additional articles will be added here -->
+                        </div>
+                    </div>
+
+                    <!-- Generate Button -->
+                    <button type="submit" class="btn btn-primary btn-large">
+                        📧 Preview / Generate Email
+                    </button>
+                </form>
+            </section>
+
+            <!-- Preview Section -->
+            <section class="preview-section" aria-label="Email Preview">
+                <div class="preview-tabs" role="tablist">
+                    <button 
+                        type="button" 
+                        class="tab-button active" 
+                        id="codeTab" 
+                        role="tab" 
+                        aria-selected="true" 
+                        aria-controls="codeContent">
+                        HTML Code
+                    </button>
+                    <button 
+                        type="button" 
+                        class="tab-button" 
+                        id="previewTab" 
+                        role="tab" 
+                        aria-selected="false" 
+                        aria-controls="previewContent">
+                        Live Preview
+                    </button>
+                </div>
+
+                <div id="codeContent" class="tab-content active" role="tabpanel" aria-labelledby="codeTab">
+                    <h3>Outlook-Ready HTML Code</h3>
+                    <p><strong>Instructions:</strong> To use in Outlook, open a new message, switch to HTML/source view (if required), and paste the code below as the message body.</p>
+                    <p><small><strong>Outlook Compatibility Note:</strong> This code uses table-based layout and inline styles for maximum compatibility with Outlook's rendering engine.</small></p>
+                    
+                    <div class="code-output" id="htmlOutput" aria-label="Generated HTML code" role="region">
+                        Click "Generate Email" to see the HTML code here.
+                    </div>
+                    
+                    <button type="button" id="copyBtn" class="btn btn-secondary copy-button" aria-describedby="copyDesc">
+                        📋 Copy to Clipboard
+                    </button>
+                    <div id="copyDesc" class="sr-only">Copy the HTML code to your clipboard</div>
+                    <div id="copyStatus" role="status" aria-live="polite" style="margin-top: 8px;"></div>
+                </div>
+
+                <div id="previewContent" class="tab-content" role="tabpanel" aria-labelledby="previewTab">
+                    <h3>Email Preview</h3>
+                    <p>This shows how your email will approximately look:</p>
+                    <iframe id="previewFrame" class="preview-frame" title="Email preview" aria-label="Preview of the generated email"></iframe>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Global variables for managing articles and state
+        let additionalArticleCount = 0;
+        const monthNames = {
+            en: ['January', 'February', 'March', 'April', 'May', 'June', 
+                 'July', 'August', 'September', 'October', 'November', 'December'],
+            fr: ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 
+                 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre']
+        };
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeEventListeners();
+            updateDateDisplay();
+            addSampleArticles();
+        });
+
+        // Event listeners setup
+        function initializeEventListeners() {
+            // Form submission
+            document.getElementById('newsletterForm').addEventListener('submit', handleFormSubmit);
+            
+            // Date change listeners
+            document.getElementById('monthSelect').addEventListener('change', updateDateDisplay);
+            document.getElementById('yearSelect').addEventListener('change', updateDateDisplay);
+            
+            // Tab switching
+            document.getElementById('codeTab').addEventListener('click', () => switchTab('code'));
+            document.getElementById('previewTab').addEventListener('click', () => switchTab('preview'));
+            
+            // Add article button
+            document.getElementById('addArticleBtn').addEventListener('click', addArticle);
+            
+            // Copy button
+            document.getElementById('copyBtn').addEventListener('click', copyToClipboard);
+        }
+
+        // Add sample articles for demonstration
+        function addSampleArticles() {
+            addArticle();
+            const firstAdditional = document.querySelector('[data-article-id="1"]');
+            if (firstAdditional) {
+                firstAdditional.querySelector('input[name$="TitleEn"]').value = 'Security Updates';
+                firstAdditional.querySelector('input[name$="TitleFr"]').value = 'Mises à jour de sécurité';
+                firstAdditional.querySelector('textarea[name$="BodyEn"]').value = 'This month we\'ve implemented enhanced security protocols across all our systems. These updates include two-factor authentication, encrypted communications, and improved access controls to protect your data.';
+                firstAdditional.querySelector('textarea[name$="BodyFr"]').value = 'Ce mois-ci, nous avons implémenté des protocoles de sécurité améliorés sur tous nos systèmes. Ces mises à jour incluent l\'authentification à deux facteurs, des communications cryptées et des contrôles d\'accès améliorés pour protéger vos données.';
+            }
+        }
+
+        // Update the date display when month/year changes
+        function updateDateDisplay() {
+            const monthSelect = document.getElementById('monthSelect');
+            const yearSelect = document.getElementById('yearSelect');
+            const displayEl = document.getElementById('dateDisplay');
+            
+            if (monthSelect.value && yearSelect.value) {
+                const monthIndex = parseInt(monthSelect.value);
+                const year = yearSelect.value;
+                const englishDate = `${monthNames.en[monthIndex]} ${year}`;
+                const frenchDate = `${monthNames.fr[monthIndex]} ${year}`;
+                displayEl.textContent = `${englishDate} / ${frenchDate}`;
+            } else {
+                displayEl.textContent = 'Please select month and year';
+            }
+        }
+
+        // Add a new article
+        function addArticle() {
+            additionalArticleCount++;
+            const articlesContainer = document.getElementById('additionalArticles');
+            
+            const articleDiv = document.createElement('div');
+            articleDiv.className = 'article-container';
+            articleDiv.setAttribute('data-article-id', additionalArticleCount);
+            articleDiv.setAttribute('role', 'listitem');
+            
+            articleDiv.innerHTML = `
+                <div class="article-header">
+                    <div class="article-title">Article ${additionalArticleCount}</div>
+                    <div class="article-controls">
+                        <button type="button" class="btn btn-secondary" onclick="moveArticle(${additionalArticleCount}, 'up')" aria-label="Move article up">
+                            ↑
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="moveArticle(${additionalArticleCount}, 'down')" aria-label="Move article down">
+                            ↓
+                        </button>
+                        <button type="button" class="btn btn-danger" onclick="removeArticle(${additionalArticleCount})" aria-label="Remove this article">
+                            🗑️ Remove
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div>
+                        <label for="article${additionalArticleCount}TitleEn">Title (English) *</label>
+                        <input 
+                            type="text" 
+                            id="article${additionalArticleCount}TitleEn" 
+                            name="article${additionalArticleCount}TitleEn" 
+                            required 
+                            placeholder="Article title in English">
+                    </div>
+                    <div>
+                        <label for="article${additionalArticleCount}TitleFr">Titre (French) *</label>
+                        <input 
+                            type="text" 
+                            id="article${additionalArticleCount}TitleFr" 
+                            name="article${additionalArticleCount}TitleFr" 
+                            required 
+                            placeholder="Titre de l'article en français">
+                    </div>
+                </div>
+                
+                <div class="form-row" style="margin-top: 16px;">
+                    <div>
+                        <label for="article${additionalArticleCount}BodyEn">Body/Content (English) *</label>
+                        <textarea 
+                            id="article${additionalArticleCount}BodyEn" 
+                            name="article${additionalArticleCount}BodyEn" 
+                            required 
+                            placeholder="Write your English content here..."></textarea>
+                    </div>
+                    <div>
+                        <label for="article${additionalArticleCount}BodyFr">Corps (French) *</label>
+                        <textarea 
+                            id="article${additionalArticleCount}BodyFr" 
+                            name="article${additionalArticleCount}BodyFr" 
+                            required 
+                            placeholder="Rédigez votre contenu français ici..."></textarea>
+                    </div>
+                </div>
+            `;
+            
+            articlesContainer.appendChild(articleDiv);
+            
+            // Focus on the first input of the new article for accessibility
+            articleDiv.querySelector('input').focus();
+            
+            // Announce the addition to screen readers
+            announceToScreenReader(`Article ${additionalArticleCount} added`);
+        }
+
+        // Remove an article
+        function removeArticle(articleId) {
+            const articleEl = document.querySelector(`[data-article-id="${articleId}"]`);
+            if (articleEl) {
+                articleEl.remove();
+                announceToScreenReader(`Article ${articleId} removed`);
+            }
+        }
+
+        // Move article up or down
+        function moveArticle(articleId, direction) {
+            const articleEl = document.querySelector(`[data-article-id="${articleId}"]`);
+            if (!articleEl) return;
+            
+            const container = document.getElementById('additionalArticles');
+            const articles = Array.from(container.children);
+            const currentIndex = articles.indexOf(articleEl);
+            
+            if (direction === 'up' && currentIndex > 0) {
+                container.insertBefore(articleEl, articles[currentIndex - 1]);
+                announceToScreenReader(`Article ${articleId} moved up`);
+            } else if (direction === 'down' && currentIndex < articles.length - 1) {
+                container.insertBefore(articles[currentIndex + 1], articleEl);
+                announceToScreenReader(`Article ${articleId} moved down`);
+            }
+        }
+
+        // Handle form submission and validation
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            if (validateForm()) {
+                generateEmail();
+                switchTab('code');
+            }
+        }
+
+        // Form validation
+        function validateForm() {
+            let isValid = true;
+            const requiredFields = document.querySelectorAll('[required]');
+            
+            // Clear previous error messages
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.style.display = 'none';
+                el.textContent = '';
+            });
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    isValid = false;
+                    showError(field, 'This field is required');
+                }
+            });
+            
+            return isValid;
+        }
+
+        // Show error message for a field
+        function showError(field, message) {
+            const errorEl = document.getElementById(field.id + '-error') || 
+                          document.querySelector(`#${field.name}-error`);
+            if (errorEl) {
+                errorEl.textContent = message;
+                errorEl.style.display = 'block';
+                field.setAttribute('aria-invalid', 'true');
+            }
+        }
+
+        // Generate the email HTML
+        function generateEmail() {
+            const formData = new FormData(document.getElementById('newsletterForm'));
+            
+            // Get basic newsletter info
+            const titleEn = formData.get('titleEn');
+            const titleFr = formData.get('titleFr');
+            const month = parseInt(formData.get('month'));
+            const year = formData.get('year');
+            const dateEn = `${monthNames.en[month]} ${year}`;
+            const dateFr = `${monthNames.fr[month]} ${year}`;
+            
+            // Get first article
+            const firstArticle = {
+                titleEn: formData.get('firstArticleTitleEn'),
+                titleFr: formData.get('firstArticleTitleFr'),
+                bodyEn: formData.get('firstArticleBodyEn'),
+                bodyFr: formData.get('firstArticleBodyFr')
+            };
+            
+            // Get additional articles
+            const additionalArticles = [];
+            const articleElements = document.querySelectorAll('[data-article-id]');
+            articleElements.forEach(articleEl => {
+                const id = articleEl.getAttribute('data-article-id');
+                const article = {
+                    titleEn: formData.get(`article${id}TitleEn`),
+                    titleFr: formData.get(`article${id}TitleFr`),
+                    bodyEn: formData.get(`article${id}BodyEn`),
+                    bodyFr: formData.get(`article${id}BodyFr`)
+                };
+                if (article.titleEn && article.titleFr && article.bodyEn && article.bodyFr) {
+                    additionalArticles.push(article);
+                }
+            });
+            
+            // Generate the HTML email
+            const emailHTML = createOutlookEmail(titleEn, titleFr, dateEn, dateFr, firstArticle, additionalArticles);
+            
+            // Display the results
+            document.getElementById('htmlOutput').textContent = emailHTML;
+            
+            // Update preview frame
+            const previewFrame = document.getElementById('previewFrame');
+            const previewDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+            previewDoc.open();
+            previewDoc.write(emailHTML);
+            previewDoc.close();
+            
+            announceToScreenReader('Email generated successfully');
+        }
+
+        // Create Outlook-compatible HTML email
+        function createOutlookEmail(titleEn, titleFr, dateEn, dateFr, firstArticle, additionalArticles) {
+            const allArticles = [firstArticle, ...additionalArticles];
+            
+            // Generate English articles HTML
+            const englishArticlesHTML = allArticles.map(article => `
+                <tr>
+                    <td style="padding: 20px 0; border-bottom: 1px solid #e0e0e0;">
+                        <h2 style="color: #2c3e50; font-size: 20px; margin: 0 0 12px 0; font-family: Arial, sans-serif;">${escapeHtml(article.titleEn)}</h2>
+                        <div style="color: #34495e; font-size: 16px; line-height: 1.6; font-family: Arial, sans-serif;">${escapeHtml(article.bodyEn).replace(/\n/g, '<br>')}</div>
+                    </td>
+                </tr>
+            `).join('');
+            
+            // Generate French articles HTML
+            const frenchArticlesHTML = allArticles.map(article => `
+                <tr>
+                    <td style="padding: 20px 0; border-bottom: 1px solid #e0e0e0;">
+                        <h2 style="color: #2c3e50; font-size: 20px; margin: 0 0 12px 0; font-family: Arial, sans-serif;">${escapeHtml(article.titleFr)}</h2>
+                        <div style="color: #34495e; font-size: 16px; line-height: 1.6; font-family: Arial, sans-serif;">${escapeHtml(article.bodyFr).replace(/\n/g, '<br>')}</div>
+                    </td>
+                </tr>
+            `).join('');
+
+            return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${escapeHtml(titleEn)} - ${dateEn}</title>
+    <!--[if mso]>
+    <noscript>
+        <xml>
+            <o:OfficeDocumentSettings>
+                <o:PixelsPerInch>96</o:PixelsPerInch>
+            </o:OfficeDocumentSettings>
+        </xml>
+    </noscript>
+    <![endif]-->
+    <style type="text/css">
+        /* Outlook-specific styles */
+        .ReadMsgBody { width: 100%; }
+        .ExternalClass { width: 100%; }
+        .ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass td, .ExternalClass div {
+            line-height: 100%;
+        }
+        table { border-collapse: collapse; }
+        a { text-decoration: underline; }
+        a:hover { text-decoration: none; }
+        
+        /* Accessibility improvements */
+        .language-nav a {
+            color: #3498db !important;
+            font-weight: bold;
+            text-decoration: underline;
+            padding: 8px 12px;
+            display: inline-block;
+        }
+        .language-nav a:hover {
+            background-color: #ecf0f1;
+            text-decoration: none;
+        }
+        
+        @media only screen and (max-width: 600px) {
+            .main-table { width: 100% !important; }
+            .content-cell { padding: 15px !important; }
+        }
+    </style>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f8f9fa; font-family: Arial, sans-serif;">
+    <!-- Language Navigation at Top -->
+    <table role="presentation" style="width: 100%; background-color: #f8f9fa;">
+        <tr>
+            <td align="center" style="padding: 20px;">
+                <table role="presentation" class="main-table" style="width: 600px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <tr>
+                        <td class="content-cell" style="padding: 20px; text-align: center; background-color: #34495e; border-radius: 8px 8px 0 0;">
+                            <div class="language-nav" style="margin-bottom: 15px;">
+                                <a href="#english-section" style="color: #ffffff; margin-right: 20px;">Go to English</a>
+                                <a href="#french-section" style="color: #ffffff;">Aller au français</a>
+                            </div>
+                            <h1 style="color: #ffffff; font-size: 28px; margin: 0; font-family: Arial, sans-serif;">${escapeHtml(titleEn)}</h1>
+                            <h1 style="color: #ecf0f1; font-size: 24px; margin: 10px 0 0 0; font-family: Arial, sans-serif;">${escapeHtml(titleFr)}</h1>
+                            <div style="color: #bdc3c7; font-size: 16px; margin-top: 12px; font-family: Arial, sans-serif;">
+                                ${dateEn} / ${dateFr}
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <!-- English Section -->
+    <table role="presentation" style="width: 100%; background-color: #f8f9fa;">
+        <tr>
+            <td align="center" style="padding: 0 20px 20px 20px;">
+                <table role="presentation" class="main-table" style="width: 600px; background-color: #ffffff; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <tr>
+                        <td id="english-section" class="content-cell" style="padding: 30px;" lang="en">
+                            <h2 style="color: #2c3e50; font-size: 24px; margin: 0 0 20px 0; padding-bottom: 10px; border-bottom: 3px solid #3498db; font-family: Arial, sans-serif;">English Version</h2>
+                            <table role="presentation" style="width: 100%;">
+                                ${englishArticlesHTML}
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <!-- French Section -->
+    <table role="presentation" style="width: 100%; background-color: #f8f9fa;">
+        <tr>
+            <td align="center" style="padding: 0 20px 20px 20px;">
+                <table role="presentation" class="main-table" style="width: 600px; background-color: #ffffff; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <tr>
+                        <td id="french-section" class="content-cell" style="padding: 30px;" lang="fr">
+                            <h2 style="color: #2c3e50; font-size: 24px; margin: 0 0 20px 0; padding-bottom: 10px; border-bottom: 3px solid #e74c3c; font-family: Arial, sans-serif;">Version française</h2>
+                            <table role="presentation" style="width: 100%;">
+                                ${frenchArticlesHTML}
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Footer -->
+    <table role="presentation" style="width: 100%; background-color: #f8f9fa;">
+        <tr>
+            <td align="center" style="padding: 20px;">
+                <table role="presentation" class="main-table" style="width: 600px; background-color: #ffffff; border-radius: 0 0 8px 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <tr>
+                        <td class="content-cell" style="padding: 20px; text-align: center; background-color: #ecf0f1; border-radius: 0 0 8px 8px;">
+                            <div style="color: #7f8c8d; font-size: 14px; font-family: Arial, sans-serif;">
+                                <span lang="en">Thank you for reading our newsletter</span> / 
+                                <span lang="fr">Merci d'avoir lu notre bulletin</span>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>`;
+        }
+
+        // Utility function to escape HTML entities
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Tab switching functionality
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+                btn.setAttribute('aria-selected', 'false');
+            });
+            
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            if (tabName === 'code') {
+                document.getElementById('codeTab').classList.add('active');
+                document.getElementById('codeTab').setAttribute('aria-selected', 'true');
+                document.getElementById('codeContent').classList.add('active');
+            } else {
+                document.getElementById('previewTab').classList.add('active');
+                document.getElementById('previewTab').setAttribute('aria-selected', 'true');
+                document.getElementById('previewContent').classList.add('active');
+            }
+        }
+
+        // Copy to clipboard functionality
+        function copyToClipboard() {
+            const htmlOutput = document.getElementById('htmlOutput');
+            const textToCopy = htmlOutput.textContent;
+            
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    showCopyStatus('Copied to clipboard successfully!', 'success');
+                }).catch(() => {
+                    fallbackCopyToClipboard(textToCopy);
+                });
+            } else {
+                fallbackCopyToClipboard(textToCopy);
+            }
+        }
+
+        // Fallback copy method for older browsers
+        function fallbackCopyToClipboard(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                showCopyStatus('Copied to clipboard successfully!', 'success');
+            } catch (err) {
+                showCopyStatus('Failed to copy. Please select and copy manually.', 'error');
+            }
+            
+            document.body.removeChild(textArea);
+        }
+
+        // Show copy status message
+        function showCopyStatus(message, type) {
+            const statusEl = document.getElementById('copyStatus');
+            statusEl.textContent = message;
+            statusEl.className = type === 'success' ? 'success-message' : 'error-message';
+            statusEl.style.display = 'block';
+            
+            // Clear message after 3 seconds
+            setTimeout(() => {
+                statusEl.style.display = 'none';
+            }, 3000);
+            
+            announceToScreenReader(message);
+        }
+
+        // Announce messages to screen readers
+        function announceToScreenReader(message) {
+            const announcement = document.createElement('div');
+            announcement.setAttribute('aria-live', 'polite');
+            announcement.setAttribute('aria-atomic', 'true');
+            announcement.className = 'sr-only';
+            announcement.textContent = message;
+            
+            document.body.appendChild(announcement);
+            
+            // Remove after announcement
+            setTimeout(() => {
+                document.body.removeChild(announcement);
+            }, 1000);
+        }
+
+        // Keyboard navigation improvements
+        document.addEventListener('keydown', function(e) {
+            // Allow Escape to close error messages
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.error-message[style*="block"]').forEach(el => {
+                    el.style.display = 'none';
+                });
+            }
+            
+            // Allow Enter/Space on tab buttons
+            if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('tab-button')) {
+                e.preventDefault();
+                e.target.click();
+            }
+        });
+    </script>
+</body>
+</html>
