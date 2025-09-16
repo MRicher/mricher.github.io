@@ -490,8 +490,13 @@
 
                 <div id="codeContent" class="tab-content active" role="tabpanel" aria-labelledby="codeTab">
                     <h3>Outlook-Ready HTML Code</h3>
-                    <p><strong>Instructions:</strong> To use in Outlook, open a new message, switch to HTML/source view, and paste the code below as the message body.</p>                    
-                    <div class="code-output" id="htmlOutput" aria-label="Generated HTML code" role="region">Click "Generate Email" to see the HTML code here.</div>
+                    <p><strong>Instructions:</strong> To use in Outlook, open a new message, switch to HTML/source view (if required), and paste the code below as the message body.</p>
+                    <p><small><strong>Outlook Compatibility Note:</strong> This code uses table-based layout and inline styles for maximum compatibility with Outlook's rendering engine.</small></p>
+                    
+                    <div class="code-output" id="htmlOutput" aria-label="Generated HTML code" role="region">
+                        Click "Generate Email" to see the HTML code here.
+                    </div>
+                    
                     <button type="button" id="copyBtn" class="btn btn-secondary copy-button" aria-describedby="copyDesc">
                         Copy to Clipboard
                     </button>
@@ -527,16 +532,24 @@
         });
 
         // Initialize CKEditor for all textarea elements
-        function initializeCKEditor(id) {
-          CKEDITOR.replace(id, {
-            toolbar: [
-              ['Bold', 'Italic', 'Underline'],
-              ['NumberedList', 'BulletedList'],
-              ['Outdent', 'Indent'],
-              ['Link']
-            ],
-            height: 150
-          });
+        function initializeCKEditor() {
+            // Initialize for existing textareas
+            const textareas = ['firstArticleBodyEn', 'firstArticleBodyFr'];
+            textareas.forEach(id => {
+                if (document.getElementById(id)) {
+                    CKEDITOR.replace(id, {
+                        toolbar: [
+                            { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline'] },
+                            { name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent'] },
+                            { name: 'links', items: ['Link', 'Unlink'] },
+                            { name: 'insert', items: ['Image'] }
+                        ],
+                        height: 150,
+                        removePlugins: 'elementspath',
+                        resize_enabled: false
+                    });
+                }
+            });
         }
 
         // Event listeners setup
@@ -553,7 +566,7 @@
             document.getElementById('previewTab').addEventListener('click', () => switchTab('preview'));
             
             // Add article button
-            document.getElementById('addArticleBtn').addEventListener('click', () => addArticle());
+            document.getElementById('addArticleBtn').addEventListener('click', addArticle);
             
             // Copy button
             document.getElementById('copyBtn').addEventListener('click', copyToClipboard);
@@ -596,7 +609,7 @@
         }
 
         // Add a new article
-        async function addArticle() {
+        function addArticle() {
             additionalArticleCount++;
             const articlesContainer = document.getElementById('additionalArticles');
             
@@ -661,29 +674,28 @@
             articlesContainer.appendChild(articleDiv);
             
             // Initialize CKEditor for the new textareas
-            try {
-                CKEDITOR.replace(`article${additionalArticleCount}BodyEn`, {
-                  toolbar: [
-                    ['Bold', 'Italic', 'Underline'],
-                    ['NumberedList', 'BulletedList'],
-                    ['Outdent', 'Indent'],
-                    ['Link']
-                  ],
-                  height: 150
-                });
-                CKEDITOR.replace(`article${additionalArticleCount}BodyFr`, {
-                  toolbar: [
-                    ['Bold', 'Italic', 'Underline'],
-                    ['NumberedList', 'BulletedList'],
-                    ['Outdent', 'Indent'],
-                    ['Link']
-                  ],
-                  height: 150
-                });
-               
-            } catch (error) {
-                console.error('Error initializing CKEditor for new article:', error);
-            }
+            CKEDITOR.replace(`article${additionalArticleCount}BodyEn`, {
+                toolbar: [
+                    { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline'] },
+                    { name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent'] },
+                    { name: 'links', items: ['Link', 'Unlink'] },
+                    { name: 'insert', items: ['Image'] }
+                ],
+                height: 150,
+                removePlugins: 'elementspath',
+                resize_enabled: false
+            });
+            
+            CKEDITOR.replace(`article${additionalArticleCount}BodyFr`, {
+                toolbar: [
+                    { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline'] },
+                    { name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent'] },
+                    { name: 'links', items: ['Link', 'Unlink'] }
+                ],
+                height: 150,
+                removePlugins: 'elementspath',
+                resize_enabled: false
+            });
             
             // Focus on the first input of the new article for accessibility
             articleDiv.querySelector('input').focus();
@@ -701,7 +713,7 @@
                 const editorFrId = `article${articleId}BodyFr`;
                 
                 if (CKEDITOR.instances[editorEnId]) {
-                  CKEDITOR.instances[editorEnId].destroy(true);
+                    CKEDITOR.instances[editorEnId].destroy();
                 }
                 if (CKEDITOR.instances[editorFrId]) {
                     CKEDITOR.instances[editorFrId].destroy();
