@@ -527,27 +527,16 @@
         });
 
         // Initialize CKEditor for all textarea elements
-        async function initializeCKEditor() {
-            const textareas = ['firstArticleBodyEn', 'firstArticleBodyFr'];
-            
-            for (const id of textareas) {
-                const element = document.getElementById(id);
-                if (element) {
-                    try {
-                        CKEDITOR.replace(id, {
-                          toolbar: [
-                            ['Bold', 'Italic', 'Underline'],
-                            ['NumberedList', 'BulletedList'],
-                            ['Outdent', 'Indent'],
-                            ['Link']
-                          ],
-                          height: 150
-                        });
-                    } catch (error) {
-                        console.error('Error initializing CKEditor for', id, error);
-                    }
-                }
-            }
+        function initializeCKEditor(id) {
+          CKEDITOR.replace(id, {
+            toolbar: [
+              ['Bold', 'Italic', 'Underline'],
+              ['NumberedList', 'BulletedList'],
+              ['Outdent', 'Indent'],
+              ['Link']
+            ],
+            height: 150
+          });
         }
 
         // Event listeners setup
@@ -673,18 +662,25 @@
             
             // Initialize CKEditor for the new textareas
             try {
-                const enEditor = await ClassicEditor.create(document.getElementById(`article${additionalArticleCount}BodyEn`), {
-                    toolbar: ['bold', 'italic', 'underline', '|', 'numberedList', 'bulletedList', '|', 'outdent', 'indent', '|', 'link'],
-                    height: '150px'
+                CKEDITOR.replace(`article${additionalArticleCount}BodyEn`, {
+                  toolbar: [
+                    ['Bold', 'Italic', 'Underline'],
+                    ['NumberedList', 'BulletedList'],
+                    ['Outdent', 'Indent'],
+                    ['Link']
+                  ],
+                  height: 150
                 });
-                editorInstances.set(`article${additionalArticleCount}BodyEn`, enEditor);
-                
-                const frEditor = await ClassicEditor.create(document.getElementById(`article${additionalArticleCount}BodyFr`), {
-                    toolbar: ['bold', 'italic', 'underline', '|', 'numberedList', 'bulletedList', '|', 'outdent', 'indent', '|', 'link'],
-                    height: '150px'
+                CKEDITOR.replace(`article${additionalArticleCount}BodyFr`, {
+                  toolbar: [
+                    ['Bold', 'Italic', 'Underline'],
+                    ['NumberedList', 'BulletedList'],
+                    ['Outdent', 'Indent'],
+                    ['Link']
+                  ],
+                  height: 150
                 });
-                editorInstances.set(`article${additionalArticleCount}BodyFr`, frEditor);
-                
+               
             } catch (error) {
                 console.error('Error initializing CKEditor for new article:', error);
             }
