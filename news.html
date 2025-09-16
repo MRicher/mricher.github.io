@@ -559,7 +559,7 @@
             document.getElementById('previewTab').addEventListener('click', () => switchTab('preview'));
             
             // Add article button
-            document.getElementById('addArticleBtn').addEventListener('click', addArticle);
+            document.getElementById('addArticleBtn').addEventListener('click', () => addArticle());
             
             // Copy button
             document.getElementById('copyBtn').addEventListener('click', copyToClipboard);
@@ -602,7 +602,7 @@
         }
 
         // Add a new article
-        function addArticle() {
+        async function addArticle() {
             additionalArticleCount++;
             const articlesContainer = document.getElementById('additionalArticles');
             
@@ -667,29 +667,22 @@
             articlesContainer.appendChild(articleDiv);
             
             // Initialize CKEditor for the new textareas
-            CKEDITOR.replace(`article${additionalArticleCount}BodyEn`, {
-                toolbar: [
-                    { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline'] },
-                    { name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent'] },
-                    { name: 'links', items: ['Link', 'Unlink'] },
-                    { name: 'insert', items: ['Image'] }
-                ],
-                height: 150,
-                removePlugins: 'elementspath',
-                resize_enabled: false
-            });
-            
-            CKEDITOR.replace(`article${additionalArticleCount}BodyFr`, {
-                toolbar: [
-                    { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline'] },
-                    { name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent'] },
-                    { name: 'links', items: ['Link', 'Unlink'] },
-                    { name: 'insert', items: ['Image'] }
-                ],
-                height: 150,
-                removePlugins: 'elementspath',
-                resize_enabled: false
-            });
+            try {
+                const enEditor = await ClassicEditor.create(document.getElementById(`article${additionalArticleCount}BodyEn`), {
+                    toolbar: ['bold', 'italic', 'underline', '|', 'numberedList', 'bulletedList', '|', 'outdent', 'indent', '|', 'link'],
+                    height: '150px'
+                });
+                editorInstances.set(`article${additionalArticleCount}BodyEn`, enEditor);
+                
+                const frEditor = await ClassicEditor.create(document.getElementById(`article${additionalArticleCount}BodyFr`), {
+                    toolbar: ['bold', 'italic', 'underline', '|', 'numberedList', 'bulletedList', '|', 'outdent', 'indent', '|', 'link'],
+                    height: '150px'
+                });
+                editorInstances.set(`article${additionalArticleCount}BodyFr`, frEditor);
+                
+            } catch (error) {
+                console.error('Error initializing CKEditor for new article:', error);
+            }
             
             // Focus on the first input of the new article for accessibility
             articleDiv.querySelector('input').focus();
