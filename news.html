@@ -394,7 +394,7 @@
 
                     <!-- First Article -->
                     <div class="form-group">
-                        <h2>First Article</h2>
+                        <h2>Mandatory Article</h2>
                         <div class="article-container">
                             <div class="form-row">
                                 <div>
@@ -425,7 +425,7 @@
                             
                             <div class="form-row" style="margin-top: 16px;">
                                 <div>
-                                    <label for="firstArticleBodyEn">Body/Content (English) *</label>
+                                    <label for="firstArticleBodyEn">Content (English) *</label>
                                     <textarea 
                                         id="firstArticleBodyEn" 
                                         name="firstArticleBodyEn" 
@@ -435,13 +435,13 @@
                                     <div id="firstArticleBodyEn-error" class="error-message" role="alert" style="display: none;"></div>
                                 </div>
                                 <div>
-                                    <label for="firstArticleBodyFr">Corps (French) *</label>
+                                    <label for="firstArticleBodyFr">Contenu (français) *</label>
                                     <textarea 
                                         id="firstArticleBodyFr" 
                                         name="firstArticleBodyFr" 
                                         required 
                                         aria-describedby="firstArticleBodyFr-error"
-                                        placeholder="Rédigez votre contenu français ici...">Nous sommes ravis d'annoncer le lancement de nos dernières fonctionnalités alimentées par l'IA qui révolutionneront votre façon de travailler avec les données. Ces nouvelles capacités incluent des rapports automatisés, une analyse intelligente des données et des insights prédictifs qui vous aident à prendre de meilleures décisions plus rapidement.</textarea>
+                                        placeholder="Rédigez votre contenu français ici...">Nous sommes ravis d'annoncer le lancement de nos dernières fonctionnalités alimentées par l'IA qui révolutionneront votre façon de travailler avec les données. Ces nouvelles capacités incluent des rapports automatisés, une analyse intelligente des données et des informations prédictives qui vous aident à prendre de meilleures décisions plus rapidement.</textarea>
                                     <div id="firstArticleBodyFr-error" class="error-message" role="alert" style="display: none;"></div>
                                 </div>
                             </div>
@@ -453,7 +453,7 @@
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                             <h2>Additional Articles</h2>
                             <button type="button" id="addArticleBtn" class="btn btn-primary" aria-describedby="addArticleDesc">
-                                ➕ Add Article
+                                Add Article
                             </button>
                             <div id="addArticleDesc" class="sr-only">Add a new article to the newsletter</div>
                         </div>
@@ -465,7 +465,7 @@
 
                     <!-- Generate Button -->
                     <button type="submit" class="btn btn-primary btn-large">
-                        📧 Preview / Generate Email
+                        Preview / Generate Email
                     </button>
                 </form>
             </section>
@@ -503,7 +503,7 @@
                     </div>
                     
                     <button type="button" id="copyBtn" class="btn btn-secondary copy-button" aria-describedby="copyDesc">
-                        📋 Copy to Clipboard
+                        Copy to Clipboard
                     </button>
                     <div id="copyDesc" class="sr-only">Copy the HTML code to your clipboard</div>
                     <div id="copyStatus" role="status" aria-live="polite" style="margin-top: 8px;"></div>
@@ -599,13 +599,13 @@
                     <div class="article-title">Article ${additionalArticleCount}</div>
                     <div class="article-controls">
                         <button type="button" class="btn btn-secondary" onclick="moveArticle(${additionalArticleCount}, 'up')" aria-label="Move article up">
-                            ↑
+                            Up
                         </button>
                         <button type="button" class="btn btn-secondary" onclick="moveArticle(${additionalArticleCount}, 'down')" aria-label="Move article down">
-                            ↓
+                            Down
                         </button>
                         <button type="button" class="btn btn-danger" onclick="removeArticle(${additionalArticleCount})" aria-label="Remove this article">
-                            🗑️ Remove
+                            Remove
                         </button>
                     </div>
                 </div>
@@ -633,7 +633,7 @@
                 
                 <div class="form-row" style="margin-top: 16px;">
                     <div>
-                        <label for="article${additionalArticleCount}BodyEn">Body/Content (English) *</label>
+                        <label for="article${additionalArticleCount}BodyEn">Content (English) *</label>
                         <textarea 
                             id="article${additionalArticleCount}BodyEn" 
                             name="article${additionalArticleCount}BodyEn" 
@@ -641,7 +641,7 @@
                             placeholder="Write your English content here..."></textarea>
                     </div>
                     <div>
-                        <label for="article${additionalArticleCount}BodyFr">Corps (French) *</label>
+                        <label for="article${additionalArticleCount}BodyFr">Contenu (français) *</label>
                         <textarea 
                             id="article${additionalArticleCount}BodyFr" 
                             name="article${additionalArticleCount}BodyFr" 
@@ -859,13 +859,11 @@
                     <tr>
                         <td class="content-cell" style="padding: 20px; text-align: center; background-color: #34495e; border-radius: 8px 8px 0 0;">
                             <div class="language-nav" style="margin-bottom: 15px;">
-                                <a href="#english-section" style="color: #ffffff; margin-right: 20px;">Go to English</a>
                                 <a href="#french-section" style="color: #ffffff;">Aller au français</a>
                             </div>
                             <h1 style="color: #ffffff; font-size: 28px; margin: 0; font-family: Arial, sans-serif;">${escapeHtml(titleEn)}</h1>
-                            <h1 style="color: #ecf0f1; font-size: 24px; margin: 10px 0 0 0; font-family: Arial, sans-serif;">${escapeHtml(titleFr)}</h1>
                             <div style="color: #bdc3c7; font-size: 16px; margin-top: 12px; font-family: Arial, sans-serif;">
-                                ${dateEn} / ${dateFr}
+                                ${dateEn}
                             </div>
                         </td>
                     </tr>
@@ -880,11 +878,45 @@
             <td align="center" style="padding: 0 20px 20px 20px;">
                 <table role="presentation" class="main-table" style="width: 600px; background-color: #ffffff; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
                     <tr>
-                        <td id="english-section" class="content-cell" style="padding: 30px;" lang="en">
-                            <h2 style="color: #2c3e50; font-size: 24px; margin: 0 0 20px 0; padding-bottom: 10px; border-bottom: 3px solid #3498db; font-family: Arial, sans-serif;">English Version</h2>
+                        <td class="content-cell" style="padding: 30px;" lang="en">
                             <table role="presentation" style="width: 100%;">
                                 ${englishArticlesHTML}
                             </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <!-- English Footer -->
+    <table role="presentation" style="width: 100%; background-color: #f8f9fa;">
+        <tr>
+            <td align="center" style="padding: 0 20px 20px 20px;">
+                <table role="presentation" class="main-table" style="width: 600px; background-color: #ffffff; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <tr>
+                        <td class="content-cell" style="padding: 20px; text-align: center; background-color: #ecf0f1;" lang="en">
+                            <div style="color: #7f8c8d; font-size: 14px; font-family: Arial, sans-serif;">
+                                Thank you for reading our newsletter
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <!-- French Header -->
+    <table role="presentation" style="width: 100%; background-color: #f8f9fa;">
+        <tr>
+            <td align="center" style="padding: 20px 20px 0 20px;">
+                <table role="presentation" class="main-table" style="width: 600px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <tr>
+                        <td id="french-section" class="content-cell" style="padding: 20px; text-align: center; background-color: #e74c3c; border-radius: 8px 8px 0 0;">
+                            <h1 style="color: #ffffff; font-size: 28px; margin: 0; font-family: Arial, sans-serif;">${escapeHtml(titleFr)}</h1>
+                            <div style="color: #fadbd8; font-size: 16px; margin-top: 12px; font-family: Arial, sans-serif;">
+                                ${dateFr}
+                            </div>
                         </td>
                     </tr>
                 </table>
@@ -898,8 +930,7 @@
             <td align="center" style="padding: 0 20px 20px 20px;">
                 <table role="presentation" class="main-table" style="width: 600px; background-color: #ffffff; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
                     <tr>
-                        <td id="french-section" class="content-cell" style="padding: 30px;" lang="fr">
-                            <h2 style="color: #2c3e50; font-size: 24px; margin: 0 0 20px 0; padding-bottom: 10px; border-bottom: 3px solid #e74c3c; font-family: Arial, sans-serif;">Version française</h2>
+                        <td class="content-cell" style="padding: 30px;" lang="fr">
                             <table role="presentation" style="width: 100%;">
                                 ${frenchArticlesHTML}
                             </table>
@@ -910,16 +941,15 @@
         </tr>
     </table>
 
-    <!-- Footer -->
+    <!-- French Footer -->
     <table role="presentation" style="width: 100%; background-color: #f8f9fa;">
         <tr>
-            <td align="center" style="padding: 20px;">
+            <td align="center" style="padding: 0 20px 40px 20px;">
                 <table role="presentation" class="main-table" style="width: 600px; background-color: #ffffff; border-radius: 0 0 8px 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
                     <tr>
-                        <td class="content-cell" style="padding: 20px; text-align: center; background-color: #ecf0f1; border-radius: 0 0 8px 8px;">
+                        <td class="content-cell" style="padding: 20px; text-align: center; background-color: #ecf0f1; border-radius: 0 0 8px 8px;" lang="fr">
                             <div style="color: #7f8c8d; font-size: 14px; font-family: Arial, sans-serif;">
-                                <span lang="en">Thank you for reading our newsletter</span> / 
-                                <span lang="fr">Merci d'avoir lu notre bulletin</span>
+                                Merci d'avoir lu notre bulletin
                             </div>
                         </td>
                     </tr>
