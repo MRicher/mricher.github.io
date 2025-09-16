@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bilingual Newsletter Generator</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ckeditor5/44.3.0/build/ckeditor.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ckeditor5/44.3.0/ckeditor.js"></script>
     <style>
         /* Main UI Styles - Modern CSS for the form interface */
         * {
@@ -527,23 +527,22 @@
         });
 
         // Initialize CKEditor for all textarea elements
-        function initializeCKEditor() {
-            // Initialize for existing textareas
+        async function initializeCKEditor() {
             const textareas = ['firstArticleBodyEn', 'firstArticleBodyFr'];
-            textareas.forEach(id => {
-                if (document.getElementById(id)) {
-                    CKEDITOR.replace(id, {
-                        toolbar: [
-                            { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline'] },
-                            { name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent'] },
-                            { name: 'links', items: ['Link', 'Unlink'] }
-                        ],
-                        height: 150,
-                        removePlugins: 'elementspath',
-                        resize_enabled: false
-                    });
+            
+            for (const id of textareas) {
+                const element = document.getElementById(id);
+                if (element) {
+                    try {
+                        await ClassicEditor.create(element, {
+                            toolbar: ['bold', 'italic', 'underline', '|', 'numberedList', 'bulletedList', '|', 'outdent', 'indent', '|', 'link'],
+                            height: 150
+                        });
+                    } catch (error) {
+                        console.error('Error initializing CKEditor for', id, error);
+                    }
                 }
-            });
+            }
         }
 
         // Event listeners setup
