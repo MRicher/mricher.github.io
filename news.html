@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bilingual Newsletter Generator</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ckeditor5/44.3.0/ckeditor.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ckeditor5/44.3.0/build/ckeditor.js"></script>
     <style>
         /* Main UI Styles - Modern CSS for the form interface */
         * {
@@ -490,13 +490,8 @@
 
                 <div id="codeContent" class="tab-content active" role="tabpanel" aria-labelledby="codeTab">
                     <h3>Outlook-Ready HTML Code</h3>
-                    <p><strong>Instructions:</strong> To use in Outlook, open a new message, switch to HTML/source view (if required), and paste the code below as the message body.</p>
-                    <p><small><strong>Outlook Compatibility Note:</strong> This code uses table-based layout and inline styles for maximum compatibility with Outlook's rendering engine.</small></p>
-                    
-                    <div class="code-output" id="htmlOutput" aria-label="Generated HTML code" role="region">
-                        Click "Generate Email" to see the HTML code here.
-                    </div>
-                    
+                    <p><strong>Instructions:</strong> To use in Outlook, open a new message, switch to HTML/source view, and paste the code below as the message body.</p>                    
+                    <div class="code-output" id="htmlOutput" aria-label="Generated HTML code" role="region">Click "Generate Email" to see the HTML code here.</div>
                     <button type="button" id="copyBtn" class="btn btn-secondary copy-button" aria-describedby="copyDesc">
                         Copy to Clipboard
                     </button>
@@ -541,8 +536,7 @@
                         toolbar: [
                             { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline'] },
                             { name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent'] },
-                            { name: 'links', items: ['Link', 'Unlink'] },
-                            { name: 'insert', items: ['Image'] }
+                            { name: 'links', items: ['Link', 'Unlink'] }
                         ],
                         height: 150,
                         removePlugins: 'elementspath',
