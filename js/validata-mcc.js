@@ -391,13 +391,15 @@ formatAllDateInputs() {
 	initializeQuillEditors() {
 		if (typeof Quill === 'undefined') return;
 		
-		// Register custom formats for abbr tag
-		const Inline = Quill.import('blots/inline');
-		class AbbrBlot extends Inline {
-			static blotName = 'abbr';
-			static tagName = 'abbr';
+		// Register custom formats for abbr tag (only once)
+		if (!Quill.imports['formats/abbr']) {
+			const Inline = Quill.import('blots/inline');
+			class AbbrBlot extends Inline {
+				static blotName = 'abbr';
+				static tagName = 'abbr';
+			}
+			Quill.register(AbbrBlot);
 		}
-		Quill.register(AbbrBlot);
 		
 		// Initialize Quill for all summary and update fields
 		document.querySelectorAll('.quill-editor').forEach(container => {
@@ -424,14 +426,20 @@ formatAllDateInputs() {
 			// Set initial content preserving HTML
 			const record = this.data.data[recordIndex];
 			if (record && record[field]) {
-				// Use clipboard to paste HTML with custom tags preserved
-				const delta = quill.clipboard.convert(record[field]);
-				quill.setContents(delta, 'silent');
+				const content = record[field] || '';
+				if (content) {
+					// Use pasteHTML method to properly insert HTML content
+					quill.clipboard.dangerouslyPasteHTML(content);
+				}
 			}
 			
 			// Handle content changes
 			quill.on('text-change', () => {
 				let html = quill.root.innerHTML;
+				// Clean up empty paragraph tags
+				if (html === '<p><br></p>') {
+					html = '';
+				}
 				// Preserve abbr tags and links
 				this.updateRecord(recordIndex, field, html);
 			});
