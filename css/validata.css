@@ -187,7 +187,8 @@ img {
     }
 }
 
-.quill-editor .ql-container {
+/* Override Quill default styles for our custom editors */
+.quill-editor.ql-container {
   box-sizing: border-box !important;
   font-family: inherit !important;
   font-size: inherit !important;
@@ -196,10 +197,18 @@ img {
   position: relative !important;
 }
 
+.quill-editor .ql-container.ql-snow {
+  border: 1px solid #ced4da !important;
+  border-radius: 0 0 0.375rem 0.375rem !important;
+  font-size: 1rem !important;
+  font-family: inherit !important;
+}
+
 .quill-editor .ql-editor {
   font-family: inherit !important;
-  font-size: inherit !important;
-  min-height: 100px !important;
+  font-size: 1rem !important;
+  line-height: 1.5 !important;
+  min-height: 120px !important;
   padding: 12px 15px !important;
 }
 
@@ -208,10 +217,16 @@ img {
   border-bottom: none !important;
   border-radius: 0.375rem 0.375rem 0 0 !important;
   background: #f8f9fa !important;
+  font-family: inherit !important;
 }
 
-.quill-editor .ql-snow.ql-container {
+.quill-editor .ql-toolbar.ql-snow {
   border: 1px solid #ced4da !important;
-  border-radius: 0 0 0.375rem 0.375rem !important;
-  font-size: 1rem !important;
+  border-bottom: none !important;
+  font-family: inherit !important;
+  padding: 8px !important;
+}
+
+.quill-editor .ql-toolbar.ql-snow + .ql-container.ql-snow {
+  border-top: 1px solid #ced4da !important;
 }
