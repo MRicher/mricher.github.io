@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en-CA">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="UTF-8">
+	<meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title data-en="Create and edit MCC JSON files" data-fr="Créer et modifier des fichiers JSON de la CPM">Create and edit MCC JSON files</title>
     <meta name="description" data-en="Use this simple tool to create, edit, and check Mass Casualty Commission (MCC) JSON files. validata helps you build complex files faster with a clear and easy-to-use interface." data-fr="Utilisez cet outil simple pour créer, modifier et vérifier les fichiers JSON de la Commission des pertes massives (CPM). validata vous aide à créer des fichiers complexes plus rapidement grâce à une interface claire et facile à utiliser." content="Use this simple tool to create, edit, and check Mass Casualty Commission (MCC) JSON files. validata helps you build complex files faster with a clear and easy-to-use interface.">
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -10,70 +10,27 @@
     <link href="css/validata.css" rel="stylesheet">
 </head>
 <body>
-    <!-- Skip to content link for accessibility -->
-    <a href="#main-content" class="skip-link" data-en="Skip to main content" data-fr="Passer au contenu principal">Skip to main content</a>
-    
-    <header>
-        <nav class="navbar navbar-expand-lg" aria-label="Main navigation">
-            <div class="container">
-                <!-- Brand/Logo -->
-                <div class="navbar-brand d-flex align-items-center">
-                    <img src="img/orca.png" alt="" class="me-2" style="height: 50px; width: auto;">
-                    <span data-en="validata" data-fr="validata">validata</span>
-                </div>
-                
-                <!-- Mobile menu toggle button -->
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
-                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation menu">
-                    <span class="navbar-toggler-icon"></span>
-                    <span class="sr-only" data-en="Toggle navigation menu" data-fr="Basculer le menu de navigation">Toggle navigation menu</span>
-                </button>
-                
-                <!-- Navigation menu -->
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0" role="menubar">
-                        <li class="nav-item" role="none">
-                            <a class="nav-link active" href="index.html" role="menuitem" aria-current="page" data-en="Home" data-fr="Accueil">Home</a>
-                        </li>
-                        <li class="nav-item" role="none">
-                            <a class="nav-link" href="#" role="menuitem" 
-                               data-en="About" data-fr="À propos">About</a>
-                        </li>
-                    </ul>
-                    
-                    <!-- Theme Toggle and Language Switcher -->
-                    <div class="language-switcher" role="group" aria-label="Settings">
-                        <!-- Theme toggle -->
-                        <button type="button" class="theme-toggle" id="theme-toggle" 
-                                aria-label="Toggle dark/light theme" 
-                                data-en-light="Switch to Dark mode" 
-                                data-fr-light="Passer au mode sombre"
-                                data-en-dark="Switch to Light mode" 
-                                data-fr-dark="Passer au mode clair">
-                            <span id="theme-text" data-en="Dark mode" data-fr="Mode sombre">Dark mode</span>
-                        </button>
-                        
-                        <!-- Language Switcher -->
-                        <button type="button" class="btn btn-outline-primary btn-sm" 
-                                data-lang="fr-CA" aria-pressed="false" 
-                                aria-label="Passer au français" 
-                                id="lang-fr-btn" style="display: none;">
-                                <span data-en="Français" data-fr="Français">Français</span>
-                        </button>
-                        <button type="button" class="btn btn-outline-primary btn-sm" 
-                                data-lang="en-CA" aria-pressed="false" 
-                                aria-label="Switch to English" 
-                                id="lang-en-btn">
-                                <span data-en="English" data-fr="English">English</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </nav>
-    </header>
-    
+	<a class="skip-link" data-en="Skip to main content" data-fr="Passer au contenu principal" href="#main-content">Skip to main content</a>
+	<header>
+		<nav aria-label="Main navigation" class="navbar navbar-expand-lg">
+			<div class="container">
+				<div class="navbar-brand d-flex align-items-center">
+					<img alt="" class="me-2" src="img/horse.svg" style="height: 50px; width: auto;"> <span data-en="Validata - <abbr>MCC</abbr>" data-fr="Validata - <abbr>CPM</abbr>">Validata - <abbr>MCC</abbr></span>
+				</div><button aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation menu" class="navbar-toggler" data-bs-target="#navbarNav" data-bs-toggle="collapse" type="button"><span class="navbar-toggler-icon"></span> <span class="sr-only" data-en="Toggle navigation menu" data-fr="Basculer le menu de navigation">Toggle navigation menu</span></button>
+				<div class="collapse navbar-collapse" id="navbarNav">
+					<ul class="navbar-nav me-auto mb-2 mb-lg-0" role="menubar">
+						<li class="nav-item" role="none">
+							<a class="nav-link" data-en="About" data-fr="À propos" href="about-a-propos.html" role="menuitem">About</a>
+						</li>
+					</ul>
+					<div aria-label="Settings" class="language-switcher" role="group">
+						<button aria-label="Toggle dark/light theme" class="theme-toggle" data-en-dark="Switch to Light mode" data-en-light="Switch to Dark mode" data-fr-dark="Passer au mode clair" data-fr-light="Passer au mode sombre" id="theme-toggle" type="button"><span data-en="Dark mode" data-fr="Mode sombre" id="theme-text">Dark mode</span></button> <button aria-label="Passer au français" aria-pressed="false" class="btn btn-outline-primary btn-sm" data-lang="fr-CA" id="lang-fr-btn" style="display: none;" type="button"><span data-en="Français" data-fr="Français">Français</span></button> <button aria-label="Switch to English" aria-pressed="false" class="btn btn-outline-primary btn-sm" data-lang="en-CA" id="lang-en-btn" type="button"><span data-en="English" data-fr="English">English</span></button>
+					</div>
+				</div>
+			</div>
+		</nav>
+	</header>
     <main id="main-content" class="container">
-        <!-- Back to Top Button -->
         <button 
             type="button" 
             class="back-to-top" 
@@ -91,8 +48,7 @@
         <div class="row">
             <div class="col-12">
                 <div id="alerts-container"></div>
-                
-                <!-- File Upload Section -->
+
                 <div class="file-upload">
                     <h3 data-en="Load JSON data" data-fr="Charger les données JSON">Load JSON data</h3>
                     <input type="file" id="file-upload" accept=".json">
@@ -103,34 +59,25 @@
                     </div>
                     <p class="text-muted" data-en="Select a JSON file or load one from the server" data-fr="Sélectionnez un fichier JSON ou chargez-en un à partir du serveur">Select a JSON file or load one from the server</p>
                 </div>
-                
-                <!-- Action Buttons -->
+
                 <div class="mb-4">
                     <button class="btn btn-success me-2" id="add-record-btn" data-en="Add new record" data-fr="Ajouter un nouvel enregistrement">Add new record</button>
                     <button class="btn btn-outline-primary" id="download-btn" data-en="Save and download JSON" data-fr="Enregistrer et télécharger le JSON">Save and download JSON</button>
                 </div>
-                
-                <!-- Records Container -->
+
                 <div id="records-container"></div>
             </div>
         </div>
     </main>
-    
-    <footer class="mt-auto">
-        <div class="container">
-            <div class="text-center">
-                <p class="mb-0" data-en="" data-fr="" id="version-info"></p>
-            </div>
-        </div>
-    </footer>
-    
-    <!-- Bootstrap 5.3 JS -->
-    <script src="js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Enhanced JavaScript with Theme Support -->
-    <script src="js/creavia.js"></script>
-  
-   <!-- RCMP Data Editor JavaScript -->
+	<footer class="mt-auto">
+		<div class="container">
+			<div class="text-center">
+				<p class="mb-0" data-en="" data-fr="" id="version-info"></p>
+			</div>
+		</div>
+	</footer>
+	<script src="js/bootstrap.bundle.min.js"></script> 
+	<script src="js/creavia.min.js"></script>
     <script src="js/validata-mcc.js"></script>
 </body>
 </html>
