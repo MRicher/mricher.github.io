@@ -369,12 +369,50 @@ class RCMPDataEditor {
 		return themes.map(theme => `<option value="${theme}" ${selectedValue === theme ? 'selected' : ''}>${theme}</option>`).join('');
 	}
 	// Fixed: Added the missing formatAllDateInputs method
-	formatAllDateInputs() {
+formatAllDateInputs() {
 		const dateInputs = document.querySelectorAll('input[type="date"]');
 		dateInputs.forEach(input => {
 			this.formatDateInput(input);
 		});
 	}
+	
+	initializeQuillEditors() {
+		if (typeof Quill === 'undefined') return;
+		
+		// Initialize Quill for all summary and update fields
+		document.querySelectorAll('.quill-editor').forEach(container => {
+			const editorId = container.getAttribute('data-editor-id');
+			const field = container.getAttribute('data-field');
+			const recordIndex = parseInt(container.getAttribute('data-record-index'));
+			
+			// Skip if already initialized
+			if (container.querySelector('.ql-toolbar')) return;
+			
+			const quill = new Quill(container, {
+				theme: 'snow',
+				modules: {
+					toolbar: [
+						['bold', 'italic'],
+						['link']
+					]
+				}
+			});
+			
+			// Set initial content
+			const record = this.data.data[recordIndex];
+			if (record && record[field]) {
+				quill.root.innerHTML = record[field];
+			}
+			
+			// Handle content changes
+			quill.on('text-change', () => {
+				let html = quill.root.innerHTML;
+				// Convert <strong> and <em> tags as Quill uses them
+				this.updateRecord(recordIndex, field, html);
+			});
+		});
+	}
+
 	render() {
 		const container = document.getElementById('records-container');
 		// Store focused element to restore later
@@ -448,14 +486,14 @@ class RCMPDataEditor {
                         </div>
                     </div>
 
-                    <div class="form-row mb-3">
+					<div class="form-row mb-3">
                         <div>
                             <label for="english-summary-${index}" class="form-label" data-en="English summary" data-fr="Résumé anglais">English summary</label>
-                            <textarea class="form-control" id="english-summary-${index}" rows="4" onchange="editor.updateRecord(${index}, 'english-summary', this.value)">${record['english-summary'] || ''}</textarea>
+                            <div class="quill-editor" id="english-summary-${index}" data-editor-id="english-summary-${index}" data-field="english-summary" data-record-index="${index}"></div>
                         </div>
                         <div>
                             <label for="french-summary-${index}" class="form-label" data-en="French summary" data-fr="Résumé français">French summary</label>
-                            <textarea class="form-control" id="french-summary-${index}" rows="4" onchange="editor.updateRecord(${index}, 'french-summary', this.value)">${record['french-summary'] || ''}</textarea>
+                            <div class="quill-editor" id="french-summary-${index}" data-editor-id="french-summary-${index}" data-field="french-summary" data-record-index="${index}"></div>
                         </div>
                     </div>
 
@@ -505,16 +543,14 @@ class RCMPDataEditor {
                                                data-en-lang="en-CA" data-fr-lang="fr-CA">
                                     </div>
                                     
-                                    <div class="form-row">
+									<div class="form-row">
                                         <div>
                                             <label for="english-update-${updateNum}-${index}" class="form-label" data-en="English update" data-fr="Mise à jour anglaise">English update</label>
-                                            <textarea class="form-control" id="english-update-${updateNum}-${index}" rows="4" 
-                                                      onchange="editor.updateRecord(${index}, 'english-update-${updateNum}', this.value)">${record[`english-update-${updateNum}`] || ''}</textarea>
+                                            <div class="quill-editor" id="english-update-${updateNum}-${index}" data-editor-id="english-update-${updateNum}-${index}" data-field="english-update-${updateNum}" data-record-index="${index}"></div>
                                         </div>
                                         <div>
                                             <label for="french-update-${updateNum}-${index}" class="form-label" data-en="French update" data-fr="Mise à jour française">French update</label>
-                                            <textarea class="form-control" id="french-update-${updateNum}-${index}" rows="4"
-                                                      onchange="editor.updateRecord(${index}, 'french-update-${updateNum}', this.value)">${record[`french-update-${updateNum}`] || ''}</textarea>
+                                            <div class="quill-editor" id="french-update-${updateNum}-${index}" data-editor-id="french-update-${updateNum}-${index}" data-field="french-update-${updateNum}" data-record-index="${index}"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -567,6 +603,9 @@ class RCMPDataEditor {
 		if (window.languageSwitcher) {
 			window.languageSwitcher.switchLanguage(window.languageSwitcher.currentLang);
 		}
+		
+		// Initialize Quill editors
+		this.initializeQuillEditors();
 	}
 	addUpdate(recordIndex) {
 		const record = this.data.data[recordIndex];
