@@ -340,7 +340,7 @@ class RCMPDataEditor {
 				'To be actioned': 'À mettre en œuvre',
 				'In progress': 'En cours',
 				'Complete': 'Terminé',
-				'Re-envisioned': 'Reconsidérée '
+				'Re-envisioned': 'Reconsidérée'
 			};
 			if (progressMap[value]) {
 				this.data.data[index]['french-progress'] = progressMap[value];
@@ -466,6 +466,7 @@ class RCMPDataEditor {
                                 <option value="To be actioned" ${record['english-progress'] === 'To be actioned' ? 'selected' : ''}>To be actioned</option>
                                 <option value="In progress" ${record['english-progress'] === 'In progress' ? 'selected' : ''}>In progress</option>
                                 <option value="Complete" ${record['english-progress'] === 'Complete' ? 'selected' : ''}>Complete</option>
+                                <option value="Re-envisioned" ${record['english-progress'] === 'Re-envisioned' ? 'selected' : ''}>Re-envisioned</option>
                             </select>
                         </div>
                         <div>
@@ -474,6 +475,7 @@ class RCMPDataEditor {
                                 <option value="À mettre en œuvre" ${record['french-progress'] === 'À mettre en œuvre' ? 'selected' : ''}>À mettre en œuvre</option>
                                 <option value="En cours" ${record['french-progress'] === 'En cours' ? 'selected' : ''}>En cours</option>
                                 <option value="Terminé" ${record['french-progress'] === 'Terminé' ? 'selected' : ''}>Terminé</option>
+                                <option value="Reconsidérée" ${record['french-progress'] === 'Reconsidérée' ? 'selected' : ''}>Reconsidérée</option>
                             </select>
                         </div>
                     </div>
