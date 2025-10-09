@@ -339,7 +339,8 @@ class RCMPDataEditor {
 			const progressMap = {
 				'To be actioned': 'À mettre en œuvre',
 				'In progress': 'En cours',
-				'Complete': 'Terminé'
+				'Complete': 'Terminé',
+				'Re-envisioned': 'Reconsidérée '
 			};
 			if (progressMap[value]) {
 				this.data.data[index]['french-progress'] = progressMap[value];
@@ -350,7 +351,8 @@ class RCMPDataEditor {
 			const progressMap = {
 				'À mettre en œuvre': 'To be actioned',
 				'En cours': 'In progress',
-				'Terminé': 'Complete'
+				'Terminé': 'Complete',
+				'Reconsidérée': 'Re-envisioned'
 			};
 			if (progressMap[value]) {
 				this.data.data[index]['english-progress'] = progressMap[value];
