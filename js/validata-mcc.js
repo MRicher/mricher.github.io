@@ -88,7 +88,11 @@ class RCMPDataEditor {
 		let sanitized = text;
 		// Replace smart apostrophes with straight apostrophes
 		sanitized = sanitized.replace(/'/g, "'");
-		// Handle email addresses
+		
+		// Check if this is Quill content (contains <p> tags or Quill classes)
+		const isQuillContent = sanitized.includes('<p>') || sanitized.includes('ql-');
+		
+		// Handle email addresses (but not if already in mailto links)
 		const emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g;
 		sanitized = sanitized.replace(emailRegex, (match) => {
 			const lowercaseEmail = match.toLowerCase();
@@ -97,30 +101,38 @@ class RCMPDataEditor {
 			if (beforeMatch.includes('<a href="mailto:') && !beforeMatch.includes('</a>') && afterMatch.includes('</a>')) {
 				return lowercaseEmail;
 			}
-			return `<a href="mailto:${lowercaseEmail}">${lowercaseEmail}</a>`;
-		});
-		// Handle RCMP acronym (not already wrapped in abbr tags)
-		sanitized = sanitized.replace(/(?<!<abbr[^>]*>)RCMP(?!<\/abbr>)/g, (match, offset, string) => {
-			const beforeText = string.substring(0, offset);
-			const afterText = string.substring(offset + match.length);
-			const lastAbbrOpen = beforeText.lastIndexOf('<abbr');
-			const lastAbbrClose = beforeText.lastIndexOf('</abbr>');
-			if (lastAbbrOpen > lastAbbrClose && afterText.includes('</abbr>')) {
-				return match;
+			// Don't auto-wrap emails in Quill content as Quill handles links
+			if (isQuillContent && beforeMatch.includes('<a ') && afterMatch.includes('</a>')) {
+				return lowercaseEmail;
 			}
-			return `<abbr>RCMP</abbr>`;
+			return isQuillContent ? match : `<a href="mailto:${lowercaseEmail}">${lowercaseEmail}</a>`;
 		});
-		// Handle GRC acronym (not already wrapped in abbr tags)
-		sanitized = sanitized.replace(/(?<!<abbr[^>]*>)GRC(?!<\/abbr>)/g, (match, offset, string) => {
-			const beforeText = string.substring(0, offset);
-			const afterText = string.substring(offset + match.length);
-			const lastAbbrOpen = beforeText.lastIndexOf('<abbr');
-			const lastAbbrClose = beforeText.lastIndexOf('</abbr>');
-			if (lastAbbrOpen > lastAbbrClose && afterText.includes('</abbr>')) {
-				return match;
-			}
-			return `<abbr>GRC</abbr>`;
-		});
+		
+		// Only add abbr tags to plain text, not Quill content (which preserves them)
+		if (!isQuillContent) {
+			// Handle RCMP acronym (not already wrapped in abbr tags)
+			sanitized = sanitized.replace(/(?<!<abbr[^>]*>)RCMP(?!<\/abbr>)/g, (match, offset, string) => {
+				const beforeText = string.substring(0, offset);
+				const afterText = string.substring(offset + match.length);
+				const lastAbbrOpen = beforeText.lastIndexOf('<abbr');
+				const lastAbbrClose = beforeText.lastIndexOf('</abbr>');
+				if (lastAbbrOpen > lastAbbrClose && afterText.includes('</abbr>')) {
+					return match;
+				}
+				return `<abbr>RCMP</abbr>`;
+			});
+			// Handle GRC acronym (not already wrapped in abbr tags)
+			sanitized = sanitized.replace(/(?<!<abbr[^>]*>)GRC(?!<\/abbr>)/g, (match, offset, string) => {
+				const beforeText = string.substring(0, offset);
+				const afterText = string.substring(offset + match.length);
+				const lastAbbrOpen = beforeText.lastIndexOf('<abbr');
+				const lastAbbrClose = beforeText.lastIndexOf('</abbr>');
+				if (lastAbbrOpen > lastAbbrClose && afterText.includes('</abbr>')) {
+					return match;
+				}
+				return `<abbr>GRC</abbr>`;
+			});
+		}
 		return sanitized;
 	}
 	sanitizeRecord(record) {
@@ -379,6 +391,14 @@ formatAllDateInputs() {
 	initializeQuillEditors() {
 		if (typeof Quill === 'undefined') return;
 		
+		// Register custom formats for abbr tag
+		const Inline = Quill.import('blots/inline');
+		class AbbrBlot extends Inline {
+			static blotName = 'abbr';
+			static tagName = 'abbr';
+		}
+		Quill.register(AbbrBlot);
+		
 		// Initialize Quill for all summary and update fields
 		document.querySelectorAll('.quill-editor').forEach(container => {
 			const editorId = container.getAttribute('data-editor-id');
@@ -394,20 +414,25 @@ formatAllDateInputs() {
 					toolbar: [
 						['bold', 'italic'],
 						['link']
-					]
+					],
+					clipboard: {
+						matchVisual: false
+					}
 				}
 			});
 			
-			// Set initial content
+			// Set initial content preserving HTML
 			const record = this.data.data[recordIndex];
 			if (record && record[field]) {
-				quill.root.innerHTML = record[field];
+				// Use clipboard to paste HTML with custom tags preserved
+				const delta = quill.clipboard.convert(record[field]);
+				quill.setContents(delta, 'silent');
 			}
 			
 			// Handle content changes
 			quill.on('text-change', () => {
 				let html = quill.root.innerHTML;
-				// Convert <strong> and <em> tags as Quill uses them
+				// Preserve abbr tags and links
 				this.updateRecord(recordIndex, field, html);
 			});
 		});
