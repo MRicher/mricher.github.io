@@ -84,61 +84,61 @@ class RCMPDataEditor {
 		}, 5000);
 	}
 	sanitizeText(text) {
-		if (!text || typeof text !== 'string') return text;
-		let sanitized = text;
-		// Replace smart apostrophes with straight apostrophes
-		sanitized = sanitized.replace(/'/g, "'");
-		
-		// Check if this is Quill content (contains <p> tags or Quill classes)
-		const isQuillContent = sanitized.includes('<p>') || sanitized.includes('ql-');
-		
-		// Handle email addresses (but not if already in mailto links)
-		const emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g;
-		sanitized = sanitized.replace(emailRegex, (match) => {
-			const lowercaseEmail = match.toLowerCase();
-			const beforeMatch = sanitized.substring(0, sanitized.indexOf(match));
-			const afterMatch = sanitized.substring(sanitized.indexOf(match) + match.length);
-			if (beforeMatch.includes('<a href="mailto:') && !beforeMatch.includes('</a>') && afterMatch.includes('</a>')) {
-				return lowercaseEmail;
-			}
-			// Don't auto-wrap emails in Quill content as Quill handles links
-			if (isQuillContent && beforeMatch.includes('<a ') && afterMatch.includes('</a>')) {
-				return lowercaseEmail;
-			}
-			return isQuillContent ? match : `<a href="mailto:${lowercaseEmail}">${lowercaseEmail}</a>`;
-		});
-		
-		if (!isQuillContent) {
-			const wrapWithAbbr = (text, acronym) => {
-				return text.replace(
-					new RegExp(`(?<!<abbr[^>]*>)${acronym}(?!</abbr>)`, 'g'),
-					(match, offset, string) => {
-						const beforeText = string.substring(0, offset);
-						const afterText = string.substring(offset + match.length);
-						const lastAbbrOpen = beforeText.lastIndexOf('<abbr');
-						const lastAbbrClose = beforeText.lastIndexOf('</abbr>');
-						
-						// Skip if already inside an abbr tag
-						if (lastAbbrOpen > lastAbbrClose && afterText.includes('</abbr>')) {
-							return match;
-						}
-						return `<abbr>${match}</abbr>`;
-					}
-				);
-			};
-
-			const acronyms = [
-				'RCMP', 'GRC', 'MCC', 'CACP', 'CISC', 'ATIP', 'CPM', 
-				'ACCP', 'SCRC', 'AIPRP', 'ICIR', 'IIIC', 'CAD', 'RAO', 
-				'CCG', 'MAB'
-			];
-			
-			acronyms.forEach(acronym => {
-				sanitized = wrapWithAbbr(sanitized, acronym);
-			});
+	if (!text || typeof text !== 'string') return text;
+	let sanitized = text;
+	// Replace smart apostrophes with straight apostrophes
+	sanitized = sanitized.replace(/'/g, "'");
+	
+	// Check if this is Quill content (contains <p> tags or Quill classes)
+	const isQuillContent = sanitized.includes('<p>') || sanitized.includes('ql-');
+	
+	// Handle email addresses (but not if already in mailto links)
+	const emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g;
+	sanitized = sanitized.replace(emailRegex, (match) => {
+		const lowercaseEmail = match.toLowerCase();
+		const beforeMatch = sanitized.substring(0, sanitized.indexOf(match));
+		const afterMatch = sanitized.substring(sanitized.indexOf(match) + match.length);
+		if (beforeMatch.includes('<a href="mailto:') && !beforeMatch.includes('</a>') && afterMatch.includes('</a>')) {
+			return lowercaseEmail;
 		}
-		return sanitized;
-	}
+		// Don't auto-wrap emails in Quill content as Quill handles links
+		if (isQuillContent && beforeMatch.includes('<a ') && afterMatch.includes('</a>')) {
+			return lowercaseEmail;
+		}
+		return isQuillContent ? match : `<a href="mailto:${lowercaseEmail}">${lowercaseEmail}</a>`;
+	});
+	
+	// Wrap acronyms in abbr tags (works for both Quill and non-Quill content)
+	const wrapWithAbbr = (text, acronym) => {
+		return text.replace(
+			new RegExp(`(?<!<abbr[^>]*>)\\b${acronym}\\b(?!</abbr>)`, 'g'),
+			(match, offset, string) => {
+				const beforeText = string.substring(0, offset);
+				const afterText = string.substring(offset + match.length);
+				const lastAbbrOpen = beforeText.lastIndexOf('<abbr');
+				const lastAbbrClose = beforeText.lastIndexOf('</abbr>');
+				
+				// Skip if already inside an abbr tag
+				if (lastAbbrOpen > lastAbbrClose && afterText.includes('</abbr>')) {
+					return match;
+				}
+				return `<abbr>${match}</abbr>`;
+			}
+		);
+	};
+
+	const acronyms = [
+		'RCMP', 'GRC', 'MCC', 'CACP', 'CISC', 'ATIP', 'CPM', 
+		'ACCP', 'SCRC', 'AIPRP', 'ICIR', 'IIIC', 'CAD', 'RAO', 
+		'CCG', 'MAB'
+	];
+	
+	acronyms.forEach(acronym => {
+		sanitized = wrapWithAbbr(sanitized, acronym);
+	});
+	
+	return sanitized;
+}
 	sanitizeRecord(record) {
 		const sanitizedRecord = {};
 		for (const [key, value] of Object.entries(record)) {
