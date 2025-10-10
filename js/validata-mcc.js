@@ -108,29 +108,33 @@ class RCMPDataEditor {
 			return isQuillContent ? match : `<a href="mailto:${lowercaseEmail}">${lowercaseEmail}</a>`;
 		});
 		
-		// Only add abbr tags to plain text, not Quill content (which preserves them)
 		if (!isQuillContent) {
-			// Handle RCMP acronym (not already wrapped in abbr tags)
-			sanitized = sanitized.replace(/(?<!<abbr[^>]*>)RCMP(?!<\/abbr>)/g, (match, offset, string) => {
-				const beforeText = string.substring(0, offset);
-				const afterText = string.substring(offset + match.length);
-				const lastAbbrOpen = beforeText.lastIndexOf('<abbr');
-				const lastAbbrClose = beforeText.lastIndexOf('</abbr>');
-				if (lastAbbrOpen > lastAbbrClose && afterText.includes('</abbr>')) {
-					return match;
-				}
-				return `<abbr>RCMP</abbr>`;
-			});
-			// Handle GRC acronym (not already wrapped in abbr tags)
-			sanitized = sanitized.replace(/(?<!<abbr[^>]*>)GRC(?!<\/abbr>)/g, (match, offset, string) => {
-				const beforeText = string.substring(0, offset);
-				const afterText = string.substring(offset + match.length);
-				const lastAbbrOpen = beforeText.lastIndexOf('<abbr');
-				const lastAbbrClose = beforeText.lastIndexOf('</abbr>');
-				if (lastAbbrOpen > lastAbbrClose && afterText.includes('</abbr>')) {
-					return match;
-				}
-				return `<abbr>GRC</abbr>`;
+			const wrapWithAbbr = (text, acronym) => {
+				return text.replace(
+					new RegExp(`(?<!<abbr[^>]*>)${acronym}(?!</abbr>)`, 'g'),
+					(match, offset, string) => {
+						const beforeText = string.substring(0, offset);
+						const afterText = string.substring(offset + match.length);
+						const lastAbbrOpen = beforeText.lastIndexOf('<abbr');
+						const lastAbbrClose = beforeText.lastIndexOf('</abbr>');
+						
+						// Skip if already inside an abbr tag
+						if (lastAbbrOpen > lastAbbrClose && afterText.includes('</abbr>')) {
+							return match;
+						}
+						return `<abbr>${match}</abbr>`;
+					}
+				);
+			};
+
+			const acronyms = [
+				'RCMP', 'GRC', 'MCC', 'CACP', 'CISC', 'ATIP', 'CPM', 
+				'ACCP', 'SCRC', 'AIPRP', 'ICIR', 'IIIC', 'CAD', 'RAO', 
+				'CCG', 'MAB'
+			];
+			
+			acronyms.forEach(acronym => {
+				sanitized = wrapWithAbbr(sanitized, acronym);
 			});
 		}
 		return sanitized;
