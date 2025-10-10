@@ -444,8 +444,6 @@ formatAllDateInputs() {
 				if (html === '<p><br></p>') {
 					html = '';
 				}
-				// Remove wrapping <p> tags if content is simple
-				html = html.replace(/^<p>(.*)<\/p>$/s, '$1');
 				// Preserve abbr tags and links
 				this.updateRecord(recordIndex, field, html);
 			});
