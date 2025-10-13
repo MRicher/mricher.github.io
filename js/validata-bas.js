@@ -359,10 +359,8 @@ class RCMPDataEditor {
 		// Handle progress linking
 		else if (field === 'english-progress') {
 			const progressMap = {
-				'To be actioned': 'À mettre en œuvre',
 				'In progress': 'En cours',
-				'Complete': 'Terminé',
-				'Re-envisioned': 'Reconsidérée'
+				'Complete': 'Terminé'
 			};
 			if (progressMap[value]) {
 				this.data.data[index]['french-progress'] = progressMap[value];
@@ -371,10 +369,8 @@ class RCMPDataEditor {
 			}
 		} else if (field === 'french-progress') {
 			const progressMap = {
-				'À mettre en œuvre': 'To be actioned',
 				'En cours': 'In progress',
-				'Terminé': 'Complete',
-				'Reconsidérée': 'Re-envisioned'
+				'Terminé': 'Complete'
 			};
 			if (progressMap[value]) {
 				this.data.data[index]['english-progress'] = progressMap[value];
@@ -544,19 +540,15 @@ formatAllDateInputs() {
                         <div>
                             <label for="english-progress-${index}" class="form-label" data-en="English progress" data-fr="Progrès anglais">English progress</label>
                             <select class="form-select" id="english-progress-${index}" onchange="editor.updateRecord(${index}, 'english-progress', this.value)">
-                                <option value="To be actioned" ${record['english-progress'] === 'To be actioned' ? 'selected' : ''}>To be actioned</option>
                                 <option value="In progress" ${record['english-progress'] === 'In progress' ? 'selected' : ''}>In progress</option>
                                 <option value="Complete" ${record['english-progress'] === 'Complete' ? 'selected' : ''}>Complete</option>
-                                <option value="Re-envisioned" ${record['english-progress'] === 'Re-envisioned' ? 'selected' : ''}>Re-envisioned</option>
                             </select>
                         </div>
                         <div>
                             <label for="french-progress-${index}" class="form-label" data-en="French progress" data-fr="Progrès français">French progress</label>
                             <select class="form-select" id="french-progress-${index}" onchange="editor.updateRecord(${index}, 'french-progress', this.value)">
-                                <option value="À mettre en œuvre" ${record['french-progress'] === 'À mettre en œuvre' ? 'selected' : ''}>À mettre en œuvre</option>
                                 <option value="En cours" ${record['french-progress'] === 'En cours' ? 'selected' : ''}>En cours</option>
                                 <option value="Terminé" ${record['french-progress'] === 'Terminé' ? 'selected' : ''}>Terminé</option>
-                                <option value="Reconsidérée" ${record['french-progress'] === 'Reconsidérée' ? 'selected' : ''}>Reconsidérée</option>
                             </select>
                         </div>
                     </div>
