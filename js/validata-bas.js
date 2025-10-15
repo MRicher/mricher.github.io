@@ -407,6 +407,16 @@ formatAllDateInputs() {
 			Quill.register(AbbrBlot);
 		}
 		
+		// Override italic to use cite tag instead of em
+		if (!Quill.imports['formats/cite']) {
+			const Inline = Quill.import('blots/inline');
+			class CiteBlot extends Inline {
+				static blotName = 'italic';
+				static tagName = 'cite';
+			}
+			Quill.register(CiteBlot, true);
+		}
+		
 		// Initialize Quill for all summary and update fields
 		document.querySelectorAll('.quill-editor').forEach(container => {
 			const editorId = container.getAttribute('data-editor-id');
