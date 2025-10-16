@@ -473,8 +473,8 @@ class RCMPDataEditor {
                 <div class="record-header">
                     <div>
                         <h2 class="h4 mb-1" data-en="Record ${index + 1}${record['english-title'] ? ` - ${record['english-title']}` : ''}" data-fr="Enregistrement ${index + 1}${record['french-title'] ? ` - ${record['french-title']}`  : ''}">Record ${index + 1}${record['english-title'] ? ` - ${record['english-title']}` : ''}</h2>
-                        <span class="status-badge ${this.getStatusClass(record['english-progress'])}" data-en="${record['english-progress'] || 'Unknown status'}" data-fr="${record['french-progress'] || 'Statut inconnu'}">
-                            ${record['english-progress'] || 'Unknown status'}
+                        <span class="status-badge ${this.getStatusClass(record['english-progress'])}">
+                            <span data-en="${record['english-progress'] || 'Unknown status'}" data-fr="${record['french-progress'] || 'Statut inconnu'}">${window.languageSwitcher && window.languageSwitcher.currentLang === 'fr' ? (record['french-progress'] || 'Statut inconnu') : (record['english-progress'] || 'Unknown status')}</span>
                         </span>
                         <small class="text-muted d-block mt-1" data-en="Updated: ${record['last-updated'] || 'Not set'}" data-fr="Mis à jour : ${record['last-updated'] || 'Non défini'}">Updated: ${record['last-updated'] || 'Not set'}</small>
                     </div>
