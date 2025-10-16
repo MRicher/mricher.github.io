@@ -739,12 +739,27 @@ class RCMPDataEditor {
 			alertContainer.innerHTML = '';
 		}
 		
-		// Check which recommendation slots are available (truly empty - not in render)
+		// Check which recommendation slots are available (2 and 3 only)
 		for (let i = 2; i <= 3; i++) {
-			// Check if this slot is truly empty (would not be rendered)
-			const hasRecommendation = record[`recommendations-${i}`] || record[`english-recommendation-summary-${i}`] || record[`french-recommendation-summary-${i}`];
+			// Check if this slot exists in the record (even if empty)
+			const exists = record.hasOwnProperty(`recommendations-${i}`) && 
+						record.hasOwnProperty(`english-recommendation-summary-${i}`) && 
+						record.hasOwnProperty(`french-recommendation-summary-${i}`);
 			
-			if (!hasRecommendation) {
+			// Check if slot has any content
+			const hasContent = record[`recommendations-${i}`] || 
+							record[`english-recommendation-summary-${i}`] || 
+							record[`french-recommendation-summary-${i}`];
+			
+			// Only add to slots that don't exist yet OR exist but are truly empty
+			if (!exists || !hasContent) {
+				// If exists but empty, it means it was previously added in this session
+				// Skip to next slot
+				if (exists && !hasContent) {
+					continue;
+				}
+				
+				// Add new recommendation
 				record[`recommendations-${i}`] = '';
 				record[`english-recommendation-summary-${i}`] = '';
 				record[`french-recommendation-summary-${i}`] = '';
