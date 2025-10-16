@@ -739,8 +739,9 @@ class RCMPDataEditor {
 			alertContainer.innerHTML = '';
 		}
 		
+		// Check if fields don't exist in the record (not just empty)
 		for (let i = 2; i <= 3; i++) {
-			if (!record[`recommendations-${i}`] && !record[`english-recommendation-summary-${i}`] && !record[`french-recommendation-summary-${i}`]) {
+			if (!((`recommendations-${i}` in record) || record[`english-recommendation-summary-${i}`] || record[`french-recommendation-summary-${i}`])) {
 				record[`recommendations-${i}`] = '';
 				record[`english-recommendation-summary-${i}`] = '';
 				record[`french-recommendation-summary-${i}`] = '';
