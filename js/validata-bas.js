@@ -254,6 +254,8 @@ class RCMPDataEditor {
 			"recommendations-3": "",
 			"english-recommendation-summary-3": "",
 			"french-recommendation-summary-3": "",
+	        "english-mcc-actions": "",
+	        "french-mcc-actions": "",
 			"update-1-date": "",
 			"english-update-1": "",
 			"french-update-1": "",
@@ -577,12 +579,33 @@ class RCMPDataEditor {
 							` : '';
 						}).join('')}
 						
-						<button class="btn btn-outline-secondary btn-sm" onclick="editor.addRecommendation(${index})" data-en="Add recommendation" data-fr="Ajouter une recommandation">Add recommendation</button>
-						<div id="recommendation-alerts-${index}" class="mt-2"></div>
-					</div>
+					<button class="btn btn-outline-secondary btn-sm" onclick="editor.addRecommendation(${index})" data-en="Add recommendation" data-fr="Ajouter une recommandation">Add recommendation</button>
+					<div id="recommendation-alerts-${index}" class="mt-2"></div>
+				</div>
 
-                    <div class="update-section">
-                        <h3 class="h5" data-en="Progress updates" data-fr="Mises à jour du progrès">Progress updates</h3>
+				<div class="mcc-section mb-4">
+					<h3 class="h5" data-en="Relevant Mass Casualty Commission (MCC) action titles" data-fr="Titre(s) de l'action Commission des pertes massives (CPM) pertinent(s)">Relevant Mass Casualty Commission (<abbr>MCC</abbr>) action titles</h3>
+					
+					<div class="form-row mb-3">
+						<div>
+							<label for="english-mcc-actions-${index}" class="form-label" data-en="English MCC action titles (one per line)" data-fr="Titres d'action MCC anglais (un par ligne)">English <abbr>MCC</abbr> action titles (one per line)</label>
+							<textarea class="form-control" id="english-mcc-actions-${index}" rows="5" 
+								placeholder="Enter each action title on a new line&#10;Each line will become a bullet point"
+								onchange="editor.updateRecord(${index}, 'english-mcc-actions', this.value)">${record['english-mcc-actions'] || ''}</textarea>
+							<small class="form-text text-muted" data-en="Each line will be displayed as a bullet point" data-fr="Chaque ligne sera affichée comme une puce">Each line will be displayed as a bullet point</small>
+						</div>
+						<div>
+							<label for="french-mcc-actions-${index}" class="form-label" data-en="French MCC action titles (one per line)" data-fr="Titres d'action CPM français (un par ligne)">Titre(s) de l'action Commission des pertes massives (<abbr>CPM</abbr>) pertinent(s) (un par ligne)</label>
+							<textarea class="form-control" id="french-mcc-actions-${index}" rows="5" 
+								placeholder="Entrez chaque titre d'action sur une nouvelle ligne&#10;Chaque ligne deviendra une puce"
+								onchange="editor.updateRecord(${index}, 'french-mcc-actions', this.value)">${record['french-mcc-actions'] || ''}</textarea>
+							<small class="form-text text-muted" data-en="Each line will be displayed as a bullet point" data-fr="Chaque ligne sera affichée comme une puce">Chaque ligne sera affichée comme une puce</small>
+						</div>
+					</div>
+				</div>
+
+                <div class="update-section">
+                    <h3 class="h5" data-en="Progress updates" data-fr="Mises à jour du progrès">Progress updates</h3>
                         ${[1, 2, 3, 4, 5, 6].map(updateNum => {
                             const hasUpdate = record[`update-${updateNum}-date`] || record[`english-update-${updateNum}`] || record[`french-update-${updateNum}`];
                             return hasUpdate ? `
