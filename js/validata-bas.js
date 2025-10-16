@@ -309,7 +309,7 @@ class RCMPDataEditor {
 		const url = URL.createObjectURL(dataBlob);
 		const link = document.createElement('a');
 		link.href = url;
-		link.download = `rcmp-data-${new Date().toISOString().split('T')[0]}.json`;
+		link.download = `bas-data-${new Date().toISOString().split('T')[0]}.json`;
 		document.body.appendChild(link);
 		link.click();
 		document.body.removeChild(link);
@@ -583,24 +583,20 @@ class RCMPDataEditor {
 					<div id="recommendation-alerts-${index}" class="mt-2"></div>
 				</div>
 
-				<div class="update-section mcc-section mb-4">
-					<h3 class="h5" data-en="Relevant Mass Casualty Commission (MCC) action titles" data-fr="Titre(s) de l'action Commission des pertes massives (CPM) pertinent(s)">Relevant Mass Casualty Commission (<abbr>MCC</abbr>) action titles</h3>
-					
-					<div class="form-row mb-3">
-						<div>
-							<label for="english-mcc-actions-${index}" class="form-label" data-en="English MCC action titles (one per line)" data-fr="Titres d'action MCC anglais (un par ligne)">English <abbr>MCC</abbr> action titles (one per line)</label>
-							<textarea class="form-control" id="english-mcc-actions-${index}" rows="5" 
-								placeholder="Enter each action title on a new line&#10;Each line will become a bullet point"
-								onchange="editor.updateRecord(${index}, 'english-mcc-actions', this.value)">${record['english-mcc-actions'] || ''}</textarea>
-							<small class="form-text text-muted" data-en="Each line will be displayed as a bullet point" data-fr="Chaque ligne sera affichée comme une puce">Each line will be displayed as a bullet point</small>
-						</div>
-						<div>
-							<label for="french-mcc-actions-${index}" class="form-label" data-en="French MCC action titles (one per line)" data-fr="Titres d'action CPM français (un par ligne)">Titre(s) de l'action Commission des pertes massives (<abbr>CPM</abbr>) pertinent(s) (un par ligne)</label>
-							<textarea class="form-control" id="french-mcc-actions-${index}" rows="5" 
-								placeholder="Entrez chaque titre d'action sur une nouvelle ligne&#10;Chaque ligne deviendra une puce"
-								onchange="editor.updateRecord(${index}, 'french-mcc-actions', this.value)">${record['french-mcc-actions'] || ''}</textarea>
-							<small class="form-text text-muted" data-en="Each line will be displayed as a bullet point" data-fr="Chaque ligne sera affichée comme une puce">Chaque ligne sera affichée comme une puce</small>
-						</div>
+				<div class="update-section form-row mb-3">
+					<div>
+						<label for="english-mcc-actions-${index}" class="form-label" data-en="English MCC action titles (one per line)" data-fr="Titres d'action MCC anglais (un par ligne)">English <abbr>MCC</abbr> action titles (one per line)</label>
+						<textarea class="form-control" id="english-mcc-actions-${index}" rows="5" 
+							placeholder="Enter each action title on a new line&#10;Each line will become a bullet point"
+							onchange="editor.updateMCCActions(${index}, 'english-mcc-actions', this.value)">${this.convertMCCActionsToTextarea(record['english-mcc-actions'])}</textarea>
+						<small class="form-text text-muted" data-en="Each line will be displayed as a bullet point" data-fr="Chaque ligne sera affichée comme une puce">Each line will be displayed as a bullet point</small>
+					</div>
+					<div>
+						<label for="french-mcc-actions-${index}" class="form-label" data-en="French MCC action titles (one per line)" data-fr="Titres d'action CPM français (un par ligne)">Titre(s) de l'action Commission des pertes massives (<abbr>CPM</abbr>) pertinent(s) (un par ligne)</label>
+						<textarea class="form-control" id="french-mcc-actions-${index}" rows="5" 
+							placeholder="Entrez chaque titre d'action sur une nouvelle ligne&#10;Chaque ligne deviendra une puce"
+							onchange="editor.updateMCCActions(${index}, 'french-mcc-actions', this.value)">${this.convertMCCActionsToTextarea(record['french-mcc-actions'])}</textarea>
+						<small class="form-text text-muted" data-en="Each line will be displayed as a bullet point" data-fr="Chaque ligne sera affichée comme une puce">Chaque ligne sera affichée comme une puce</small>
 					</div>
 				</div>
 
@@ -685,6 +681,33 @@ class RCMPDataEditor {
 		}
 		// Initialize Quill editors
 		this.initializeQuillEditors();
+	}
+	updateMCCActions(index, field, value) {
+		if (!this.data.data[index]) return;
+		// Convert textarea lines to <li> tags
+		if (value) {
+			const lines = value.split('\n')
+				.map(line => line.trim())
+				.filter(line => line.length > 0);
+			
+			if (lines.length > 0) {
+				const listItems = lines.map(line => `<li>${line}</li>`).join('');
+				this.data.data[index][field] = listItems;
+			} else {
+				this.data.data[index][field] = '';
+			}
+		} else {
+			this.data.data[index][field] = '';
+		}
+	}
+	convertMCCActionsToTextarea(htmlList) {
+		if (!htmlList) return '';
+		
+		// Convert <li>tags</li> back to newline-separated text for textarea
+		return htmlList
+			.replace(/<li>/g, '')
+			.replace(/<\/li>/g, '\n')
+			.trim();
 	}
 	addUpdate(recordIndex) {
 		const record = this.data.data[recordIndex];
