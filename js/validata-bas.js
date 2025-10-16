@@ -551,24 +551,25 @@ class RCMPDataEditor {
 							const hasRecommendation = recNum === 1 || record[`recommendations-${recNum}`] || record[`english-recommendation-summary-${recNum}`] || record[`french-recommendation-summary-${recNum}`];
 							return hasRecommendation ? `
 								<div class="recommendation-item mb-3">
-									<div class="d-flex justify-content-between align-items-center mb-2">
-										<h4 class="h6 mb-0" data-en="Recommendation ${recNum}" data-fr="Recommandation ${recNum}">Recommendation ${recNum}</h4>
-										${recNum > 1 ? `<button class="btn btn-outline-danger btn-sm" onclick="editor.deleteRecommendation(${index}, ${recNum})" data-en="Delete" data-fr="Supprimer">Delete</button>` : ''}
-									</div>
+									${recNum > 1 ? `
+										<div class="d-flex justify-content-end mb-2">
+											<button class="btn btn-outline-danger btn-sm" onclick="editor.deleteRecommendation(${index}, ${recNum})" data-en="Delete" data-fr="Supprimer">Delete</button>
+										</div>
+									` : ''}
 									
 									<div class="mb-3">
-										<label for="recommendations-${recNum}-${index}" class="form-label" data-en="Recommendation number" data-fr="Numéro de recommandation">Recommendation number</label>
+										<label for="recommendations-${recNum}-${index}" class="form-label" data-en="Recommendation ${recNum}" data-fr="Recommandation ${recNum}">Recommendation ${recNum}</label>
 										<input type="text" class="form-control" id="recommendations-${recNum}-${index}" value="${record[`recommendations-${recNum}`] || ''}"
 											onchange="editor.updateRecord(${index}, 'recommendations-${recNum}', this.value)">
 									</div>
 
 									<div class="form-row mb-3">
 										<div>
-											<label for="english-recommendation-summary-${recNum}-${index}" class="form-label" data-en="English recommendation summary" data-fr="Résumé des recommandations anglais">English recommendation summary</label>
+											<label for="english-recommendation-summary-${recNum}-${index}" class="form-label" data-en="English recommendation summary ${recNum}" data-fr="Résumé des recommandations ${recNum} anglais">English recommendation summary ${recNum}</label>
 											<div class="quill-editor" id="english-recommendation-summary-${recNum}-${index}" data-editor-id="english-recommendation-summary-${recNum}-${index}" data-field="english-recommendation-summary-${recNum}" data-record-index="${index}"></div>
 										</div>
 										<div>
-											<label for="french-recommendation-summary-${recNum}-${index}" class="form-label" data-en="French recommendation summary" data-fr="Résumé des recommandations français">French recommendation summary</label>
+											<label for="french-recommendation-summary-${recNum}-${index}" class="form-label" data-en="French recommendation summary ${recNum}" data-fr="Résumé des recommandations ${recNum} français">French recommendation summary ${recNum}</label>
 											<div class="quill-editor" id="french-recommendation-summary-${recNum}-${index}" data-editor-id="french-recommendation-summary-${recNum}-${index}" data-field="french-recommendation-summary-${recNum}" data-record-index="${index}"></div>
 										</div>
 									</div>
@@ -576,7 +577,7 @@ class RCMPDataEditor {
 							` : '';
 						}).join('')}
 						
-						<button class="btn btn-outline-secondary btn-sm" onclick="window.editor.addRecommendation(${index})" data-en="Add recommendation" data-fr="Ajouter une recommandation">Add recommendation</button>
+						<button class="btn btn-outline-secondary btn-sm" onclick="editor.addRecommendation(${index})" data-en="Add recommendation" data-fr="Ajouter une recommandation">Add recommendation</button>
 						<div id="recommendation-alerts-${index}" class="mt-2"></div>
 					</div>
 
