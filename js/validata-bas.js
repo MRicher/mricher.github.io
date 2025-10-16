@@ -98,6 +98,10 @@ class RCMPDataEditor {
 		sanitized = sanitized.replace(/ »/g, "&#160;»");
 		// Replace space after opening guillemet with non-breaking space
 		sanitized = sanitized.replace(/« /g, "«&#160;");
+	    // Remove empty paragraph tags with line breaks
+	    sanitized = sanitized.replace(/<p><br><\/p>/g, "");
+		// Replace double spaces with space + non-breaking space
+		sanitized = sanitized.replace(/  /g, " &#160;");
 		// Check if this is Quill content (contains <p> tags or Quill classes)
 		const isQuillContent = sanitized.includes('<p>') || sanitized.includes('ql-');
 		// Handle email addresses (but not if already in mailto links)
