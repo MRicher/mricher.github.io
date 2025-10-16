@@ -583,7 +583,7 @@ class RCMPDataEditor {
 					<div id="recommendation-alerts-${index}" class="mt-2"></div>
 				</div>
 
-				<div class="mcc-section mb-4">
+				<div class="update-section mcc-section mb-4">
 					<h3 class="h5" data-en="Relevant Mass Casualty Commission (MCC) action titles" data-fr="Titre(s) de l'action Commission des pertes massives (CPM) pertinent(s)">Relevant Mass Casualty Commission (<abbr>MCC</abbr>) action titles</h3>
 					
 					<div class="form-row mb-3">
