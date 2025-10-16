@@ -544,55 +544,42 @@ class RCMPDataEditor {
                         </div>
                     </div>
 
-					<div class="mb-3">
-						<label for="recommendations-1-${index}" class="form-label" data-en="Recommendations 1" data-fr="Recommandations 1">Recommendations 1</label>
-						<input type="text" class="form-control" id="recommendations-1-${index}" value="${record['recommendations-1'] || ''}"
-							onchange="editor.updateRecord(${index}, 'recommendations-1', this.value)">
-					</div>
+					<div class="recommendation-section">
+						<h3 class="h5" data-en="Recommendations" data-fr="Recommandations">Recommendations</h3>
+						
+						${[1, 2, 3].map(recNum => {
+							const hasRecommendation = recNum === 1 || record[`recommendations-${recNum}`] || record[`english-recommendation-summary-${recNum}`] || record[`french-recommendation-summary-${recNum}`];
+							return hasRecommendation ? `
+								<div class="recommendation-item mb-3">
+									${recNum > 1 ? `
+										<div class="d-flex justify-content-between align-items-center mb-2">
+											<h4 class="h6 mb-0" data-en="Recommendation ${recNum}" data-fr="Recommandation ${recNum}">Recommendation ${recNum}</h4>
+											<button class="btn btn-outline-danger btn-sm" onclick="editor.deleteRecommendation(${index}, ${recNum})" data-en="Delete" data-fr="Supprimer">Delete</button>
+										</div>
+									` : `<h4 class="h6 mb-2" data-en="Recommendation ${recNum}" data-fr="Recommandation ${recNum}">Recommendation ${recNum}</h4>`}
+									
+									<div class="mb-3">
+										<label for="recommendations-${recNum}-${index}" class="form-label" data-en="Recommendation ${recNum}" data-fr="Recommandation ${recNum}">Recommendation ${recNum}</label>
+										<input type="text" class="form-control" id="recommendations-${recNum}-${index}" value="${record[`recommendations-${recNum}`] || ''}"
+											onchange="editor.updateRecord(${index}, 'recommendations-${recNum}', this.value)">
+									</div>
 
-					<div class="form-row mb-3">
-						<div>
-							<label for="english-recommendation-summary-1-${index}" class="form-label" data-en="English recommendation summary 1" data-fr="Résumé des recommandations 1 anglais">English recommendation summary 1</label>
-							<div class="quill-editor" id="english-recommendation-summary-1-${index}" data-editor-id="english-recommendation-summary-1-${index}" data-field="english-recommendation-summary-1" data-record-index="${index}"></div>
-						</div>
-						<div>
-							<label for="french-recommendation-summary-1-${index}" class="form-label" data-en="French recommendation summary 1" data-fr="Résumé des recommandations 1 français">French recommendation summary 1</label>
-							<div class="quill-editor" id="french-recommendation-summary-1-${index}" data-editor-id="french-recommendation-summary-1-${index}" data-field="french-recommendation-summary-1" data-record-index="${index}"></div>
-						</div>
-					</div>
-
-					<div class="mb-3">
-						<label for="recommendations-2-${index}" class="form-label" data-en="Recommendations 2" data-fr="Recommandations 2">Recommendations 2</label>
-						<input type="text" class="form-control" id="recommendations-2-${index}" value="${record['recommendations-2'] || ''}"
-							onchange="editor.updateRecord(${index}, 'recommendations-2', this.value)">
-					</div>
-
-					<div class="form-row mb-3">
-						<div>
-							<label for="english-recommendation-summary-2-${index}" class="form-label" data-en="English recommendation summary 2" data-fr="Résumé des recommandations 2 anglais">English recommendation summary 2</label>
-							<div class="quill-editor" id="english-recommendation-summary-2-${index}" data-editor-id="english-recommendation-summary-2-${index}" data-field="english-recommendation-summary-2" data-record-index="${index}"></div>
-						</div>
-						<div>
-							<label for="french-recommendation-summary-2-${index}" class="form-label" data-en="French recommendation summary 2" data-fr="Résumé des recommandations 2 français">French recommendation summary 2</label>
-							<div class="quill-editor" id="french-recommendation-summary-2-${index}" data-editor-id="french-recommendation-summary-2-${index}" data-field="french-recommendation-summary-2" data-record-index="${index}"></div>
-						</div>
-					</div>
-
-					<div class="mb-3">
-						<label for="recommendations-3-${index}" class="form-label" data-en="Recommendations 3" data-fr="Recommandations 3">Recommendations 3</label>
-						<input type="text" class="form-control" id="recommendations-3-${index}" value="${record['recommendations-3'] || ''}"
-							onchange="editor.updateRecord(${index}, 'recommendations-3', this.value)">
-					</div>
-
-					<div class="form-row mb-3">
-						<div>
-							<label for="english-recommendation-summary-3-${index}" class="form-label" data-en="English recommendation summary 3" data-fr="Résumé des recommandations 3 anglais">English recommendation summary 3</label>
-							<div class="quill-editor" id="english-recommendation-summary-3-${index}" data-editor-id="english-recommendation-summary-3-${index}" data-field="english-recommendation-summary-3" data-record-index="${index}"></div>
-						</div>
-						<div>
-							<label for="french-recommendation-summary-3-${index}" class="form-label" data-en="French recommendation summary 3" data-fr="Résumé des recommandations 3 français">French recommendation summary 3</label>
-							<div class="quill-editor" id="french-recommendation-summary-3-${index}" data-editor-id="french-recommendation-summary-3-${index}" data-field="french-recommendation-summary-3" data-record-index="${index}"></div>
-						</div>
+									<div class="form-row mb-3">
+										<div>
+											<label for="english-recommendation-summary-${recNum}-${index}" class="form-label" data-en="English recommendation summary ${recNum}" data-fr="Résumé des recommandations ${recNum} anglais">English recommendation summary ${recNum}</label>
+											<div class="quill-editor" id="english-recommendation-summary-${recNum}-${index}" data-editor-id="english-recommendation-summary-${recNum}-${index}" data-field="english-recommendation-summary-${recNum}" data-record-index="${index}"></div>
+										</div>
+										<div>
+											<label for="french-recommendation-summary-${recNum}-${index}" class="form-label" data-en="French recommendation summary ${recNum}" data-fr="Résumé des recommandations ${recNum} français">French recommendation summary ${recNum}</label>
+											<div class="quill-editor" id="french-recommendation-summary-${recNum}-${index}" data-editor-id="french-recommendation-summary-${recNum}-${index}" data-field="french-recommendation-summary-${recNum}" data-record-index="${index}"></div>
+										</div>
+									</div>
+								</div>
+							` : '';
+						}).join('')}
+						
+						<button class="btn btn-outline-secondary btn-sm" onclick="editor.addRecommendation(${index})" data-en="Add recommendation" data-fr="Ajouter une recommandation">Add recommendation</button>
+						<div id="recommendation-alerts-${index}" class="mt-2"></div>
 					</div>
 
                     <div class="update-section">
@@ -722,6 +709,85 @@ class RCMPDataEditor {
 				this.showAlert(successMsg);
 			}
 		}
+	}
+	deleteRecommendation(recordIndex, recNumber) {
+		const confirmMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr' 
+			? `Êtes-vous sûr de vouloir supprimer la recommandation ${recNumber} ?` 
+			: `Are you sure you want to delete recommendation ${recNumber}?`;
+		
+		if (confirm(confirmMsg)) {
+			const record = this.data.data[recordIndex];
+			if (record) {
+				record[`recommendations-${recNumber}`] = '';
+				record[`english-recommendation-summary-${recNumber}`] = '';
+				record[`french-recommendation-summary-${recNumber}`] = '';
+				this.render();
+				
+				const successMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr' 
+					? `Recommandation ${recNumber} supprimée de l'enregistrement ${recordIndex + 1} !` 
+					: `Recommendation ${recNumber} deleted from record ${recordIndex + 1}!`;
+				this.showAlert(successMsg);
+			}
+		}
+	}
+	addRecommendation(recordIndex) {
+		const record = this.data.data[recordIndex];
+		if (!record) return;
+		
+		// Clear any existing recommendation alerts for this record first
+		const alertContainer = document.getElementById(`recommendation-alerts-${recordIndex}`);
+		if (alertContainer) {
+			alertContainer.innerHTML = '';
+		}
+		
+		for (let i = 2; i <= 3; i++) {
+			if (!record[`recommendations-${i}`] && !record[`english-recommendation-summary-${i}`] && !record[`french-recommendation-summary-${i}`]) {
+				record[`recommendations-${i}`] = '';
+				record[`english-recommendation-summary-${i}`] = '';
+				record[`french-recommendation-summary-${i}`] = '';
+				this.render();
+				
+				const successMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr' 
+					? `Recommandation ${i} ajoutée à l'enregistrement ${recordIndex + 1} !` 
+					: `Recommendation ${i} added to record ${recordIndex + 1}!`;
+				this.showAlert(successMsg);
+				return;
+			}
+		}
+		
+		// More robust language detection for error message
+		const isFrench = (window.languageSwitcher && window.languageSwitcher.currentLang === 'fr') 
+			|| document.documentElement.lang === 'fr' 
+			|| document.documentElement.getAttribute('lang') === 'fr-CA';
+		const errorMsg = isFrench 
+			? 'Nombre maximum de recommandations (3) atteint pour cet enregistrement.' 
+			: 'Maximum number of recommendations (3) reached for this record.';
+		this.showRecommendationAlert(recordIndex, errorMsg, 'danger');
+	}
+	showRecommendationAlert(recordIndex, message, type = 'danger') {
+		const container = document.getElementById(`recommendation-alerts-${recordIndex}`);
+		if (!container) return;
+		
+		// Clear any existing alerts in this container
+		container.innerHTML = '';
+		
+		const alert = document.createElement('div');
+		alert.className = `alert alert-${type} alert-dismissible fade show`;
+		const closeButtonLabel = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr' ? 'Fermer' : 'Close';
+		
+		alert.innerHTML = `
+			${message}
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="${closeButtonLabel}"></button>
+		`;
+		
+		container.appendChild(alert);
+		
+		// Auto-dismiss after 5 seconds
+		setTimeout(() => {
+			if (alert.parentNode) {
+				alert.remove();
+			}
+		}, 5000);
 	}
 	updateCalendarLanguage() {
 		const currentLang = document.documentElement.lang || 'en-CA';
