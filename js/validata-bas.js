@@ -239,8 +239,6 @@ class RCMPDataEditor {
 			"last-updated": this.getCurrentDateFormatted(),
 			"english-theme": "",
 			"french-theme": "",
-			"english-commitment": "",
-			"french-commitment": "",
 			"english-title": "",
 			"french-title": "",
 			"english-summary": "",
@@ -248,8 +246,14 @@ class RCMPDataEditor {
 			"english-progress": "",
 			"french-progress": "",
 			"recommendations-1": "",
+			"english-recommendation-summary-1": "",
+			"french-recommendation-summary-1": "",
 			"recommendations-2": "",
+			"english-recommendation-summary-2": "",
+			"french-recommendation-summary-2": "",
 			"recommendations-3": "",
+			"english-recommendation-summary-3": "",
+			"french-recommendation-summary-3": "",
 			"update-1-date": "",
 			"english-update-1": "",
 			"french-update-1": "",
@@ -540,11 +544,56 @@ class RCMPDataEditor {
                         </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="recommendations-${index}" class="form-label" data-en="Recommendations" data-fr="Recommandations">Recommendations</label>
-                        <input type="text" class="form-control" id="recommendations-${index}" value="${record['recommendations-1'] || ''}"
-                               onchange="editor.updateRecord(${index}, 'recommendations-1', this.value)">
-                    </div>
+					<div class="mb-3">
+						<label for="recommendations-1-${index}" class="form-label" data-en="Recommendations 1" data-fr="Recommandations 1">Recommendations 1</label>
+						<input type="text" class="form-control" id="recommendations-1-${index}" value="${record['recommendations-1'] || ''}"
+							onchange="editor.updateRecord(${index}, 'recommendations-1', this.value)">
+					</div>
+
+					<div class="form-row mb-3">
+						<div>
+							<label for="english-recommendation-summary-1-${index}" class="form-label" data-en="English recommendation summary 1" data-fr="Résumé des recommandations 1 anglais">English recommendation summary 1</label>
+							<div class="quill-editor" id="english-recommendation-summary-1-${index}" data-editor-id="english-recommendation-summary-1-${index}" data-field="english-recommendation-summary-1" data-record-index="${index}"></div>
+						</div>
+						<div>
+							<label for="french-recommendation-summary-1-${index}" class="form-label" data-en="French recommendation summary 1" data-fr="Résumé des recommandations 1 français">French recommendation summary 1</label>
+							<div class="quill-editor" id="french-recommendation-summary-1-${index}" data-editor-id="french-recommendation-summary-1-${index}" data-field="french-recommendation-summary-1" data-record-index="${index}"></div>
+						</div>
+					</div>
+
+					<div class="mb-3">
+						<label for="recommendations-2-${index}" class="form-label" data-en="Recommendations 2" data-fr="Recommandations 2">Recommendations 2</label>
+						<input type="text" class="form-control" id="recommendations-2-${index}" value="${record['recommendations-2'] || ''}"
+							onchange="editor.updateRecord(${index}, 'recommendations-2', this.value)">
+					</div>
+
+					<div class="form-row mb-3">
+						<div>
+							<label for="english-recommendation-summary-2-${index}" class="form-label" data-en="English recommendation summary 2" data-fr="Résumé des recommandations 2 anglais">English recommendation summary 2</label>
+							<div class="quill-editor" id="english-recommendation-summary-2-${index}" data-editor-id="english-recommendation-summary-2-${index}" data-field="english-recommendation-summary-2" data-record-index="${index}"></div>
+						</div>
+						<div>
+							<label for="french-recommendation-summary-2-${index}" class="form-label" data-en="French recommendation summary 2" data-fr="Résumé des recommandations 2 français">French recommendation summary 2</label>
+							<div class="quill-editor" id="french-recommendation-summary-2-${index}" data-editor-id="french-recommendation-summary-2-${index}" data-field="french-recommendation-summary-2" data-record-index="${index}"></div>
+						</div>
+					</div>
+
+					<div class="mb-3">
+						<label for="recommendations-3-${index}" class="form-label" data-en="Recommendations 3" data-fr="Recommandations 3">Recommendations 3</label>
+						<input type="text" class="form-control" id="recommendations-3-${index}" value="${record['recommendations-3'] || ''}"
+							onchange="editor.updateRecord(${index}, 'recommendations-3', this.value)">
+					</div>
+
+					<div class="form-row mb-3">
+						<div>
+							<label for="english-recommendation-summary-3-${index}" class="form-label" data-en="English recommendation summary 3" data-fr="Résumé des recommandations 3 anglais">English recommendation summary 3</label>
+							<div class="quill-editor" id="english-recommendation-summary-3-${index}" data-editor-id="english-recommendation-summary-3-${index}" data-field="english-recommendation-summary-3" data-record-index="${index}"></div>
+						</div>
+						<div>
+							<label for="french-recommendation-summary-3-${index}" class="form-label" data-en="French recommendation summary 3" data-fr="Résumé des recommandations 3 français">French recommendation summary 3</label>
+							<div class="quill-editor" id="french-recommendation-summary-3-${index}" data-editor-id="french-recommendation-summary-3-${index}" data-field="french-recommendation-summary-3" data-record-index="${index}"></div>
+						</div>
+					</div>
 
                     <div class="update-section">
                         <h3 class="h5" data-en="Progress updates" data-fr="Mises à jour du progrès">Progress updates</h3>
