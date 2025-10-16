@@ -92,8 +92,12 @@ class RCMPDataEditor {
 	sanitizeText(text) {
 		if (!text || typeof text !== 'string') return text;
 		let sanitized = text;
-		// Replace smart apostrophes with straight apostrophes
-		sanitized = sanitized.replace(/'/g, "'");
+		// Replace straight apostrophes with smart apostrophes
+		sanitized = sanitized.replace(/’/g, "'");
+		// Replace space before closing guillemet with non-breaking space
+		sanitized = sanitized.replace(/ »/g, "&#160;»");
+		// Replace space after opening guillemet with non-breaking space
+		sanitized = sanitized.replace(/« /g, "«&#160;");
 		// Check if this is Quill content (contains <p> tags or Quill classes)
 		const isQuillContent = sanitized.includes('<p>') || sanitized.includes('ql-');
 		// Handle email addresses (but not if already in mailto links)
@@ -125,7 +129,7 @@ class RCMPDataEditor {
 				return `<abbr>${match}</abbr>`;
 			});
 		};
-		const acronyms = ['RCMP', 'GRC', 'MCC', 'CACP', 'CISC', 'ATIP', 'CPM', 'ACCP', 'SCRC', 'AIPRP', 'ICIR', 'IIIC', 'CAD', 'RAO', 'CCG', 'MAB'];
+		const acronyms = ['RCMP', 'GRC', 'MCC', 'CACP', 'CISC', 'ATIP', 'CPM', 'ACCP', 'SCRC', 'AIPRP', 'ICIR', 'IIIC', 'CAD', 'RAO', 'CCG', 'MAB', 'GBA', 'EDI', 'ACS', 'DICE', 'DREAM' ];
 		acronyms.forEach(acronym => {
 			sanitized = wrapWithAbbr(sanitized, acronym);
 		});
