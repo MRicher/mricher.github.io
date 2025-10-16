@@ -739,9 +739,12 @@ class RCMPDataEditor {
 			alertContainer.innerHTML = '';
 		}
 		
-		// Check if fields don't exist in the record (not just empty)
+		// Check which recommendation slots are available (truly empty - not in render)
 		for (let i = 2; i <= 3; i++) {
-			if (!((`recommendations-${i}` in record) || record[`english-recommendation-summary-${i}`] || record[`french-recommendation-summary-${i}`])) {
+			// Check if this slot is truly empty (would not be rendered)
+			const hasRecommendation = record[`recommendations-${i}`] || record[`english-recommendation-summary-${i}`] || record[`french-recommendation-summary-${i}`];
+			
+			if (!hasRecommendation) {
 				record[`recommendations-${i}`] = '';
 				record[`english-recommendation-summary-${i}`] = '';
 				record[`french-recommendation-summary-${i}`] = '';
