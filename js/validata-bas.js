@@ -251,8 +251,8 @@ class RCMPDataEditor {
 			"french-title": "",
 			"english-summary": "",
 			"french-summary": "",
-			"english-progress": "",
-			"french-progress": "",
+			"english-progress": "In progress",
+			"french-progress": "En cours",
 			"recommendations-1": "",
 			"english-recommendation-summary-1": "",
 			"french-recommendation-summary-1": "",
@@ -537,22 +537,24 @@ class RCMPDataEditor {
                         </div>
                     </div>
 
-                    <div class="form-row mb-3">
-                        <div>
-                            <label for="english-progress-${index}" class="form-label" data-en="English progress" data-fr="Progrès anglais">English progress</label>
-                            <select class="form-select" id="english-progress-${index}" onchange="editor.updateRecord(${index}, 'english-progress', this.value)">
-                                <option value="In progress" ${record['english-progress'] === 'In progress' ? 'selected' : ''}>In progress</option>
-                                <option value="Complete" ${record['english-progress'] === 'Complete' ? 'selected' : ''}>Complete</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="french-progress-${index}" class="form-label" data-en="French progress" data-fr="Progrès français">French progress</label>
-                            <select class="form-select" id="french-progress-${index}" onchange="editor.updateRecord(${index}, 'french-progress', this.value)">
-                                <option value="En cours" ${record['french-progress'] === 'En cours' ? 'selected' : ''}>En cours</option>
-                                <option value="Terminé" ${record['french-progress'] === 'Terminé' ? 'selected' : ''}>Terminé</option>
-                            </select>
-                        </div>
-                    </div>
+					<div class="form-row mb-3">
+						<div>
+							<label for="english-progress-${index}" class="form-label" data-en="English progress" data-fr="Progrès anglais">English progress</label>
+							<select class="form-select" id="english-progress-${index}" onchange="editor.updateRecord(${index}, 'english-progress', this.value)">
+								<option value="" ${!record['english-progress'] ? 'selected' : ''}>Unknown status</option>
+								<option value="In progress" ${record['english-progress'] === 'In progress' ? 'selected' : ''}>In progress</option>
+								<option value="Complete" ${record['english-progress'] === 'Complete' ? 'selected' : ''}>Complete</option>
+							</select>
+						</div>
+						<div>
+							<label for="french-progress-${index}" class="form-label" data-en="French progress" data-fr="Progrès français">French progress</label>
+							<select class="form-select" id="french-progress-${index}" onchange="editor.updateRecord(${index}, 'french-progress', this.value)">
+								<option value="" ${!record['french-progress'] ? 'selected' : ''}>Statut inconnu</option>
+								<option value="En cours" ${record['french-progress'] === 'En cours' ? 'selected' : ''}>En cours</option>
+								<option value="Terminé" ${record['french-progress'] === 'Terminé' ? 'selected' : ''}>Terminé</option>
+							</select>
+						</div>
+					</div>
 
 					<div class="recommendation-section">
 						<h3 class="h5" data-en="Recommendations" data-fr="Recommandations">Recommendations</h3>
