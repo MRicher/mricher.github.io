@@ -262,8 +262,8 @@ class RCMPDataEditor {
 			"recommendations-3": "",
 			"english-recommendation-summary-3": "",
 			"french-recommendation-summary-3": "",
-	        "english-mcc-actions": "",
-	        "french-mcc-actions": "",
+			"english-mcc-actions": "",
+			"french-mcc-actions": "",
 			"update-1-date": "",
 			"english-update-1": "",
 			"french-update-1": "",
@@ -285,6 +285,16 @@ class RCMPDataEditor {
 		};
 		this.data.data.push(newRecord);
 		this.render();
+		
+		// Scroll to the new record
+		setTimeout(() => {
+			const recordCards = document.querySelectorAll('.record-card');
+			const lastCard = recordCards[recordCards.length - 1];
+			if (lastCard) {
+				lastCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+			}
+		}, 100);
+		
 		this.showAlert({
 			en: 'New record added successfully!',
 			fr: 'Nouvel enregistrement ajouté avec succès !'
