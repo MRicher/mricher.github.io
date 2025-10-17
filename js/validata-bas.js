@@ -1,4 +1,4 @@
-const ORCAVIA_APP_VERSION = "1.0.1";
+const ORCAVIA_APP_VERSION = "1.0.2";
 const ORCAVIA_VERSION_STRING = `Version ${ORCAVIA_APP_VERSION}`;
 
 // Update version info dynamically
