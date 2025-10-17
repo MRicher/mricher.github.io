@@ -251,8 +251,8 @@ class RCMPDataEditor {
 			"french-title": "",
 			"english-summary": "",
 			"french-summary": "",
-			"english-progress": "In progress",
-			"french-progress": "En cours",
+			"english-progress": "",
+			"french-progress": "",
 			"recommendations-1": "",
 			"english-recommendation-summary-1": "",
 			"french-recommendation-summary-1": "",
@@ -482,7 +482,7 @@ class RCMPDataEditor {
                     <div>
                         <h2 class="h4 mb-1" data-en="Record ${index + 1}${record['english-title'] ? ` - ${record['english-title']}` : ''}" data-fr="Enregistrement ${index + 1}${record['french-title'] ? ` - ${record['french-title']}`  : ''}">Record ${index + 1}${record['english-title'] ? ` - ${record['english-title']}` : ''}</h2>
 						<span class="status-badge ${this.getStatusClass(record['english-progress'])}">
-							<span data-en="${record['english-progress'] || 'Unknown status'}" data-fr="${record['french-progress'] || 'Statut inconnu'}">${window.languageSwitcher && window.languageSwitcher.currentLang === 'fr' ? (record['french-progress'] || 'Statut inconnu') : (record['english-progress'] || 'Unknown status')}</span>
+							<span data-en="${record['english-progress']}" data-fr="${record['french-progress']}">${window.languageSwitcher && window.languageSwitcher.currentLang === 'fr' ? record['french-progress'] : record['english-progress']}</span>
 						</span>
                         <small class="text-muted d-block mt-1" data-en="Updated: ${record['last-updated'] || 'Not set'}" data-fr="Mis à jour : ${record['last-updated'] || 'Non défini'}">Updated: ${record['last-updated'] || 'Not set'}</small>
                     </div>
@@ -541,7 +541,6 @@ class RCMPDataEditor {
 						<div>
 							<label for="english-progress-${index}" class="form-label" data-en="English progress" data-fr="Progrès anglais">English progress</label>
 							<select class="form-select" id="english-progress-${index}" onchange="editor.updateRecord(${index}, 'english-progress', this.value)">
-								<option value="" ${!record['english-progress'] ? 'selected' : ''}>Unknown status</option>
 								<option value="In progress" ${record['english-progress'] === 'In progress' ? 'selected' : ''}>In progress</option>
 								<option value="Complete" ${record['english-progress'] === 'Complete' ? 'selected' : ''}>Complete</option>
 							</select>
@@ -549,7 +548,6 @@ class RCMPDataEditor {
 						<div>
 							<label for="french-progress-${index}" class="form-label" data-en="French progress" data-fr="Progrès français">French progress</label>
 							<select class="form-select" id="french-progress-${index}" onchange="editor.updateRecord(${index}, 'french-progress', this.value)">
-								<option value="" ${!record['french-progress'] ? 'selected' : ''}>Statut inconnu</option>
 								<option value="En cours" ${record['french-progress'] === 'En cours' ? 'selected' : ''}>En cours</option>
 								<option value="Terminé" ${record['french-progress'] === 'Terminé' ? 'selected' : ''}>Terminé</option>
 							</select>
