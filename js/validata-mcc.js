@@ -436,44 +436,44 @@ class RCMPDataEditor {
 							tab: {
 								key: 9,
 								handler: function() {
-									// Find the next focusable element
+									// Find all focusable elements
 									const focusableElements = Array.from(document.querySelectorAll(
-										'input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), .ql-editor'
-									));
+										'input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]):not([style*="display: none"]), .ql-editor'
+									)).filter(el => {
+										// Filter out hidden elements
+										return el.offsetParent !== null;
+									});
+									
 									const currentIndex = focusableElements.indexOf(this.quill.root);
 									const nextElement = focusableElements[currentIndex + 1];
 									
 									if (nextElement) {
-										if (nextElement.classList.contains('ql-editor')) {
-											nextElement.focus();
-										} else {
-											nextElement.focus();
-										}
-										return false;
+										nextElement.focus();
+										return false; // Prevent default tab behavior
 									}
-									return true;
+									return true; // Allow default if no next element
 								}
 							},
 							shiftTab: {
 								key: 9,
 								shiftKey: true,
 								handler: function() {
-									// Find the previous focusable element
+									// Find all focusable elements
 									const focusableElements = Array.from(document.querySelectorAll(
-										'input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), .ql-editor'
-									));
+										'input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]):not([style*="display: none"]), .ql-editor'
+									)).filter(el => {
+										// Filter out hidden elements
+										return el.offsetParent !== null;
+									});
+									
 									const currentIndex = focusableElements.indexOf(this.quill.root);
 									const prevElement = focusableElements[currentIndex - 1];
 									
 									if (prevElement) {
-										if (prevElement.classList.contains('ql-editor')) {
-											prevElement.focus();
-										} else {
-											prevElement.focus();
-										}
-										return false;
+										prevElement.focus();
+										return false; // Prevent default tab behavior
 									}
-									return true;
+									return true; // Allow default if no previous element
 								}
 							}
 						}
