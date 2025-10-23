@@ -1,6 +1,5 @@
 const ORCAVIA_APP_VERSION = "1.0.2";
 const ORCAVIA_VERSION_STRING = `Version ${ORCAVIA_APP_VERSION}`;
-// Update version info dynamically
 document.addEventListener('DOMContentLoaded', () => {
 	const versionElement = document.getElementById('version-info');
 	if (versionElement) {
@@ -82,7 +81,6 @@ class RCMPDataEditor {
 			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="${closeButtonLabel}"></button>
 		`;
 		container.appendChild(alert);
-		// Auto-dismiss after 5 seconds
 		setTimeout(() => {
 			if (alert.parentNode) {
 				alert.remove();
@@ -92,19 +90,12 @@ class RCMPDataEditor {
 	sanitizeText(text) {
 		if (!text || typeof text !== 'string') return text;
 		let sanitized = text;
-		// Replace straight apostrophes with smart apostrophes
 		sanitized = sanitized.replace(/’/g, "'");
-		// Replace space before closing guillemet with non-breaking space
 		sanitized = sanitized.replace(/ »/g, "&#160;»");
-		// Replace space after opening guillemet with non-breaking space
 		sanitized = sanitized.replace(/« /g, "«&#160;");
-	    // Remove empty paragraph tags with line breaks
 	    sanitized = sanitized.replace(/<p><br><\/p>/g, "");
-		// Replace double spaces with space + non-breaking space
-		sanitized = sanitized.replace(/  /g, " &#160;");
-		// Check if this is Quill content (contains <p> tags or Quill classes)
+		sanitized = sanitized.replace(/  /g, " ");
 		const isQuillContent = sanitized.includes('<p>') || sanitized.includes('ql-');
-		// Handle email addresses (but not if already in mailto links)
 		const emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g;
 		sanitized = sanitized.replace(emailRegex, (match) => {
 			const lowercaseEmail = match.toLowerCase();
@@ -133,7 +124,7 @@ class RCMPDataEditor {
 				return `<abbr>${match}</abbr>`;
 			});
 		};
-		const acronyms = ['RCMP', 'GRC', 'MCC', 'CACP', 'CISC', 'ATIP', 'CPM', 'ACCP', 'SCRC', 'AIPRP', 'ICIR', 'IIIC', 'CAD', 'RAO', 'CCG', 'MAB', 'GBA', 'EDI', 'ACS', 'DICE', 'DREAM', 'HR', 'PSEA', 'CRH', 'HRC', 'MR', 'RM', 'ICHR', 'CES', 'PEC', 'NMP', 'PNM', 'AM', 'CIRH', 'FCP', 'PFT', 'PE', 'RH', 'LEFP', 'PSDPA', 'CM', 'LPDAC'];
+		const acronyms = ['RCMP', 'GRC', '2SLGBTQI+', 'MCC', 'CACP', 'CISC', 'ATIP', 'CPM', 'ACCP', 'SCRC', 'AIPRP', 'ICIR', 'IIIC', 'CAD', 'RAO', 'CCG', 'MAB', 'GBA', 'EDI', 'ACS', 'DICE', 'DREAM', 'HR', 'PSEA', 'CRH', 'HRC', 'MR', 'RM', 'ICHR', 'CES', 'PEC', 'NMP', 'PNM', 'AM', 'CIRH', 'FCP', 'PFT', 'PE', 'RH', 'LEFP', 'PSDPA', 'CM', 'LPDAC'];
 		acronyms.forEach(acronym => {
 			sanitized = wrapWithAbbr(sanitized, acronym);
 		});
@@ -439,6 +430,53 @@ class RCMPDataEditor {
 					],
 					clipboard: {
 						matchVisual: false
+					},
+					keyboard: {
+						bindings: {
+							tab: {
+								key: 9,
+								handler: function() {
+									// Find the next focusable element
+									const focusableElements = Array.from(document.querySelectorAll(
+										'input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), .ql-editor'
+									));
+									const currentIndex = focusableElements.indexOf(this.quill.root);
+									const nextElement = focusableElements[currentIndex + 1];
+									
+									if (nextElement) {
+										if (nextElement.classList.contains('ql-editor')) {
+											nextElement.focus();
+										} else {
+											nextElement.focus();
+										}
+										return false;
+									}
+									return true;
+								}
+							},
+							shiftTab: {
+								key: 9,
+								shiftKey: true,
+								handler: function() {
+									// Find the previous focusable element
+									const focusableElements = Array.from(document.querySelectorAll(
+										'input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), .ql-editor'
+									));
+									const currentIndex = focusableElements.indexOf(this.quill.root);
+									const prevElement = focusableElements[currentIndex - 1];
+									
+									if (prevElement) {
+										if (prevElement.classList.contains('ql-editor')) {
+											prevElement.focus();
+										} else {
+											prevElement.focus();
+										}
+										return false;
+									}
+									return true;
+								}
+							}
+						}
 					}
 				}
 			});

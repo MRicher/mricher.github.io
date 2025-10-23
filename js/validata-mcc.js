@@ -1,6 +1,5 @@
 const ORCAVIA_APP_VERSION = "1.0.2";
 const ORCAVIA_VERSION_STRING = `Version ${ORCAVIA_APP_VERSION}`;
-// Update version info dynamically
 document.addEventListener('DOMContentLoaded', () => {
 	const versionElement = document.getElementById('version-info');
 	if (versionElement) {
@@ -431,6 +430,53 @@ class RCMPDataEditor {
 					],
 					clipboard: {
 						matchVisual: false
+					},
+					keyboard: {
+						bindings: {
+							tab: {
+								key: 9,
+								handler: function() {
+									// Find the next focusable element
+									const focusableElements = Array.from(document.querySelectorAll(
+										'input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), .ql-editor'
+									));
+									const currentIndex = focusableElements.indexOf(this.quill.root);
+									const nextElement = focusableElements[currentIndex + 1];
+									
+									if (nextElement) {
+										if (nextElement.classList.contains('ql-editor')) {
+											nextElement.focus();
+										} else {
+											nextElement.focus();
+										}
+										return false;
+									}
+									return true;
+								}
+							},
+							shiftTab: {
+								key: 9,
+								shiftKey: true,
+								handler: function() {
+									// Find the previous focusable element
+									const focusableElements = Array.from(document.querySelectorAll(
+										'input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), .ql-editor'
+									));
+									const currentIndex = focusableElements.indexOf(this.quill.root);
+									const prevElement = focusableElements[currentIndex - 1];
+									
+									if (prevElement) {
+										if (prevElement.classList.contains('ql-editor')) {
+											prevElement.focus();
+										} else {
+											prevElement.focus();
+										}
+										return false;
+									}
+									return true;
+								}
+							}
+						}
 					}
 				}
 			});
