@@ -1,4 +1,4 @@
-const ORCAVIA_APP_VERSION = "1.0.1";
+const ORCAVIA_APP_VERSION = "1.0.2";
 const ORCAVIA_VERSION_STRING = `Version ${ORCAVIA_APP_VERSION}`;
 // Update version info dynamically
 document.addEventListener('DOMContentLoaded', () => {
@@ -133,7 +133,7 @@ class RCMPDataEditor {
 				return `<abbr>${match}</abbr>`;
 			});
 		};
-		const acronyms = ['RCMP', 'GRC', 'MCC', 'CACP', 'CISC', 'ATIP', 'CPM', 'ACCP', 'SCRC', 'AIPRP', 'ICIR', 'IIIC', 'CAD', 'RAO', 'CCG', 'MAB', 'GBA', 'EDI', 'ACS', 'DICE', 'DREAM', 'HR', 'PSEA', 'CRH', 'HRC', 'MR', 'RM', 'ICHR', 'CES', 'PEC', 'NMP', 'PNM'];
+		const acronyms = ['RCMP', 'GRC', 'MCC', 'CACP', 'CISC', 'ATIP', 'CPM', 'ACCP', 'SCRC', 'AIPRP', 'ICIR', 'IIIC', 'CAD', 'RAO', 'CCG', 'MAB', 'GBA', 'EDI', 'ACS', 'DICE', 'DREAM', 'HR', 'PSEA', 'CRH', 'HRC', 'MR', 'RM', 'ICHR', 'CES', 'PEC', 'NMP', 'PNM', 'AM', 'CIRH', 'FCP', 'PFT', 'PE', 'RH', 'LEFP', 'PSDPA', 'CM', 'LPDAC'];
 		acronyms.forEach(acronym => {
 			sanitized = wrapWithAbbr(sanitized, acronym);
 		});
