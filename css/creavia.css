@@ -465,3 +465,28 @@ footer {
     transform: none;
   }
 }
+
+/* Quill toolbar icons white in dark mode */
+[data-theme="dark"] .ql-toolbar .ql-stroke {
+	stroke: #ffffff;
+}
+
+[data-theme="dark"] .ql-toolbar .ql-fill {
+	fill: #ffffff;
+}
+
+[data-theme="dark"] .ql-toolbar .ql-picker-label {
+	color: #ffffff;
+}
+
+[data-theme="dark"] .ql-toolbar button:hover .ql-stroke,
+[data-theme="dark"] .ql-toolbar button:focus .ql-stroke,
+[data-theme="dark"] .ql-toolbar button.ql-active .ql-stroke {
+	stroke: #4dabf7;
+}
+
+[data-theme="dark"] .ql-toolbar button:hover .ql-fill,
+[data-theme="dark"] .ql-toolbar button:focus .ql-fill,
+[data-theme="dark"] .ql-toolbar button.ql-active .ql-fill {
+	fill: #4dabf7;
+}
