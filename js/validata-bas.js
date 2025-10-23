@@ -133,7 +133,7 @@ class RCMPDataEditor {
 				return `<abbr>${match}</abbr>`;
 			});
 		};
-		const acronyms = ['RCMP', 'GRC', 'MCC', 'CACP', 'CISC', 'ATIP', 'CPM', 'ACCP', 'SCRC', 'AIPRP', 'ICIR', 'IIIC', 'CAD', 'RAO', 'CCG', 'MAB', 'GBA', 'EDI', 'ACS', 'DICE', 'DREAM'];
+		const acronyms = ['RCMP', 'GRC', 'MCC', 'CACP', 'CISC', 'ATIP', 'CPM', 'ACCP', 'SCRC', 'AIPRP', 'ICIR', 'IIIC', 'CAD', 'RAO', 'CCG', 'MAB', 'GBA', 'EDI', 'ACS', 'DICE', 'DREAM', 'HR', 'PSEA', 'CRH', 'HRC', 'MR', 'RM', 'ICHR', 'CES', 'PEC', 'NMP', 'PNM'];
 		acronyms.forEach(acronym => {
 			sanitized = wrapWithAbbr(sanitized, acronym);
 		});
