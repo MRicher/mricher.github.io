@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location Mapper</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            max-width: 1000px;
+            width: 100%;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        .info {
+            padding: 20px 30px;
+            background: #f8f9fa;
+        }
+        .info-item {
+            margin: 10px 0;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .label {
+            font-weight: 600;
+            color: #667eea;
+        }
+        .value {
+            color: #333;
+        }
+        #map {
+            width: 100%;
+            height: 500px;
+        }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin: 20px auto;
+            display: block;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .status {
+            text-align: center;
+            padding: 15px;
+            color: #666;
+            font-style: italic;
+        }
+        .error {
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📍 Location Distance Mapper</h1>
+            <p>Find your distance to the target location</p>
+        </div>
+        
+        <div class="info">
+            <div class="status" id="status">Click the button to get your location</div>
+            <div class="info-item" style="display:none;" id="userLocationInfo">
+                <span class="label">Your Location:</span>
+                <span class="value" id="userLocation">--</span>
+            </div>
+            <div class="info-item" style="display:none;" id="targetLocationInfo">
+                <span class="label">Target Location:</span>
+                <span class="value">45.1500°N, 75.5291°W</span>
+            </div>
+            <div class="info-item" style="display:none;" id="distanceInfo">
+                <span class="label">Distance:</span>
+                <span class="value" id="distance">--</span>
+            </div>
+            <button class="btn" id="getLocationBtn">Get My Location</button>
+        </div>
+        
+        <div id="map"></div>
+    </div>
+
+    <script>
+        const TARGET_LAT = 45.14997398531623;
+        const TARGET_LNG = -75.52907721956818;
+        
+        let map;
+        let userMarker;
+        let targetMarker;
+        let routeLine;
+
+        // Initialize map
+        function initMap() {
+            map = L.map('map').setView([TARGET_LAT, TARGET_LNG], 13);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+            
+            // Add target location marker
+            targetMarker = L.marker([TARGET_LAT, TARGET_LNG], {
+                icon: L.icon({
+                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    shadowSize: [41, 41]
+                })
+            }).addTo(map);
+            
+            targetMarker.bindPopup('<b>Target Location</b><br>45.1500°N, 75.5291°W');
+        }
+
+        // Calculate distance between two coordinates (Haversine formula)
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Earth's radius in km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            const distance = R * c;
+            return distance;
+        }
+
+        // Get user's location
+        function getUserLocation() {
+            const statusEl = document.getElementById('status');
+            const btn = document.getElementById('getLocationBtn');
+            
+            if (!navigator.geolocation) {
+                statusEl.textContent = 'Geolocation is not supported by your browser';
+                statusEl.classList.add('error');
+                return;
+            }
+            
+            btn.disabled = true;
+            statusEl.textContent = 'Getting your location...';
+            statusEl.classList.remove('error');
+            
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const userLat = position.coords.latitude;
+                    const userLng = position.coords.longitude;
+                    
+                    // Update UI
+                    document.getElementById('userLocation').textContent = 
+                        `${userLat.toFixed(4)}°N, ${userLng.toFixed(4)}°W`;
+                    document.getElementById('userLocationInfo').style.display = 'flex';
+                    document.getElementById('targetLocationInfo').style.display = 'flex';
+                    document.getElementById('distanceInfo').style.display = 'flex';
+                    
+                    // Calculate distance
+                    const dist = calculateDistance(userLat, userLng, TARGET_LAT, TARGET_LNG);
+                    document.getElementById('distance').textContent = 
+                        `${dist.toFixed(2)} km (${(dist * 0.621371).toFixed(2)} miles)`;
+                    
+                    statusEl.textContent = '✓ Location found!';
+                    btn.disabled = false;
+                    
+                    // Add user marker
+                    if (userMarker) {
+                        map.removeLayer(userMarker);
+                    }
+                    userMarker = L.marker([userLat, userLng], {
+                        icon: L.icon({
+                            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+                            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+                            iconSize: [25, 41],
+                            iconAnchor: [12, 41],
+                            popupAnchor: [1, -34],
+                            shadowSize: [41, 41]
+                        })
+                    }).addTo(map);
+                    
+                    userMarker.bindPopup('<b>Your Location</b>');
+                    
+                    // Draw line between points
+                    if (routeLine) {
+                        map.removeLayer(routeLine);
+                    }
+                    routeLine = L.polyline([
+                        [userLat, userLng],
+                        [TARGET_LAT, TARGET_LNG]
+                    ], {
+                        color: '#667eea',
+                        weight: 3,
+                        opacity: 0.7,
+                        dashArray: '10, 10'
+                    }).addTo(map);
+                    
+                    // Fit map to show both markers
+                    const bounds = L.latLngBounds([
+                        [userLat, userLng],
+                        [TARGET_LAT, TARGET_LNG]
+                    ]);
+                    map.fitBounds(bounds, { padding: [50, 50] });
+                },
+                (error) => {
+                    let errorMsg = 'Unable to retrieve your location';
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMsg = 'Location access denied. Please enable location permissions.';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMsg = 'Location information unavailable';
+                            break;
+                        case error.TIMEOUT:
+                            errorMsg = 'Location request timed out';
+                            break;
+                    }
+                    statusEl.textContent = errorMsg;
+                    statusEl.classList.add('error');
+                    btn.disabled = false;
+                }
+            );
+        }
+
+        // Initialize
+        initMap();
+        document.getElementById('getLocationBtn').addEventListener('click', getUserLocation);
+    </script>
+</body>
+</html>
