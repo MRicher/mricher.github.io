@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Location Mapper</title>
+    <title>Location Mapper with Routing</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
     <style>
@@ -58,6 +58,7 @@
         }
         .value {
             color: #333;
+            text-align: right;
         }
         #map {
             width: 100%;
@@ -91,17 +92,60 @@
         .error {
             color: #e74c3c;
         }
+        .manual-input {
+            display: none;
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+        }
+        .input-group {
+            margin: 10px 0;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #667eea;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 14px;
+            margin: 10px 5px 0 0;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>📍 Location Distance Mapper</h1>
-            <p>Find your distance to the target location</p>
+            <h1>🚗 Route Distance Mapper</h1>
+            <p>Find your driving distance to the target location</p>
         </div>
         
         <div class="info">
             <div class="status" id="status">Click the button to get your location</div>
+            
+            <div class="manual-input" id="manualInput">
+                <div class="input-group">
+                    <label>Your Latitude:</label>
+                    <input type="number" id="manualLat" step="0.0001" placeholder="e.g., 43.6532">
+                </div>
+                <div class="input-group">
+                    <label>Your Longitude:</label>
+                    <input type="number" id="manualLng" step="0.0001" placeholder="e.g., -79.3832">
+                </div>
+                <button class="btn btn-small" id="useManualBtn">Use These Coordinates</button>
+                <button class="btn btn-small" id="cancelManualBtn">Cancel</button>
+            </div>
+            
             <div class="info-item" style="display:none;" id="userLocationInfo">
                 <span class="label">Your Location:</span>
                 <span class="value" id="userLocation">--</span>
@@ -111,10 +155,15 @@
                 <span class="value">45.1500°N, 75.5291°W</span>
             </div>
             <div class="info-item" style="display:none;" id="distanceInfo">
-                <span class="label">Distance:</span>
+                <span class="label">Driving Distance:</span>
                 <span class="value" id="distance">--</span>
             </div>
+            <div class="info-item" style="display:none;" id="durationInfo">
+                <span class="label">Estimated Duration:</span>
+                <span class="value" id="duration">--</span>
+            </div>
             <button class="btn" id="getLocationBtn">Get My Location</button>
+            <button class="btn" id="manualLocationBtn">Enter Location Manually</button>
         </div>
         
         <div id="map"></div>
@@ -152,20 +201,96 @@
             targetMarker.bindPopup('<b>Target Location</b><br>45.1500°N, 75.5291°W');
         }
 
-        // Calculate distance between two coordinates (Haversine formula)
-        function calculateDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371; // Earth's radius in km
-            const dLat = (lat2 - lat1) * Math.PI / 180;
-            const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                      Math.sin(dLon/2) * Math.sin(dLon/2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            const distance = R * c;
-            return distance;
+        // Get routing information using OSRM (Open Source Routing Machine)
+        async function getRoute(userLat, userLng) {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = 'Calculating route...';
+            
+            try {
+                const url = `https://router.project-osrm.org/route/v1/driving/${userLng},${userLat};${TARGET_LNG},${TARGET_LAT}?overview=full&geometries=geojson`;
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.code !== 'Ok' || !data.routes || data.routes.length === 0) {
+                    throw new Error('No route found');
+                }
+                
+                const route = data.routes[0];
+                const distanceKm = route.distance / 1000;
+                const durationMin = route.duration / 60;
+                const durationHrs = Math.floor(durationMin / 60);
+                const durationMins = Math.round(durationMin % 60);
+                
+                // Update UI
+                document.getElementById('distance').textContent = 
+                    `${distanceKm.toFixed(2)} km (${(distanceKm * 0.621371).toFixed(2)} miles)`;
+                
+                let durationText = '';
+                if (durationHrs > 0) {
+                    durationText = `${durationHrs} hr ${durationMins} min`;
+                } else {
+                    durationText = `${durationMins} min`;
+                }
+                document.getElementById('duration').textContent = durationText;
+                
+                document.getElementById('distanceInfo').style.display = 'flex';
+                document.getElementById('durationInfo').style.display = 'flex';
+                
+                statusEl.textContent = '✓ Route calculated!';
+                
+                // Draw route on map
+                if (routeLine) {
+                    map.removeLayer(routeLine);
+                }
+                
+                const coordinates = route.geometry.coordinates.map(coord => [coord[1], coord[0]]);
+                routeLine = L.polyline(coordinates, {
+                    color: '#667eea',
+                    weight: 4,
+                    opacity: 0.8
+                }).addTo(map);
+                
+                // Fit map to show entire route
+                map.fitBounds(routeLine.getBounds(), { padding: [50, 50] });
+                
+            } catch (error) {
+                statusEl.textContent = 'Error calculating route. Please try again.';
+                statusEl.classList.add('error');
+                console.error('Routing error:', error);
+            }
         }
 
-        // Get user's location
+        // Process location (from geolocation or manual input)
+        function processLocation(userLat, userLng) {
+            // Update UI
+            document.getElementById('userLocation').textContent = 
+                `${userLat.toFixed(4)}°${userLat >= 0 ? 'N' : 'S'}, ${Math.abs(userLng).toFixed(4)}°${userLng >= 0 ? 'E' : 'W'}`;
+            document.getElementById('userLocationInfo').style.display = 'flex';
+            document.getElementById('targetLocationInfo').style.display = 'flex';
+            
+            // Add user marker
+            if (userMarker) {
+                map.removeLayer(userMarker);
+            }
+            userMarker = L.marker([userLat, userLng], {
+                icon: L.icon({
+                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    shadowSize: [41, 41]
+                })
+            }).addTo(map);
+            
+            userMarker.bindPopup('<b>Your Location</b>');
+            
+            // Get and draw route
+            getRoute(userLat, userLng);
+        }
+
+        // Get user's location via geolocation
         function getUserLocation() {
             const statusEl = document.getElementById('status');
             const btn = document.getElementById('getLocationBtn');
@@ -182,67 +307,14 @@
             
             navigator.geolocation.getCurrentPosition(
                 (position) => {
-                    const userLat = position.coords.latitude;
-                    const userLng = position.coords.longitude;
-                    
-                    // Update UI
-                    document.getElementById('userLocation').textContent = 
-                        `${userLat.toFixed(4)}°N, ${userLng.toFixed(4)}°W`;
-                    document.getElementById('userLocationInfo').style.display = 'flex';
-                    document.getElementById('targetLocationInfo').style.display = 'flex';
-                    document.getElementById('distanceInfo').style.display = 'flex';
-                    
-                    // Calculate distance
-                    const dist = calculateDistance(userLat, userLng, TARGET_LAT, TARGET_LNG);
-                    document.getElementById('distance').textContent = 
-                        `${dist.toFixed(2)} km (${(dist * 0.621371).toFixed(2)} miles)`;
-                    
-                    statusEl.textContent = '✓ Location found!';
                     btn.disabled = false;
-                    
-                    // Add user marker
-                    if (userMarker) {
-                        map.removeLayer(userMarker);
-                    }
-                    userMarker = L.marker([userLat, userLng], {
-                        icon: L.icon({
-                            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
-                            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-                            iconSize: [25, 41],
-                            iconAnchor: [12, 41],
-                            popupAnchor: [1, -34],
-                            shadowSize: [41, 41]
-                        })
-                    }).addTo(map);
-                    
-                    userMarker.bindPopup('<b>Your Location</b>');
-                    
-                    // Draw line between points
-                    if (routeLine) {
-                        map.removeLayer(routeLine);
-                    }
-                    routeLine = L.polyline([
-                        [userLat, userLng],
-                        [TARGET_LAT, TARGET_LNG]
-                    ], {
-                        color: '#667eea',
-                        weight: 3,
-                        opacity: 0.7,
-                        dashArray: '10, 10'
-                    }).addTo(map);
-                    
-                    // Fit map to show both markers
-                    const bounds = L.latLngBounds([
-                        [userLat, userLng],
-                        [TARGET_LAT, TARGET_LNG]
-                    ]);
-                    map.fitBounds(bounds, { padding: [50, 50] });
+                    processLocation(position.coords.latitude, position.coords.longitude);
                 },
                 (error) => {
                     let errorMsg = 'Unable to retrieve your location';
                     switch(error.code) {
                         case error.PERMISSION_DENIED:
-                            errorMsg = 'Location access denied. Please enable location permissions.';
+                            errorMsg = 'Location access denied. Try entering coordinates manually.';
                             break;
                         case error.POSITION_UNAVAILABLE:
                             errorMsg = 'Location information unavailable';
@@ -258,9 +330,49 @@
             );
         }
 
+        // Show manual input
+        function showManualInput() {
+            document.getElementById('manualInput').style.display = 'block';
+            document.getElementById('getLocationBtn').style.display = 'none';
+            document.getElementById('manualLocationBtn').style.display = 'none';
+        }
+
+        // Hide manual input
+        function hideManualInput() {
+            document.getElementById('manualInput').style.display = 'none';
+            document.getElementById('getLocationBtn').style.display = 'block';
+            document.getElementById('manualLocationBtn').style.display = 'block';
+        }
+
+        // Use manual coordinates
+        function useManualCoordinates() {
+            const lat = parseFloat(document.getElementById('manualLat').value);
+            const lng = parseFloat(document.getElementById('manualLng').value);
+            const statusEl = document.getElementById('status');
+            
+            if (isNaN(lat) || isNaN(lng)) {
+                statusEl.textContent = 'Please enter valid coordinates';
+                statusEl.classList.add('error');
+                return;
+            }
+            
+            if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+                statusEl.textContent = 'Coordinates out of range (lat: -90 to 90, lng: -180 to 180)';
+                statusEl.classList.add('error');
+                return;
+            }
+            
+            statusEl.classList.remove('error');
+            hideManualInput();
+            processLocation(lat, lng);
+        }
+
         // Initialize
         initMap();
         document.getElementById('getLocationBtn').addEventListener('click', getUserLocation);
+        document.getElementById('manualLocationBtn').addEventListener('click', showManualInput);
+        document.getElementById('useManualBtn').addEventListener('click', useManualCoordinates);
+        document.getElementById('cancelManualBtn').addEventListener('click', hideManualInput);
     </script>
 </body>
 </html>
