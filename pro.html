@@ -129,20 +129,27 @@
 </div>
 </div>
 
-<main property="mainContentOfPage" resource="#wb-main" typeof="WebPageElement">
-<div class="container">
-<div class="row">
-<div class="col-xs-12">
+<main property="mainContentOfPage" resource="#wb-main" typeof="WebPageElement" class="container">
+<div>
+<div>
+<div id="block-poweb-content--3" class="block-system block-poweb-content--3">
+<header about="/en/hrcsoda">
+</header>
+<section id="collection-page">
 <h1 id="wb-cont" property="name">High Risk Child Sex Offender Database</h1>
-</div>
-</div>
+
+<section class="alert alert-info">
+<h2 class="h4">Important information</h2>
+<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+<p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+</section>
 
 <div class="row">
 <!-- Left Sidebar - Filters -->
 <aside class="col-md-3">
 <section class="well well-sm">
 <h2 class="mrgn-tp-0 h3">Filter profiles</h2>
-<form class="wb-tables-filter" data-bind-to="offender-profiles">
+<form class="wb-tables-filter" data-bind-to="offender-profiles" id="filter-form">
 <div class="form-group">
 <label for="filter-gender">Gender</label>
 <select class="form-control" id="filter-gender" name="gender" data-column="1">
@@ -171,6 +178,11 @@
 <option value="Saskatchewan">Saskatchewan</option>
 <option value="Yukon">Yukon</option>
 </select>
+</div>
+
+<div class="form-group">
+<button type="submit" class="btn btn-primary mrgn-rght-sm">Filter</button>
+<button type="reset" class="btn btn-default" id="reset-filters">Reset filters</button>
 </div>
 </form>
 </section>
@@ -283,7 +295,7 @@
 </div>
 
 <!-- Page details -->
-<div class="pagedetails container">
+<div class="pagedetails">
 <div class="row">
 <dl id="wb-dtmd">
 <dt>Date modified:</dt>
@@ -292,6 +304,9 @@
 </div>
 </div>
 
+</section>
+</div>
+</div>
 </div>
 </main>
 
@@ -347,6 +362,23 @@
 <script src="https://mpupcdrupalwxtappcdne.azureedge.net/core/assets/vendor/jquery/jquery.min.js?v=3.7.1"></script>
 <script src="https://mpupcdrupalwxtappcdne.azureedge.net/themes/custom/poweb/wet-boew/js/wet-boew.js?v=1.x1.0"></script>
 <script src="https://mpupcdrupalwxtappcdne.azureedge.net/themes/custom/poweb/js/theme.min.js?v=1.x1.0"></script>
+
+<script>
+// Reset filters functionality
+document.addEventListener('DOMContentLoaded', function() {
+  var resetButton = document.getElementById('reset-filters');
+  if (resetButton) {
+    resetButton.addEventListener('click', function(e) {
+      e.preventDefault();
+      document.getElementById('filter-gender').value = '';
+      document.getElementById('filter-province').value = '';
+      // Trigger change event to reset the table filter
+      var event = new Event('change', { bubbles: true });
+      document.getElementById('filter-gender').dispatchEvent(event);
+    });
+  }
+});
+</script>
 
 <style>
 .stretched-link::after {
