@@ -55,13 +55,12 @@ article {
 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
 </section>
 
-<section class="mrgn-bttm-md">
+<section class="mrgn-bttm-lg">
 <h2 class="mrgn-tp-0">Additional notice</h2>
 <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
 </section>
 
 <div class="row">
-<!-- Left Sidebar - Filters -->
 <aside class="col-md-3">
 <section class="well well-sm">
 <h2 class="mrgn-tp-0 h3">Filter profiles</h2>
@@ -97,14 +96,13 @@ article {
 </div>
 
 <div class="form-group">
-<button type="submit" class="btn btn-primary btn-block btn-sm mrgn-tp-lg">Filter</button>
+<button type="submit" class="btn btn-primary btn-block btn-sm mrgn-tp-md">Filter</button>
 <button type="reset" class="btn btn-default btn-block btn-sm" id="reset-filters">Reset filters</button>
 </div>
 </form>
 </section>
 </aside>
 
-<!-- Right Content - Profile Cards -->
 <section class="col-md-9 mrgn-tp-md">
 <h2 class="wb-inv">Offender profiles</h2>
 <div class="row wb-eqht" id="offender-profiles-container">
@@ -276,21 +274,6 @@ article {
 <script src="https://mpupcdrupalwxtappcdne.azureedge.net/core/assets/vendor/jquery/jquery.min.js?v=3.7.1"></script>
 <script src="https://mpupcdrupalwxtappcdne.azureedge.net/themes/custom/poweb/wet-boew/js/wet-boew.js?v=1.x1.0"></script>
 <script src="https://mpupcdrupalwxtappcdne.azureedge.net/themes/custom/poweb/js/theme.min.js?v=1.x1.0"></script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  var resetButton = document.getElementById('reset-filters');
-  if (resetButton) {
-    resetButton.addEventListener('click', function(e) {
-      e.preventDefault();
-      document.getElementById('filter-gender').value = '';
-      document.getElementById('filter-province').value = '';
-      var event = new Event('change', { bubbles: true });
-      document.getElementById('filter-gender').dispatchEvent(event);
-    });
-  }
-});
-</script>
 
 </body>
 </html>
