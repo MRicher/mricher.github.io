@@ -97,16 +97,17 @@ article {
 </div>
 
 <div class="form-group">
-<button type="submit" class="btn btn-primary btn-block btn-sm mrgn-tp-md">Filter</button>
+<button type="submit" class="btn btn-primary btn-block btn-sm mrgn-tp-lg">Filter</button>
 <button type="reset" class="btn btn-default btn-block btn-sm" id="reset-filters">Reset filters</button>
 </div>
 </form>
 </section>
 </aside>
 
-<section class="col-md-9">
+<!-- Right Content - Profile Cards -->
+<section class="col-md-9 mrgn-tp-md">
 <h2 class="wb-inv">Offender profiles</h2>
-<div class="row wb-eqht mrgn-tp-md" id="offender-profiles-container">
+<div class="row wb-eqht" id="offender-profiles-container">
 <table class="wb-tables table table-striped hidden" id="offender-profiles" aria-label="Offender profile data" data-wb-tables='{"paging": false, "info": false, "searching": true, "ordering": false}'>
 <thead>
 <tr>
@@ -276,6 +277,20 @@ article {
 <script src="https://mpupcdrupalwxtappcdne.azureedge.net/themes/custom/poweb/wet-boew/js/wet-boew.js?v=1.x1.0"></script>
 <script src="https://mpupcdrupalwxtappcdne.azureedge.net/themes/custom/poweb/js/theme.min.js?v=1.x1.0"></script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var resetButton = document.getElementById('reset-filters');
+  if (resetButton) {
+    resetButton.addEventListener('click', function(e) {
+      e.preventDefault();
+      document.getElementById('filter-gender').value = '';
+      document.getElementById('filter-province').value = '';
+      var event = new Event('change', { bubbles: true });
+      document.getElementById('filter-gender').dispatchEvent(event);
+    });
+  }
+});
+</script>
 
 </body>
 </html>
