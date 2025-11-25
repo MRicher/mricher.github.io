@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Status Form / Formulaire d'état de l'application</title>
+    
+    <!-- Bootstrap 4.5 CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.3/css/bootstrap.min.css">
+    
+    <style>
+        /* High contrast and accessibility enhancements */
+        body {
+            background-color: #ffffff;
+            color: #000000;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        
+        .bilingual-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #000000;
+        }
+        
+        .form-control:focus,
+        .btn:focus {
+            outline: 3px solid #0056b3;
+            outline-offset: 2px;
+            box-shadow: 0 0 0 0.2rem rgba(0, 86, 179, 0.25);
+        }
+        
+        .status-entry {
+            border: 2px solid #dee2e6;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0.25rem;
+            background-color: #f8f9fa;
+        }
+        
+        .btn-primary {
+            background-color: #0056b3;
+            border-color: #004085;
+            font-weight: 600;
+        }
+        
+        .btn-primary:hover,
+        .btn-primary:focus {
+            background-color: #004085;
+            border-color: #002752;
+        }
+        
+        .btn-success {
+            background-color: #218838;
+            border-color: #1e7e34;
+            font-weight: 600;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #545b62;
+            font-weight: 600;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: #000000;
+            color: #ffffff;
+            padding: 8px;
+            text-decoration: none;
+            z-index: 100;
+        }
+        
+        .skip-link:focus {
+            top: 0;
+        }
+        
+        fieldset {
+            border: 2px solid #495057;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        legend {
+            width: auto;
+            padding: 0 0.5rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #000000;
+        }
+        
+        .form-text {
+            color: #212529;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip to main content link for accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content / Passer au contenu principal</a>
+    
+    <header role="banner" class="bg-dark text-white py-3">
+        <div class="container">
+            <h1 class="h3 mb-0">
+                Application Status Management System<br>
+                <span lang="fr">Système de gestion de l'état des applications</span>
+            </h1>
+        </div>
+    </header>
+    
+    <main id="main-content" role="main" class="container my-5">
+        <div class="row">
+            <div class="col-lg-10 offset-lg-1">
+                <!-- Main Form -->
+                <form id="statusForm" novalidate>
+                    <div id="statusEntriesContainer" role="region" aria-label="Status entries container">
+                        <!-- Initial Status Entry -->
+                        <div class="status-entry" data-entry-index="0">
+                            <fieldset>
+                                <legend>
+                                    Status Entry 1<br>
+                                    <span lang="fr">Entrée d'état 1</span>
+                                </legend>
+                                
+                                <!-- Application Selection -->
+                                <div class="form-group">
+                                    <label for="application-0" class="bilingual-label">
+                                        <span lang="en">Application</span><br>
+                                        <span lang="fr">Application</span>
+                                    </label>
+                                    <select 
+                                        class="form-control application-select" 
+                                        id="application-0" 
+                                        name="application-0"
+                                        required
+                                        aria-required="true"
+                                        aria-describedby="application-help-0">
+                                        <option value="">-- Select / Sélectionner --</option>
+                                        <option value="outlook">Microsoft Outlook</option>
+                                        <option value="m365">Microsoft 365 (M365)</option>
+                                    </select>
+                                    <small id="application-help-0" class="form-text">
+                                        <span lang="en">Choose the application to update.</span>
+                                        <span lang="fr">Choisissez l'application à mettre à jour.</span>
+                                    </small>
+                                </div>
+                                
+                                <!-- Current Status -->
+                                <div class="form-group">
+                                    <label for="status-0" class="bilingual-label">
+                                        <span lang="en">Current Status</span><br>
+                                        <span lang="fr">État actuel</span>
+                                    </label>
+                                    <select 
+                                        class="form-control status-select" 
+                                        id="status-0" 
+                                        name="status-0"
+                                        required
+                                        aria-required="true"
+                                        aria-describedby="status-help-0">
+                                        <option value="">-- Select / Sélectionner --</option>
+                                        <option value="no-issues">No reported issues / Aucun problème signalé</option>
+                                        <option value="incident">Incident / Incident</option>
+                                        <option value="outage">Outage / Panne</option>
+                                    </select>
+                                    <small id="status-help-0" class="form-text">
+                                        <span lang="en">Select the current operational status.</span>
+                                        <span lang="fr">Sélectionnez l'état opérationnel actuel.</span>
+                                    </small>
+                                </div>
+                                
+                                <!-- Pre-determined Messages -->
+                                <div class="form-group">
+                                    <label for="message-0" class="bilingual-label">
+                                        <span lang="en">Pre-determined Message</span><br>
+                                        <span lang="fr">Message prédéterminé</span>
+                                    </label>
+                                    <select 
+                                        class="form-control message-select" 
+                                        id="message-0" 
+                                        name="message-0"
+                                        required
+                                        aria-required="true"
+                                        aria-describedby="message-help-0"
+                                        disabled>
+                                        <option value="">-- Select application first / Sélectionnez d'abord l'application --</option>
+                                    </select>
+                                    <small id="message-help-0" class="form-text">
+                                        <span lang="en">Choose a pre-defined message or select "Other" for custom text.</span>
+                                        <span lang="fr">Choisissez un message prédéfini ou sélectionnez "Autre" pour un texte personnalisé.</span>
+                                    </small>
+                                </div>
+                                
+                                <!-- Custom Message (shown when "Other" is selected) -->
+                                <div class="custom-message-container hidden" id="custom-message-0">
+                                    <div class="form-group">
+                                        <label for="custom-en-0" class="bilingual-label">
+                                            <span lang="en">Custom Message (English)</span><br>
+                                            <span lang="fr">Message personnalisé (anglais)</span>
+                                        </label>
+                                        <textarea 
+                                            class="form-control custom-en-textarea" 
+                                            id="custom-en-0" 
+                                            name="custom-en-0"
+                                            rows="4"
+                                            aria-describedby="custom-en-help-0"></textarea>
+                                        <small id="custom-en-help-0" class="form-text">
+                                            <span lang="en">Enter your custom message in English.</span>
+                                            <span lang="fr">Entrez votre message personnalisé en anglais.</span>
+                                        </small>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="custom-fr-0" class="bilingual-label">
+                                            <span lang="en">Custom Message (French Canadian)</span><br>
+                                            <span lang="fr">Message personnalisé (français canadien)</span>
+                                        </label>
+                                        <textarea 
+                                            class="form-control custom-fr-textarea" 
+                                            id="custom-fr-0" 
+                                            name="custom-fr-0"
+                                            rows="4"
+                                            aria-describedby="custom-fr-help-0"></textarea>
+                                        <small id="custom-fr-help-0" class="form-text">
+                                            <span lang="en">Enter your custom message in French Canadian.</span>
+                                            <span lang="fr">Entrez votre message personnalisé en français canadien.</span>
+                                        </small>
+                                    </div>
+                                </div>
+                                
+                                <!-- Remove Entry Button (hidden for first entry) -->
+                                <button 
+                                    type="button" 
+                                    class="btn btn-danger btn-sm remove-entry-btn hidden"
+                                    aria-label="Remove this status entry / Supprimer cette entrée d'état">
+                                    <span lang="en">Remove Entry</span> / <span lang="fr">Supprimer l'entrée</span>
+                                </button>
+                            </fieldset>
+                        </div>
+                    </div>
+                    
+                    <!-- Add Entry Button -->
+                    <div class="form-group">
+                        <button 
+                            type="button" 
+                            id="addEntryBtn" 
+                            class="btn btn-secondary"
+                            aria-label="Add another status entry / Ajouter une autre entrée d'état">
+                            <span lang="en">+ Add Another Status Entry</span><br>
+                            <span lang="fr">+ Ajouter une autre entrée d'état</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Export Button -->
+                    <div class="form-group">
+                        <button 
+                            type="button" 
+                            id="exportBtn" 
+                            class="btn btn-success btn-lg btn-block"
+                            aria-label="Export to SHTM file / Exporter vers un fichier SHTM">
+                            <span lang="en">📥 Export to .shtm File</span><br>
+                            <span lang="fr">📥 Exporter vers un fichier .shtm</span>
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- Alert for validation messages -->
+                <div id="alertContainer" role="alert" aria-live="polite" aria-atomic="true"></div>
+            </div>
+        </div>
+    </main>
+    
+    <footer role="contentinfo" class="bg-light py-3 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">
+                <span lang="en">Accessible Application Status Management</span> |
+                <span lang="fr">Gestion accessible de l'état des applications</span>
+            </p>
+        </div>
+    </footer>
+    
+    <!-- Bootstrap 4.5 JS Dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.3/js/bootstrap.min.js"></script>
+    
+    <script>
+        // Pre-determined messages for each application
+        const predeterminedMessages = {
+            outlook: [
+                {
+                    value: 'msg1',
+                    en: 'Email services are operating normally.',
+                    fr: 'Les services de courriel fonctionnent normalement.'
+                },
+                {
+                    value: 'msg2',
+                    en: 'Users may experience delays in sending or receiving emails.',
+                    fr: 'Les utilisateurs peuvent rencontrer des retards dans l\'envoi ou la réception de courriels.'
+                },
+                {
+                    value: 'msg3',
+                    en: 'Outlook is currently unavailable. We are working to restore service.',
+                    fr: 'Outlook est actuellement indisponible. Nous travaillons à rétablir le service.'
+                }
+            ],
+            m365: [
+                {
+                    value: 'msg1',
+                    en: 'All Microsoft 365 services are functioning normally.',
+                    fr: 'Tous les services Microsoft 365 fonctionnent normalement.'
+                },
+                {
+                    value: 'msg2',
+                    en: 'Some Microsoft 365 services may be experiencing intermittent issues.',
+                    fr: 'Certains services Microsoft 365 peuvent rencontrer des problèmes intermittents.'
+                },
+                {
+                    value: 'msg3',
+                    en: 'Microsoft 365 services are currently experiencing a major outage.',
+                    fr: 'Les services Microsoft 365 connaissent actuellement une panne majeure.'
+                }
+            ]
+        };
+        
+        let entryCounter = 0;
+        
+        // Initialize the form
+        $(document).ready(function() {
+            setupEventListeners();
+        });
+        
+        function setupEventListeners() {
+            // Application selection change
+            $(document).on('change', '.application-select', function() {
+                const index = $(this).closest('.status-entry').data('entry-index');
+                populateMessages(index);
+            });
+            
+            // Message selection change (to show/hide custom message fields)
+            $(document).on('change', '.message-select', function() {
+                const index = $(this).closest('.status-entry').data('entry-index');
+                toggleCustomMessage(index);
+            });
+            
+            // Add entry button
+            $('#addEntryBtn').on('click', addStatusEntry);
+            
+            // Remove entry button (delegated)
+            $(document).on('click', '.remove-entry-btn', function() {
+                removeStatusEntry($(this).closest('.status-entry'));
+            });
+            
+            // Export button
+            $('#exportBtn').on('click', exportToSHTM);
+        }
+        
+        function populateMessages(index) {
+            const appSelect = $(`#application-${index}`);
+            const msgSelect = $(`#message-${index}`);
+            const selectedApp = appSelect.val();
+            
+            // Clear existing options
+            msgSelect.empty();
+            msgSelect.prop('disabled', false);
+            
+            // Add default option
+            msgSelect.append('<option value="">-- Select / Sélectionner --</option>');
+            
+            if (selectedApp && predeterminedMessages[selectedApp]) {
+                // Add pre-determined messages
+                predeterminedMessages[selectedApp].forEach(msg => {
+                    msgSelect.append(`<option value="${msg.value}">${msg.en} / ${msg.fr}</option>`);
+                });
+                
+                // Add "Other" option
+                msgSelect.append('<option value="other">Other / Autre</option>');
+            } else {
+                msgSelect.prop('disabled', true);
+                msgSelect.append('<option value="">-- Select application first / Sélectionnez d\'abord l\'application --</option>');
+            }
+            
+            // Hide custom message if it was visible
+            $(`#custom-message-${index}`).addClass('hidden');
+        }
+        
+        function toggleCustomMessage(index) {
+            const msgSelect = $(`#message-${index}`);
+            const customContainer = $(`#custom-message-${index}`);
+            
+            if (msgSelect.val() === 'other') {
+                customContainer.removeClass('hidden');
+                // Set required on custom textareas
+                customContainer.find('textarea').prop('required', true).attr('aria-required', 'true');
+            } else {
+                customContainer.addClass('hidden');
+                // Remove required from custom textareas
+                customContainer.find('textarea').prop('required', false).removeAttr('aria-required');
+            }
+        }
+        
+        function addStatusEntry() {
+            entryCounter++;
+            const newIndex = entryCounter;
+            
+            const entryHTML = `
+                <div class="status-entry" data-entry-index="${newIndex}">
+                    <fieldset>
+                        <legend>
+                            Status Entry ${newIndex + 1}<br>
+                            <span lang="fr">Entrée d'état ${newIndex + 1}</span>
+                        </legend>
+                        
+                        <div class="form-group">
+                            <label for="application-${newIndex}" class="bilingual-label">
+                                <span lang="en">Application</span><br>
+                                <span lang="fr">Application</span>
+                            </label>
+                            <select 
+                                class="form-control application-select" 
+                                id="application-${newIndex}" 
+                                name="application-${newIndex}"
+                                required
+                                aria-required="true"
+                                aria-describedby="application-help-${newIndex}">
+                                <option value="">-- Select / Sélectionner --</option>
+                                <option value="outlook">Microsoft Outlook</option>
+                                <option value="m365">Microsoft 365 (M365)</option>
+                            </select>
+                            <small id="application-help-${newIndex}" class="form-text">
+                                <span lang="en">Choose the application to update.</span>
+                                <span lang="fr">Choisissez l'application à mettre à jour.</span>
+                            </small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="status-${newIndex}" class="bilingual-label">
+                                <span lang="en">Current Status</span><br>
+                                <span lang="fr">État actuel</span>
+                            </label>
+                            <select 
+                                class="form-control status-select" 
+                                id="status-${newIndex}" 
+                                name="status-${newIndex}"
+                                required
+                                aria-required="true"
+                                aria-describedby="status-help-${newIndex}">
+                                <option value="">-- Select / Sélectionner --</option>
+                                <option value="no-issues">No reported issues / Aucun problème signalé</option>
+                                <option value="incident">Incident / Incident</option>
+                                <option value="outage">Outage / Panne</option>
+                            </select>
+                            <small id="status-help-${newIndex}" class="form-text">
+                                <span lang="en">Select the current operational status.</span>
+                                <span lang="fr">Sélectionnez l'état opérationnel actuel.</span>
+                            </small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="message-${newIndex}" class="bilingual-label">
+                                <span lang="en">Pre-determined Message</span><br>
+                                <span lang="fr">Message prédéterminé</span>
+                            </label>
+                            <select 
+                                class="form-control message-select" 
+                                id="message-${newIndex}" 
+                                name="message-${newIndex}"
+                                required
+                                aria-required="true"
+                                aria-describedby="message-help-${newIndex}"
+                                disabled>
+                                <option value="">-- Select application first / Sélectionnez d'abord l'application --</option>
+                            </select>
+                            <small id="message-help-${newIndex}" class="form-text">
+                                <span lang="en">Choose a pre-defined message or select "Other" for custom text.</span>
+                                <span lang="fr">Choisissez un message prédéfini ou sélectionnez "Autre" pour un texte personnalisé.</span>
+                            </small>
+                        </div>
+                        
+                        <div class="custom-message-container hidden" id="custom-message-${newIndex}">
+                            <div class="form-group">
+                                <label for="custom-en-${newIndex}" class="bilingual-label">
+                                    <span lang="en">Custom Message (English)</span><br>
+                                    <span lang="fr">Message personnalisé (anglais)</span>
+                                </label>
+                                <textarea 
+                                    class="form-control custom-en-textarea" 
+                                    id="custom-en-${newIndex}" 
+                                    name="custom-en-${newIndex}"
+                                    rows="4"
+                                    aria-describedby="custom-en-help-${newIndex}"></textarea>
+                                <small id="custom-en-help-${newIndex}" class="form-text">
+                                    <span lang="en">Enter your custom message in English.</span>
+                                    <span lang="fr">Entrez votre message personnalisé en anglais.</span>
+                                </small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="custom-fr-${newIndex}" class="bilingual-label">
+                                    <span lang="en">Custom Message (French Canadian)</span><br>
+                                    <span lang="fr">Message personnalisé (français canadien)</span>
+                                </label>
+                                <textarea 
+                                    class="form-control custom-fr-textarea" 
+                                    id="custom-fr-${newIndex}" 
+                                    name="custom-fr-${newIndex}"
+                                    rows="4"
+                                    aria-describedby="custom-fr-help-${newIndex}"></textarea>
+                                <small id="custom-fr-help-${newIndex}" class="form-text">
+                                    <span lang="en">Enter your custom message in French Canadian.</span>
+                                    <span lang="fr">Entrez votre message personnalisé en français canadien.</span>
+                                </small>
+                            </div>
+                        </div>
+                        
+                        <button 
+                            type="button" 
+                            class="btn btn-danger btn-sm remove-entry-btn"
+                            aria-label="Remove this status entry / Supprimer cette entrée d'état">
+                            <span lang="en">Remove Entry</span> / <span lang="fr">Supprimer l'entrée</span>
+                        </button>
+                    </fieldset>
+                </div>
+            `;
+            
+            $('#statusEntriesContainer').append(entryHTML);
+            
+            // Focus on the new entry's first field
+            $(`#application-${newIndex}`).focus();
+            
+            showAlert('success', 
+                'New status entry added. / Nouvelle entrée d\'état ajoutée.',
+                3000
+            );
+        }
+        
+        function removeStatusEntry(entryElement) {
+            if ($('.status-entry').length === 1) {
+                showAlert('warning', 
+                    'Cannot remove the last entry. / Impossible de supprimer la dernière entrée.',
+                    3000
+                );
+                return;
+            }
+            
+            entryElement.remove();
+            showAlert('info', 
+                'Status entry removed. / Entrée d\'état supprimée.',
+                3000
+            );
+        }
+        
+        function validateForm() {
+            let isValid = true;
+            const entries = [];
+            
+            $('.status-entry').each(function() {
+                const index = $(this).data('entry-index');
+                const application = $(`#application-${index}`).val();
+                const status = $(`#status-${index}`).val();
+                const message = $(`#message-${index}`).val();
+                
+                if (!application || !status || !message) {
+                    isValid = false;
+                    return false; // break the loop
+                }
+                
+                let messageEn = '';
+                let messageFr = '';
+                
+                if (message === 'other') {
+                    messageEn = $(`#custom-en-${index}`).val().trim();
+                    messageFr = $(`#custom-fr-${index}`).val().trim();
+                    
+                    if (!messageEn || !messageFr) {
+                        isValid = false;
+                        return false;
+                    }
+                } else {
+                    // Get the pre-determined message
+                    const appMessages = predeterminedMessages[application];
+                    const selectedMsg = appMessages.find(m => m.value === message);
+                    if (selectedMsg) {
+                        messageEn = selectedMsg.en;
+                        messageFr = selectedMsg.fr;
+                    }
+                }
+                
+                entries.push({
+                    application,
+                    status,
+                    messageEn,
+                    messageFr
+                });
+            });
+            
+            if (!isValid) {
+                showAlert('danger', 
+                    'Please complete all required fields. / Veuillez remplir tous les champs obligatoires.',
+                    5000
+                );
+                return null;
+            }
+            
+            return entries;
+        }
+        
+        function exportToSHTM() {
+            const entries = validateForm();
+            
+            if (!entries) {
+                return;
+            }
+            
+            // Group entries by application for export
+            const outlookEntries = entries.filter(e => e.application === 'outlook');
+            const m365Entries = entries.filter(e => e.application === 'm365');
+            
+            // Export each application separately
+            if (outlookEntries.length > 0) {
+                generateSHTMFile('outlook', outlookEntries);
+            }
+            
+            if (m365Entries.length > 0) {
+                generateSHTMFile('m365', m365Entries);
+            }
+            
+            if (outlookEntries.length === 0 && m365Entries.length === 0) {
+                showAlert('warning', 
+                    'No entries to export. / Aucune entrée à exporter.',
+                    3000
+                );
+            }
+        }
+        
+        function generateSHTMFile(appType, entries) {
+            const appName = appType === 'outlook' ? 'Microsoft Outlook' : 'Microsoft 365 (M365)';
+            
+            // Build the SHTM content
+            let shtmContent = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${appName} Status / État de ${appName}</title>
+</head>
+<body>
+    <h1>${appName} Status Updates / Mises à jour de l'état de ${appName}</h1>
+    
+`;
+            
+            entries.forEach((entry, idx) => {
+                shtmContent += `    <section>
+        <h2>Update ${idx + 1} / Mise à jour ${idx + 1}</h2>
+        <p><strong>Status / État:</strong> ${getStatusLabel(entry.status)}</p>
+        
+        <h3>English Message:</h3>
+        <p>${escapeHtml(entry.messageEn)}</p>
+        
+        <h3 lang="fr">Message en français:</h3>
+        <p lang="fr">${escapeHtml(entry.messageFr)}</p>
+    </section>
+    
+`;
+            });
+            
+            shtmContent += `    <footer>
+        <p>Generated on: ${new Date().toLocaleString()} / Généré le: ${new Date().toLocaleString('fr-CA')}</p>
+    </footer>
+</body>
+</html>`;
+            
+            // Create a Blob and download
+            const blob = new Blob([shtmContent], { type: 'text/html' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${appType}.shtm`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            showAlert('success', 
+                `${appType}.shtm file exported successfully. / Fichier ${appType}.shtm exporté avec succès.`,
+                5000
+            );
+        }
+        
+        function getStatusLabel(statusValue) {
+            const statusLabels = {
+                'no-issues': 'No reported issues / Aucun problème signalé',
+                'incident': 'Incident / Incident',
+                'outage': 'Outage / Panne'
+            };
+            return statusLabels[statusValue] || statusValue;
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function showAlert(type, message, duration = 3000) {
+            const alertHTML = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    ${message}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close / Fermer">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            `;
+            
+            const container = $('#alertContainer');
+            container.html(alertHTML);
+            
+            // Auto-dismiss after duration
+            setTimeout(() => {
+                container.find('.alert').alert('close');
+            }, duration);
+        }
+    </script>
+</body>
+</html>
