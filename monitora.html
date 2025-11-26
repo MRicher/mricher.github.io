@@ -22,6 +22,26 @@
 		.custom-message-section.show {
 		  display: block;
 		}
+.ql-container {
+	background-color: var(--card-bg);
+	color: var(--card-text);
+	border-color: var(--border-color) !important;
+}
+
+.ql-editor {
+	color: var(--card-text);
+	min-height: 150px;
+}
+
+.ql-editor.ql-blank::before {
+	color: var(--card-text);
+	opacity: 0.6;
+}
+
+.ql-toolbar {
+	background-color: var(--card-bg);
+	border-color: var(--border-color) !important;
+}
 	</style>
 </head>
 <body>
@@ -113,7 +133,8 @@
 								<span data-en="English message" data-fr="Message en anglais">English message</span>
 								<small id="custom-en-help-1" class="form-text text-muted d-block" data-en="Enter your custom message in English." data-fr="Entrez votre message personnalisé en anglais.">Enter your custom message in English.</small>
 							</label>
-							<textarea class="form-control custom-message-en" id="custom-en-1" name="custom-en-1" rows="4" aria-describedby="custom-en-help-1"></textarea>
+							<div id="custom-en-editor-1" class="custom-message-en" style="min-height: 150px;"></div>
+							<input type="hidden" id="custom-en-1" name="custom-en-1">
 						</div>
 						
 						<div class="form-group">
@@ -121,7 +142,8 @@
 								<span data-en="French message" data-fr="Message en français">French message</span>
 								<small id="custom-fr-help-1" class="form-text text-muted d-block" data-en="Enter your custom message in French." data-fr="Entrez votre message personnalisé en français.">Enter your custom message in French.</small>
 							</label>
-							<textarea class="form-control custom-message-fr" id="custom-fr-1" name="custom-fr-1" rows="4" aria-describedby="custom-fr-help-1"></textarea>
+							<div id="custom-fr-editor-1" class="custom-message-fr" style="min-height: 150px;"></div>
+							<input type="hidden" id="custom-fr-1" name="custom-fr-1">
 						</div>
 					</div>
 				</div>
@@ -188,12 +210,60 @@
 		let entryCounter = 1;
 		
 		// Initialize form
-		document.addEventListener('DOMContentLoaded', function() {
-			// Initialize language system
-			initializeLanguage();
-			setupEventListeners();
-			updateMessageOptions(1); // Initialize first entry
-		});
+// Store Quill instances
+const quillInstances = {};
+
+document.addEventListener('DOMContentLoaded', function() {
+	// Initialize language system
+	initializeLanguage();
+	setupEventListeners();
+	updateMessageOptions(1); // Initialize first entry
+	initializeQuillEditor(1); // Initialize Quill for first entry
+});
+
+// Initialize Quill editor for a specific entry
+function initializeQuillEditor(entryId) {
+	// English editor
+	const quillEnEditor = new Quill(`#custom-en-editor-${entryId}`, {
+		theme: 'snow',
+		modules: {
+			toolbar: [
+				['bold', 'italic', 'underline'],
+				[{ 'list': 'ordered'}, { 'list': 'bullet' }],
+				['link'],
+				['clean']
+			]
+		},
+		placeholder: 'Enter your custom message in English...'
+	});
+	
+	// French editor
+	const quillFrEditor = new Quill(`#custom-fr-editor-${entryId}`, {
+		theme: 'snow',
+		modules: {
+			toolbar: [
+				['bold', 'italic', 'underline'],
+				[{ 'list': 'ordered'}, { 'list': 'bullet' }],
+				['link'],
+				['clean']
+			]
+		},
+		placeholder: 'Entrez votre message personnalisé en français...'
+	});
+	
+	// Store instances
+	quillInstances[`en-${entryId}`] = quillEnEditor;
+	quillInstances[`fr-${entryId}`] = quillFrEditor;
+	
+	// Sync content to hidden input on text change
+	quillEnEditor.on('text-change', function() {
+		document.getElementById(`custom-en-${entryId}`).value = quillEnEditor.root.innerHTML;
+	});
+	
+	quillFrEditor.on('text-change', function() {
+		document.getElementById(`custom-fr-${entryId}`).value = quillFrEditor.root.innerHTML;
+	});
+}
 		
 		// Initialize language switching
 		function initializeLanguage() {
@@ -320,23 +390,31 @@
 		// Toggle custom message section
 		function toggleCustomMessage(entryId, value) {
 			const customSection = document.getElementById(`custom-message-${entryId}`);
-			const customEnTextarea = document.getElementById(`custom-en-${entryId}`);
-			const customFrTextarea = document.getElementById(`custom-fr-${entryId}`);
+			const customEnInput = document.getElementById(`custom-en-${entryId}`);
+			const customFrInput = document.getElementById(`custom-fr-${entryId}`);
 			
 			if (value === 'other') {
 				customSection.classList.add('show');
-				customEnTextarea.required = true;
-				customFrTextarea.required = true;
-				customEnTextarea.setAttribute('aria-required', 'true');
-				customFrTextarea.setAttribute('aria-required', 'true');
+				customEnInput.required = true;
+				customFrInput.required = true;
+				customEnInput.setAttribute('aria-required', 'true');
+				customFrInput.setAttribute('aria-required', 'true');
 			} else {
 				customSection.classList.remove('show');
-				customEnTextarea.required = false;
-				customFrTextarea.required = false;
-				customEnTextarea.removeAttribute('aria-required');
-				customFrTextarea.removeAttribute('aria-required');
-				customEnTextarea.value = '';
-				customFrTextarea.value = '';
+				customEnInput.required = false;
+				customFrInput.required = false;
+				customEnInput.removeAttribute('aria-required');
+				customFrInput.removeAttribute('aria-required');
+				
+				// Clear Quill editors
+				if (quillInstances[`en-${entryId}`]) {
+					quillInstances[`en-${entryId}`].setText('');
+				}
+				if (quillInstances[`fr-${entryId}`]) {
+					quillInstances[`fr-${entryId}`].setText('');
+				}
+				customEnInput.value = '';
+				customFrInput.value = '';
 			}
 		}
 		
@@ -395,36 +473,45 @@
 				<div class="custom-message-section" id="custom-message-${entryCounter}" role="region" aria-labelledby="custom-message-heading-${entryCounter}">
 					<h3 class="h5" id="custom-message-heading-${entryCounter}" data-en="Custom message" data-fr="Message personnalisé">Custom message</h3>
 					
-					<div class="form-group">
-						<label class="bilingual-label" for="custom-en-${entryCounter}">
-							<span data-en="English message" data-fr="Message en anglais">English message</span>
-							<small id="custom-en-help-${entryCounter}" class="form-text text-muted d-block" data-en="Enter your custom message in English." data-fr="Entrez votre message personnalisé en anglais.">Enter your custom message in English.</small>
-						</label>
-						<textarea class="form-control custom-message-en" id="custom-en-${entryCounter}" name="custom-en-${entryCounter}" rows="4" aria-describedby="custom-en-help-${entryCounter}"></textarea>
-					</div>
-					
-					<div class="form-group">
-						<label class="bilingual-label" for="custom-fr-${entryCounter}">
-							<span data-en="French message" data-fr="Message en français">French message</span>
-							<small id="custom-fr-help-${entryCounter}" class="form-text text-muted d-block" data-en="Enter your custom message in French." data-fr="Entrez votre message personnalisé en français.">Enter your custom message in French.</small>
-						</label>
-						<textarea class="form-control custom-message-fr" id="custom-fr-${entryCounter}" name="custom-fr-${entryCounter}" rows="4" aria-describedby="custom-fr-help-${entryCounter}"></textarea>
-					</div>
+<div class="form-group">
+	<label class="bilingual-label" for="custom-en-${entryCounter}">
+		<span data-en="English message" data-fr="Message en anglais">English message</span>
+		<small id="custom-en-help-${entryCounter}" class="form-text text-muted d-block" data-en="Enter your custom message in English." data-fr="Entrez votre message personnalisé en anglais.">Enter your custom message in English.</small>
+	</label>
+	<div id="custom-en-editor-${entryCounter}" class="custom-message-en" style="min-height: 150px;"></div>
+	<input type="hidden" id="custom-en-${entryCounter}" name="custom-en-${entryCounter}">
+</div>
+
+<div class="form-group">
+	<label class="bilingual-label" for="custom-fr-${entryCounter}">
+		<span data-en="French message" data-fr="Message en français">French message</span>
+		<small id="custom-fr-help-${entryCounter}" class="form-text text-muted d-block" data-en="Enter your custom message in French." data-fr="Entrez votre message personnalisé en français.">Enter your custom message in French.</small>
+	</label>
+	<div id="custom-fr-editor-${entryCounter}" class="custom-message-fr" style="min-height: 150px;"></div>
+	<input type="hidden" id="custom-fr-${entryCounter}" name="custom-fr-${entryCounter}">
+</div>
 				</div>
 				
 				<button type="button" class="btn btn-danger btn-sm remove-entry-btn" data-entry-id="${entryCounter}" data-en="Remove this entry" data-fr="Supprimer cette entrée">Remove this entry</button>
 			`;
 			
-			container.appendChild(newEntry);
-			
-			// Add remove button listener
-			newEntry.querySelector('.remove-entry-btn').addEventListener('click', function() {
-				newEntry.remove();
-				showAlert(getLocalizedText('Entry removed successfully.', 'Entrée supprimée avec succès.'), 'info');
-			});
-			
-			// Initialize message options for new entry
-			updateMessageOptions(entryCounter);
+container.appendChild(newEntry);
+
+// Initialize Quill editors for new entry
+initializeQuillEditor(entryCounter);
+
+// Add remove button listener
+newEntry.querySelector('.remove-entry-btn').addEventListener('click', function() {
+	// Clean up Quill instances
+	delete quillInstances[`en-${entryCounter}`];
+	delete quillInstances[`fr-${entryCounter}`];
+	
+	newEntry.remove();
+	showAlert(getLocalizedText('Entry removed successfully.', 'Entrée supprimée avec succès.'), 'info');
+});
+
+// Initialize message options for new entry
+updateMessageOptions(entryCounter);
 			
 			// Update language for new entry elements
 			const currentLang = localStorage.getItem('language') || 'en-CA';
@@ -499,16 +586,30 @@
 				const entryId = entry.dataset.entryId;
 				const messageSelect = document.getElementById(`message-${entryId}`);
 				
-				if (messageSelect && messageSelect.value === 'other') {
-					const customEn = document.getElementById(`custom-en-${entryId}`);
-					const customFr = document.getElementById(`custom-fr-${entryId}`);
-					
-					if (!customEn.value.trim() || !customFr.value.trim()) {
-						isValid = false;
-						customEn.classList.add('is-invalid');
-						customFr.classList.add('is-invalid');
-					}
-				}
+if (messageSelect && messageSelect.value === 'other') {
+	const customEnInput = document.getElementById(`custom-en-${entryId}`);
+	const customFrInput = document.getElementById(`custom-fr-${entryId}`);
+	
+	// Check Quill content
+	let enContent = customEnInput.value.trim();
+	let frContent = customFrInput.value.trim();
+	
+	if (quillInstances[`en-${entryId}`]) {
+		enContent = quillInstances[`en-${entryId}`].getText().trim();
+	}
+	if (quillInstances[`fr-${entryId}`]) {
+		frContent = quillInstances[`fr-${entryId}`].getText().trim();
+	}
+	
+	if (!enContent || !frContent) {
+		isValid = false;
+		// Add visual feedback to Quill editors
+		const enEditor = document.getElementById(`custom-en-editor-${entryId}`);
+		const frEditor = document.getElementById(`custom-fr-editor-${entryId}`);
+		if (enEditor) enEditor.style.border = '2px solid #dc3545';
+		if (frEditor) frEditor.style.border = '2px solid #dc3545';
+	}
+}
 			});
 			
 			return isValid;
@@ -531,14 +632,23 @@
 				
 				let messageEn, messageFr;
 				
-				if (messageValue === 'other') {
-					messageEn = document.getElementById(`custom-en-${entryId}`).value.trim();
-					messageFr = document.getElementById(`custom-fr-${entryId}`).value.trim();
-				} else {
-					const selectedOption = messageSelect.options[messageSelect.selectedIndex];
-					messageEn = selectedOption.dataset.en;
-					messageFr = selectedOption.dataset.fr;
-				}
+if (messageValue === 'other') {
+	// Get HTML content from hidden inputs (populated by Quill)
+	messageEn = document.getElementById(`custom-en-${entryId}`).value.trim();
+	messageFr = document.getElementById(`custom-fr-${entryId}`).value.trim();
+	
+	// If empty, get from Quill instance directly
+	if (!messageEn && quillInstances[`en-${entryId}`]) {
+		messageEn = quillInstances[`en-${entryId}`].root.innerHTML.trim();
+	}
+	if (!messageFr && quillInstances[`fr-${entryId}`]) {
+		messageFr = quillInstances[`fr-${entryId}`].root.innerHTML.trim();
+	}
+} else {
+	const selectedOption = messageSelect.options[messageSelect.selectedIndex];
+	messageEn = selectedOption.dataset.en;
+	messageFr = selectedOption.dataset.fr;
+}
 				
 				entries.push({
 					application: app,
