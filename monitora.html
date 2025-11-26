@@ -66,6 +66,78 @@ legend.bilingual-label {
 .form-check-label {
 	margin-left: 0.25rem;
 	cursor: pointer;
+}.status-entry {
+	margin-bottom: 2rem;
+	padding-bottom: 2rem;
+	border-bottom: 2px solid var(--border-color);
+}
+
+.status-entry:last-child {
+	border-bottom: none;
+}
+
+.form-group {
+	margin-bottom: 1.5rem;
+}
+
+fieldset {
+	border: none;
+	padding: 0;
+	margin: 0;
+	margin-bottom: 1.5rem;
+}
+
+legend.bilingual-label {
+	font-size: 1rem;
+	font-weight: 500;
+	margin-bottom: 0.75rem;
+	padding: 0;
+}
+
+.form-check {
+	margin-bottom: 0.5rem;
+}
+
+.form-check-input {
+	margin-top: 0.25rem;
+}
+
+.form-check-label {
+	margin-left: 0.25rem;
+	cursor: pointer;
+}
+
+/* Action Buttons Spacing */
+.action-buttons {
+	margin-top: 2rem;
+	display: flex;
+	gap: 1rem;
+	flex-wrap: wrap;
+}
+
+/* Custom Message Section Spacing */
+.custom-message-section {
+	display: none;
+	margin-top: 1.5rem;
+	padding: 1.5rem;
+	background-color: var(--hero-bg);
+	border: 1px solid var(--border-color);
+	border-radius: 0.375rem;
+	transition: all 0.3s ease;
+}
+
+.custom-message-section.show {
+	display: block;
+}
+
+.custom-message-section h3 {
+	margin-top: 0;
+	margin-bottom: 1rem;
+}
+
+/* Remove Entry Button Spacing */
+.remove-entry-btn {
+	margin-top: 1rem;
 }
 	</style>
 </head>
@@ -199,7 +271,7 @@ legend.bilingual-label {
 			
 			<!-- Action Buttons -->
 			<div class="action-buttons" role="group" aria-label="Form actions">
-				<button type="button" class="btn btn-secondary" id="addEntryBtn" data-en="+ Add Another Status Entry" data-fr="+ Ajouter une autre entrée de statut">+ Add Another Status Entry</button>
+<button type="button" class="btn btn-secondary" id="addEntryBtn" data-en="Add another status entry" data-fr="Ajouter une autre entrée de statut">Add another status entry</button>
 				
 				<button type="submit" class="btn btn-success" data-en="Generate SHTM File" data-fr="Générer le fichier SHTM">Generate SHTM File</button>
 				
@@ -218,9 +290,6 @@ legend.bilingual-label {
 			</div>
 		</div>
 	</footer>
-	
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.slim.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.bundle.min.js"></script>
 	
 	<script>
 		// Pre-determined messages for each application
@@ -269,9 +338,6 @@ document.addEventListener('DOMContentLoaded', function() {
 	initializeQuillEditor(1); // Initialize Quill for first entry
 });
 
-// Initialize Quill editor for a specific entry
-function initializeQuillEditor(entryId) {
-// Configure Quill to use <strong> and <em> tags
 const Block = Quill.import('blots/block');
 Block.tagName = 'p';
 Quill.register(Block, true);
@@ -283,6 +349,9 @@ Quill.register(Bold, true);
 const Italic = Quill.import('formats/italic');
 Italic.tagName = 'em';
 Quill.register(Italic, true);
+
+// Initialize Quill editor for a specific entry
+function initializeQuillEditor(entryId) {
 
 // English editor
 const quillEnEditor = new Quill(`#custom-en-editor-${entryId}`, {
@@ -481,14 +550,21 @@ function updateMessageOptions(entryId) {
 			}
 		}
 		
-		// Add a new status entry
-		function addStatusEntry() {
-			entryCounter++;
-			const container = document.getElementById('statusEntriesContainer');
-			
-			const newEntry = document.createElement('div');
-			newEntry.className = 'status-entry';
-			newEntry.dataset.entryId = entryCounter;
+// Add a new status entry
+function addStatusEntry() {
+	// Check if maximum entries reached
+	const currentEntries = document.querySelectorAll('.status-entry').length;
+	if (currentEntries >= 2) {
+		showAlert(getLocalizedText('Maximum of 2 status entries allowed.', 'Maximum de 2 entrées de statut autorisées.'), 'warning');
+		return;
+	}
+	
+	entryCounter++;
+	const container = document.getElementById('statusEntriesContainer');
+	
+	const newEntry = document.createElement('div');
+	newEntry.className = 'status-entry';
+	newEntry.dataset.entryId = entryCounter;
 			newEntry.innerHTML = `
 				<h2 class="h4">
 					<span data-en="Status entry" data-fr="Entrée de statut">Status entry</span> #<span class="entry-number">${entryCounter}</span>
@@ -587,28 +663,48 @@ container.appendChild(newEntry);
 initializeQuillEditor(entryCounter);
 
 // Add remove button listener
+const currentCounter = entryCounter;
 newEntry.querySelector('.remove-entry-btn').addEventListener('click', function() {
 	// Clean up Quill instances
-	delete quillInstances[`en-${entryCounter}`];
-	delete quillInstances[`fr-${entryCounter}`];
+	delete quillInstances[`en-${currentCounter}`];
+	delete quillInstances[`fr-${currentCounter}`];
 	
 	newEntry.remove();
+	
+	// Show/hide add button based on remaining entries
+	updateAddButtonVisibility();
+	
 	showAlert(getLocalizedText('Entry removed successfully.', 'Entrée supprimée avec succès.'), 'info');
 });
 
 // Initialize message options for new entry
 updateMessageOptions(entryCounter);
-			
-			// Update language for new entry elements
-			const currentLang = localStorage.getItem('language') || 'en-CA';
-			updateElementLanguage(newEntry, currentLang);
-			
-			// Focus on new entry
-			newEntry.querySelector('.application-select').focus();
-			
-			showAlert(getLocalizedText('New status entry added.', 'Nouvelle entrée de statut ajoutée.'), 'success');
+
+// Update language for new entry elements
+const currentLang = localStorage.getItem('language') || 'en-CA';
+updateElementLanguage(newEntry, currentLang);
+
+// Focus on first radio button in new entry
+const firstRadio = newEntry.querySelector('.application-radio');
+if (firstRadio) firstRadio.focus();
+
+// Show/hide add button based on entry count
+updateAddButtonVisibility();
+
+showAlert(getLocalizedText('New status entry added.', 'Nouvelle entrée de statut ajoutée.'), 'success');
 		}
-		
+
+		// Update add button visibility based on entry count
+function updateAddButtonVisibility() {
+	const addBtn = document.getElementById('addEntryBtn');
+	const currentEntries = document.querySelectorAll('.status-entry').length;
+	
+	if (currentEntries >= 2) {
+		addBtn.style.display = 'none';
+	} else {
+		addBtn.style.display = 'inline-block';
+	}
+}
 		// Helper function to update language for specific element
 		function updateElementLanguage(element, lang) {
 			const isEnglish = lang === 'en-CA';
@@ -766,11 +862,11 @@ if (messageValue === 'other') {
 	<div class="status-update" data-app="${entry.application}" data-status="${entry.status}" data-timestamp="${timestamp}">
 		<div lang="en" class="message-en">
 			<h2>English</h2>
-			<p>${escapeHtml(entry.messageEn)}</p>
+			<div>${entry.messageEn}</div>
 		</div>
 		<div lang="fr" class="message-fr">
 			<h2>Français</h2>
-			<p>${escapeHtml(entry.messageFr)}</p>
+			<div>${entry.messageFr}</div>
 		</div>
 	</div>
 </body>
@@ -790,44 +886,24 @@ if (messageValue === 'other') {
 			document.body.removeChild(a);
 		}
 		
-		// Show alert message
-		function showAlert(message, type) {
-			const alertContainer = document.getElementById('alertContainer');
-			const alert = document.createElement('div');
-			alert.className = `alert alert-${type} alert-dismissible fade show`;
-			alert.setAttribute('role', 'alert');
-			alert.innerHTML = `
-				${message}
-				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			`;
-			alertContainer.appendChild(alert);
-			
-			// Auto dismiss after 5 seconds
-			setTimeout(() => {
-				alert.classList.remove('show');
-				setTimeout(() => alert.remove(), 150);
-			}, 5000);
-		}
-		
-		// Back to top button functionality
-		window.addEventListener('scroll', function() {
-			const backToTop = document.getElementById('backToTop');
-			if (backToTop) {
-				if (window.pageYOffset > 300) {
-					backToTop.style.display = 'block';
-				} else {
-					backToTop.style.display = 'none';
-				}
-			}
-		});
-		
-		if (document.getElementById('backToTop')) {
-			document.getElementById('backToTop').addEventListener('click', function() {
-				window.scrollTo({ top: 0, behavior: 'smooth' });
-			});
-		}
+// Show alert message
+function showAlert(message, type) {
+	const alertContainer = document.getElementById('alertContainer');
+	const alert = document.createElement('div');
+	alert.className = `alert alert-${type} alert-dismissible fade show`;
+	alert.setAttribute('role', 'alert');
+	alert.innerHTML = `
+		${message}
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	`;
+	alertContainer.appendChild(alert);
+	
+	// Auto dismiss after 5 seconds
+	setTimeout(() => {
+		alert.classList.remove('show');
+		setTimeout(() => alert.remove(), 150);
+	}, 5000);
+}
 		
 		// Escape HTML for security
 		function escapeHtml(text) {
@@ -841,7 +917,7 @@ if (messageValue === 'other') {
 			return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 		}
 	</script>
-	</main>
+
 	<footer class="mt-auto">
 		<div class="container">
 			<div class="text-center">
