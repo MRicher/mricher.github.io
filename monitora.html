@@ -569,6 +569,58 @@
 			window.URL.revokeObjectURL(url);
 			document.body.removeChild(a);
 		}
+		
+		// Show alert message
+		function showAlert(message, type) {
+			const alertContainer = document.getElementById('alertContainer');
+			const alert = document.createElement('div');
+			alert.className = `alert alert-${type} alert-dismissible fade show`;
+			alert.setAttribute('role', 'alert');
+			alert.innerHTML = `
+				${message}
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			`;
+			alertContainer.appendChild(alert);
+			
+			// Auto dismiss after 5 seconds
+			setTimeout(() => {
+				alert.classList.remove('show');
+				setTimeout(() => alert.remove(), 150);
+			}, 5000);
+		}
+		
+		// Back to top button functionality
+		window.addEventListener('scroll', function() {
+			const backToTop = document.getElementById('backToTop');
+			if (backToTop) {
+				if (window.pageYOffset > 300) {
+					backToTop.style.display = 'block';
+				} else {
+					backToTop.style.display = 'none';
+				}
+			}
+		});
+		
+		if (document.getElementById('backToTop')) {
+			document.getElementById('backToTop').addEventListener('click', function() {
+				window.scrollTo({ top: 0, behavior: 'smooth' });
+			});
+		}
+		
+		// Escape HTML for security
+		function escapeHtml(text) {
+			const map = {
+				'&': '&amp;',
+				'<': '&lt;',
+				'>': '&gt;',
+				'"': '&quot;',
+				"'": '&#039;'
+			};
+			return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+		}
+	</script>
 	</main>
 	<footer class="mt-auto">
 		<div class="container">
