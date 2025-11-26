@@ -846,45 +846,101 @@ if (messageValue === 'other') {
 		}
 		
 		// Generate SHTM file
-		function generateSHTMFile(entry) {
-			const timestamp = new Date().toISOString();
-			const filename = entry.application === 'outlook' ? 'outlook.shtm' : 'm365.shtm';
-			
-			// Create bilingual SHTM content
-			const shtmlContent = `<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Status Update - ${entry.application}</title>
-</head>
-<body>
-	<div class="status-update" data-app="${entry.application}" data-status="${entry.status}" data-timestamp="${timestamp}">
-		<div lang="en" class="message-en">
-			<h2>English</h2>
-			<div>${entry.messageEn}</div>
-		</div>
-		<div lang="fr" class="message-fr">
-			<h2>Français</h2>
-			<div>${entry.messageFr}</div>
-		</div>
-	</div>
-</body>
-</html>`;
-			
-			// Create and download file
-			const blob = new Blob([shtmlContent], { type: 'text/html' });
-			const url = window.URL.createObjectURL(blob);
-			const a = document.createElement('a');
-			a.href = url;
-			a.download = filename;
-			document.body.appendChild(a);
-			a.click();
-			
-			// Cleanup
-			window.URL.revokeObjectURL(url);
-			document.body.removeChild(a);
+		// Generate SHTM file
+function generateSHTMFile(entry) {
+	const timestamp = new Date().toISOString();
+	const filename = entry.application === 'outlook' ? 'outlook.shtm' : 'm365.shtm';
+	
+	// Map application values to display names
+	const appDisplayNames = {
+		'outlook': {
+			en: 'Microsoft Outlook',
+			fr: 'Microsoft Outlook'
+		},
+		'm365': {
+			en: 'Microsoft 365 (M365)',
+			fr: 'Microsoft 365 (M365)'
 		}
+	};
+	
+	// Map status values to display names and styling
+	const statusConfig = {
+		'no-issues': {
+			en: 'No reported issues',
+			fr: 'Aucun problème signalé',
+			icon: 'fa-check-circle',
+			color: 'text-success',
+			ariaLabelEn: 'No reported issues',
+			ariaLabelFr: 'Aucun problème signalé'
+		},
+		'incident': {
+			en: 'Incident',
+			fr: 'Incident',
+			icon: 'fa-exclamation-triangle',
+			color: 'text-warning',
+			ariaLabelEn: 'Incident',
+			ariaLabelFr: 'Incident'
+		},
+		'outage': {
+			en: 'Outage',
+			fr: 'Panne',
+			icon: 'fa-times-circle',
+			color: 'text-danger',
+			ariaLabelEn: 'Outage',
+			ariaLabelFr: 'Panne'
+		}
+	};
+	
+	const appNameEn = appDisplayNames[entry.application].en;
+	const appNameFr = appDisplayNames[entry.application].fr;
+	const statusInfo = statusConfig[entry.status];
+	
+	// Create bilingual SHTM content with SSI conditionals
+	const shtmlContent = `<!--#if expr="lang=eng" -->
+		<div class="col-sm-6">
+			<div class="card mb-3">
+				<div class="card-body d-flex justify-content-between align-items-center">
+					<div>
+						<h3 class="h5 mb-1">${appNameEn}</h3>
+						<p class="mb-0">
+							<span class="sr-only">Status:&#160;</span>${statusInfo.en}
+						</p>
+						<p>${entry.messageEn}</p>
+					</div>
+					<i class="fas ${statusInfo.icon} fa-lg ${statusInfo.color}" aria-label="${statusInfo.ariaLabelEn}" role="img"></i>
+				</div>
+			</div>
+		</div>
+<!--#else -->
+		<div class="col-sm-6">
+			<div class="card mb-3">
+				<div class="card-body d-flex justify-content-between align-items-center">
+					<div>
+						<h3 class="h5 mb-1">${appNameFr}</h3>
+						<p class="mb-0">
+							<span class="sr-only">État&#160;:&#160;</span>${statusInfo.fr}
+						</p>
+						<p>${entry.messageFr}</p>
+					</div>
+					<i class="fas ${statusInfo.icon} fa-lg ${statusInfo.color}" aria-label="${statusInfo.ariaLabelFr}" role="img"></i>
+				</div>
+			</div>
+		</div>
+<!--#endif -->`;
+	
+	// Create and download file
+	const blob = new Blob([shtmlContent], { type: 'text/html' });
+	const url = window.URL.createObjectURL(blob);
+	const a = document.createElement('a');
+	a.href = url;
+	a.download = filename;
+	document.body.appendChild(a);
+	a.click();
+	
+	// Cleanup
+	window.URL.revokeObjectURL(url);
+	document.body.removeChild(a);
+}
 		
 // Show alert message
 function showAlert(message, type) {
@@ -904,18 +960,7 @@ function showAlert(message, type) {
 		setTimeout(() => alert.remove(), 150);
 	}, 5000);
 }
-		
-		// Escape HTML for security
-		function escapeHtml(text) {
-			const map = {
-				'&': '&amp;',
-				'<': '&lt;',
-				'>': '&gt;',
-				'"': '&quot;',
-				"'": '&#039;'
-			};
-			return text.replace(/[&<>"']/g, function(m) { return map[m]; });
-		}
+
 	</script>
 
 	<footer class="mt-auto">
