@@ -42,6 +42,31 @@
 	background-color: var(--card-bg);
 	border-color: var(--border-color) !important;
 }
+		fieldset {
+	border: none;
+	padding: 0;
+	margin: 0;
+}
+
+legend.bilingual-label {
+	font-size: 1rem;
+	font-weight: 500;
+	margin-bottom: 0.5rem;
+	padding: 0;
+}
+
+.form-check {
+	margin-bottom: 0.5rem;
+}
+
+.form-check-input {
+	margin-top: 0.25rem;
+}
+
+.form-check-label {
+	margin-left: 0.25rem;
+	cursor: pointer;
+}
 	</style>
 </head>
 <body>
@@ -82,34 +107,57 @@
 						<span data-en="Status entry" data-fr="Entrée de statut">Status entry</span> #<span class="entry-number">1</span>
 					</h2>
 					
-					<!-- Application Selection -->
-					<div class="form-group">
-						<label class="bilingual-label" for="application-1">
-							<span data-en="Application" data-fr="Application">Application</span>
-							<span class="text-danger" aria-label="required">*</span>
-							<small id="application-help-1" class="form-text text-muted d-block" data-en="Choose the application to update." data-fr="Choisissez l'application à mettre à jour.">Choose the application to update.</small>
-						</label>
-						<select class="form-control application-select" id="application-1" name="application-1" required aria-required="true" aria-describedby="application-help-1">
-							<option value="" data-en="-- Select an application --" data-fr="-- Sélectionnez une application --">-- Select an application --</option>
-							<option value="outlook">Microsoft Outlook</option>
-							<option value="m365">Microsoft 365 (M365)</option>
-						</select>
-					</div>
-					
-					<!-- Current Status -->
-					<div class="form-group">
-						<label class="bilingual-label" for="status-1">
-							<span data-en="Current status" data-fr="Statut actuel">Current status</span>
-							<span class="text-danger" aria-label="required">*</span>
-							<small id="status-help-1" class="form-text text-muted d-block" data-en="Select the current operational status." data-fr="Sélectionnez le statut opérationnel actuel.">Select the current operational status.</small>
-						</label>
-						<select class="form-control status-select" id="status-1" name="status-1" required aria-required="true" aria-describedby="status-help-1">
-							<option value="" data-en="-- Select status --" data-fr="-- Sélectionnez le statut --">-- Select status --</option>
-							<option value="no-issues" data-en="No reported issues" data-fr="Aucun problème signalé">No reported issues</option>
-							<option value="incident" data-en="Incident" data-fr="Incident">Incident</option>
-							<option value="outage" data-en="Outage" data-fr="Panne">Outage</option>
-						</select>
-					</div>
+<!-- Application Selection -->
+<div class="form-group">
+	<fieldset>
+		<legend class="bilingual-label">
+			<span data-en="Application" data-fr="Application">Application</span>
+			<span class="text-danger" aria-label="required">*</span>
+			<small id="application-help-1" class="form-text text-muted d-block" data-en="Choose the application to update." data-fr="Choisissez l'application à mettre à jour.">Choose the application to update.</small>
+		</legend>
+		<div class="form-check">
+			<input class="form-check-input application-radio" type="radio" name="application-1" id="application-outlook-1" value="outlook" required aria-describedby="application-help-1">
+			<label class="form-check-label" for="application-outlook-1">
+				Microsoft Outlook
+			</label>
+		</div>
+		<div class="form-check">
+			<input class="form-check-input application-radio" type="radio" name="application-1" id="application-m365-1" value="m365" required aria-describedby="application-help-1">
+			<label class="form-check-label" for="application-m365-1">
+				Microsoft 365 (M365)
+			</label>
+		</div>
+	</fieldset>
+</div>
+
+<!-- Current Status -->
+<div class="form-group">
+	<fieldset>
+		<legend class="bilingual-label">
+			<span data-en="Current status" data-fr="Statut actuel">Current status</span>
+			<span class="text-danger" aria-label="required">*</span>
+			<small id="status-help-1" class="form-text text-muted d-block" data-en="Select the current operational status." data-fr="Sélectionnez le statut opérationnel actuel.">Select the current operational status.</small>
+		</legend>
+		<div class="form-check">
+			<input class="form-check-input status-radio" type="radio" name="status-1" id="status-no-issues-1" value="no-issues" required aria-describedby="status-help-1">
+			<label class="form-check-label" for="status-no-issues-1">
+				<span data-en="No reported issues" data-fr="Aucun problème signalé">No reported issues</span>
+			</label>
+		</div>
+		<div class="form-check">
+			<input class="form-check-input status-radio" type="radio" name="status-1" id="status-incident-1" value="incident" required aria-describedby="status-help-1">
+			<label class="form-check-label" for="status-incident-1">
+				<span data-en="Incident" data-fr="Incident">Incident</span>
+			</label>
+		</div>
+		<div class="form-check">
+			<input class="form-check-input status-radio" type="radio" name="status-1" id="status-outage-1" value="outage" required aria-describedby="status-help-1">
+			<label class="form-check-label" for="status-outage-1">
+				<span data-en="Outage" data-fr="Panne">Outage</span>
+			</label>
+		</div>
+	</fieldset>
+</div>
 					
 					<!-- Pre-determined Messages -->
 					<div class="form-group">
@@ -223,33 +271,46 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Initialize Quill editor for a specific entry
 function initializeQuillEditor(entryId) {
-	// English editor
-	const quillEnEditor = new Quill(`#custom-en-editor-${entryId}`, {
-		theme: 'snow',
-		modules: {
-			toolbar: [
-				['bold', 'italic', 'underline'],
-				[{ 'list': 'ordered'}, { 'list': 'bullet' }],
-				['link'],
-				['clean']
-			]
-		},
-		placeholder: 'Enter your custom message in English...'
-	});
-	
-	// French editor
-	const quillFrEditor = new Quill(`#custom-fr-editor-${entryId}`, {
-		theme: 'snow',
-		modules: {
-			toolbar: [
-				['bold', 'italic', 'underline'],
-				[{ 'list': 'ordered'}, { 'list': 'bullet' }],
-				['link'],
-				['clean']
-			]
-		},
-		placeholder: 'Entrez votre message personnalisé en français...'
-	});
+// Configure Quill to use <strong> and <em> tags
+const Block = Quill.import('blots/block');
+Block.tagName = 'p';
+Quill.register(Block, true);
+
+const Bold = Quill.import('formats/bold');
+Bold.tagName = 'strong';
+Quill.register(Bold, true);
+
+const Italic = Quill.import('formats/italic');
+Italic.tagName = 'em';
+Quill.register(Italic, true);
+
+// English editor
+const quillEnEditor = new Quill(`#custom-en-editor-${entryId}`, {
+	theme: 'snow',
+	modules: {
+		toolbar: [
+			['bold', 'italic'],
+			[{ 'list': 'ordered'}, { 'list': 'bullet' }],
+			['link'],
+			['clean']
+		]
+	},
+	placeholder: 'Enter your custom message in English...'
+});
+
+// French editor
+const quillFrEditor = new Quill(`#custom-fr-editor-${entryId}`, {
+	theme: 'snow',
+	modules: {
+		toolbar: [
+			['bold', 'italic'],
+			[{ 'list': 'ordered'}, { 'list': 'bullet' }],
+			['link'],
+			['clean']
+		]
+	},
+	placeholder: 'Entrez votre message personnalisé en français...'
+});
 	
 	// Store instances
 	quillInstances[`en-${entryId}`] = quillEnEditor;
@@ -312,18 +373,18 @@ function initializeQuillEditor(entryId) {
 		
 		// Setup all event listeners
 		function setupEventListeners() {
-			// Application change listener
-			document.addEventListener('change', function(e) {
-				if (e.target.classList.contains('application-select') || e.target.classList.contains('status-select')) {
-					const entryId = e.target.id.split('-')[1];
-					updateMessageOptions(entryId);
-				}
-				
-				if (e.target.classList.contains('message-select')) {
-					const entryId = e.target.id.split('-')[1];
-					toggleCustomMessage(entryId, e.target.value);
-				}
-			});
+// Application and status change listener
+document.addEventListener('change', function(e) {
+	if (e.target.classList.contains('application-radio') || e.target.classList.contains('status-radio')) {
+		const entryId = e.target.name.split('-')[1];
+		updateMessageOptions(entryId);
+	}
+	
+	if (e.target.classList.contains('message-select')) {
+		const entryId = e.target.id.split('-')[1];
+		toggleCustomMessage(entryId, e.target.value);
+	}
+});
 			
 			// Add entry button
 			document.getElementById('addEntryBtn').addEventListener('click', addStatusEntry);
@@ -342,50 +403,52 @@ function initializeQuillEditor(entryId) {
 		}
 		
 		// Update message dropdown based on application and status selection
-		function updateMessageOptions(entryId) {
-			const appSelect = document.getElementById(`application-${entryId}`);
-			const statusSelect = document.getElementById(`status-${entryId}`);
-			const messageSelect = document.getElementById(`message-${entryId}`);
-			
-			const app = appSelect.value;
-			const status = statusSelect.value;
-			
-			// Clear existing options except first and "Other"
-			messageSelect.innerHTML = `
-				<option value="">-- Select a message -- / -- Sélectionnez un message --</option>
-			`;
-			
-			// Add messages if both app and status are selected
-			if (app && status && messageTemplates[app] && messageTemplates[app][status]) {
-				messageTemplates[app][status].forEach(msg => {
-					const option = document.createElement('option');
-					option.value = msg.value;
-					option.dataset.en = msg.en;
-					option.dataset.fr = msg.fr;
-					
-					// Set text based on current language
-					const currentLang = localStorage.getItem('language') || 'en-CA';
-					option.textContent = currentLang === 'en-CA' ? msg.en : msg.fr;
-					
-					messageSelect.appendChild(option);
-				});
-			}
-			
-			// Always add "Other" option at the end
-			const otherOption = document.createElement('option');
-			otherOption.value = 'other';
-			otherOption.dataset.en = 'Other';
-			otherOption.dataset.fr = 'Autre';
+function updateMessageOptions(entryId) {
+	// Get selected application radio button
+	const appRadio = document.querySelector(`input[name="application-${entryId}"]:checked`);
+	// Get selected status radio button
+	const statusRadio = document.querySelector(`input[name="status-${entryId}"]:checked`);
+	const messageSelect = document.getElementById(`message-${entryId}`);
+	
+	const app = appRadio ? appRadio.value : null;
+	const status = statusRadio ? statusRadio.value : null;
+	
+	// Clear existing options except first and "Other"
+	messageSelect.innerHTML = `
+		<option value="">-- Select a message -- / -- Sélectionnez un message --</option>
+	`;
+	
+	// Add messages if both app and status are selected
+	if (app && status && messageTemplates[app] && messageTemplates[app][status]) {
+		messageTemplates[app][status].forEach(msg => {
+			const option = document.createElement('option');
+			option.value = msg.value;
+			option.dataset.en = msg.en;
+			option.dataset.fr = msg.fr;
 			
 			// Set text based on current language
 			const currentLang = localStorage.getItem('language') || 'en-CA';
-			otherOption.textContent = currentLang === 'en-CA' ? 'Other' : 'Autre';
-			messageSelect.appendChild(otherOption);
+			option.textContent = currentLang === 'en-CA' ? msg.en : msg.fr;
 			
-			// Reset message selection
-			messageSelect.value = '';
-			toggleCustomMessage(entryId, '');
-		}
+			messageSelect.appendChild(option);
+		});
+	}
+	
+	// Always add "Other" option at the end
+	const otherOption = document.createElement('option');
+	otherOption.value = 'other';
+	otherOption.dataset.en = 'Other';
+	otherOption.dataset.fr = 'Autre';
+	
+	// Set text based on current language
+	const currentLang = localStorage.getItem('language') || 'en-CA';
+	otherOption.textContent = currentLang === 'en-CA' ? 'Other' : 'Autre';
+	messageSelect.appendChild(otherOption);
+	
+	// Reset message selection
+	messageSelect.value = '';
+	toggleCustomMessage(entryId, '');
+}
 		
 		// Toggle custom message section
 		function toggleCustomMessage(entryId, value) {
@@ -431,32 +494,55 @@ function initializeQuillEditor(entryId) {
 					<span data-en="Status entry" data-fr="Entrée de statut">Status entry</span> #<span class="entry-number">${entryCounter}</span>
 				</h2>
 				
-				<div class="form-group">
-					<label class="bilingual-label" for="application-${entryCounter}">
-						<span data-en="Application" data-fr="Application">Application</span>
-						<span class="text-danger" aria-label="required">*</span>
-						<small id="application-help-${entryCounter}" class="form-text text-muted d-block" data-en="Choose the application to update." data-fr="Choisissez l'application à mettre à jour.">Choose the application to update.</small>
-					</label>
-					<select class="form-control application-select" id="application-${entryCounter}" name="application-${entryCounter}" required aria-required="true" aria-describedby="application-help-${entryCounter}">
-						<option value="" data-en="-- Select an application --" data-fr="-- Sélectionnez une application --">-- Select an application --</option>
-						<option value="outlook">Microsoft Outlook</option>
-						<option value="m365">Microsoft 365 (M365)</option>
-					</select>
-				</div>
-				
-				<div class="form-group">
-					<label class="bilingual-label" for="status-${entryCounter}">
-						<span data-en="Current status" data-fr="Statut actuel">Current status</span>
-						<span class="text-danger" aria-label="required">*</span>
-						<small id="status-help-${entryCounter}" class="form-text text-muted d-block" data-en="Select the current operational status." data-fr="Sélectionnez le statut opérationnel actuel.">Select the current operational status.</small>
-					</label>
-					<select class="form-control status-select" id="status-${entryCounter}" name="status-${entryCounter}" required aria-required="true" aria-describedby="status-help-${entryCounter}">
-						<option value="" data-en="-- Select status --" data-fr="-- Sélectionnez le statut --">-- Select status --</option>
-						<option value="no-issues" data-en="No reported issues" data-fr="Aucun problème signalé">No reported issues</option>
-						<option value="incident" data-en="Incident" data-fr="Incident">Incident</option>
-						<option value="outage" data-en="Outage" data-fr="Panne">Outage</option>
-					</select>
-				</div>
+<div class="form-group">
+	<fieldset>
+		<legend class="bilingual-label">
+			<span data-en="Application" data-fr="Application">Application</span>
+			<span class="text-danger" aria-label="required">*</span>
+			<small id="application-help-${entryCounter}" class="form-text text-muted d-block" data-en="Choose the application to update." data-fr="Choisissez l'application à mettre à jour.">Choose the application to update.</small>
+		</legend>
+		<div class="form-check">
+			<input class="form-check-input application-radio" type="radio" name="application-${entryCounter}" id="application-outlook-${entryCounter}" value="outlook" required aria-describedby="application-help-${entryCounter}">
+			<label class="form-check-label" for="application-outlook-${entryCounter}">
+				Microsoft Outlook
+			</label>
+		</div>
+		<div class="form-check">
+			<input class="form-check-input application-radio" type="radio" name="application-${entryCounter}" id="application-m365-${entryCounter}" value="m365" required aria-describedby="application-help-${entryCounter}">
+			<label class="form-check-label" for="application-m365-${entryCounter}">
+				Microsoft 365 (M365)
+			</label>
+		</div>
+	</fieldset>
+</div>
+
+<div class="form-group">
+	<fieldset>
+		<legend class="bilingual-label">
+			<span data-en="Current status" data-fr="Statut actuel">Current status</span>
+			<span class="text-danger" aria-label="required">*</span>
+			<small id="status-help-${entryCounter}" class="form-text text-muted d-block" data-en="Select the current operational status." data-fr="Sélectionnez le statut opérationnel actuel.">Select the current operational status.</small>
+		</legend>
+		<div class="form-check">
+			<input class="form-check-input status-radio" type="radio" name="status-${entryCounter}" id="status-no-issues-${entryCounter}" value="no-issues" required aria-describedby="status-help-${entryCounter}">
+			<label class="form-check-label" for="status-no-issues-${entryCounter}">
+				<span data-en="No reported issues" data-fr="Aucun problème signalé">No reported issues</span>
+			</label>
+		</div>
+		<div class="form-check">
+			<input class="form-check-input status-radio" type="radio" name="status-${entryCounter}" id="status-incident-${entryCounter}" value="incident" required aria-describedby="status-help-${entryCounter}">
+			<label class="form-check-label" for="status-incident-${entryCounter}">
+				<span data-en="Incident" data-fr="Incident">Incident</span>
+			</label>
+		</div>
+		<div class="form-check">
+			<input class="form-check-input status-radio" type="radio" name="status-${entryCounter}" id="status-outage-${entryCounter}" value="outage" required aria-describedby="status-help-${entryCounter}">
+			<label class="form-check-label" for="status-outage-${entryCounter}">
+				<span data-en="Outage" data-fr="Panne">Outage</span>
+			</label>
+		</div>
+	</fieldset>
+</div>
 				
 				<div class="form-group">
 					<label class="bilingual-label" for="message-${entryCounter}">
@@ -619,12 +705,14 @@ if (messageSelect && messageSelect.value === 'other') {
 		function collectFormData() {
 			const entries = [];
 			
-			document.querySelectorAll('.status-entry').forEach(entry => {
-				const entryId = entry.dataset.entryId;
-				const app = document.getElementById(`application-${entryId}`).value;
-				const status = document.getElementById(`status-${entryId}`).value;
-				const messageSelect = document.getElementById(`message-${entryId}`);
-				const messageValue = messageSelect.value;
+document.querySelectorAll('.status-entry').forEach(entry => {
+	const entryId = entry.dataset.entryId;
+	const appRadio = document.querySelector(`input[name="application-${entryId}"]:checked`);
+	const statusRadio = document.querySelector(`input[name="status-${entryId}"]:checked`);
+	const app = appRadio ? appRadio.value : null;
+	const status = statusRadio ? statusRadio.value : null;
+	const messageSelect = document.getElementById(`message-${entryId}`);
+	const messageValue = messageSelect.value;
 				
 				if (!app || !status || !messageValue) {
 					return; // Skip incomplete entries
