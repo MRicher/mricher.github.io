@@ -1,4 +1,4 @@
-const ORCAVIA_APP_VERSION = "1.0.2";
+const ORCAVIA_APP_VERSION = "1.0.4";
 const ORCAVIA_VERSION_STRING = `Version ${ORCAVIA_APP_VERSION}`;
 document.addEventListener('DOMContentLoaded', () => {
 	const versionElement = document.getElementById('version-info');
@@ -12,22 +12,22 @@ class RCMPDataEditor {
 			data: []
 		};
 		this.themeMapping = {
-			'Systemic barriers': 'Les obstacle systémiques',
-			'Recruitment': 'Le recrutement',
-			'Training at Depot': 'La formation à la division Dépôt',
-			'Recruit field training': 'La formation pratique des recrues',
-			'Postings': 'Les affectations',
-			'Ongoing training': 'La formation continue',
-			'Human resources and staffing': 'Les ressources humaines et la dotation',
-			'Maternity and parental leave': 'Le congé de maternité et le congé parental',
-			'Employment flexibility': 'La flexibilité de l\'emploi',
-			'Grievances and discipline': 'Les griefs et la disciplines',
-			'Mental health': 'La santé mentale',
-			'Promotions': 'Les promotions',
-			'Leadership': 'Le leadership',
-			'Specialized teams': 'Les équipes spécialisées',
-			'Medical Examination': 'L\'examen médical',
-			'Temporary civilian employees, civilian members and public service employees': 'Employés civiles temporaires, membres civiles et fonctionnaires'
+			'A. Systemic barriers': 'A. Les obstacles systémiques',
+			'B. Recruitment': 'B. Le recrutement',
+			'C. Training at Depot': 'C. La formation à la division Dépôt',
+			'D. Recruit field training': 'D. La formation pratique des recrues',
+			'E. Postings': 'E. Les affectations',
+			'F. Ongoing training': 'F. La formation continue',
+			'G. Human resources and staffing': 'G. Les ressources humaines et la dotation',
+			'H. Maternity and parental leave': 'H. Le congé de maternité et le congé parental',
+			'I. Employment flexibility': 'I. La flexibilité de l\'emploi',
+			'J. Grievances and discipline': 'J. Les griefs et la discipline',
+			'K. Mental health': 'K. La santé mentale',
+			'L. Promotions': 'L. Les promotions',
+			'M. Leadership': 'M. Le leadership',
+			'N. Specialized teams': 'N. Les équipes spécialisées',
+			'O. Medical examination': 'O. L\'examen médical',
+			'P. Temporary civilian employees, civilian members and public service employees': 'P. Employés civiles temporaires, membres civiles et fonctionnaires'
 		};
 		this.reversedThemeMapping = Object.fromEntries(Object.entries(this.themeMapping).map(([key, value]) => [value, key]));
 		this.waitForLanguageInitialization();
@@ -91,6 +91,7 @@ class RCMPDataEditor {
 		if (!text || typeof text !== 'string') return text;
 		let sanitized = text;
 		sanitized = sanitized.replace(/’/g, "'");
+		sanitized = sanitized.replace(/ :/g, "&#160;:");
 		sanitized = sanitized.replace(/ »/g, "&#160;»");
 		sanitized = sanitized.replace(/« /g, "«&#160;");
 	    sanitized = sanitized.replace(/<p><br><\/p>/g, "");
