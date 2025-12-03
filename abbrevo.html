@@ -10,6 +10,32 @@
           data-fr="Cette application modifie et génère le code HTML pour le gabarit de la liste de données des abréviations et acronymes de la GRC.">
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/creavia.css">
+    <style>
+        .entry-card {
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--button-primary-bg);
+        }
+        .entry-card .card-header {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .entry-number {
+            font-weight: bold;
+            color: var(--button-primary-bg);
+        }
+        .btn-delete {
+            background-color: #dc3545;
+            border-color: #dc3545;
+            color: white;
+        }
+        .btn-delete:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+        }
+    </style>
 </head>
 
 <body>
@@ -108,7 +134,142 @@
                 Abbrevo
             </h1>
 
+            <p class="lead" 
+               data-en="Add and manage abbreviations and acronyms with their full titles and notes in both English and French."
+               data-fr="Ajoutez et gérez les abréviations et acronymes avec leurs titres complets et notes en anglais et en français.">
+                Add and manage abbreviations and acronyms with their full titles and notes in both English and French.
+            </p>
 
+            <!-- Add New Entry Form -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="card-title" 
+                        data-en="Add New Entry"
+                        data-fr="Ajouter une nouvelle entrée">
+                        Add New Entry
+                    </h2>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="abbr-en" class="form-label" 
+                                   data-en="English Abbreviation/Acronym"
+                                   data-fr="Abréviation/Acronyme anglais">
+                                English Abbreviation/Acronym
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="abbr-en"
+                                   data-en="Enter English abbreviation"
+                                   data-fr="Entrez l'abréviation anglaise"
+                                   placeholder="Enter English abbreviation"
+                                   required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="abbr-fr" class="form-label"
+                                   data-en="French Abbreviation/Acronym"
+                                   data-fr="Abréviation/Acronyme français">
+                                French Abbreviation/Acronym
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="abbr-fr"
+                                   data-en="Enter French abbreviation"
+                                   data-fr="Entrez l'abréviation française"
+                                   placeholder="Enter French abbreviation"
+                                   required>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="title-en" class="form-label"
+                                   data-en="English Full Title"
+                                   data-fr="Titre complet anglais">
+                                English Full Title
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="title-en"
+                                   data-en="Enter English full title"
+                                   data-fr="Entrez le titre complet anglais"
+                                   placeholder="Enter English full title"
+                                   required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="title-fr" class="form-label"
+                                   data-en="French Full Title"
+                                   data-fr="Titre complet français">
+                                French Full Title
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="title-fr"
+                                   data-en="Enter French full title"
+                                   data-fr="Entrez le titre complet français"
+                                   placeholder="Enter French full title"
+                                   required>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="notes-en" class="form-label"
+                                   data-en="English Notes (Optional)"
+                                   data-fr="Notes en anglais (Optionnel)">
+                                English Notes (Optional)
+                            </label>
+                            <textarea class="form-control" 
+                                      id="notes-en"
+                                      rows="3"
+                                      data-en="Enter English notes"
+                                      data-fr="Entrez les notes en anglais"
+                                      placeholder="Enter English notes"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="notes-fr" class="form-label"
+                                   data-en="French Notes (Optional)"
+                                   data-fr="Notes en français (Optionnel)">
+                                French Notes (Optional)
+                            </label>
+                            <textarea class="form-control" 
+                                      id="notes-fr"
+                                      rows="3"
+                                      data-en="Enter French notes"
+                                      data-fr="Entrez les notes en français"
+                                      placeholder="Enter French notes"></textarea>
+                        </div>
+                    </div>
+
+                    <button type="button" 
+                            class="btn btn-primary" 
+                            id="add-entry-btn"
+                            onclick="addEntry()">
+                        <span data-en="Add Entry"
+                              data-fr="Ajouter l'entrée">
+                            Add Entry
+                        </span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Entries List -->
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title"
+                        data-en="Current Entries"
+                        data-fr="Entrées actuelles">
+                        Current Entries
+                    </h2>
+
+                    <div id="entries-container">
+                        <p class="text-muted"
+                           data-en="No entries yet. Add your first abbreviation or acronym above."
+                           data-fr="Aucune entrée pour le moment. Ajoutez votre première abréviation ou acronyme ci-dessus.">
+                            No entries yet. Add your first abbreviation or acronym above.
+                        </p>
+                    </div>
+                </div>
+            </div>
 
         </section>
     </main>
@@ -123,5 +284,134 @@
 
     <script src="js/bootstrap.bundle.min.js"></script>
     <script src="js/creavia.js"></script>
+    <script>
+        // Store entries
+        let entries = [];
+        let entryCounter = 0;
+
+        // Add new entry
+        function addEntry() {
+            const abbrEn = document.getElementById('abbr-en').value.trim();
+            const abbrFr = document.getElementById('abbr-fr').value.trim();
+            const titleEn = document.getElementById('title-en').value.trim();
+            const titleFr = document.getElementById('title-fr').value.trim();
+            const notesEn = document.getElementById('notes-en').value.trim();
+            const notesFr = document.getElementById('notes-fr').value.trim();
+
+            // Validation
+            if (!abbrEn || !abbrFr || !titleEn || !titleFr) {
+                const currentLang = document.documentElement.lang?.split('-')[0] || 'en';
+                const message = currentLang === 'fr' 
+                    ? 'Veuillez remplir tous les champs obligatoires.' 
+                    : 'Please fill in all required fields.';
+                alert(message);
+                return;
+            }
+
+            // Create entry object
+            const entry = {
+                id: entryCounter++,
+                abbrEn,
+                abbrFr,
+                titleEn,
+                titleFr,
+                notesEn,
+                notesFr
+            };
+
+            entries.push(entry);
+            renderEntries();
+            clearForm();
+        }
+
+        // Clear form
+        function clearForm() {
+            document.getElementById('abbr-en').value = '';
+            document.getElementById('abbr-fr').value = '';
+            document.getElementById('title-en').value = '';
+            document.getElementById('title-fr').value = '';
+            document.getElementById('notes-en').value = '';
+            document.getElementById('notes-fr').value = '';
+            document.getElementById('abbr-en').focus();
+        }
+
+        // Delete entry
+        function deleteEntry(id) {
+            const currentLang = document.documentElement.lang?.split('-')[0] || 'en';
+            const message = currentLang === 'fr' 
+                ? 'Êtes-vous sûr de vouloir supprimer cette entrée?' 
+                : 'Are you sure you want to delete this entry?';
+            
+            if (confirm(message)) {
+                entries = entries.filter(e => e.id !== id);
+                renderEntries();
+            }
+        }
+
+        // Render all entries
+        function renderEntries() {
+            const container = document.getElementById('entries-container');
+            const currentLang = document.documentElement.lang?.split('-')[0] || 'en';
+
+            if (entries.length === 0) {
+                const noEntriesText = currentLang === 'fr'
+                    ? 'Aucune entrée pour le moment. Ajoutez votre première abréviation ou acronyme ci-dessus.'
+                    : 'No entries yet. Add your first abbreviation or acronym above.';
+                
+                container.innerHTML = `<p class="text-muted" data-en="No entries yet. Add your first abbreviation or acronym above." data-fr="Aucune entrée pour le moment. Ajoutez votre première abréviation ou acronyme ci-dessus.">${noEntriesText}</p>`;
+                return;
+            }
+
+            const entryLabel = currentLang === 'fr' ? 'Entrée' : 'Entry';
+            const deleteLabel = currentLang === 'fr' ? 'Supprimer' : 'Delete';
+
+            container.innerHTML = entries.map((entry, index) => `
+                <div class="card entry-card">
+                    <div class="card-header">
+                        <span class="entry-number">${entryLabel} ${index + 1}</span>
+                        <button type="button" 
+                                class="btn btn-sm btn-delete" 
+                                onclick="deleteEntry(${entry.id})"
+                                aria-label="${deleteLabel} ${entryLabel} ${index + 1}">
+                            ${deleteLabel}
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <strong>${currentLang === 'fr' ? 'Abréviation anglaise:' : 'English Abbreviation:'}</strong> ${entry.abbrEn}
+                            </div>
+                            <div class="col-md-6">
+                                <strong>${currentLang === 'fr' ? 'Abréviation française:' : 'French Abbreviation:'}</strong> ${entry.abbrFr}
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <strong>${currentLang === 'fr' ? 'Titre complet anglais:' : 'English Full Title:'}</strong> ${entry.titleEn}
+                            </div>
+                            <div class="col-md-6">
+                                <strong>${currentLang === 'fr' ? 'Titre complet français:' : 'French Full Title:'}</strong> ${entry.titleFr}
+                            </div>
+                        </div>
+                        ${entry.notesEn || entry.notesFr ? `
+                        <div class="row">
+                            <div class="col-md-6">
+                                ${entry.notesEn ? `<strong>${currentLang === 'fr' ? 'Notes anglaises:' : 'English Notes:'}</strong> ${entry.notesEn}` : ''}
+                            </div>
+                            <div class="col-md-6">
+                                ${entry.notesFr ? `<strong>${currentLang === 'fr' ? 'Notes françaises:' : 'French Notes:'}</strong> ${entry.notesFr}` : ''}
+                            </div>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Listen for language changes to update displayed entries
+        document.addEventListener('languageChanged', () => {
+            renderEntries();
+        });
+    </script>
 </body>
 </html>
