@@ -1,39 +1,122 @@
 <!DOCTYPE html>
 <html lang="en-CA">
 <head>
-	<meta charset="UTF-8">
-	<meta content="width=device-width, initial-scale=1.0" name="viewport">
-	<title data-en="Image cropping and resizing tool" data-fr="Outil de recadrage et de redimensionnement d'images">Image cropping and resizing tool</title>
-	<meta content="Easily crop, resize, and optimize images for web publishing. This tool supports PNG and JPG formats and uses smart compression to reduce file size while maintaining image quality." data-en="Easily crop, resize, and optimize images for web publishing. This tool supports PNG and JPG formats and uses smart compression to reduce file size while maintaining image quality." data-fr="Recadrez, redimensionnez et optimisez facilement vos images pour la publication web. Cet outil prend en charge les formats PNG et JPG et applique une compression intelligente pour réduire la taille des fichiers tout en conservant la qualité des images." name="description">
-	<link href="css/bootstrap.min.css" rel="stylesheet">
-	<link href="css/cropper.min.css" rel="stylesheet">
-	<link href="css/creavia.css" rel="stylesheet">
-	<link href="css/optipix.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-en="OptiPix" data-fr="OptiPix">OptiPix</title>
+    <meta name="description"
+		content="Easily crop, resize, and optimize images for web publishing. This tool supports PNG and JPG formats and uses smart compression to reduce file size while maintaining image quality."
+		  data-en="Easily crop, resize, and optimize images for web publishing. This tool supports PNG and JPG formats and uses smart compression to reduce file size while maintaining image quality."
+		  data-fr="Recadrez, redimensionnez et optimisez facilement vos images pour la publication web. Cet outil prend en charge les formats PNG et JPG et applique une compression intelligente pour réduire la taille des fichiers tout en conservant la qualité des images.">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/creavia.css">
+	<link rel="stylesheet" href="css/cropper.min.css">
+	<link rel="stylesheet" href="css/optipix.css">
 </head>
+
 <body>
-	<a class="skip-link" data-en="Skip to main content" data-fr="Passer au contenu principal" href="#main-content">Skip to main content</a>
-	<header>
-		<nav aria-label="Main navigation" class="navbar navbar-expand-lg">
-			<div class="container">
-				<div class="navbar-brand d-flex align-items-center">
-					<img alt="" class="me-2" src="img/photo-scan.svg" style="height: 50px; width: auto;"> <span data-en="OptiPix" data-fr="OptiPix">OptiPix</span>
-				</div><button aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation menu" class="navbar-toggler" data-bs-target="#navbarNav" data-bs-toggle="collapse" type="button"><span class="navbar-toggler-icon"></span> <span class="sr-only" data-en="Toggle navigation menu" data-fr="Basculer le menu de navigation">Toggle navigation menu</span></button>
-				<div class="collapse navbar-collapse" id="navbarNav">
+    <a class="skip-link"
+       href="#main-content"
+       data-en="Skip to main content"
+       data-fr="Passer au contenu principal">
+        Skip to main content
+    </a>
+
+    <header>
+        <nav class="navbar navbar-expand-lg" aria-label="Main navigation">
+            <div class="container">
+
+                <div class="navbar-brand d-flex align-items-center">
+                    <img src="img/photo-scan.svg"
+                         alt=""
+                         class="me-2"
+                         style="height: 50px; width: auto;">
+                    <span data-en="OptiPix" data-fr="OptiPix">OptiPix</span>
+                </div>
+
+                <button class="navbar-toggler"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#navbarNav"
+                        aria-controls="navbarNav"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation menu">
+                    <span class="navbar-toggler-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden"
+                          data-en="Toggle navigation menu"
+                          data-fr="Basculer le menu de navigation">
+                        Toggle navigation menu
+                    </span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+
 					<ul class="navbar-nav me-auto mb-2 mb-lg-0" role="menubar">
 						<li class="nav-item" role="none">
-							<a class="nav-link active" data-en="Home" data-fr="Accueil" href="index.html" role="menuitem">Home</a>
+							<a class="nav-link"
+							href="/index.html"
+							role="menuitem"
+							data-en="Home"
+							data-fr="Accueil">
+								Home
+							</a>
 						</li>
 					</ul>
-					<div aria-label="Settings" class="language-switcher" role="group">
-						<button aria-label="Toggle dark/light theme" class="theme-toggle" data-en-dark="Switch to Light mode" data-en-light="Switch to Dark mode" data-fr-dark="Passer au mode clair" data-fr-light="Passer au mode sombre" id="theme-toggle" type="button"><span data-en="Dark mode" data-fr="Mode sombre" id="theme-text">Dark mode</span></button> <button aria-label="Passer au français" aria-pressed="false" class="btn btn-outline-primary btn-sm" data-lang="fr-CA" id="lang-fr-btn" style="display: none;" type="button"><span data-en="Français" data-fr="Français">Français</span></button> <button aria-label="Switch to English" aria-pressed="false" class="btn btn-outline-primary btn-sm" data-lang="en-CA" id="lang-en-btn" type="button"><span data-en="English" data-fr="English">English</span></button>
-					</div>
-				</div>
-			</div>
-		</nav>
-	</header>
-	<main class="container" id="main-content">
-		<section aria-labelledby="main-heading">
-			<h1 data-en="Image cropping and resizing tool" data-fr="Outil de recadrage et de redimensionnement d'images" id="main-heading">Image cropping and resizing tool</h1>
+
+                    <div class="language-switcher" role="group" aria-label="Settings">
+
+                        <button id="theme-toggle"
+                                type="button"
+                                class="theme-toggle"
+                                aria-label="Toggle dark/light theme"
+                                data-en-dark="Switch to light mode"
+                                data-en-light="Switch to dark mode"
+                                data-fr-dark="Passer au mode clair"
+                                data-fr-light="Passer au mode sombre">
+                            <span id="theme-text"
+                                  data-en="Dark mode"
+                                  data-fr="Mode sombre">
+                                Dark mode
+                            </span>
+                        </button>
+
+                        <button id="lang-fr-btn"
+                                type="button"
+                                class="btn btn-outline-primary btn-sm"
+                                data-lang="fr-CA"
+                                aria-label="Passer au français"
+                                aria-pressed="false"
+                                style="display: none;">
+                            <span data-en="Français" data-fr="Français">Français</span>
+                        </button>
+
+                        <button id="lang-en-btn"
+                                type="button"
+                                class="btn btn-outline-primary btn-sm"
+                                data-lang="en-CA"
+                                aria-label="Switch to English"
+                                aria-pressed="false">
+                            <span data-en="English" data-fr="English">English</span>
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </nav>
+    </header>
+
+    <main class="container" id="main-content">
+        <section aria-labelledby="main-heading">
+
+            <h1 id="main-heading"
+                class="mb-4"
+                data-en="OptiPix"
+                data-fr="OptiPix">
+                OptiPix
+            </h1>
+
 			<p class="lead" data-en="Upload, crop, and resize your images with precision. This tool supports &lt;abbr&gt;PNG&lt;/abbr&gt; and &lt;abbr&gt;JPG&lt;/abbr&gt; formats and applies smart compression to keep quality high and file size low." data-fr="Téléversez, recadrez et redimensionnez vos images avec précision. Cet outil prend en charge les formats &lt;abbr&gt;PNG&lt;/abbr&gt; et &lt;abbr&gt;JPG&lt;/abbr&gt; et applique une compression optimisée pour conserver une bonne qualité tout en réduisant la taille des fichiers.">Upload, crop, and resize your images with precision. This tool supports <abbr>PNG</abbr> and <abbr>JPG</abbr> formats and applies smart compression to keep quality high and file size low.</p>
 		</section>
 		<section class="card mb-4">
@@ -106,23 +189,22 @@
 				<div class="download-buttons">
 					<button class="btn btn-primary" onclick="downloadImage('png')" type="button"><span data-en="Download &lt;abbr&gt;PNG&lt;/abbr&gt;" data-fr="Télécharger &lt;abbr&gt;PNG&lt;/abbr&gt;">Download <abbr>PNG</abbr></span></button> <button class="btn btn-primary" onclick="downloadImage('jpg')" type="button"><span data-en="Download &lt;abbr&gt;JPG&lt;/abbr&gt;" data-fr="Télécharger &lt;abbr&gt;JPG&lt;/abbr&gt;">Download <abbr>JPG</abbr></span></button> <button class="btn btn-outline-secondary" onclick="startOver()" type="button"><span data-en="Start over" data-fr="Recommencer">Start over</span></button>
 				</div>
-			</div>
-		</section>
-	</main>
-	<footer class="mt-auto">
-		<div class="container">
-			<div class="text-center">
-				<p class="mb-0" data-en="" data-fr="" id="version-info"></p>
-			</div>
-		</div>
-	</footer>
-	<script src="js/bootstrap.bundle.min.js">
-	</script> 
-	<script src="js/creavia.js">
-	</script> 
-	<script src="js/cropper.min.js">
-	</script> 
-	<script src="js/optipix.js">
-	</script>
+
+            </div>
+        </section>
+    </main>
+
+    <footer class="mt-auto">
+        <div class="container">
+            <div class="text-center">
+                <p id="version-info" class="mb-0" data-en="" data-fr=""></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/creavia.js"></script>
+	<script src="js/cropper.min.js"></script> 
+	<script src="js/optipix.js"></script>
 </body>
 </html>
