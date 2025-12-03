@@ -144,17 +144,17 @@
             <div class="card mb-4">
                 <div class="card-body">
                     <h2 class="card-title" 
-                        data-en="Add New Entry"
+                        data-en="Add new entry"
                         data-fr="Ajouter une nouvelle entrée">
-                        Add New Entry
+                        Add new entry
                     </h2>
 
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="abbr-en" class="form-label" 
-                                   data-en="English Abbreviation/Acronym"
-                                   data-fr="Abréviation/Acronyme anglais">
-                                English Abbreviation/Acronym
+                                   data-en="English abbreviation/acronym"
+                                   data-fr="Abréviation/acronyme anglais">
+                                English abbreviation/acronym
                             </label>
                             <input type="text" 
                                    class="form-control" 
@@ -166,9 +166,9 @@
                         </div>
                         <div class="col-md-6">
                             <label for="abbr-fr" class="form-label"
-                                   data-en="French Abbreviation/Acronym"
-                                   data-fr="Abréviation/Acronyme français">
-                                French Abbreviation/Acronym
+                                   data-en="French abbreviation/acronym"
+                                   data-fr="Abréviation/acronyme français">
+                                French abbreviation/acronym
                             </label>
                             <input type="text" 
                                    class="form-control" 
@@ -183,9 +183,9 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="title-en" class="form-label"
-                                   data-en="English Full Title"
+                                   data-en="English full title"
                                    data-fr="Titre complet anglais">
-                                English Full Title
+                                English full Title
                             </label>
                             <input type="text" 
                                    class="form-control" 
@@ -197,7 +197,7 @@
                         </div>
                         <div class="col-md-6">
                             <label for="title-fr" class="form-label"
-                                   data-en="French Full Title"
+                                   data-en="French full title"
                                    data-fr="Titre complet français">
                                 French Full Title
                             </label>
@@ -214,8 +214,8 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="notes-en" class="form-label"
-                                   data-en="English Notes (Optional)"
-                                   data-fr="Notes en anglais (Optionnel)">
+                                   data-en="English notes (optional)"
+                                   data-fr="Notes en anglais (optionnel)">
                                 English Notes (Optional)
                             </label>
                             <textarea class="form-control" 
@@ -227,8 +227,8 @@
                         </div>
                         <div class="col-md-6">
                             <label for="notes-fr" class="form-label"
-                                   data-en="French Notes (Optional)"
-                                   data-fr="Notes en français (Optionnel)">
+                                   data-en="French notes (optional)"
+                                   data-fr="Notes en français (optionnel)">
                                 French Notes (Optional)
                             </label>
                             <textarea class="form-control" 
@@ -244,11 +244,48 @@
                             class="btn btn-primary" 
                             id="add-entry-btn"
                             onclick="addEntry()">
-                        <span data-en="Add Entry"
+                        <span data-en="Add entry"
                               data-fr="Ajouter l'entrée">
-                            Add Entry
+                            Add entry
                         </span>
                     </button>
+                </div>
+            </div>
+
+            <!-- Save and Load Section -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="card-title"
+                        data-en="Save and load"
+                        data-fr="Enregistrer et charger">
+                        Save and load
+                    </h2>
+                    
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button type="button" 
+                                class="btn btn-success" 
+                                onclick="saveToJSON()">
+                            <span data-en="Save as JSON"
+                                  data-fr="Enregistrer en JSON">
+                                Save as JSON
+                            </span>
+                        </button>
+                        
+                        <button type="button" 
+                                class="btn btn-primary" 
+                                onclick="document.getElementById('json-upload').click()">
+                            <span data-en="Upload JSON"
+                                  data-fr="Charger JSON">
+                                Upload JSON
+                            </span>
+                        </button>
+                        
+                        <input type="file" 
+                               id="json-upload" 
+                               accept="application/json,.json" 
+                               style="display: none;" 
+                               onchange="loadFromJSON(event)">
+                    </div>
                 </div>
             </div>
 
@@ -256,9 +293,9 @@
             <div class="card">
                 <div class="card-body">
                     <h2 class="card-title"
-                        data-en="Current Entries"
+                        data-en="Current entries"
                         data-fr="Entrées actuelles">
-                        Current Entries
+                        Current entries
                     </h2>
 
                     <div id="entries-container">
@@ -379,27 +416,27 @@
                     <div class="card-body">
                         <div class="row mb-2">
                             <div class="col-md-6">
-                                <strong>${currentLang === 'fr' ? 'Abréviation anglaise:' : 'English Abbreviation:'}</strong> ${entry.abbrEn}
+                                <strong>${currentLang === 'fr' ? 'Abréviation anglaise:' : 'English abbreviation:'}</strong> ${entry.abbrEn}
                             </div>
                             <div class="col-md-6">
-                                <strong>${currentLang === 'fr' ? 'Abréviation française:' : 'French Abbreviation:'}</strong> ${entry.abbrFr}
+                                <strong>${currentLang === 'fr' ? 'Abréviation française:' : 'French abbreviation:'}</strong> ${entry.abbrFr}
                             </div>
                         </div>
                         <div class="row mb-2">
                             <div class="col-md-6">
-                                <strong>${currentLang === 'fr' ? 'Titre complet anglais:' : 'English Full Title:'}</strong> ${entry.titleEn}
+                                <strong>${currentLang === 'fr' ? 'Titre complet anglais:' : 'English full title:'}</strong> ${entry.titleEn}
                             </div>
                             <div class="col-md-6">
-                                <strong>${currentLang === 'fr' ? 'Titre complet français:' : 'French Full Title:'}</strong> ${entry.titleFr}
+                                <strong>${currentLang === 'fr' ? 'Titre complet français:' : 'French full title:'}</strong> ${entry.titleFr}
                             </div>
                         </div>
                         ${entry.notesEn || entry.notesFr ? `
                         <div class="row">
                             <div class="col-md-6">
-                                ${entry.notesEn ? `<strong>${currentLang === 'fr' ? 'Notes anglaises:' : 'English Notes:'}</strong> ${entry.notesEn}` : ''}
+                                ${entry.notesEn ? `<strong>${currentLang === 'fr' ? 'Notes anglaises:' : 'English notes:'}</strong> ${entry.notesEn}` : ''}
                             </div>
                             <div class="col-md-6">
-                                ${entry.notesFr ? `<strong>${currentLang === 'fr' ? 'Notes françaises:' : 'French Notes:'}</strong> ${entry.notesFr}` : ''}
+                                ${entry.notesFr ? `<strong>${currentLang === 'fr' ? 'Notes françaises:' : 'French notes:'}</strong> ${entry.notesFr}` : ''}
                             </div>
                         </div>
                         ` : ''}
@@ -412,6 +449,89 @@
         document.addEventListener('languageChanged', () => {
             renderEntries();
         });
+
+        // Save entries to JSON file
+        function saveToJSON() {
+            if (entries.length === 0) {
+                const currentLang = document.documentElement.lang?.split('-')[0] || 'en';
+                const message = currentLang === 'fr' 
+                    ? 'Aucune entrée à enregistrer.' 
+                    : 'No entries to save.';
+                alert(message);
+                return;
+            }
+
+            const dataStr = JSON.stringify(entries, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'abbrevo-entries.json';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        // Load entries from JSON file
+        function loadFromJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const loadedData = JSON.parse(e.target.result);
+                    
+                    // Validate that it's an array
+                    if (!Array.isArray(loadedData)) {
+                        throw new Error('Invalid JSON format');
+                    }
+
+                    // Validate structure of entries
+                    const isValid = loadedData.every(entry => 
+                        entry.hasOwnProperty('abbrEn') &&
+                        entry.hasOwnProperty('abbrFr') &&
+                        entry.hasOwnProperty('titleEn') &&
+                        entry.hasOwnProperty('titleFr')
+                    );
+
+                    if (!isValid) {
+                        throw new Error('Invalid entry structure');
+                    }
+
+                    // Load the data
+                    entries = loadedData;
+                    
+                    // Update counter to prevent ID conflicts
+                    if (entries.length > 0) {
+                        entryCounter = Math.max(...entries.map(e => e.id || 0)) + 1;
+                    }
+
+                    renderEntries();
+
+                    const currentLang = document.documentElement.lang?.split('-')[0] || 'en';
+                    const message = currentLang === 'fr' 
+                        ? `${entries.length} entrée(s) chargée(s) avec succès.` 
+                        : `${entries.length} entry(ies) loaded successfully.`;
+                    alert(message);
+
+                } catch (error) {
+                    const currentLang = document.documentElement.lang?.split('-')[0] || 'en';
+                    const message = currentLang === 'fr' 
+                        ? 'Erreur lors du chargement du fichier JSON. Veuillez vérifier le format.' 
+                        : 'Error loading JSON file. Please check the format.';
+                    alert(message);
+                    console.error('JSON load error:', error);
+                }
+            };
+
+            reader.readAsText(file);
+            
+            // Reset the file input so the same file can be loaded again if needed
+            event.target.value = '';
+        }
     </script>
 </body>
 </html>
