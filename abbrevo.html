@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en-CA">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-en="Abbrevo" data-fr="Abbrevo">Abbrevo</title>
+    <meta name="description"
+          content="This application edits, and generates HTML for the RCMP abbreviation and acronym data list template."
+          data-en="This application edits, and generates HTML for the RCMP abbreviation and acronym data list template."
+          data-fr="Cette application modifie et génère le code HTML pour le gabarit de la liste de données des abréviations et acronymes de la GRC.">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/creavia.css">
+</head>
+
+<body>
+    <a class="skip-link"
+       href="#main-content"
+       data-en="Skip to main content"
+       data-fr="Passer au contenu principal">
+        Skip to main content
+    </a>
+
+    <header>
+        <nav class="navbar navbar-expand-lg" aria-label="Main navigation">
+            <div class="container">
+                <div class="navbar-brand d-flex align-items-center">
+                    <img src="img/list.svg"
+                         alt=""
+                         class="me-2"
+                         style="height: 50px; width: auto;">
+                    <span data-en="Abbrevo" data-fr="Abbrevo">Abbrevo</span>
+                </div>
+
+                <button class="navbar-toggler"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#navbarNav"
+                        aria-controls="navbarNav"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation menu">
+                    <span class="navbar-toggler-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden"
+                          data-en="Toggle navigation menu"
+                          data-fr="Basculer le menu de navigation">
+                        Toggle navigation menu
+                    </span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0" role="menubar">
+                        <li class="nav-item" role="none">
+                            <a class="nav-link"
+                               href="/index.html"
+                               role="menuitem"
+                               data-en="Home"
+                               data-fr="Accueil">
+                                Home
+                            </a>
+                        </li>
+                    </ul>
+
+                    <div class="language-switcher" role="group" aria-label="Settings">
+                        <button id="theme-toggle"
+                                type="button"
+                                class="theme-toggle"
+                                aria-label="Toggle dark/light theme"
+                                data-en-dark="Switch to light mode"
+                                data-en-light="Switch to dark mode"
+                                data-fr-dark="Passer au mode clair"
+                                data-fr-light="Passer au mode sombre">
+                            <span id="theme-text"
+                                  data-en="Dark mode"
+                                  data-fr="Mode sombre">
+                                Dark mode
+                            </span>
+                        </button>
+
+                        <button id="lang-fr-btn"
+                                type="button"
+                                class="btn btn-outline-primary btn-sm"
+                                data-lang="fr-CA"
+                                aria-label="Passer au français"
+                                aria-pressed="false"
+                                style="display: none;">
+                            <span data-en="Français" data-fr="Français">Français</span>
+                        </button>
+
+                        <button id="lang-en-btn"
+                                type="button"
+                                class="btn btn-outline-primary btn-sm"
+                                data-lang="en-CA"
+                                aria-label="Switch to English"
+                                aria-pressed="false">
+                            <span data-en="English" data-fr="English">English</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container" id="main-content">
+        <section aria-labelledby="main-heading">
+            <h1 id="main-heading"
+                class="mb-4"
+                data-en="Abbrevo"
+                data-fr="Abbrevo">
+                Abbrevo
+            </h1>
+
+
+
+        </section>
+    </main>
+
+    <footer class="mt-auto">
+        <div class="container">
+            <div class="text-center">
+                <p id="version-info" class="mb-0" data-en="" data-fr=""></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/creavia.js"></script>
+</body>
+</html>
