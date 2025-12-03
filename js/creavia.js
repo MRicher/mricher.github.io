@@ -7,7 +7,7 @@
 // CONSTANTS AND VERSION INFO
 // ===================================================================
 
-const APP_VERSION = "1.0.1";
+const APP_VERSION = "1.0.2";
 const VERSION_STRING = `Version ${APP_VERSION}`;
 
 /**
