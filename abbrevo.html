@@ -298,7 +298,7 @@
                         Current entries
                     </h2>
 
-                    <div id="entries-container">
+                    <div id="entries-container" class="table-responsive">
                         <p class="text-muted"
                            data-en="No entries yet. Add your first abbreviation or acronym above."
                            data-fr="Aucune entrée pour le moment. Ajoutez votre première abréviation ou acronyme ci-dessus.">
@@ -399,50 +399,176 @@
                 return;
             }
 
-            const entryLabel = currentLang === 'fr' ? 'Entrée' : 'Entry';
-            const deleteLabel = currentLang === 'fr' ? 'Supprimer' : 'Delete';
+            const labels = currentLang === 'fr' ? {
+                num: '#',
+                abbrEn: 'Abrév. EN',
+                abbrFr: 'Abrév. FR',
+                titleEn: 'Titre EN',
+                titleFr: 'Titre FR',
+                notesEn: 'Notes EN',
+                notesFr: 'Notes FR',
+                actions: 'Actions',
+                edit: 'Modifier',
+                delete: 'Supprimer'
+            } : {
+                num: '#',
+                abbrEn: 'Abbr. EN',
+                abbrFr: 'Abbr. FR',
+                titleEn: 'Title EN',
+                titleFr: 'Title FR',
+                notesEn: 'Notes EN',
+                notesFr: 'Notes FR',
+                actions: 'Actions',
+                edit: 'Edit',
+                delete: 'Delete'
+            };
 
-            container.innerHTML = entries.map((entry, index) => `
-                <div class="card entry-card">
-                    <div class="card-header">
-                        <span class="entry-number">${entryLabel} ${index + 1}</span>
-                        <button type="button" 
-                                class="btn btn-sm btn-delete" 
-                                onclick="deleteEntry(${entry.id})"
-                                aria-label="${deleteLabel} ${entryLabel} ${index + 1}">
-                            ${deleteLabel}
-                        </button>
-                    </div>
-                    <div class="card-body">
-                        <div class="row mb-2">
-                            <div class="col-md-6">
-                                <strong>${currentLang === 'fr' ? 'Abréviation anglaise:' : 'English abbreviation:'}</strong> ${entry.abbrEn}
-                            </div>
-                            <div class="col-md-6">
-                                <strong>${currentLang === 'fr' ? 'Abréviation française:' : 'French abbreviation:'}</strong> ${entry.abbrFr}
-                            </div>
-                        </div>
-                        <div class="row mb-2">
-                            <div class="col-md-6">
-                                <strong>${currentLang === 'fr' ? 'Titre complet anglais:' : 'English full title:'}</strong> ${entry.titleEn}
-                            </div>
-                            <div class="col-md-6">
-                                <strong>${currentLang === 'fr' ? 'Titre complet français:' : 'French full title:'}</strong> ${entry.titleFr}
-                            </div>
-                        </div>
-                        ${entry.notesEn || entry.notesFr ? `
-                        <div class="row">
-                            <div class="col-md-6">
-                                ${entry.notesEn ? `<strong>${currentLang === 'fr' ? 'Notes anglaises:' : 'English notes:'}</strong> ${entry.notesEn}` : ''}
-                            </div>
-                            <div class="col-md-6">
-                                ${entry.notesFr ? `<strong>${currentLang === 'fr' ? 'Notes françaises:' : 'French notes:'}</strong> ${entry.notesFr}` : ''}
-                            </div>
-                        </div>
-                        ` : ''}
-                    </div>
-                </div>
-            `).join('');
+            const tableHTML = `
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">${labels.num}</th>
+                            <th scope="col">${labels.abbrEn}</th>
+                            <th scope="col">${labels.abbrFr}</th>
+                            <th scope="col">${labels.titleEn}</th>
+                            <th scope="col">${labels.titleFr}</th>
+                            <th scope="col">${labels.notesEn}</th>
+                            <th scope="col">${labels.notesFr}</th>
+                            <th scope="col">${labels.actions}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${entries.map((entry, index) => `
+                            <tr>
+                                <th scope="row">${index + 1}</th>
+                                <td>${escapeHtml(entry.abbrEn)}</td>
+                                <td>${escapeHtml(entry.abbrFr)}</td>
+                                <td>${escapeHtml(entry.titleEn)}</td>
+                                <td>${escapeHtml(entry.titleFr)}</td>
+                                <td>${entry.notesEn ? escapeHtml(entry.notesEn) : '<em class="text-muted">—</em>'}</td>
+                                <td>${entry.notesFr ? escapeHtml(entry.notesFr) : '<em class="text-muted">—</em>'}</td>
+                                <td class="text-nowrap">
+                                    <button type="button" 
+                                            class="btn btn-sm btn-primary me-1" 
+                                            onclick="editEntry(${entry.id})"
+                                            aria-label="${labels.edit} ${labels.num}${index + 1}">
+                                        ${labels.edit}
+                                    </button>
+                                    <button type="button" 
+                                            class="btn btn-sm btn-delete" 
+                                            onclick="deleteEntry(${entry.id})"
+                                            aria-label="${labels.delete} ${labels.num}${index + 1}">
+                                        ${labels.delete}
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = tableHTML;
+        }
+
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Edit entry
+        function editEntry(id) {
+            const entry = entries.find(e => e.id === id);
+            if (!entry) return;
+
+            // Populate form with entry data
+            document.getElementById('abbr-en').value = entry.abbrEn;
+            document.getElementById('abbr-fr').value = entry.abbrFr;
+            document.getElementById('title-en').value = entry.titleEn;
+            document.getElementById('title-fr').value = entry.titleFr;
+            document.getElementById('notes-en').value = entry.notesEn || '';
+            document.getElementById('notes-fr').value = entry.notesFr || '';
+
+            // Change Add button to Update button
+            const addBtn = document.getElementById('add-entry-btn');
+            const currentLang = document.documentElement.lang?.split('-')[0] || 'en';
+            const updateText = currentLang === 'fr' ? 'Mettre à jour' : 'Update entry';
+            const cancelText = currentLang === 'fr' ? 'Annuler' : 'Cancel';
+
+            addBtn.innerHTML = `<span data-en="Update entry" data-fr="Mettre à jour">${updateText}</span>`;
+            addBtn.onclick = () => updateEntry(id);
+
+            // Add cancel button if it doesn't exist
+            let cancelBtn = document.getElementById('cancel-edit-btn');
+            if (!cancelBtn) {
+                cancelBtn = document.createElement('button');
+                cancelBtn.type = 'button';
+                cancelBtn.className = 'btn btn-secondary ms-2';
+                cancelBtn.id = 'cancel-edit-btn';
+                cancelBtn.innerHTML = `<span data-en="Cancel" data-fr="Annuler">${cancelText}</span>`;
+                cancelBtn.onclick = cancelEdit;
+                addBtn.parentNode.insertBefore(cancelBtn, addBtn.nextSibling);
+            }
+
+            // Scroll to form
+            document.getElementById('abbr-en').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            document.getElementById('abbr-en').focus();
+        }
+
+        // Update entry
+        function updateEntry(id) {
+            const abbrEn = document.getElementById('abbr-en').value.trim();
+            const abbrFr = document.getElementById('abbr-fr').value.trim();
+            const titleEn = document.getElementById('title-en').value.trim();
+            const titleFr = document.getElementById('title-fr').value.trim();
+            const notesEn = document.getElementById('notes-en').value.trim();
+            const notesFr = document.getElementById('notes-fr').value.trim();
+
+            // Validation
+            if (!abbrEn || !abbrFr || !titleEn || !titleFr) {
+                const currentLang = document.documentElement.lang?.split('-')[0] || 'en';
+                const message = currentLang === 'fr' 
+                    ? 'Veuillez remplir tous les champs obligatoires.' 
+                    : 'Please fill in all required fields.';
+                alert(message);
+                return;
+            }
+
+            // Find and update entry
+            const entryIndex = entries.findIndex(e => e.id === id);
+            if (entryIndex !== -1) {
+                entries[entryIndex] = {
+                    id,
+                    abbrEn,
+                    abbrFr,
+                    titleEn,
+                    titleFr,
+                    notesEn,
+                    notesFr
+                };
+            }
+
+            renderEntries();
+            cancelEdit();
+        }
+
+        // Cancel edit mode
+        function cancelEdit() {
+            const addBtn = document.getElementById('add-entry-btn');
+            const currentLang = document.documentElement.lang?.split('-')[0] || 'en';
+            const addText = currentLang === 'fr' ? 'Ajouter l\'entrée' : 'Add entry';
+
+            addBtn.innerHTML = `<span data-en="Add entry" data-fr="Ajouter l'entrée">${addText}</span>`;
+            addBtn.onclick = addEntry;
+
+            // Remove cancel button
+            const cancelBtn = document.getElementById('cancel-edit-btn');
+            if (cancelBtn) {
+                cancelBtn.remove();
+            }
+
+            clearForm();
         }
 
         // Listen for language changes to update displayed entries
