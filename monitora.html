@@ -618,30 +618,38 @@
 		}
 
         // Setup all event listeners
-        function setupEventListeners() {
-            document.addEventListener('change', function(e) {
-                if (e.target.classList.contains('application-radio') || e.target.classList.contains('status-radio')) {
-                    const entryId = e.target.name.split('-')[1];
-                    updateMessageOptions(entryId);
-                }
-                
-                if (e.target.classList.contains('message-select')) {
-                    const entryId = e.target.id.split('-')[1];
-                    toggleCustomMessage(entryId, e.target.value);
-                }
-            });
-            
-            document.getElementById('addEntryBtn').addEventListener('click', addStatusEntry);
-            document.getElementById('statusForm').addEventListener('submit', handleFormSubmit);
-            
-            document.getElementById('statusForm').addEventListener('reset', function() {
-                setTimeout(() => {
-                    document.querySelectorAll('.custom-message-section').forEach(section => {
-                        section.classList.remove('show');
-                    });
-                }, 10);
-            });
-        }
+		function setupEventListeners() {
+			document.addEventListener('change', function(e) {
+				if (e.target.classList.contains('application-radio') || e.target.classList.contains('status-radio')) {
+					const entryId = e.target.name.split('-')[1];
+					updateMessageOptions(entryId);
+					if (e.target.classList.contains('status-radio')) {
+						toggleMessageDropdown(entryId);
+					}
+				}
+				
+				if (e.target.classList.contains('message-select')) {
+					const entryId = e.target.id.split('-')[1];
+					toggleCustomMessage(entryId, e.target.value);
+				}
+			});
+			
+			document.getElementById('addEntryBtn').addEventListener('click', addStatusEntry);
+			document.getElementById('statusForm').addEventListener('submit', handleFormSubmit);
+			
+			document.getElementById('statusForm').addEventListener('reset', function() {
+				setTimeout(() => {
+					document.querySelectorAll('.custom-message-section').forEach(section => {
+						section.classList.remove('show');
+					});
+					document.querySelectorAll('.status-entry').forEach(entry => {
+						const entryId = entry.dataset.entryId;
+						const messageGroup = document.getElementById(`message-${entryId}`).closest('.form-group');
+						messageGroup.style.display = 'block';
+					});
+				}, 10);
+			});
+		}
         
         // Update message dropdown based on application and status selection
         function updateMessageOptions(entryId) {
@@ -684,34 +692,50 @@
         }
         
         // Toggle custom message section
-        function toggleCustomMessage(entryId, value) {
-            const customSection = document.getElementById(`custom-message-${entryId}`);
-            const customEnInput = document.getElementById(`custom-en-${entryId}`);
-            const customFrInput = document.getElementById(`custom-fr-${entryId}`);
-            
-            if (value === 'other') {
-                customSection.classList.add('show');
-                customEnInput.required = true;
-                customFrInput.required = true;
-                customEnInput.setAttribute('aria-required', 'true');
-                customFrInput.setAttribute('aria-required', 'true');
-            } else {
-                customSection.classList.remove('show');
-                customEnInput.required = false;
-                customFrInput.required = false;
-                customEnInput.removeAttribute('aria-required');
-                customFrInput.removeAttribute('aria-required');
-                
-                if (quillInstances[`en-${entryId}`]) {
-                    quillInstances[`en-${entryId}`].setText('');
-                }
-                if (quillInstances[`fr-${entryId}`]) {
-                    quillInstances[`fr-${entryId}`].setText('');
-                }
-                customEnInput.value = '';
-                customFrInput.value = '';
-            }
-        }
+		function toggleCustomMessage(entryId, value) {
+			const customSection = document.getElementById(`custom-message-${entryId}`);
+			const customEnInput = document.getElementById(`custom-en-${entryId}`);
+			const customFrInput = document.getElementById(`custom-fr-${entryId}`);
+			
+			if (value === 'other') {
+				customSection.classList.add('show');
+				customEnInput.required = true;
+				customFrInput.required = true;
+				customEnInput.setAttribute('aria-required', 'true');
+				customFrInput.setAttribute('aria-required', 'true');
+			} else {
+				customSection.classList.remove('show');
+				customEnInput.required = false;
+				customFrInput.required = false;
+				customEnInput.removeAttribute('aria-required');
+				customFrInput.removeAttribute('aria-required');
+				
+				if (quillInstances[`en-${entryId}`]) {
+					quillInstances[`en-${entryId}`].setText('');
+				}
+				if (quillInstances[`fr-${entryId}`]) {
+					quillInstances[`fr-${entryId}`].setText('');
+				}
+				customEnInput.value = '';
+				customFrInput.value = '';
+			}
+		}
+
+		// Toggle message dropdown visibility based on status
+		function toggleMessageDropdown(entryId) {
+			const statusRadio = document.querySelector(`input[name="status-${entryId}"]:checked`);
+			const messageGroup = document.getElementById(`message-${entryId}`).closest('.form-group');
+			
+			if (statusRadio && statusRadio.value === 'no-issues') {
+				messageGroup.style.display = 'none';
+				document.getElementById(`message-${entryId}`).required = false;
+				document.getElementById(`message-${entryId}`).value = '';
+				toggleCustomMessage(entryId, '');
+			} else {
+				messageGroup.style.display = 'block';
+				document.getElementById(`message-${entryId}`).required = true;
+			}
+		}
         
         // Add a new status entry
         function addStatusEntry() {
@@ -934,50 +958,66 @@
         return isValid;
     }
     
-    function collectFormData() {
-        const entries = [];
-        
-        document.querySelectorAll('.status-entry').forEach(entry => {
-            const entryId = entry.dataset.entryId;
-            const appRadio = document.querySelector(`input[name="application-${entryId}"]:checked`);
-            const statusRadio = document.querySelector(`input[name="status-${entryId}"]:checked`);
-            const app = appRadio ? appRadio.value : null;
-            const status = statusRadio ? statusRadio.value : null;
-            const messageSelect = document.getElementById(`message-${entryId}`);
-            const messageValue = messageSelect.value;
-            
-            if (!app || !status || !messageValue) {
-                return;
-            }
-            
-            let messageEn, messageFr;
-            
-            if (messageValue === 'other') {
-                messageEn = document.getElementById(`custom-en-${entryId}`).value.trim();
-                messageFr = document.getElementById(`custom-fr-${entryId}`).value.trim();
-                
-                if (!messageEn && quillInstances[`en-${entryId}`]) {
-                    messageEn = quillInstances[`en-${entryId}`].root.innerHTML.trim();
-                }
-                if (!messageFr && quillInstances[`fr-${entryId}`]) {
-                    messageFr = quillInstances[`fr-${entryId}`].root.innerHTML.trim();
-                }
-            } else {
-                const selectedOption = messageSelect.options[messageSelect.selectedIndex];
-                messageEn = selectedOption.dataset.en;
-                messageFr = selectedOption.dataset.fr;
-            }
-            
-            entries.push({
-                application: app,
-                status: status,
-                messageEn: messageEn,
-                messageFr: messageFr
-            });
-        });
-        
-        return entries;
-    }
+	function collectFormData() {
+		const entries = [];
+		
+		document.querySelectorAll('.status-entry').forEach(entry => {
+			const entryId = entry.dataset.entryId;
+			const appRadio = document.querySelector(`input[name="application-${entryId}"]:checked`);
+			const statusRadio = document.querySelector(`input[name="status-${entryId}"]:checked`);
+			const app = appRadio ? appRadio.value : null;
+			const status = statusRadio ? statusRadio.value : null;
+			
+			if (!app || !status) {
+				return;
+			}
+			
+			// For "no-issues" status, no message is required
+			if (status === 'no-issues') {
+				entries.push({
+					application: app,
+					status: status,
+					messageEn: '',
+					messageFr: ''
+				});
+				return;
+			}
+			
+			const messageSelect = document.getElementById(`message-${entryId}`);
+			const messageValue = messageSelect.value;
+			
+			if (!messageValue) {
+				return;
+			}
+			
+			let messageEn, messageFr;
+			
+			if (messageValue === 'other') {
+				messageEn = document.getElementById(`custom-en-${entryId}`).value.trim();
+				messageFr = document.getElementById(`custom-fr-${entryId}`).value.trim();
+				
+				if (!messageEn && quillInstances[`en-${entryId}`]) {
+					messageEn = quillInstances[`en-${entryId}`].root.innerHTML.trim();
+				}
+				if (!messageFr && quillInstances[`fr-${entryId}`]) {
+					messageFr = quillInstances[`fr-${entryId}`].root.innerHTML.trim();
+				}
+			} else {
+				const selectedOption = messageSelect.options[messageSelect.selectedIndex];
+				messageEn = selectedOption.dataset.en;
+				messageFr = selectedOption.dataset.fr;
+			}
+			
+			entries.push({
+				application: app,
+				status: status,
+				messageEn: messageEn,
+				messageFr: messageFr
+			});
+		});
+		
+		return entries;
+	}
     
     function generateSHTMFile(entry) {
         const timestamp = new Date().toISOString();
@@ -1025,37 +1065,40 @@
         const appNameFr = appDisplayNames[entry.application].fr;
         const statusInfo = statusConfig[entry.status];
         
-        const shtmlContent = `<!--#if expr="lang=eng" -->
-<div class="col-sm-6">
-	<div class="card mb-3">
-		<div class="card-body d-flex justify-content-between align-items-center">
-			<div>
-				<h3 class="h5 mb-1">${appNameEn}</h3>
-				<p class="mb-0">
-					<span class="sr-only">Status:&#160;</span>${statusInfo.en}
-				</p>
-				<p>${entry.messageEn}</p>
-			</div>
-			<i class="fas ${statusInfo.icon} fa-lg ${statusInfo.color}" aria-label="${statusInfo.ariaLabelEn}" role="img"></i>
-		</div>
-	</div>
-</div>
-<!--#else -->
-<div class="col-sm-6">
-		<div class="card mb-3">
-			<div class="card-body d-flex justify-content-between align-items-center">
-				<div>
-					<h3 class="h5 mb-1">${appNameFr}</h3>
-					<p class="mb-0">
-						<span class="sr-only">État&#160;:&#160;</span>${statusInfo.fr}
-					</p>
-					<p>${entry.messageFr}</p>
+        const messageEnHTML = entry.messageEn ? `<p>${entry.messageEn}</p>` : '';
+		const messageFrHTML = entry.messageFr ? `<p>${entry.messageFr}</p>` : '';
+
+		const shtmlContent = `<!--#if expr="lang=eng" -->
+		<div class="col-sm-6">
+			<div class="card mb-3">
+				<div class="card-body d-flex justify-content-between align-items-center">
+					<div>
+						<h3 class="h5 mb-1">${appNameEn}</h3>
+						<p class="mb-0">
+							<span class="sr-only">Status:&#160;</span>${statusInfo.en}
+						</p>
+						${messageEnHTML}
+					</div>
+					<i class="fas ${statusInfo.icon} fa-lg ${statusInfo.color}" aria-label="${statusInfo.ariaLabelEn}" role="img"></i>
 				</div>
-				<i class="fas ${statusInfo.icon} fa-lg ${statusInfo.color}" aria-label="${statusInfo.ariaLabelFr}" role="img"></i>
 			</div>
 		</div>
-	</div>
-	<!--#endif -->`;
+		<!--#else -->
+		<div class="col-sm-6">
+			<div class="card mb-3">
+				<div class="card-body d-flex justify-content-between align-items-center">
+					<div>
+						<h3 class="h5 mb-1">${appNameFr}</h3>
+						<p class="mb-0">
+							<span class="sr-only">État&#160;:&#160;</span>${statusInfo.fr}
+						</p>
+						${messageFrHTML}
+					</div>
+					<i class="fas ${statusInfo.icon} fa-lg ${statusInfo.color}" aria-label="${statusInfo.ariaLabelFr}" role="img"></i>
+				</div>
+			</div>
+		</div>
+		<!--#endif -->`;
 	const blob = new Blob([shtmlContent], { type: 'text/html' });
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
