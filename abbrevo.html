@@ -27,9 +27,13 @@
             color: var(--button-primary-bg);
         }
         .form-label.required::after {
-            content: " *";
+            content: " (required)";
             color: #dc3545;
-            font-weight: bold;
+            font-size: 0.875rem;
+        }
+        [lang="fr-CA"] .form-label.required::after,
+        [lang^="fr"] .form-label.required::after {
+            content: " (obligatoire)";
         }
     </style>
 </head>
