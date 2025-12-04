@@ -26,6 +26,11 @@
             font-weight: bold;
             color: var(--button-primary-bg);
         }
+        .form-label.required::after {
+            content: " *";
+            color: #dc3545;
+            font-weight: bold;
+        }
     </style>
 </head>
 
@@ -171,7 +176,7 @@
 
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="title-en" class="form-label"
+                            <label for="title-en" class="form-label required"
                                    data-en="English full title"
                                    data-fr="Titre complet anglais">
                                 English full title
@@ -185,7 +190,7 @@
                                    required>
                         </div>
                         <div class="col-md-6">
-                            <label for="title-fr" class="form-label"
+                            <label for="title-fr" class="form-label required"
                                    data-en="French full title"
                                    data-fr="Titre complet français">
                                 French full title
@@ -336,7 +341,7 @@
 
             // Auto-fill missing abbreviations with message
             if (abbrEn && !abbrFr) {
-                abbrFr = "Il n'y a pas d'abréviations ni d'acronymes pour le français.";
+                abbrFr = "Il n'y a pas d'abréviations ou d'acronymes pour le français.";
             } else if (abbrFr && !abbrEn) {
                 abbrEn = "There are no abbreviations or acronyms for English.";
             }
@@ -538,7 +543,7 @@
 
             // Auto-fill missing abbreviations with message
             if (abbrEn && !abbrFr) {
-                abbrFr = "Il n'y a pas d'abréviations ni d'acronymes pour le français.";
+                abbrFr = "Il n'y a pas d'abréviations ou d'acronymes pour le français.";
             } else if (abbrFr && !abbrEn) {
                 abbrEn = "There are no abbreviations or acronyms for English.";
             }
