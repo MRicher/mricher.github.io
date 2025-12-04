@@ -273,7 +273,7 @@
                             <small id="message-help-1" class="form-text text-muted d-block" data-en="Choose a pre-defined message or select 'Other' to write your own." data-fr="Choisissez un message prédéfini ou sélectionnez « Autre » pour écrire le vôtre.">Choose a pre-defined message or select "Other" to write your own.</small>
                         </label>
                         <select class="form-control message-select" id="message-1" name="message-1" required aria-required="true" aria-describedby="message-help-1">
-                            <option value="" data-en="-- Select a message --" data-fr="-- Sélectionnez un message --">-- Select a message --</option>
+                            <option value="" data-en="Select a message" data-fr="Sélectionnez un message">Select a message</option>
                             <option value="other" data-en="Other" data-fr="Autre">Other</option>
                         </select>
                     </div>
@@ -460,9 +460,9 @@
             const app = appRadio ? appRadio.value : null;
             const status = statusRadio ? statusRadio.value : null;
             
-            messageSelect.innerHTML = `
-                <option value="">-- Select a message -- / -- Sélectionnez un message --</option>
-            `;
+			messageSelect.innerHTML = `
+				<option value="" data-en="Select a message" data-fr="Sélectionnez un message">Select a message</option>
+			`;
             
             if (app && status && messageTemplates[app] && messageTemplates[app][status]) {
                 messageTemplates[app][status].forEach(msg => {
@@ -597,13 +597,13 @@
                         <small id="message-help-${entryCounter}" class="form-text text-muted d-block" data-en="Choose a pre-defined message or select 'Other' to write your own." data-fr="Choisissez un message prédéfini ou sélectionnez « Autre » pour écrire le vôtre.">Choose a pre-defined message or select "Other" to write your own.</small>
                     </label>
                     <select class="form-control message-select" id="message-${entryCounter}" name="message-${entryCounter}" required aria-required="true" aria-describedby="message-help-${entryCounter}">
-                        <option value="" data-en="-- Select a message --" data-fr="-- Sélectionnez un message --">-- Select a message --</option>
+                        <option value="" data-en="Select a message" data-fr="Sélectionnez un message">Select a message</option>
                         <option value="other" data-en="Other" data-fr="Autre">Other</option>
                     </select>
                 </div>
                 
                 <div class="custom-message-section" id="custom-message-${entryCounter}" role="region" aria-labelledby="custom-message-heading-${entryCounter}">
-                    <h3 class="h5" id="custom-message-heading-${entryCounter}"data-en="Custom message" data-fr="Message personnalisé">Custom message</h3>
+                    <h3 class="h5" id="custom-message-heading-${entryCounter}" data-en="Custom message" data-fr="Message personnalisé">Custom message</h3>
 					<div class="form-group">
                     <label class="bilingual-label" for="custom-en-${entryCounter}">
                         <span data-en="English message" data-fr="Message en anglais">English message</span>
@@ -834,22 +834,22 @@
         const statusInfo = statusConfig[entry.status];
         
         const shtmlContent = `<!--#if expr="lang=eng" -->
-	<div class="col-sm-6">
-		<div class="card mb-3">
-			<div class="card-body d-flex justify-content-between align-items-center">
-				<div>
-					<h3 class="h5 mb-1">${appNameEn}</h3>
-					<p class="mb-0">
-						<span class="sr-only">Status:&#160;</span>${statusInfo.en}
-					</p>
-					<p>${entry.messageEn}</p>
-				</div>
-				<i class="fas ${statusInfo.icon} fa-lg ${statusInfo.color}" aria-label="${statusInfo.ariaLabelEn}" role="img"></i>
+<div class="col-sm-6">
+	<div class="card mb-3">
+		<div class="card-body d-flex justify-content-between align-items-center">
+			<div>
+				<h3 class="h5 mb-1">${appNameEn}</h3>
+				<p class="mb-0">
+					<span class="sr-only">Status:&#160;</span>${statusInfo.en}
+				</p>
+				<p>${entry.messageEn}</p>
 			</div>
+			<i class="fas ${statusInfo.icon} fa-lg ${statusInfo.color}" aria-label="${statusInfo.ariaLabelEn}" role="img"></i>
 		</div>
 	</div>
-	<!--#else -->
-	<div class="col-sm-6">
+</div>
+<!--#else -->
+<div class="col-sm-6">
 		<div class="card mb-3">
 			<div class="card-body d-flex justify-content-between align-items-center">
 				<div>
