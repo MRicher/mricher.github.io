@@ -442,61 +442,60 @@
         Block.tagName = 'p';
         Quill.register(Block, true);
 
-        const Bold = Quill.import('formats/bold');
-        Bold.tagName = 'strong';
-        Quill.register(Bold, true);
-
-        const Italic = Quill.import('formats/italic');
-        Italic.tagName = 'em';
-        Quill.register(Italic, true);
+		const Bold = Quill.import('formats/bold');
+		Bold.tagName = 'strong';
+		Quill.register(Bold, true);
 
         // Initialize Quill editor for a specific entry
-        function initializeQuillEditor(entryId) {
-            const quillEnEditor = new Quill(`#custom-en-editor-${entryId}`, {
-                theme: 'snow',
-                modules: {
-                    toolbar: [
-                        ['bold', 'italic'],
-                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                        ['link'],
-                        ['clean']
-                    ]
-                },
-                placeholder: 'Enter your custom message in English...'
-            });
+		function initializeQuillEditor(entryId) {
+			const quillEnEditor = new Quill(`#custom-en-editor-${entryId}`, {
+				theme: 'snow',
+				modules: {
+					toolbar: [
+						['bold'],
+						[{ 'list': 'ordered'}, { 'list': 'bullet' }],
+						['link'],
+						['clean']
+					]
+				},
+				placeholder: 'Enter your custom message in English...'
+			});
 
-            const quillFrEditor = new Quill(`#custom-fr-editor-${entryId}`, {
-                theme: 'snow',
-                modules: {
-                    toolbar: [
-                        ['bold', 'italic'],
-                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                        ['link'],
-                        ['clean']
-                    ]
-                },
-                placeholder: 'Entrez votre message personnalisé en français...'
-            });
-            
-            quillInstances[`en-${entryId}`] = quillEnEditor;
-            quillInstances[`fr-${entryId}`] = quillFrEditor;
-            
-            quillEnEditor.on('text-change', function() {
-                document.getElementById(`custom-en-${entryId}`).value = quillEnEditor.root.innerHTML;
-            });
-            
-            quillFrEditor.on('text-change', function() {
-                document.getElementById(`custom-fr-${entryId}`).value = quillFrEditor.root.innerHTML;
-            });
-        }
+			const quillFrEditor = new Quill(`#custom-fr-editor-${entryId}`, {
+				theme: 'snow',
+				modules: {
+					toolbar: [
+						['bold'],
+						[{ 'list': 'ordered'}, { 'list': 'bullet' }],
+						['link'],
+						['clean']
+					]
+				},
+				placeholder: 'Entrez votre message personnalisé en français...'
+			});
+			
+			quillInstances[`en-${entryId}`] = quillEnEditor;
+			quillInstances[`fr-${entryId}`] = quillFrEditor;
+			
+			quillEnEditor.on('text-change', function() {
+				document.getElementById(`custom-en-${entryId}`).value = quillEnEditor.root.innerHTML;
+			});
+			
+			quillFrEditor.on('text-change', function() {
+				document.getElementById(`custom-fr-${entryId}`).value = quillFrEditor.root.innerHTML;
+			});
+		}
 
 		// Initialize Quill editors for alert messages
 		function initializeAlertQuillEditors() {
+			// Register custom alert link format
+			Quill.register(AlertLink, true);
+			
 			const alertEnEditor = new Quill('#alert-en-editor', {
 				theme: 'snow',
 				modules: {
 					toolbar: [
-						['bold', 'italic'],
+						['bold'],
 						[{ 'list': 'ordered'}, { 'list': 'bullet' }],
 						['link'],
 						['clean']
@@ -509,7 +508,7 @@
 				theme: 'snow',
 				modules: {
 					toolbar: [
-						['bold', 'italic'],
+						['bold'],
 						[{ 'list': 'ordered'}, { 'list': 'bullet' }],
 						['link'],
 						['clean']
@@ -517,6 +516,14 @@
 				},
 				placeholder: 'Entrez votre message d\'alerte en français...'
 			});
+			
+			// Set default content with headers
+			alertEnEditor.root.innerHTML = '<h2>Note</h2><p><br></p>';
+			alertFrEditor.root.innerHTML = '<h2>Remarque</h2><p><br></p>';
+			
+			// Initialize hidden input values
+			document.getElementById('alert-en').value = alertEnEditor.root.innerHTML;
+			document.getElementById('alert-fr').value = alertFrEditor.root.innerHTML;
 			
 			quillInstances['alert-en'] = alertEnEditor;
 			quillInstances['alert-fr'] = alertFrEditor;
