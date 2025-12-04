@@ -430,21 +430,31 @@
         // Store Quill instances
         const quillInstances = {};
 
-        document.addEventListener('DOMContentLoaded', function() {
+		const Block = Quill.import('blots/block');
+		Block.tagName = 'p';
+		Quill.register(Block, true);
+
+		const Bold = Quill.import('formats/bold');
+		Bold.tagName = 'strong';
+		Quill.register(Bold, true);
+
+		// Custom link format for alert messages
+		const Link = Quill.import('formats/link');
+		class AlertLink extends Link {
+			static create(value) {
+				let node = super.create(value);
+				node.setAttribute('class', 'alert-link');
+				return node;
+			}
+		}
+
+		document.addEventListener('DOMContentLoaded', function() {
 			setupEventListeners();
 			updateMessageOptions(1);
 			initializeQuillEditor(1);
 			initializeAlertQuillEditors();
 			setupAlertEventListeners();
 		});
-
-        const Block = Quill.import('blots/block');
-        Block.tagName = 'p';
-        Quill.register(Block, true);
-
-		const Bold = Quill.import('formats/bold');
-		Bold.tagName = 'strong';
-		Quill.register(Bold, true);
 
         // Initialize Quill editor for a specific entry
 		function initializeQuillEditor(entryId) {
