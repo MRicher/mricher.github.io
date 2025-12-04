@@ -26,15 +26,6 @@
             font-weight: bold;
             color: var(--button-primary-bg);
         }
-        .btn-delete {
-            background-color: #dc3545;
-            border-color: #dc3545;
-            color: white;
-        }
-        .btn-delete:hover {
-            background-color: #c82333;
-            border-color: #bd2130;
-        }
     </style>
 </head>
 
@@ -161,8 +152,7 @@
                                    id="abbr-en"
                                    data-en="Enter English abbreviation"
                                    data-fr="Entrez l'abréviation anglaise"
-                                   placeholder="Enter English abbreviation"
-                                   required>
+                                   placeholder="Enter English abbreviation">
                         </div>
                         <div class="col-md-6">
                             <label for="abbr-fr" class="form-label"
@@ -175,8 +165,7 @@
                                    id="abbr-fr"
                                    data-en="Enter French abbreviation"
                                    data-fr="Entrez l'abréviation française"
-                                   placeholder="Enter French abbreviation"
-                                   required>
+                                   placeholder="Enter French abbreviation">
                         </div>
                     </div>
 
@@ -185,7 +174,7 @@
                             <label for="title-en" class="form-label"
                                    data-en="English full title"
                                    data-fr="Titre complet anglais">
-                                English full Title
+                                English full title
                             </label>
                             <input type="text" 
                                    class="form-control" 
@@ -199,7 +188,7 @@
                             <label for="title-fr" class="form-label"
                                    data-en="French full title"
                                    data-fr="Titre complet français">
-                                French Full Title
+                                French full title
                             </label>
                             <input type="text" 
                                    class="form-control" 
@@ -328,21 +317,28 @@
 
         // Add new entry
         function addEntry() {
-            const abbrEn = document.getElementById('abbr-en').value.trim();
-            const abbrFr = document.getElementById('abbr-fr').value.trim();
+            let abbrEn = document.getElementById('abbr-en').value.trim();
+            let abbrFr = document.getElementById('abbr-fr').value.trim();
             const titleEn = document.getElementById('title-en').value.trim();
             const titleFr = document.getElementById('title-fr').value.trim();
             const notesEn = document.getElementById('notes-en').value.trim();
             const notesFr = document.getElementById('notes-fr').value.trim();
 
-            // Validation
-            if (!abbrEn || !abbrFr || !titleEn || !titleFr) {
+            // Validation - at least one abbreviation and both titles required
+            if ((!abbrEn && !abbrFr) || !titleEn || !titleFr) {
                 const currentLang = document.documentElement.lang?.split('-')[0] || 'en';
                 const message = currentLang === 'fr' 
-                    ? 'Veuillez remplir tous les champs obligatoires.' 
-                    : 'Please fill in all required fields.';
+                    ? 'Veuillez remplir au moins une abréviation et les deux titres complets.' 
+                    : 'Please fill in at least one abbreviation and both full titles.';
                 alert(message);
                 return;
+            }
+
+            // Auto-fill missing abbreviations with message
+            if (abbrEn && !abbrFr) {
+                abbrFr = "Il n'y a pas d'abréviations ni d'acronymes pour le français.";
+            } else if (abbrFr && !abbrEn) {
+                abbrEn = "There are no abbreviations or acronyms for English.";
             }
 
             // Create entry object
@@ -460,7 +456,7 @@
                                         ${labels.edit}
                                     </button>
                                     <button type="button" 
-                                            class="btn btn-sm btn-delete" 
+                                            class="btn btn-sm btn-danger" 
                                             onclick="deleteEntry(${entry.id})"
                                             aria-label="${labels.delete} ${labels.num}${index + 1}">
                                         ${labels.delete}
@@ -523,21 +519,28 @@
 
         // Update entry
         function updateEntry(id) {
-            const abbrEn = document.getElementById('abbr-en').value.trim();
-            const abbrFr = document.getElementById('abbr-fr').value.trim();
+            let abbrEn = document.getElementById('abbr-en').value.trim();
+            let abbrFr = document.getElementById('abbr-fr').value.trim();
             const titleEn = document.getElementById('title-en').value.trim();
             const titleFr = document.getElementById('title-fr').value.trim();
             const notesEn = document.getElementById('notes-en').value.trim();
             const notesFr = document.getElementById('notes-fr').value.trim();
 
-            // Validation
-            if (!abbrEn || !abbrFr || !titleEn || !titleFr) {
+            // Validation - at least one abbreviation and both titles required
+            if ((!abbrEn && !abbrFr) || !titleEn || !titleFr) {
                 const currentLang = document.documentElement.lang?.split('-')[0] || 'en';
                 const message = currentLang === 'fr' 
-                    ? 'Veuillez remplir tous les champs obligatoires.' 
-                    : 'Please fill in all required fields.';
+                    ? 'Veuillez remplir au moins une abréviation et les deux titres complets.' 
+                    : 'Please fill in at least one abbreviation and both full titles.';
                 alert(message);
                 return;
+            }
+
+            // Auto-fill missing abbreviations with message
+            if (abbrEn && !abbrFr) {
+                abbrFr = "Il n'y a pas d'abréviations ni d'acronymes pour le français.";
+            } else if (abbrFr && !abbrEn) {
+                abbrEn = "There are no abbreviations or acronyms for English.";
             }
 
             // Find and update entry
