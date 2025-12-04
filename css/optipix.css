@@ -1,318 +1,206 @@
-/**
- * =================================================================
- * BISOLUX.CSS - Image Processing Tool Specific Styles
- * Styles unique to the Bisolux image compression/cropping page
- * =================================================================
- */
-
-/* =================================================================
-   FILE UPLOAD INTERFACE
-   ================================================================= */
-
-/**
- * Main upload area with drag and drop functionality
- */
-.upload-area {
-    border: 2px dashed var(--border-color);
-    border-radius: 8px;
-    padding: 40px;
-    text-align: center;
-    transition: border-color 0.3s ease;
-    background-color: var(--hero-bg);
-    cursor: pointer;
+:root {
+    --shadow-soft: rgba(0,0,0,0.05);
+    --shadow-medium: rgba(0,0,0,0.1);
+    --shadow-strong: rgba(0,0,0,0.15);
+    --shadow-extra: rgba(0,0,0,0.3);
+    --border-dark: #000;
 }
 
-/**
- * Upload area hover state
- */
+/* ===== FILE UPLOAD ===== */
+.upload-area {
+    background-color: var(--hero-bg);
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 40px;
+    text-align: center;
+    transition: border-color .3s ease;
+}
+.upload-area.dragover {
+    background-color: var(--alert-info-bg);
+    border-color: var(--button-primary-bg);
+}
 .upload-area:hover {
     border-color: var(--button-primary-bg);
 }
 
-/**
- * Upload area drag over state
- */
-.upload-area.dragover {
-    border-color: var(--button-primary-bg);
-    background-color: var(--alert-info-bg);
-}
-
-/* =================================================================
-   IMAGE CROPPING INTERFACE
-   ================================================================= */
-
-/**
- * Container for the image cropper component
- */
+/* ===== IMAGE CROPPER ===== */
 .cropper-container {
-    max-height: 500px;
-    margin: 20px 0;
-    overflow: hidden;
     border-radius: 4px;
+    margin: 20px 0;
+    max-height: 500px;
+    overflow: hidden;
 }
-
-/**
- * Preset button container layout
- */
 .preset-buttons {
+    align-items: center;
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    margin: 20px 0;
     justify-content: flex-start;
-    align-items: center;
+    margin: 20px 0;
 }
-
-/**
- * Individual preset button styling
- */
 .preset-buttons .btn {
-    font-size: 0.875rem;
-    padding: 0.5rem 1rem;
+    font-size: .875rem;
+    padding: .5rem 1rem;
+    transition: all .2s ease-in-out;
     white-space: nowrap;
-    transition: all 0.2s ease-in-out;
 }
-
-/**
- * Active preset button state
- */
 .preset-buttons .btn.active {
     background-color: var(--button-primary-bg);
     border-color: var(--button-primary-bg);
+    box-shadow: 0 2px 4px var(--shadow-medium);
     color: var(--button-primary-color);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-
-/**
- * Preset button hover state
- */
 .preset-buttons .btn:hover:not(.active) {
+    box-shadow: 0 2px 8px var(--shadow-strong);
     transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-/* =================================================================
-   IMAGE PREVIEW SECTION
-   ================================================================= */
-
-/**
- * Container for image preview and information
- */
-.preview-container {
-    text-align: center;
-    margin-top: 20px;
-    padding: 20px;
-    background-color: var(--card-bg);
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-/**
- * Preview image styling
- */
-.preview-image {
-    max-width: 100%;
-    max-height: 300px;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease;
-}
-
-/**
- * Compression information display
- */
+/* ===== PREVIEW ===== */
 .compression-info {
-    margin-top: 10px;
-    font-size: 0.875rem;
     color: var(--body-color);
-    opacity: 0.8;
+    font-size: .875rem;
     line-height: 1.5;
+    margin-top: 10px;
+    opacity: .8;
 }
-
-/**
- * Individual compression info paragraphs
- */
 .compression-info p {
-    margin-bottom: 0.5rem;
+    margin-bottom: .5rem;
 }
-
 .compression-info p:last-child {
     margin-bottom: 0;
 }
+.preview-container {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px var(--shadow-soft);
+    margin-top: 20px;
+    padding: 20px;
+    text-align: center;
+}
+.preview-image {
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    box-shadow: 0 4px 8px var(--shadow-medium);
+    max-height: 300px;
+    max-width: 100%;
+    transition: transform .2s ease;
+}
 
-/* =================================================================
-   DOWNLOAD ACTIONS
-   ================================================================= */
-
-/**
- * Download button container
- */
+/* ===== DOWNLOAD ACTIONS ===== */
 .download-buttons {
     display: flex;
+    flex-wrap: wrap;
     gap: 10px;
     justify-content: center;
     margin-top: 20px;
-    flex-wrap: wrap;
 }
 
-/* =================================================================
-   RESPONSIVE DESIGN
-   ================================================================= */
-
-/**
- * Tablet and mobile adjustments
- */
-@media (max-width: 991px) {
-    .preset-buttons {
-        justify-content: center;
-    }
-    
-    .upload-area {
-        padding: 30px 20px;
-    }
-    
-    .download-buttons {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .download-buttons .btn {
-        width: 100%;
-        max-width: 200px;
-    }
-}
-
-/**
- * Mobile phone specific adjustments
- */
-@media (max-width: 576px) {
-    .cropper-container {
-        max-height: 300px;
-        margin: 15px 0;
-    }
-    
-    .preset-buttons {
-        gap: 8px;
-        margin: 15px 0;
-    }
-    
-    .preset-buttons .btn {
-        font-size: 0.8rem;
-        padding: 0.4rem 0.8rem;
-    }
-    
-    .preview-container {
-        margin-top: 15px;
-        padding: 15px;
-    }
-    
-    .preview-image {
-        max-height: 200px;
-    }
-    
-    .upload-area {
-        padding: 20px 15px;
-        font-size: 0.9rem;
-    }
-}
-
-/* =================================================================
-   ACCESSIBILITY ENHANCEMENTS
-   ================================================================= */
-
-/**
- * Focus styles for keyboard navigation
- */
-.upload-area:focus-within,
+/* ===== ACCESSIBILITY ===== */
+.download-buttons .btn:focus,
 .preset-buttons .btn:focus,
-.download-buttons .btn:focus {
+.upload-area:focus-within {
     outline: 2px solid var(--button-primary-bg);
     outline-offset: 2px;
 }
 
-/**
- * Reduced motion preferences
- */
+/* ===== REDUCED MOTION ===== */
 @media (prefers-reduced-motion: reduce) {
-    .upload-area,
+    .download-buttons .btn,
     .preset-buttons .btn,
     .preview-image,
-    .download-buttons .btn {
+    .upload-area {
         transition: none;
     }
-    
-    .preset-buttons .btn:hover:not(.active),
     .download-buttons .btn:hover,
+    .preset-buttons .btn:hover:not(.active),
     .preview-image:hover {
         transform: none;
     }
 }
 
-/**
- * High contrast mode support
- */
+/* ===== HIGH CONTRAST ===== */
 @media (prefers-contrast: high) {
-    .upload-area {
-        border-width: 3px;
-    }
-    
     .preset-buttons .btn.active {
         border-width: 2px;
     }
-    
     .preview-image {
         border-width: 2px;
     }
+    .upload-area {
+        border-width: 3px;
+    }
 }
 
-/* =================================================================
-   DARK THEME SPECIFIC ADJUSTMENTS
-   ================================================================= */
-
-/**
- * Dark theme upload area adjustments
- */
-[data-theme="dark"] .upload-area.dragover {
-    background-color: rgba(var(--alert-info-rgb), 0.1);
-}
-
-/**
- * Dark theme preview container
- */
-[data-theme="dark"] .preview-container {
-    background-color: rgba(255, 255, 255, 0.02);
-}
-
-/**
- * Dark theme button shadows
- */
+/* ===== DARK MODE ===== */
 [data-theme="dark"] .preset-buttons .btn:hover:not(.active),
 [data-theme="dark"] .download-buttons .btn:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 12px var(--shadow-extra);
+}
+[data-theme="dark"] .preview-container {
+    background-color: rgba(255,255,255,.02);
+}
+[data-theme="dark"] .upload-area.dragover {
+    background-color: rgba(var(--alert-info-rgb), .1);
 }
 
-/* =================================================================
-   PRINT STYLES
-   ================================================================= */
-
-/**
- * Print-specific styles
- */
+/* ===== PRINT ===== */
 @media print {
-    .upload-area,
+    .download-buttons,
     .preset-buttons,
-    .download-buttons {
+    .upload-area {
         display: none;
     }
-    
     .preview-container {
+        border: 1px solid var(--border-dark);
         box-shadow: none;
-        border: 1px solid #000;
     }
-    
     .preview-image {
-        max-height: none;
         box-shadow: none;
+        max-height: none;
+    }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 991px) {
+    .download-buttons {
+        align-items: center;
+        flex-direction: column;
+    }
+    .download-buttons .btn {
+        max-width: 200px;
+        width: 100%;
+    }
+    .preset-buttons {
+        justify-content: center;
+    }
+    .upload-area {
+        padding: 30px 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    .cropper-container {
+        margin: 15px 0;
+        max-height: 300px;
+    }
+    .preset-buttons {
+        gap: 8px;
+        margin: 15px 0;
+    }
+    .preset-buttons .btn {
+        font-size: .8rem;
+        padding: .4rem .8rem;
+    }
+    .preview-container {
+        margin-top: 15px;
+        padding: 15px;
+    }
+    .preview-image {
+        max-height: 200px;
+    }
+    .upload-area {
+        font-size: .9rem;
+        padding: 20px 15px;
     }
 }

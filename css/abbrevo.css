@@ -1,0 +1,31 @@
+:root {
+    --required-text: #dc3545;
+}
+
+.entry-card {
+    border-left: 4px solid var(--button-primary-bg);
+    margin-bottom: 1rem;
+}
+
+.entry-card .card-header {
+    align-items: center;
+    background-color: var(--card-bg);
+    border-bottom: 1px solid var(--card-border);
+    display: flex;
+    justify-content: space-between;
+}
+
+.entry-number {
+    color: var(--button-primary-bg);
+    font-weight: bold;
+}
+
+.form-label.required::after {
+    color: var(--required-text);
+    content: " (required)";
+}
+
+[lang="fr-CA"] .form-label.required::after,
+[lang^="fr"] .form-label.required::after {
+    content: " (obligatoire)";
+}
