@@ -1,980 +1,897 @@
 <!DOCTYPE html>
 <html lang="en-CA">
 <head>
-	<meta charset="UTF-8">
-	<meta content="width=device-width, initial-scale=1.0" name="viewport">
-	<title data-en="Monitora" data-fr="Monitora">Monitora</title>
-	<meta content="" data-en="" data-fr="" name="description">
-	<link href="css/bootstrap.min.css" rel="stylesheet">
-	<link href="css/creavia.css" rel="stylesheet">
-    <link href="css/quill.snow.css" rel="stylesheet">
-	<style>
-		.custom-message-section {
-		  display: none;
-		  margin-top: 1rem;
-		  padding: 1rem;
-		  background-color: var(--hero-bg);
-		  border: 1px solid var(--border-color);
-		  border-radius: 0.375rem;
-		  transition: all 0.3s ease;
-		}
-		
-		.custom-message-section.show {
-		  display: block;
-		}
-.ql-container {
-	background-color: var(--card-bg);
-	color: var(--card-text);
-	border-color: var(--border-color) !important;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-en="Monitora" data-fr="Monitora">Monitora</title>
+    <meta name="description"
+          content="This application edits and generates the HTML for the system health page on the Infoweb."
+          data-en="This application edits and generates the HTML for the system health page on the Infoweb."
+          data-fr="Cette application modifie et génère le code HTML pour la page de l'état des systèmes sur l'Infoweb.">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/creavia.css">
+    <link rel="stylesheet" href="css/quill.snow.css">
+    <style>
+        .custom-message-section {
+            display: none;
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: var(--hero-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            transition: all 0.3s ease;
+        }
+        
+        .custom-message-section.show {
+            display: block;
+        }
 
-.ql-editor {
-	color: var(--card-text);
-	min-height: 150px;
-}
+        .ql-container {
+            background-color: var(--card-bg);
+            color: var(--card-text);
+            border-color: var(--border-color) !important;
+        }
 
-.ql-editor.ql-blank::before {
-	color: var(--card-text);
-	opacity: 0.6;
-}
+        .ql-editor {
+            color: var(--card-text);
+            min-height: 150px;
+        }
 
-.ql-toolbar {
-	background-color: var(--card-bg);
-	border-color: var(--border-color) !important;
-}
-		fieldset {
-	border: none;
-	padding: 0;
-	margin: 0;
-}
+        .ql-editor.ql-blank::before {
+            color: var(--card-text);
+            opacity: 0.6;
+        }
 
-legend.bilingual-label {
-	font-size: 1rem;
-	font-weight: 500;
-	margin-bottom: 0.5rem;
-	padding: 0;
-}
+        .ql-toolbar {
+            background-color: var(--card-bg);
+            border-color: var(--border-color) !important;
+        }
 
-.form-check {
-	margin-bottom: 0.5rem;
-}
+        fieldset {
+            border: none;
+            padding: 0;
+            margin: 0;
+        }
 
-.form-check-input {
-	margin-top: 0.25rem;
-}
+        legend.bilingual-label {
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            padding: 0;
+        }
 
-.form-check-label {
-	margin-left: 0.25rem;
-	cursor: pointer;
-}.status-entry {
-	margin-bottom: 2rem;
-	padding-bottom: 2rem;
-	border-bottom: 2px solid var(--border-color);
-}
+        .form-check {
+            margin-bottom: 0.5rem;
+        }
 
-.status-entry:last-child {
-	border-bottom: none;
-}
+        .form-check-input {
+            margin-top: 0.25rem;
+        }
 
-.form-group {
-	margin-bottom: 1.5rem;
-}
+        .form-check-label {
+            margin-left: 0.25rem;
+            cursor: pointer;
+        }
 
-fieldset {
-	border: none;
-	padding: 0;
-	margin: 0;
-	margin-bottom: 1.5rem;
-}
+        .status-entry {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid var(--border-color);
+        }
 
-legend.bilingual-label {
-	font-size: 1rem;
-	font-weight: 500;
-	margin-bottom: 0.75rem;
-	padding: 0;
-}
+        .status-entry:last-child {
+            border-bottom: none;
+        }
 
-.form-check {
-	margin-bottom: 0.5rem;
-}
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
 
-.form-check-input {
-	margin-top: 0.25rem;
-}
+        /* Action Buttons Spacing */
+        .action-buttons {
+            margin-top: 2rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
 
-.form-check-label {
-	margin-left: 0.25rem;
-	cursor: pointer;
-}
-
-/* Action Buttons Spacing */
-.action-buttons {
-	margin-top: 2rem;
-	display: flex;
-	gap: 1rem;
-	flex-wrap: wrap;
-}
-
-/* Custom Message Section Spacing */
-.custom-message-section {
-	display: none;
-	margin-top: 1.5rem;
-	padding: 1.5rem;
-	background-color: var(--hero-bg);
-	border: 1px solid var(--border-color);
-	border-radius: 0.375rem;
-	transition: all 0.3s ease;
-}
-
-.custom-message-section.show {
-	display: block;
-}
-
-.custom-message-section h3 {
-	margin-top: 0;
-	margin-bottom: 1rem;
-}
-
-/* Remove Entry Button Spacing */
-.remove-entry-btn {
-	margin-top: 1rem;
-}
-	</style>
+        /* Remove Entry Button Spacing */
+        .remove-entry-btn {
+            margin-top: 1rem;
+        }
+    </style>
 </head>
+
 <body>
-	<a class="skip-link" data-en="Skip to main content" data-fr="Passer au contenu principal" href="#main-content">Skip to main content</a>
-	<header>
-		<nav aria-label="Main navigation" class="navbar navbar-expand-lg">
-			<div class="container">
-				<div class="navbar-brand d-flex align-items-center">
-					<img alt="" class="me-2" src="img/tree.svg" style="height: 50px; width: auto;"> <span data-en="Monitora" data-fr="Monitora">Monitora</span>
-				</div><button aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation menu" class="navbar-toggler" data-bs-target="#navbarNav" data-bs-toggle="collapse" type="button"><span class="navbar-toggler-icon"></span> <span class="sr-only" data-en="Toggle navigation menu" data-fr="Basculer le menu de navigation">Toggle navigation menu</span></button>
-				<div class="collapse navbar-collapse" id="navbarNav">
-					<ul class="navbar-nav me-auto mb-2 mb-lg-0" role="menubar">
-						<li class="nav-item" role="none">
-							<a class="nav-link active" data-en="Home" data-fr="Accueil" href="index.html" role="menuitem">Home</a>
-						</li>
-					</ul>
-					<div aria-label="Settings" class="language-switcher" role="group">
-						<button aria-label="Toggle dark/light theme" class="theme-toggle" data-en-dark="Switch to Light mode" data-en-light="Switch to Dark mode" data-fr-dark="Passer au mode clair" data-fr-light="Passer au mode sombre" id="theme-toggle" type="button"><span data-en="Dark mode" data-fr="Mode sombre" id="theme-text">Dark mode</span></button> <button aria-label="Passer au français" aria-pressed="false" class="btn btn-outline-primary btn-sm" data-lang="fr-CA" id="lang-fr-btn" style="display: none;" type="button"><span data-en="Français" data-fr="Français">Français</span></button> <button aria-label="Switch to English" aria-pressed="false" class="btn btn-outline-primary btn-sm" data-lang="en-CA" id="lang-en-btn" type="button"><span data-en="English" data-fr="English">English</span></button>
-					</div>
-				</div>
-			</div>
-		</nav>
-	</header>
-	
-	<main class="container" id="main-content">
-		<button aria-label="Return to top of page" class="back-to-top" data-en="Return to top of page" data-fr="Retourner en haut de la page" id="backToTop" title="Return to top" type="button"></button>
-		<section aria-labelledby="main-heading">
-			<h1 data-en="Application status update" data-fr="Mise à jour du statut des applications">Application status update</h1>			
-			<p class="lead" data-en="Update operational status messages for applications and export to bilingual SHTM files." data-fr="Mettez à jour les messages d'état opérationnel des applications et exportez vers des fichiers SHTM bilingues.">Update operational status messages for applications and export to bilingual SHTM files.</p>
-		</section>
-		
-		<!-- Main Form -->
-		<form id="statusForm" novalidate>
-			<div id="statusEntriesContainer">
-				<!-- Status Entry 1 (Template) -->
-				<div class="status-entry" data-entry-id="1">
-					<h2 class="h4">
-						<span data-en="Status entry" data-fr="Entrée de statut">Status entry</span> #<span class="entry-number">1</span>
-					</h2>
-					
-<!-- Application Selection -->
-<div class="form-group">
-	<fieldset>
-		<legend class="bilingual-label">
-			<span data-en="Application" data-fr="Application">Application</span>
-			<span class="text-danger" aria-label="required">*</span>
-			<small id="application-help-1" class="form-text text-muted d-block" data-en="Choose the application to update." data-fr="Choisissez l'application à mettre à jour.">Choose the application to update.</small>
-		</legend>
-		<div class="form-check">
-			<input class="form-check-input application-radio" type="radio" name="application-1" id="application-outlook-1" value="outlook" required aria-describedby="application-help-1">
-			<label class="form-check-label" for="application-outlook-1">
-				Microsoft Outlook
-			</label>
-		</div>
-		<div class="form-check">
-			<input class="form-check-input application-radio" type="radio" name="application-1" id="application-m365-1" value="m365" required aria-describedby="application-help-1">
-			<label class="form-check-label" for="application-m365-1">
-				Microsoft 365 (M365)
-			</label>
-		</div>
-	</fieldset>
-</div>
+    <a class="skip-link"
+       href="#main-content"
+       data-en="Skip to main content"
+       data-fr="Passer au contenu principal">
+        Skip to main content
+    </a>
 
-<!-- Current Status -->
-<div class="form-group">
-	<fieldset>
-		<legend class="bilingual-label">
-			<span data-en="Current status" data-fr="Statut actuel">Current status</span>
-			<span class="text-danger" aria-label="required">*</span>
-			<small id="status-help-1" class="form-text text-muted d-block" data-en="Select the current operational status." data-fr="Sélectionnez le statut opérationnel actuel.">Select the current operational status.</small>
-		</legend>
-		<div class="form-check">
-			<input class="form-check-input status-radio" type="radio" name="status-1" id="status-no-issues-1" value="no-issues" required aria-describedby="status-help-1">
-			<label class="form-check-label" for="status-no-issues-1">
-				<span data-en="No reported issues" data-fr="Aucun problème signalé">No reported issues</span>
-			</label>
-		</div>
-		<div class="form-check">
-			<input class="form-check-input status-radio" type="radio" name="status-1" id="status-incident-1" value="incident" required aria-describedby="status-help-1">
-			<label class="form-check-label" for="status-incident-1">
-				<span data-en="Incident" data-fr="Incident">Incident</span>
-			</label>
-		</div>
-		<div class="form-check">
-			<input class="form-check-input status-radio" type="radio" name="status-1" id="status-outage-1" value="outage" required aria-describedby="status-help-1">
-			<label class="form-check-label" for="status-outage-1">
-				<span data-en="Outage" data-fr="Panne">Outage</span>
-			</label>
-		</div>
-	</fieldset>
-</div>
-					
-					<!-- Pre-determined Messages -->
+    <header>
+        <nav class="navbar navbar-expand-lg" aria-label="Main navigation">
+            <div class="container">
+                <div class="navbar-brand d-flex align-items-center">
+                    <img src="img/tree.svg"
+                         alt=""
+                         class="me-2"
+                         style="height: 50px; width: auto;">
+                    <span data-en="Monitora" data-fr="Monitora">Monitora</span>
+                </div>
+
+                <button class="navbar-toggler"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#navbarNav"
+                        aria-controls="navbarNav"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation menu">
+                    <span class="navbar-toggler-icon"></span>
+                    <span class="sr-only"
+                          data-en="Toggle navigation menu"
+                          data-fr="Basculer le menu de navigation">
+                        Toggle navigation menu
+                    </span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0" role="menubar">
+                        <li class="nav-item" role="none">
+                            <a class="nav-link"
+                               href="index.html"
+                               role="menuitem"
+                               data-en="Home"
+                               data-fr="Accueil">
+                                Home
+                            </a>
+                        </li>
+                    </ul>
+
+                    <div class="language-switcher" role="group" aria-label="Settings">
+                        <button id="theme-toggle"
+                                type="button"
+                                class="theme-toggle"
+                                aria-label="Toggle dark/light theme"
+                                data-en-dark="Switch to light mode"
+                                data-en-light="Switch to dark mode"
+                                data-fr-dark="Passer au mode clair"
+                                data-fr-light="Passer au mode sombre">
+                            <span id="theme-text"
+                                  data-en="Dark mode"
+                                  data-fr="Mode sombre">
+                                Dark mode
+                            </span>
+                        </button>
+
+                        <button id="lang-fr-btn"
+                                type="button"
+                                class="btn btn-outline-primary btn-sm"
+                                data-lang="fr-CA"
+                                aria-label="Passer au français"
+                                aria-pressed="false"
+                                style="display: none;">
+                            <span data-en="Français" data-fr="Français">Français</span>
+                        </button>
+
+                        <button id="lang-en-btn"
+                                type="button"
+                                class="btn btn-outline-primary btn-sm"
+                                data-lang="en-CA"
+                                aria-label="Switch to English"
+                                aria-pressed="false">
+                            <span data-en="English" data-fr="English">English</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container" id="main-content">
+        <section aria-labelledby="main-heading">
+            <h1 id="main-heading"
+                data-en="Application status update"
+                data-fr="Mise à jour du statut des applications">
+                Application status update
+            </h1>
+            
+            <p class="lead" 
+               data-en="Update operational status messages for applications and export to bilingual SHTM files." 
+               data-fr="Mettez à jour les messages d'état opérationnel des applications et exportez vers des fichiers SHTM bilingues.">
+                Update operational status messages for applications and export to bilingual SHTM files.
+            </p>
+        </section>
+
+        <!-- Main Form -->
+        <form id="statusForm" novalidate>
+            <div id="statusEntriesContainer">
+                <!-- Status Entry 1 (Template) -->
+                <div class="status-entry" data-entry-id="1">
+                    <h2 class="h4">
+                        <span data-en="Status entry" data-fr="Entrée de statut">Status entry</span> #<span class="entry-number">1</span>
+                    </h2>
+                    
+                    <!-- Application Selection -->
+                    <div class="form-group">
+                        <fieldset>
+                            <legend class="bilingual-label">
+                                <span data-en="Application" data-fr="Application">Application</span>
+                                <span class="text-danger" aria-label="required">*</span>
+                                <small id="application-help-1" class="form-text text-muted d-block" data-en="Choose the application to update." data-fr="Choisissez l'application à mettre à jour.">Choose the application to update.</small>
+                            </legend>
+                            <div class="form-check">
+                                <input class="form-check-input application-radio" type="radio" name="application-1" id="application-outlook-1" value="outlook" required aria-describedby="application-help-1">
+                                <label class="form-check-label" for="application-outlook-1">
+                                    Microsoft Outlook
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input application-radio" type="radio" name="application-1" id="application-m365-1" value="m365" required aria-describedby="application-help-1">
+                                <label class="form-check-label" for="application-m365-1">
+                                    Microsoft 365 (M365)
+                                </label>
+                            </div>
+                        </fieldset>
+                    </div>
+
+                    <!-- Current Status -->
+                    <div class="form-group">
+                        <fieldset>
+                            <legend class="bilingual-label">
+                                <span data-en="Current status" data-fr="Statut actuel">Current status</span>
+                                <span class="text-danger" aria-label="required">*</span>
+                                <small id="status-help-1" class="form-text text-muted d-block" data-en="Select the current operational status." data-fr="Sélectionnez le statut opérationnel actuel.">Select the current operational status.</small>
+                            </legend>
+                            <div class="form-check">
+                                <input class="form-check-input status-radio" type="radio" name="status-1" id="status-no-issues-1" value="no-issues" required aria-describedby="status-help-1">
+                                <label class="form-check-label" for="status-no-issues-1">
+                                    <span data-en="No reported issues" data-fr="Aucun problème signalé">No reported issues</span>
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input status-radio" type="radio" name="status-1" id="status-incident-1" value="incident" required aria-describedby="status-help-1">
+                                <label class="form-check-label" for="status-incident-1">
+                                    <span data-en="Incident" data-fr="Incident">Incident</span>
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input status-radio" type="radio" name="status-1" id="status-outage-1" value="outage" required aria-describedby="status-help-1">
+                                <label class="form-check-label" for="status-outage-1">
+                                    <span data-en="Outage" data-fr="Panne">Outage</span>
+                                </label>
+                            </div>
+                        </fieldset>
+                    </div>
+                    
+                    <!-- Pre-determined Messages -->
+                    <div class="form-group">
+                        <label class="bilingual-label" for="message-1">
+                            <span data-en="Status message" data-fr="Message de statut">Status message</span>
+                            <span class="text-danger" aria-label="required">*</span>
+                            <small id="message-help-1" class="form-text text-muted d-block" data-en="Choose a pre-defined message or select 'Other' to write your own." data-fr="Choisissez un message prédéfini ou sélectionnez « Autre » pour écrire le vôtre.">Choose a pre-defined message or select "Other" to write your own.</small>
+                        </label>
+                        <select class="form-control message-select" id="message-1" name="message-1" required aria-required="true" aria-describedby="message-help-1">
+                            <option value="" data-en="-- Select a message --" data-fr="-- Sélectionnez un message --">-- Select a message --</option>
+                            <option value="other" data-en="Other" data-fr="Autre">Other</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Custom Message Section (Hidden by default) -->
+                    <div class="custom-message-section" id="custom-message-1" role="region" aria-labelledby="custom-message-heading-1">
+                        <h3 class="h5" id="custom-message-heading-1" data-en="Custom message" data-fr="Message personnalisé">Custom message</h3>
+                        
+                        <div class="form-group">
+                            <label class="bilingual-label" for="custom-en-1">
+                                <span data-en="English message" data-fr="Message en anglais">English message</span>
+                                <small id="custom-en-help-1" class="form-text text-muted d-block" data-en="Enter your custom message in English." data-fr="Entrez votre message personnalisé en anglais.">Enter your custom message in English.</small>
+                            </label>
+                            <div id="custom-en-editor-1" class="custom-message-en" style="min-height: 150px;"></div>
+                            <input type="hidden" id="custom-en-1" name="custom-en-1">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="bilingual-label" for="custom-fr-1">
+                                <span data-en="French message" data-fr="Message en français">French message</span>
+                                <small id="custom-fr-help-1" class="form-text text-muted d-block" data-en="Enter your custom message in French." data-fr="Entrez votre message personnalisé en français.">Enter your custom message in French.</small>
+                            </label>
+                            <div id="custom-fr-editor-1" class="custom-message-fr" style="min-height: 150px;"></div>
+                            <input type="hidden" id="custom-fr-1" name="custom-fr-1">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="action-buttons" role="group" aria-label="Form actions">
+                <button type="button" class="btn btn-secondary" id="addEntryBtn" data-en="Add another status entry" data-fr="Ajouter une autre entrée de statut">Add another status entry</button>
+                
+                <button type="submit" class="btn btn-success" data-en="Generate SHTM file" data-fr="Générer le fichier SHTM">Generate SHTM file</button>
+                
+                <button type="reset" class="btn btn-outline-secondary" data-en="Reset form" data-fr="Réinitialiser le formulaire">Reset form</button>
+            </div>
+        </form>
+        
+        <!-- Success/Error Messages -->
+        <div id="alertContainer" class="mt-3" role="alert" aria-live="polite" aria-atomic="true"></div>
+    </main>
+
+    <footer class="mt-auto">
+        <div class="container">
+            <div class="text-center">
+                <p id="version-info" class="mb-0" data-en="" data-fr=""></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/creavia.js"></script>
+    <script src="js/quill.js"></script>
+    <script>
+        // [All the existing JavaScript code remains the same]
+        // Pre-determined messages for each application
+        const messageTemplates = {
+            outlook: {
+                'no-issues': [
+                    { value: 'msg1', en: 'All Outlook services are operating normally.', fr: 'Tous les services Outlook fonctionnent normalement.' },
+                    { value: 'msg2', en: 'No current issues affecting Outlook.', fr: 'Aucun problème actuel n\'affecte Outlook.' }
+                ],
+                'incident': [
+                    { value: 'msg3', en: 'We are investigating reports of Outlook connectivity issues.', fr: 'Nous enquêtons sur des rapports de problèmes de connectivité Outlook.' },
+                    { value: 'msg4', en: 'Some users may experience delayed email delivery.', fr: 'Certains utilisateurs peuvent rencontrer des retards de livraison de courriels.' }
+                ],
+                'outage': [
+                    { value: 'msg5', en: 'Outlook services are currently unavailable. We are working to restore access.', fr: 'Les services Outlook sont actuellement indisponibles. Nous travaillons à rétablir l\'accès.' },
+                    { value: 'msg6', en: 'Major outage affecting all Outlook users. Estimated restoration time: 2 hours.', fr: 'Panne majeure affectant tous les utilisateurs Outlook. Temps de rétablissement estimé : 2 heures.' }
+                ]
+            },
+            m365: {
+                'no-issues': [
+                    { value: 'msg7', en: 'All Microsoft 365 services are running smoothly.', fr: 'Tous les services Microsoft 365 fonctionnent correctement.' },
+                    { value: 'msg8', en: 'No disruptions to M365 services at this time.', fr: 'Aucune interruption des services M365 pour le moment.' }
+                ],
+                'incident': [
+                    { value: 'msg9', en: 'We are aware of performance issues affecting some M365 applications.', fr: 'Nous sommes conscients de problèmes de performance affectant certaines applications M365.' },
+                    { value: 'msg10', en: 'Teams and SharePoint may be experiencing intermittent connectivity.', fr: 'Teams et SharePoint peuvent rencontrer une connectivité intermittente.' }
+                ],
+                'outage': [
+                    { value: 'msg11', en: 'Microsoft 365 services are experiencing a complete outage. Updates to follow.', fr: 'Les services Microsoft 365 subissent une panne complète. Mises à jour à suivre.' },
+                    { value: 'msg12', en: 'Critical outage impacting all M365 services. Our team is working on resolution.', fr: 'Panne critique affectant tous les services M365. Notre équipe travaille à la résolution.' }
+                ]
+            }
+        };
+        
+        let entryCounter = 1;
+        
+        // Store Quill instances
+        const quillInstances = {};
+
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            updateMessageOptions(1);
+            initializeQuillEditor(1);
+        });
+
+        const Block = Quill.import('blots/block');
+        Block.tagName = 'p';
+        Quill.register(Block, true);
+
+        const Bold = Quill.import('formats/bold');
+        Bold.tagName = 'strong';
+        Quill.register(Bold, true);
+
+        const Italic = Quill.import('formats/italic');
+        Italic.tagName = 'em';
+        Quill.register(Italic, true);
+
+        // Initialize Quill editor for a specific entry
+        function initializeQuillEditor(entryId) {
+            const quillEnEditor = new Quill(`#custom-en-editor-${entryId}`, {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        ['bold', 'italic'],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        ['link'],
+                        ['clean']
+                    ]
+                },
+                placeholder: 'Enter your custom message in English...'
+            });
+
+            const quillFrEditor = new Quill(`#custom-fr-editor-${entryId}`, {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        ['bold', 'italic'],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        ['link'],
+                        ['clean']
+                    ]
+                },
+                placeholder: 'Entrez votre message personnalisé en français...'
+            });
+            
+            quillInstances[`en-${entryId}`] = quillEnEditor;
+            quillInstances[`fr-${entryId}`] = quillFrEditor;
+            
+            quillEnEditor.on('text-change', function() {
+                document.getElementById(`custom-en-${entryId}`).value = quillEnEditor.root.innerHTML;
+            });
+            
+            quillFrEditor.on('text-change', function() {
+                document.getElementById(`custom-fr-${entryId}`).value = quillFrEditor.root.innerHTML;
+            });
+        }
+        
+        // Setup all event listeners
+        function setupEventListeners() {
+            document.addEventListener('change', function(e) {
+                if (e.target.classList.contains('application-radio') || e.target.classList.contains('status-radio')) {
+                    const entryId = e.target.name.split('-')[1];
+                    updateMessageOptions(entryId);
+                }
+                
+                if (e.target.classList.contains('message-select')) {
+                    const entryId = e.target.id.split('-')[1];
+                    toggleCustomMessage(entryId, e.target.value);
+                }
+            });
+            
+            document.getElementById('addEntryBtn').addEventListener('click', addStatusEntry);
+            document.getElementById('statusForm').addEventListener('submit', handleFormSubmit);
+            
+            document.getElementById('statusForm').addEventListener('reset', function() {
+                setTimeout(() => {
+                    document.querySelectorAll('.custom-message-section').forEach(section => {
+                        section.classList.remove('show');
+                    });
+                }, 10);
+            });
+        }
+        
+        // Update message dropdown based on application and status selection
+        function updateMessageOptions(entryId) {
+            const appRadio = document.querySelector(`input[name="application-${entryId}"]:checked`);
+            const statusRadio = document.querySelector(`input[name="status-${entryId}"]:checked`);
+            const messageSelect = document.getElementById(`message-${entryId}`);
+            
+            const app = appRadio ? appRadio.value : null;
+            const status = statusRadio ? statusRadio.value : null;
+            
+            messageSelect.innerHTML = `
+                <option value="">-- Select a message -- / -- Sélectionnez un message --</option>
+            `;
+            
+            if (app && status && messageTemplates[app] && messageTemplates[app][status]) {
+                messageTemplates[app][status].forEach(msg => {
+                    const option = document.createElement('option');
+                    option.value = msg.value;
+                    option.dataset.en = msg.en;
+                    option.dataset.fr = msg.fr;
+                    
+                    const currentLang = document.documentElement.lang?.split('-')[0] || 'en';
+                    option.textContent = currentLang === 'en' ? msg.en : msg.fr;
+                    
+                    messageSelect.appendChild(option);
+                });
+            }
+            
+            const otherOption = document.createElement('option');
+            otherOption.value = 'other';
+            otherOption.dataset.en = 'Other';
+            otherOption.dataset.fr = 'Autre';
+            
+            const currentLang = document.documentElement.lang?.split('-')[0] || 'en';
+            otherOption.textContent = currentLang === 'en' ? 'Other' : 'Autre';
+            messageSelect.appendChild(otherOption);
+            
+            messageSelect.value = '';
+            toggleCustomMessage(entryId, '');
+        }
+        
+        // Toggle custom message section
+        function toggleCustomMessage(entryId, value) {
+            const customSection = document.getElementById(`custom-message-${entryId}`);
+            const customEnInput = document.getElementById(`custom-en-${entryId}`);
+            const customFrInput = document.getElementById(`custom-fr-${entryId}`);
+            
+            if (value === 'other') {
+                customSection.classList.add('show');
+                customEnInput.required = true;
+                customFrInput.required = true;
+                customEnInput.setAttribute('aria-required', 'true');
+                customFrInput.setAttribute('aria-required', 'true');
+            } else {
+                customSection.classList.remove('show');
+                customEnInput.required = false;
+                customFrInput.required = false;
+                customEnInput.removeAttribute('aria-required');
+                customFrInput.removeAttribute('aria-required');
+                
+                if (quillInstances[`en-${entryId}`]) {
+                    quillInstances[`en-${entryId}`].setText('');
+                }
+                if (quillInstances[`fr-${entryId}`]) {
+                    quillInstances[`fr-${entryId}`].setText('');
+                }
+                customEnInput.value = '';
+                customFrInput.value = '';
+            }
+        }
+        
+        // Add a new status entry
+        function addStatusEntry() {
+            const currentEntries = document.querySelectorAll('.status-entry').length;
+            if (currentEntries >= 2) {
+                showAlert(getLocalizedText('Maximum of 2 status entries allowed.', 'Maximum de 2 entrées de statut autorisées.'), 'warning');
+                return;
+            }
+            
+            entryCounter++;
+            const container = document.getElementById('statusEntriesContainer');
+            
+            const newEntry = document.createElement('div');
+            newEntry.className = 'status-entry';
+            newEntry.dataset.entryId = entryCounter;
+            newEntry.innerHTML = `
+                <h2 class="h4">
+                    <span data-en="Status entry" data-fr="Entrée de statut">Status entry</span> #<span class="entry-number">${entryCounter}</span>
+                </h2>
+                
+                <div class="form-group">
+                    <fieldset>
+                        <legend class="bilingual-label">
+                            <span data-en="Application" data-fr="Application">Application</span>
+                            <span class="text-danger" aria-label="required">*</span>
+                            <small id="application-help-${entryCounter}" class="form-text text-muted d-block" data-en="Choose the application to update." data-fr="Choisissez l'application à mettre à jour.">Choose the application to update.</small>
+                        </legend>
+                        <div class="form-check">
+                            <input class="form-check-input application-radio" type="radio" name="application-${entryCounter}" id="application-outlook-${entryCounter}" value="outlook" required aria-describedby="application-help-${entryCounter}">
+                            <label class="form-check-label" for="application-outlook-${entryCounter}">
+                                Microsoft Outlook
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input application-radio" type="radio" name="application-${entryCounter}" id="application-m365-${entryCounter}" value="m365" required aria-describedby="application-help-${entryCounter}">
+                            <label class="form-check-label" for="application-m365-${entryCounter}">
+                                Microsoft 365 (M365)
+                            </label>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <div class="form-group">
+                    <fieldset>
+                        <legend class="bilingual-label">
+                            <span data-en="Current status" data-fr="Statut actuel">Current status</span>
+                            <span class="text-danger" aria-label="required">*</span>
+                            <small id="status-help-${entryCounter}" class="form-text text-muted d-block" data-en="Select the current operational status." data-fr="Sélectionnez le statut opérationnel actuel.">Select the current operational status.</small>
+                        </legend>
+                        <div class="form-check">
+                            <input class="form-check-input status-radio" type="radio" name="status-${entryCounter}" id="status-no-issues-${entryCounter}" value="no-issues" required aria-describedby="status-help-${entryCounter}">
+                            <label class="form-check-label" for="status-no-issues-${entryCounter}">
+                                <span data-en="No reported issues" data-fr="Aucun problème signalé">No reported issues</span>
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input status-radio" type="radio" name="status-${entryCounter}" id="status-incident-${entryCounter}" value="incident" required aria-describedby="status-help-${entryCounter}">
+                            <label class="form-check-label" for="status-incident-${entryCounter}">
+                                <span data-en="Incident" data-fr="Incident">Incident</span>
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input status-radio" type="radio" name="status-${entryCounter}" id="status-outage-${entryCounter}" value="outage" required aria-describedby="status-help-${entryCounter}">
+                            <label class="form-check-label" for="status-outage-${entryCounter}">
+                                <span data-en="Outage" data-fr="Panne">Outage</span>
+                            </label>
+                        </div>
+                    </fieldset>
+                </div>
+                
+                <div class="form-group">
+                    <label class="bilingual-label" for="message-${entryCounter}">
+                        <span data-en="Status message" data-fr="Message de statut">Status message</span>
+                        <span class="text-danger" aria-label="required">*</span>
+                        <small id="message-help-${entryCounter}" class="form-text text-muted d-block" data-en="Choose a pre-defined message or select 'Other' to write your own." data-fr="Choisissez un message prédéfini ou sélectionnez « Autre » pour écrire le vôtre.">Choose a pre-defined message or select "Other" to write your own.</small>
+                    </label>
+                    <select class="form-control message-select" id="message-${entryCounter}" name="message-${entryCounter}" required aria-required="true" aria-describedby="message-help-${entryCounter}">
+                        <option value="" data-en="-- Select a message --" data-fr="-- Sélectionnez un message --">-- Select a message --</option>
+                        <option value="other" data-en="Other" data-fr="Autre">Other</option>
+                    </select>
+                </div>
+                
+                <div class="custom-message-section" id="custom-message-${entryCounter}" role="region" aria-labelledby="custom-message-heading-${entryCounter}">
+                    <h3 class="h5" id="custom-message-heading-${entryCounter}"data-en="Custom message" data-fr="Message personnalisé">Custom message</h3>
 					<div class="form-group">
-						<label class="bilingual-label" for="message-1">
-							<span data-en="Status message" data-fr="Message de statut">Status message</span>
-							<span class="text-danger" aria-label="required">*</span>
-							<small id="message-help-1" class="form-text text-muted d-block" data-en="Choose a pre-defined message or select 'Other' to write your own." data-fr="Choisissez un message prédéfini ou sélectionnez « Autre » pour écrire le vôtre.">Choose a pre-defined message or select "Other" to write your own.</small>
-						</label>
-						<select class="form-control message-select" id="message-1" name="message-1" required aria-required="true" aria-describedby="message-help-1">
-							<option value="" data-en="-- Select a message --" data-fr="-- Sélectionnez un message --">-- Select a message --</option>
-							<option value="other" data-en="Other" data-fr="Autre">Other</option>
-						</select>
-					</div>
-					
-					<!-- Custom Message Section (Hidden by default) -->
-					<div class="custom-message-section" id="custom-message-1" role="region" aria-labelledby="custom-message-heading-1">
-						<h3 class="h5" id="custom-message-heading-1" data-en="Custom message" data-fr="Message personnalisé">Custom message</h3>
-						
-						<div class="form-group">
-							<label class="bilingual-label" for="custom-en-1">
-								<span data-en="English message" data-fr="Message en anglais">English message</span>
-								<small id="custom-en-help-1" class="form-text text-muted d-block" data-en="Enter your custom message in English." data-fr="Entrez votre message personnalisé en anglais.">Enter your custom message in English.</small>
-							</label>
-							<div id="custom-en-editor-1" class="custom-message-en" style="min-height: 150px;"></div>
-							<input type="hidden" id="custom-en-1" name="custom-en-1">
-						</div>
-						
-						<div class="form-group">
-							<label class="bilingual-label" for="custom-fr-1">
-								<span data-en="French message" data-fr="Message en français">French message</span>
-								<small id="custom-fr-help-1" class="form-text text-muted d-block" data-en="Enter your custom message in French." data-fr="Entrez votre message personnalisé en français.">Enter your custom message in French.</small>
-							</label>
-							<div id="custom-fr-editor-1" class="custom-message-fr" style="min-height: 150px;"></div>
-							<input type="hidden" id="custom-fr-1" name="custom-fr-1">
-						</div>
-					</div>
+                    <label class="bilingual-label" for="custom-en-${entryCounter}">
+                        <span data-en="English message" data-fr="Message en anglais">English message</span>
+                        <small id="custom-en-help-${entryCounter}" class="form-text text-muted d-block" data-en="Enter your custom message in English." data-fr="Entrez votre message personnalisé en anglais.">Enter your custom message in English.</small>
+                    </label>
+                    <div id="custom-en-editor-${entryCounter}" class="custom-message-en" style="min-height: 150px;"></div>
+                    <input type="hidden" id="custom-en-${entryCounter}" name="custom-en-${entryCounter}">
+                </div>
+
+                <div class="form-group">
+                    <label class="bilingual-label" for="custom-fr-${entryCounter}">
+                        <span data-en="French message" data-fr="Message en français">French message</span>
+                        <small id="custom-fr-help-${entryCounter}" class="form-text text-muted d-block" data-en="Enter your custom message in French." data-fr="Entrez votre message personnalisé en français.">Enter your custom message in French.</small>
+                    </label>
+                    <div id="custom-fr-editor-${entryCounter}" class="custom-message-fr" style="min-height: 150px;"></div>
+                    <input type="hidden" id="custom-fr-${entryCounter}" name="custom-fr-${entryCounter}">
+                </div>
+            </div>
+            
+            <button type="button" class="btn btn-danger btn-sm remove-entry-btn" data-entry-id="${entryCounter}" data-en="Remove this entry" data-fr="Supprimer cette entrée">Remove this entry</button>
+        `;
+        
+        container.appendChild(newEntry);
+        initializeQuillEditor(entryCounter);
+
+        const currentCounter = entryCounter;
+        newEntry.querySelector('.remove-entry-btn').addEventListener('click', function() {
+            delete quillInstances[`en-${currentCounter}`];
+            delete quillInstances[`fr-${currentCounter}`];
+            newEntry.remove();
+            updateAddButtonVisibility();
+            showAlert(getLocalizedText('Entry removed successfully.', 'Entrée supprimée avec succès.'), 'info');
+        });
+
+        updateMessageOptions(entryCounter);
+
+        const currentLang = document.documentElement.lang?.split('-')[0] || 'en';
+        updateElementLanguage(newEntry, currentLang);
+
+        const firstRadio = newEntry.querySelector('.application-radio');
+        if (firstRadio) firstRadio.focus();
+
+        updateAddButtonVisibility();
+        showAlert(getLocalizedText('New status entry added.', 'Nouvelle entrée de statut ajoutée.'), 'success');
+    }
+
+    function updateAddButtonVisibility() {
+        const addBtn = document.getElementById('addEntryBtn');
+        const currentEntries = document.querySelectorAll('.status-entry').length;
+        
+        if (currentEntries >= 2) {
+            addBtn.style.display = 'none';
+        } else {
+            addBtn.style.display = 'inline-block';
+        }
+    }
+
+    function updateElementLanguage(element, lang) {
+        const isEnglish = lang === 'en-CA' || lang === 'en';
+        element.querySelectorAll('[data-en][data-fr]').forEach(el => {
+            const text = isEnglish ? el.getAttribute('data-en') : el.getAttribute('data-fr');
+            if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                el.placeholder = text;
+            } else if (el.tagName === 'OPTION') {
+                el.textContent = text;
+            } else {
+                el.innerHTML = text;
+            }
+        });
+    }
+    
+    function getLocalizedText(enText, frText) {
+        const currentLang = document.documentElement.lang?.split('-')[0] || 'en';
+        return currentLang === 'en' ? enText : frText;
+    }
+    
+    function handleFormSubmit(e) {
+        e.preventDefault();
+        
+        if (!validateForm()) {
+            showAlert(getLocalizedText('Please fill in all required fields.', 'Veuillez remplir tous les champs obligatoires.'), 'danger');
+            return;
+        }
+        
+        const formData = collectFormData();
+        
+        if (formData.length === 0) {
+            showAlert(getLocalizedText('No valid entries to export.', 'Aucune entrée valide à exporter.'), 'warning');
+            return;
+        }
+        
+        formData.forEach(entry => {
+            generateSHTMFile(entry);
+        });
+        
+        showAlert(getLocalizedText(`Successfully generated ${formData.length} SHTM file(s).`, `${formData.length} fichier(s) SHTM généré(s) avec succès.`), 'success');
+    }
+    
+    function validateForm() {
+        const form = document.getElementById('statusForm');
+        let isValid = true;
+        
+        if (!form.checkValidity()) {
+            form.classList.add('was-validated');
+            return false;
+        }
+        
+        document.querySelectorAll('.status-entry').forEach(entry => {
+            const entryId = entry.dataset.entryId;
+            const messageSelect = document.getElementById(`message-${entryId}`);
+            
+            if (messageSelect && messageSelect.value === 'other') {
+                const customEnInput = document.getElementById(`custom-en-${entryId}`);
+                const customFrInput = document.getElementById(`custom-fr-${entryId}`);
+                
+                let enContent = customEnInput.value.trim();
+                let frContent = customFrInput.value.trim();
+                
+                if (quillInstances[`en-${entryId}`]) {
+                    enContent = quillInstances[`en-${entryId}`].getText().trim();
+                }
+                if (quillInstances[`fr-${entryId}`]) {
+                    frContent = quillInstances[`fr-${entryId}`].getText().trim();
+                }
+                
+                if (!enContent || !frContent) {
+                    isValid = false;
+                    const enEditor = document.getElementById(`custom-en-editor-${entryId}`);
+                    const frEditor = document.getElementById(`custom-fr-editor-${entryId}`);
+                    if (enEditor) enEditor.style.border = '2px solid #dc3545';
+                    if (frEditor) frEditor.style.border = '2px solid #dc3545';
+                }
+            }
+        });
+        
+        return isValid;
+    }
+    
+    function collectFormData() {
+        const entries = [];
+        
+        document.querySelectorAll('.status-entry').forEach(entry => {
+            const entryId = entry.dataset.entryId;
+            const appRadio = document.querySelector(`input[name="application-${entryId}"]:checked`);
+            const statusRadio = document.querySelector(`input[name="status-${entryId}"]:checked`);
+            const app = appRadio ? appRadio.value : null;
+            const status = statusRadio ? statusRadio.value : null;
+            const messageSelect = document.getElementById(`message-${entryId}`);
+            const messageValue = messageSelect.value;
+            
+            if (!app || !status || !messageValue) {
+                return;
+            }
+            
+            let messageEn, messageFr;
+            
+            if (messageValue === 'other') {
+                messageEn = document.getElementById(`custom-en-${entryId}`).value.trim();
+                messageFr = document.getElementById(`custom-fr-${entryId}`).value.trim();
+                
+                if (!messageEn && quillInstances[`en-${entryId}`]) {
+                    messageEn = quillInstances[`en-${entryId}`].root.innerHTML.trim();
+                }
+                if (!messageFr && quillInstances[`fr-${entryId}`]) {
+                    messageFr = quillInstances[`fr-${entryId}`].root.innerHTML.trim();
+                }
+            } else {
+                const selectedOption = messageSelect.options[messageSelect.selectedIndex];
+                messageEn = selectedOption.dataset.en;
+                messageFr = selectedOption.dataset.fr;
+            }
+            
+            entries.push({
+                application: app,
+                status: status,
+                messageEn: messageEn,
+                messageFr: messageFr
+            });
+        });
+        
+        return entries;
+    }
+    
+    function generateSHTMFile(entry) {
+        const timestamp = new Date().toISOString();
+        const filename = entry.application === 'outlook' ? 'outlook.shtm' : 'm365.shtm';
+        
+        const appDisplayNames = {
+            'outlook': {
+                en: 'Microsoft Outlook',
+                fr: 'Microsoft Outlook'
+            },
+            'm365': {
+                en: 'Microsoft 365 (M365)',
+                fr: 'Microsoft 365 (M365)'
+            }
+        };
+        
+        const statusConfig = {
+            'no-issues': {
+                en: 'No reported issues',
+                fr: 'Aucun problème signalé',
+                icon: 'fa-check-circle',
+                color: 'text-success',
+                ariaLabelEn: 'No reported issues',
+                ariaLabelFr: 'Aucun problème signalé'
+            },
+            'incident': {
+                en: 'Incident',
+                fr: 'Incident',
+                icon: 'fa-exclamation-triangle',
+                color: 'text-warning',
+                ariaLabelEn: 'Incident',
+                ariaLabelFr: 'Incident'
+            },
+            'outage': {
+                en: 'Outage',
+                fr: 'Panne',
+                icon: 'fa-times-circle',
+                color: 'text-danger',
+                ariaLabelEn: 'Outage',
+                ariaLabelFr: 'Panne'
+            }
+        };
+        
+        const appNameEn = appDisplayNames[entry.application].en;
+        const appNameFr = appDisplayNames[entry.application].fr;
+        const statusInfo = statusConfig[entry.status];
+        
+        const shtmlContent = `<!--#if expr="lang=eng" -->
+	<div class="col-sm-6">
+		<div class="card mb-3">
+			<div class="card-body d-flex justify-content-between align-items-center">
+				<div>
+					<h3 class="h5 mb-1">${appNameEn}</h3>
+					<p class="mb-0">
+						<span class="sr-only">Status:&#160;</span>${statusInfo.en}
+					</p>
+					<p>${entry.messageEn}</p>
 				</div>
-			</div>
-			
-			<!-- Action Buttons -->
-			<div class="action-buttons" role="group" aria-label="Form actions">
-<button type="button" class="btn btn-secondary" id="addEntryBtn" data-en="Add another status entry" data-fr="Ajouter une autre entrée de statut">Add another status entry</button>
-				
-				<button type="submit" class="btn btn-success" data-en="Generate SHTM File" data-fr="Générer le fichier SHTM">Generate SHTM File</button>
-				
-				<button type="reset" class="btn btn-outline-secondary" data-en="Reset Form" data-fr="Réinitialiser le formulaire">Reset Form</button>
-			</div>
-		</form>
-		
-		<!-- Success/Error Messages -->
-		<div id="alertContainer" class="mt-3" role="alert" aria-live="polite" aria-atomic="true"></div>
-	</main>
-	
-	<footer class="mt-auto">
-		<div class="container">
-			<div class="text-center">
-				<p class="mb-0" data-en="Monitora - Application Status Manager v1.0" data-fr="Monitora - Gestionnaire de statut des applications v1.0" id="version-info">Monitora - Application Status Manager v1.0</p>
-			</div>
-		</div>
-	</footer>
-	
-	<script>
-		// Pre-determined messages for each application
-		const messageTemplates = {
-			outlook: {
-				'no-issues': [
-					{ value: 'msg1', en: 'All Outlook services are operating normally.', fr: 'Tous les services Outlook fonctionnent normalement.' },
-					{ value: 'msg2', en: 'No current issues affecting Outlook.', fr: 'Aucun problème actuel n\'affecte Outlook.' }
-				],
-				'incident': [
-					{ value: 'msg3', en: 'We are investigating reports of Outlook connectivity issues.', fr: 'Nous enquêtons sur des rapports de problèmes de connectivité Outlook.' },
-					{ value: 'msg4', en: 'Some users may experience delayed email delivery.', fr: 'Certains utilisateurs peuvent rencontrer des retards de livraison de courriels.' }
-				],
-				'outage': [
-					{ value: 'msg5', en: 'Outlook services are currently unavailable. We are working to restore access.', fr: 'Les services Outlook sont actuellement indisponibles. Nous travaillons à rétablir l\'accès.' },
-					{ value: 'msg6', en: 'Major outage affecting all Outlook users. Estimated restoration time: 2 hours.', fr: 'Panne majeure affectant tous les utilisateurs Outlook. Temps de rétablissement estimé : 2 heures.' }
-				]
-			},
-			m365: {
-				'no-issues': [
-					{ value: 'msg7', en: 'All Microsoft 365 services are running smoothly.', fr: 'Tous les services Microsoft 365 fonctionnent correctement.' },
-					{ value: 'msg8', en: 'No disruptions to M365 services at this time.', fr: 'Aucune interruption des services M365 pour le moment.' }
-				],
-				'incident': [
-					{ value: 'msg9', en: 'We are aware of performance issues affecting some M365 applications.', fr: 'Nous sommes conscients de problèmes de performance affectant certaines applications M365.' },
-					{ value: 'msg10', en: 'Teams and SharePoint may be experiencing intermittent connectivity.', fr: 'Teams et SharePoint peuvent rencontrer une connectivité intermittente.' }
-				],
-				'outage': [
-					{ value: 'msg11', en: 'Microsoft 365 services are experiencing a complete outage. Updates to follow.', fr: 'Les services Microsoft 365 subissent une panne complète. Mises à jour à suivre.' },
-					{ value: 'msg12', en: 'Critical outage impacting all M365 services. Our team is working on resolution.', fr: 'Panne critique affectant tous les services M365. Notre équipe travaille à la résolution.' }
-				]
-			}
-		};
-		
-		let entryCounter = 1;
-		
-		// Initialize form
-// Store Quill instances
-const quillInstances = {};
-
-document.addEventListener('DOMContentLoaded', function() {
-	// Initialize language system
-	initializeLanguage();
-	setupEventListeners();
-	updateMessageOptions(1); // Initialize first entry
-	initializeQuillEditor(1); // Initialize Quill for first entry
-});
-
-const Block = Quill.import('blots/block');
-Block.tagName = 'p';
-Quill.register(Block, true);
-
-const Bold = Quill.import('formats/bold');
-Bold.tagName = 'strong';
-Quill.register(Bold, true);
-
-const Italic = Quill.import('formats/italic');
-Italic.tagName = 'em';
-Quill.register(Italic, true);
-
-// Initialize Quill editor for a specific entry
-function initializeQuillEditor(entryId) {
-
-// English editor
-const quillEnEditor = new Quill(`#custom-en-editor-${entryId}`, {
-	theme: 'snow',
-	modules: {
-		toolbar: [
-			['bold', 'italic'],
-			[{ 'list': 'ordered'}, { 'list': 'bullet' }],
-			['link'],
-			['clean']
-		]
-	},
-	placeholder: 'Enter your custom message in English...'
-});
-
-// French editor
-const quillFrEditor = new Quill(`#custom-fr-editor-${entryId}`, {
-	theme: 'snow',
-	modules: {
-		toolbar: [
-			['bold', 'italic'],
-			[{ 'list': 'ordered'}, { 'list': 'bullet' }],
-			['link'],
-			['clean']
-		]
-	},
-	placeholder: 'Entrez votre message personnalisé en français...'
-});
-	
-	// Store instances
-	quillInstances[`en-${entryId}`] = quillEnEditor;
-	quillInstances[`fr-${entryId}`] = quillFrEditor;
-	
-	// Sync content to hidden input on text change
-	quillEnEditor.on('text-change', function() {
-		document.getElementById(`custom-en-${entryId}`).value = quillEnEditor.root.innerHTML;
-	});
-	
-	quillFrEditor.on('text-change', function() {
-		document.getElementById(`custom-fr-${entryId}`).value = quillFrEditor.root.innerHTML;
-	});
-}
-		
-		// Initialize language switching
-		function initializeLanguage() {
-			const currentLang = localStorage.getItem('language') || 'en-CA';
-			setLanguage(currentLang);
-			
-			// Language button listeners
-			document.getElementById('lang-en-btn').addEventListener('click', function() {
-				setLanguage('en-CA');
-			});
-			
-			document.getElementById('lang-fr-btn').addEventListener('click', function() {
-				setLanguage('fr-CA');
-			});
-		}
-		
-		// Set language and update all text
-		function setLanguage(lang) {
-			localStorage.setItem('language', lang);
-			const isEnglish = lang === 'en-CA';
-			const isFrench = lang === 'fr-CA';
-			
-			// Update document language
-			document.documentElement.lang = lang;
-			
-			// Show/hide language buttons
-			document.getElementById('lang-en-btn').style.display = isFrench ? 'inline-block' : 'none';
-			document.getElementById('lang-fr-btn').style.display = isEnglish ? 'inline-block' : 'none';
-			
-			document.getElementById('lang-en-btn').setAttribute('aria-pressed', isEnglish);
-			document.getElementById('lang-fr-btn').setAttribute('aria-pressed', isFrench);
-			
-			// Update all elements with data-en and data-fr attributes
-			document.querySelectorAll('[data-en][data-fr]').forEach(element => {
-				const text = isEnglish ? element.getAttribute('data-en') : element.getAttribute('data-fr');
-				if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
-					element.placeholder = text;
-				} else if (element.tagName === 'OPTION') {
-					element.textContent = text;
-				} else {
-					// Handle HTML content in attributes (like <abbr> tags)
-					element.innerHTML = text;
-				}
-			});
-		}
-		
-		// Setup all event listeners
-		function setupEventListeners() {
-// Application and status change listener
-document.addEventListener('change', function(e) {
-	if (e.target.classList.contains('application-radio') || e.target.classList.contains('status-radio')) {
-		const entryId = e.target.name.split('-')[1];
-		updateMessageOptions(entryId);
-	}
-	
-	if (e.target.classList.contains('message-select')) {
-		const entryId = e.target.id.split('-')[1];
-		toggleCustomMessage(entryId, e.target.value);
-	}
-});
-			
-			// Add entry button
-			document.getElementById('addEntryBtn').addEventListener('click', addStatusEntry);
-			
-			// Form submission
-			document.getElementById('statusForm').addEventListener('submit', handleFormSubmit);
-			
-			// Form reset
-			document.getElementById('statusForm').addEventListener('reset', function() {
-				setTimeout(() => {
-					document.querySelectorAll('.custom-message-section').forEach(section => {
-						section.classList.remove('show');
-					});
-				}, 10);
-			});
-		}
-		
-		// Update message dropdown based on application and status selection
-function updateMessageOptions(entryId) {
-	// Get selected application radio button
-	const appRadio = document.querySelector(`input[name="application-${entryId}"]:checked`);
-	// Get selected status radio button
-	const statusRadio = document.querySelector(`input[name="status-${entryId}"]:checked`);
-	const messageSelect = document.getElementById(`message-${entryId}`);
-	
-	const app = appRadio ? appRadio.value : null;
-	const status = statusRadio ? statusRadio.value : null;
-	
-	// Clear existing options except first and "Other"
-	messageSelect.innerHTML = `
-		<option value="">-- Select a message -- / -- Sélectionnez un message --</option>
-	`;
-	
-	// Add messages if both app and status are selected
-	if (app && status && messageTemplates[app] && messageTemplates[app][status]) {
-		messageTemplates[app][status].forEach(msg => {
-			const option = document.createElement('option');
-			option.value = msg.value;
-			option.dataset.en = msg.en;
-			option.dataset.fr = msg.fr;
-			
-			// Set text based on current language
-			const currentLang = localStorage.getItem('language') || 'en-CA';
-			option.textContent = currentLang === 'en-CA' ? msg.en : msg.fr;
-			
-			messageSelect.appendChild(option);
-		});
-	}
-	
-	// Always add "Other" option at the end
-	const otherOption = document.createElement('option');
-	otherOption.value = 'other';
-	otherOption.dataset.en = 'Other';
-	otherOption.dataset.fr = 'Autre';
-	
-	// Set text based on current language
-	const currentLang = localStorage.getItem('language') || 'en-CA';
-	otherOption.textContent = currentLang === 'en-CA' ? 'Other' : 'Autre';
-	messageSelect.appendChild(otherOption);
-	
-	// Reset message selection
-	messageSelect.value = '';
-	toggleCustomMessage(entryId, '');
-}
-		
-		// Toggle custom message section
-		function toggleCustomMessage(entryId, value) {
-			const customSection = document.getElementById(`custom-message-${entryId}`);
-			const customEnInput = document.getElementById(`custom-en-${entryId}`);
-			const customFrInput = document.getElementById(`custom-fr-${entryId}`);
-			
-			if (value === 'other') {
-				customSection.classList.add('show');
-				customEnInput.required = true;
-				customFrInput.required = true;
-				customEnInput.setAttribute('aria-required', 'true');
-				customFrInput.setAttribute('aria-required', 'true');
-			} else {
-				customSection.classList.remove('show');
-				customEnInput.required = false;
-				customFrInput.required = false;
-				customEnInput.removeAttribute('aria-required');
-				customFrInput.removeAttribute('aria-required');
-				
-				// Clear Quill editors
-				if (quillInstances[`en-${entryId}`]) {
-					quillInstances[`en-${entryId}`].setText('');
-				}
-				if (quillInstances[`fr-${entryId}`]) {
-					quillInstances[`fr-${entryId}`].setText('');
-				}
-				customEnInput.value = '';
-				customFrInput.value = '';
-			}
-		}
-		
-// Add a new status entry
-function addStatusEntry() {
-	// Check if maximum entries reached
-	const currentEntries = document.querySelectorAll('.status-entry').length;
-	if (currentEntries >= 2) {
-		showAlert(getLocalizedText('Maximum of 2 status entries allowed.', 'Maximum de 2 entrées de statut autorisées.'), 'warning');
-		return;
-	}
-	
-	entryCounter++;
-	const container = document.getElementById('statusEntriesContainer');
-	
-	const newEntry = document.createElement('div');
-	newEntry.className = 'status-entry';
-	newEntry.dataset.entryId = entryCounter;
-			newEntry.innerHTML = `
-				<h2 class="h4">
-					<span data-en="Status entry" data-fr="Entrée de statut">Status entry</span> #<span class="entry-number">${entryCounter}</span>
-				</h2>
-				
-<div class="form-group">
-	<fieldset>
-		<legend class="bilingual-label">
-			<span data-en="Application" data-fr="Application">Application</span>
-			<span class="text-danger" aria-label="required">*</span>
-			<small id="application-help-${entryCounter}" class="form-text text-muted d-block" data-en="Choose the application to update." data-fr="Choisissez l'application à mettre à jour.">Choose the application to update.</small>
-		</legend>
-		<div class="form-check">
-			<input class="form-check-input application-radio" type="radio" name="application-${entryCounter}" id="application-outlook-${entryCounter}" value="outlook" required aria-describedby="application-help-${entryCounter}">
-			<label class="form-check-label" for="application-outlook-${entryCounter}">
-				Microsoft Outlook
-			</label>
-		</div>
-		<div class="form-check">
-			<input class="form-check-input application-radio" type="radio" name="application-${entryCounter}" id="application-m365-${entryCounter}" value="m365" required aria-describedby="application-help-${entryCounter}">
-			<label class="form-check-label" for="application-m365-${entryCounter}">
-				Microsoft 365 (M365)
-			</label>
-		</div>
-	</fieldset>
-</div>
-
-<div class="form-group">
-	<fieldset>
-		<legend class="bilingual-label">
-			<span data-en="Current status" data-fr="Statut actuel">Current status</span>
-			<span class="text-danger" aria-label="required">*</span>
-			<small id="status-help-${entryCounter}" class="form-text text-muted d-block" data-en="Select the current operational status." data-fr="Sélectionnez le statut opérationnel actuel.">Select the current operational status.</small>
-		</legend>
-		<div class="form-check">
-			<input class="form-check-input status-radio" type="radio" name="status-${entryCounter}" id="status-no-issues-${entryCounter}" value="no-issues" required aria-describedby="status-help-${entryCounter}">
-			<label class="form-check-label" for="status-no-issues-${entryCounter}">
-				<span data-en="No reported issues" data-fr="Aucun problème signalé">No reported issues</span>
-			</label>
-		</div>
-		<div class="form-check">
-			<input class="form-check-input status-radio" type="radio" name="status-${entryCounter}" id="status-incident-${entryCounter}" value="incident" required aria-describedby="status-help-${entryCounter}">
-			<label class="form-check-label" for="status-incident-${entryCounter}">
-				<span data-en="Incident" data-fr="Incident">Incident</span>
-			</label>
-		</div>
-		<div class="form-check">
-			<input class="form-check-input status-radio" type="radio" name="status-${entryCounter}" id="status-outage-${entryCounter}" value="outage" required aria-describedby="status-help-${entryCounter}">
-			<label class="form-check-label" for="status-outage-${entryCounter}">
-				<span data-en="Outage" data-fr="Panne">Outage</span>
-			</label>
-		</div>
-	</fieldset>
-</div>
-				
-				<div class="form-group">
-					<label class="bilingual-label" for="message-${entryCounter}">
-						<span data-en="Status message" data-fr="Message de statut">Status message</span>
-						<span class="text-danger" aria-label="required">*</span>
-						<small id="message-help-${entryCounter}" class="form-text text-muted d-block" data-en="Choose a pre-defined message or select 'Other' to write your own." data-fr="Choisissez un message prédéfini ou sélectionnez « Autre » pour écrire le vôtre.">Choose a pre-defined message or select "Other" to write your own.</small>
-					</label>
-					<select class="form-control message-select" id="message-${entryCounter}" name="message-${entryCounter}" required aria-required="true" aria-describedby="message-help-${entryCounter}">
-						<option value="" data-en="-- Select a message --" data-fr="-- Sélectionnez un message --">-- Select a message --</option>
-						<option value="other" data-en="Other" data-fr="Autre">Other</option>
-					</select>
-				</div>
-				
-				<div class="custom-message-section" id="custom-message-${entryCounter}" role="region" aria-labelledby="custom-message-heading-${entryCounter}">
-					<h3 class="h5" id="custom-message-heading-${entryCounter}" data-en="Custom message" data-fr="Message personnalisé">Custom message</h3>
-					
-<div class="form-group">
-	<label class="bilingual-label" for="custom-en-${entryCounter}">
-		<span data-en="English message" data-fr="Message en anglais">English message</span>
-		<small id="custom-en-help-${entryCounter}" class="form-text text-muted d-block" data-en="Enter your custom message in English." data-fr="Entrez votre message personnalisé en anglais.">Enter your custom message in English.</small>
-	</label>
-	<div id="custom-en-editor-${entryCounter}" class="custom-message-en" style="min-height: 150px;"></div>
-	<input type="hidden" id="custom-en-${entryCounter}" name="custom-en-${entryCounter}">
-</div>
-
-<div class="form-group">
-	<label class="bilingual-label" for="custom-fr-${entryCounter}">
-		<span data-en="French message" data-fr="Message en français">French message</span>
-		<small id="custom-fr-help-${entryCounter}" class="form-text text-muted d-block" data-en="Enter your custom message in French." data-fr="Entrez votre message personnalisé en français.">Enter your custom message in French.</small>
-	</label>
-	<div id="custom-fr-editor-${entryCounter}" class="custom-message-fr" style="min-height: 150px;"></div>
-	<input type="hidden" id="custom-fr-${entryCounter}" name="custom-fr-${entryCounter}">
-</div>
-				</div>
-				
-				<button type="button" class="btn btn-danger btn-sm remove-entry-btn" data-entry-id="${entryCounter}" data-en="Remove this entry" data-fr="Supprimer cette entrée">Remove this entry</button>
-			`;
-			
-container.appendChild(newEntry);
-
-// Initialize Quill editors for new entry
-initializeQuillEditor(entryCounter);
-
-// Add remove button listener
-const currentCounter = entryCounter;
-newEntry.querySelector('.remove-entry-btn').addEventListener('click', function() {
-	// Clean up Quill instances
-	delete quillInstances[`en-${currentCounter}`];
-	delete quillInstances[`fr-${currentCounter}`];
-	
-	newEntry.remove();
-	
-	// Show/hide add button based on remaining entries
-	updateAddButtonVisibility();
-	
-	showAlert(getLocalizedText('Entry removed successfully.', 'Entrée supprimée avec succès.'), 'info');
-});
-
-// Initialize message options for new entry
-updateMessageOptions(entryCounter);
-
-// Update language for new entry elements
-const currentLang = localStorage.getItem('language') || 'en-CA';
-updateElementLanguage(newEntry, currentLang);
-
-// Focus on first radio button in new entry
-const firstRadio = newEntry.querySelector('.application-radio');
-if (firstRadio) firstRadio.focus();
-
-// Show/hide add button based on entry count
-updateAddButtonVisibility();
-
-showAlert(getLocalizedText('New status entry added.', 'Nouvelle entrée de statut ajoutée.'), 'success');
-		}
-
-		// Update add button visibility based on entry count
-function updateAddButtonVisibility() {
-	const addBtn = document.getElementById('addEntryBtn');
-	const currentEntries = document.querySelectorAll('.status-entry').length;
-	
-	if (currentEntries >= 2) {
-		addBtn.style.display = 'none';
-	} else {
-		addBtn.style.display = 'inline-block';
-	}
-}
-		// Helper function to update language for specific element
-		function updateElementLanguage(element, lang) {
-			const isEnglish = lang === 'en-CA';
-			element.querySelectorAll('[data-en][data-fr]').forEach(el => {
-				const text = isEnglish ? el.getAttribute('data-en') : el.getAttribute('data-fr');
-				if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-					el.placeholder = text;
-				} else if (el.tagName === 'OPTION') {
-					el.textContent = text;
-				} else {
-					el.innerHTML = text;
-				}
-			});
-		}
-		
-		// Helper function to get localized text
-		function getLocalizedText(enText, frText) {
-			const currentLang = localStorage.getItem('language') || 'en-CA';
-			return currentLang === 'en-CA' ? enText : frText;
-		}
-		
-		// Handle form submission
-		function handleFormSubmit(e) {
-			e.preventDefault();
-			
-			// Validate form
-			if (!validateForm()) {
-				showAlert(getLocalizedText('Please fill in all required fields.', 'Veuillez remplir tous les champs obligatoires.'), 'danger');
-				return;
-			}
-			
-			// Collect form data
-			const formData = collectFormData();
-			
-			if (formData.length === 0) {
-				showAlert(getLocalizedText('No valid entries to export.', 'Aucune entrée valide à exporter.'), 'warning');
-				return;
-			}
-			
-			// Generate and download SHTM file for each entry
-			formData.forEach(entry => {
-				generateSHTMFile(entry);
-			});
-			
-			showAlert(getLocalizedText(`Successfully generated ${formData.length} SHTM file(s).`, `${formData.length} fichier(s) SHTM généré(s) avec succès.`), 'success');
-		}
-		
-		// Validate form
-		function validateForm() {
-			const form = document.getElementById('statusForm');
-			let isValid = true;
-			
-			// Check HTML5 validation
-			if (!form.checkValidity()) {
-				form.classList.add('was-validated');
-				return false;
-			}
-			
-			// Additional custom validation
-			document.querySelectorAll('.status-entry').forEach(entry => {
-				const entryId = entry.dataset.entryId;
-				const messageSelect = document.getElementById(`message-${entryId}`);
-				
-if (messageSelect && messageSelect.value === 'other') {
-	const customEnInput = document.getElementById(`custom-en-${entryId}`);
-	const customFrInput = document.getElementById(`custom-fr-${entryId}`);
-	
-	// Check Quill content
-	let enContent = customEnInput.value.trim();
-	let frContent = customFrInput.value.trim();
-	
-	if (quillInstances[`en-${entryId}`]) {
-		enContent = quillInstances[`en-${entryId}`].getText().trim();
-	}
-	if (quillInstances[`fr-${entryId}`]) {
-		frContent = quillInstances[`fr-${entryId}`].getText().trim();
-	}
-	
-	if (!enContent || !frContent) {
-		isValid = false;
-		// Add visual feedback to Quill editors
-		const enEditor = document.getElementById(`custom-en-editor-${entryId}`);
-		const frEditor = document.getElementById(`custom-fr-editor-${entryId}`);
-		if (enEditor) enEditor.style.border = '2px solid #dc3545';
-		if (frEditor) frEditor.style.border = '2px solid #dc3545';
-	}
-}
-			});
-			
-			return isValid;
-		}
-		
-		// Collect form data
-		function collectFormData() {
-			const entries = [];
-			
-document.querySelectorAll('.status-entry').forEach(entry => {
-	const entryId = entry.dataset.entryId;
-	const appRadio = document.querySelector(`input[name="application-${entryId}"]:checked`);
-	const statusRadio = document.querySelector(`input[name="status-${entryId}"]:checked`);
-	const app = appRadio ? appRadio.value : null;
-	const status = statusRadio ? statusRadio.value : null;
-	const messageSelect = document.getElementById(`message-${entryId}`);
-	const messageValue = messageSelect.value;
-				
-				if (!app || !status || !messageValue) {
-					return; // Skip incomplete entries
-				}
-				
-				let messageEn, messageFr;
-				
-if (messageValue === 'other') {
-	// Get HTML content from hidden inputs (populated by Quill)
-	messageEn = document.getElementById(`custom-en-${entryId}`).value.trim();
-	messageFr = document.getElementById(`custom-fr-${entryId}`).value.trim();
-	
-	// If empty, get from Quill instance directly
-	if (!messageEn && quillInstances[`en-${entryId}`]) {
-		messageEn = quillInstances[`en-${entryId}`].root.innerHTML.trim();
-	}
-	if (!messageFr && quillInstances[`fr-${entryId}`]) {
-		messageFr = quillInstances[`fr-${entryId}`].root.innerHTML.trim();
-	}
-} else {
-	const selectedOption = messageSelect.options[messageSelect.selectedIndex];
-	messageEn = selectedOption.dataset.en;
-	messageFr = selectedOption.dataset.fr;
-}
-				
-				entries.push({
-					application: app,
-					status: status,
-					messageEn: messageEn,
-					messageFr: messageFr
-				});
-			});
-			
-			return entries;
-		}
-		
-		// Generate SHTM file
-		// Generate SHTM file
-function generateSHTMFile(entry) {
-	const timestamp = new Date().toISOString();
-	const filename = entry.application === 'outlook' ? 'outlook.shtm' : 'm365.shtm';
-	
-	// Map application values to display names
-	const appDisplayNames = {
-		'outlook': {
-			en: 'Microsoft Outlook',
-			fr: 'Microsoft Outlook'
-		},
-		'm365': {
-			en: 'Microsoft 365 (M365)',
-			fr: 'Microsoft 365 (M365)'
-		}
-	};
-	
-	// Map status values to display names and styling
-	const statusConfig = {
-		'no-issues': {
-			en: 'No reported issues',
-			fr: 'Aucun problème signalé',
-			icon: 'fa-check-circle',
-			color: 'text-success',
-			ariaLabelEn: 'No reported issues',
-			ariaLabelFr: 'Aucun problème signalé'
-		},
-		'incident': {
-			en: 'Incident',
-			fr: 'Incident',
-			icon: 'fa-exclamation-triangle',
-			color: 'text-warning',
-			ariaLabelEn: 'Incident',
-			ariaLabelFr: 'Incident'
-		},
-		'outage': {
-			en: 'Outage',
-			fr: 'Panne',
-			icon: 'fa-times-circle',
-			color: 'text-danger',
-			ariaLabelEn: 'Outage',
-			ariaLabelFr: 'Panne'
-		}
-	};
-	
-	const appNameEn = appDisplayNames[entry.application].en;
-	const appNameFr = appDisplayNames[entry.application].fr;
-	const statusInfo = statusConfig[entry.status];
-	
-	// Create bilingual SHTM content with SSI conditionals
-	const shtmlContent = `<!--#if expr="lang=eng" -->
-		<div class="col-sm-6">
-			<div class="card mb-3">
-				<div class="card-body d-flex justify-content-between align-items-center">
-					<div>
-						<h3 class="h5 mb-1">${appNameEn}</h3>
-						<p class="mb-0">
-							<span class="sr-only">Status:&#160;</span>${statusInfo.en}
-						</p>
-						<p>${entry.messageEn}</p>
-					</div>
-					<i class="fas ${statusInfo.icon} fa-lg ${statusInfo.color}" aria-label="${statusInfo.ariaLabelEn}" role="img"></i>
-				</div>
+				<i class="fas ${statusInfo.icon} fa-lg ${statusInfo.color}" aria-label="${statusInfo.ariaLabelEn}" role="img"></i>
 			</div>
 		</div>
-<!--#else -->
-		<div class="col-sm-6">
-			<div class="card mb-3">
-				<div class="card-body d-flex justify-content-between align-items-center">
-					<div>
-						<h3 class="h5 mb-1">${appNameFr}</h3>
-						<p class="mb-0">
-							<span class="sr-only">État&#160;:&#160;</span>${statusInfo.fr}
-						</p>
-						<p>${entry.messageFr}</p>
-					</div>
-					<i class="fas ${statusInfo.icon} fa-lg ${statusInfo.color}" aria-label="${statusInfo.ariaLabelFr}" role="img"></i>
+	</div>
+	<!--#else -->
+	<div class="col-sm-6">
+		<div class="card mb-3">
+			<div class="card-body d-flex justify-content-between align-items-center">
+				<div>
+					<h3 class="h5 mb-1">${appNameFr}</h3>
+					<p class="mb-0">
+						<span class="sr-only">État&#160;:&#160;</span>${statusInfo.fr}
+					</p>
+					<p>${entry.messageFr}</p>
 				</div>
+				<i class="fas ${statusInfo.icon} fa-lg ${statusInfo.color}" aria-label="${statusInfo.ariaLabelFr}" role="img"></i>
 			</div>
 		</div>
-<!--#endif -->`;
-	
-	// Create and download file
+	</div>
+	<!--#endif -->`;
 	const blob = new Blob([shtmlContent], { type: 'text/html' });
-	const url = window.URL.createObjectURL(blob);
-	const a = document.createElement('a');
-	a.href = url;
-	a.download = filename;
-	document.body.appendChild(a);
-	a.click();
-	
-	// Cleanup
-	window.URL.revokeObjectURL(url);
-	document.body.removeChild(a);
-}
-		
-// Show alert message
-function showAlert(message, type) {
-	const alertContainer = document.getElementById('alertContainer');
-	const alert = document.createElement('div');
-	alert.className = `alert alert-${type} alert-dismissible fade show`;
-	alert.setAttribute('role', 'alert');
-	alert.innerHTML = `
-		${message}
-		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-	`;
-	alertContainer.appendChild(alert);
-	
-	// Auto dismiss after 5 seconds
-	setTimeout(() => {
-		alert.classList.remove('show');
-		setTimeout(() => alert.remove(), 150);
-	}, 5000);
-}
-
-	</script>
-
-	<footer class="mt-auto">
-		<div class="container">
-			<div class="text-center">
-				<p class="mb-0" data-en="" data-fr="" id="version-info"></p>
-			</div>
-		</div>
-	</footer>
-	<script src="js/bootstrap.bundle.min.js">
-	</script> 
-	<script src="js/creavia.js">
-	</script>
-    <script src="js/quill.js">
-    </script>
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+    }
+    
+    function showAlert(message, type) {
+        const alertContainer = document.getElementById('alertContainer');
+        const alert = document.createElement('div');
+        alert.className = `alert alert-${type} alert-dismissible fade show`;
+        alert.setAttribute('role', 'alert');
+        alert.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        alertContainer.appendChild(alert);
+        
+        setTimeout(() => {
+            alert.classList.remove('show');
+            setTimeout(() => alert.remove(), 150);
+        }, 5000);
+    }
+</script>
 </body>
 </html>
