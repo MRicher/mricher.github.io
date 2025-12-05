@@ -369,8 +369,8 @@
 						<small id="alert-en-help" class="form-text text-muted d-block" data-en="Enter the alert message in English. The header 'Note' will be automatically added." data-fr="Entrez le message d'alerte en anglais. L'en-tête « Note » sera automatiquement ajouté.">Enter the alert message in English. The header "Note" will be automatically added.</small>
 					</label>
 					<div style="padding: 0.5rem; background-color: var(--card-bg); border: 1px solid var(--border-color); border-bottom: none; border-radius: 0.375rem 0.375rem 0 0;">
-						<h2 style="margin: 0; font-size: 1.25rem; color: var(--card-text);">Note</h2>
-					</div>
+                        <h3 style="margin: 0; font-size: 1.25rem; color: var(--card-text);">Note</h3>
+                    </div>
 					<div id="alert-en-editor" style="min-height: 150px; border-radius: 0 0 0.375rem 0.375rem;"></div>
 					<input type="hidden" id="alert-en" name="alert-en">
 				</div>
@@ -381,8 +381,8 @@
 						<small id="alert-fr-help" class="form-text text-muted d-block" data-en="Enter the alert message in French. The header 'Remarque' will be automatically added." data-fr="Entrez le message d'alerte en français. L'en-tête « Remarque » sera automatiquement ajouté.">Enter the alert message in French. The header "Remarque" will be automatically added.</small>
 					</label>
 					<div style="padding: 0.5rem; background-color: var(--card-bg); border: 1px solid var(--border-color); border-bottom: none; border-radius: 0.375rem 0.375rem 0 0;">
-						<h2 style="margin: 0; font-size: 1.25rem; color: var(--card-text);">Remarque</h2>
-					</div>
+                        <h3 style="margin: 0; font-size: 1.25rem; color: var(--card-text);">Remarque</h3>
+                    </div>
 					<div id="alert-fr-editor" style="min-height: 150px; border-radius: 0 0 0.375rem 0.375rem;"></div>
 					<input type="hidden" id="alert-fr" name="alert-fr">
 				</div>
@@ -462,38 +462,47 @@
 		Bold.tagName = 'strong';
 		Quill.register(Bold, true);
 
-		// Custom link format for alert messages
-		const Link = Quill.import('formats/link');
-		class AlertLink extends Link {
-			static create(value) {
-				let node = super.create(value);
-				node.setAttribute('class', 'alert-link');
-				return node;
-			}
-		}
-
-        // Register line break
-        const Break = Quill.import('blots/break');
-        const Embed = Quill.import('blots/embed');
-
-        class LineBreak extends Break {
-            length() {
-                return 1;
+        // Custom link format for alert messages
+        const Link = Quill.import('formats/link');
+        class AlertLink extends Link {
+            static create(value) {
+                let node = super.create(value);
+                node.setAttribute('class', 'alert-link');
+                node.removeAttribute('rel');
+                node.removeAttribute('target');
+                return node;
             }
             
-            value() {
-                return '\n';
-            }
-
-            insertInto(parent, ref) {
-                Embed.prototype.insertInto.call(this, parent, ref);
+            static formats(node) {
+                return node.getAttribute('href');
             }
         }
 
-        LineBreak.blotName = 'break';
+        // Register line break
+        const Inline = Quill.import('blots/inline');
+
+        class LineBreak extends Inline {
+            static create() {
+                return super.create();
+            }
+
+            static formats() {
+                return true;
+            }
+
+            length() {
+                return 1;
+            }
+
+            optimize() {
+                super.optimize();
+            }
+        }
+
+        LineBreak.blotName = 'linebreak';
         LineBreak.tagName = 'BR';
 
-        Quill.register(LineBreak);
+        Quill.register(LineBreak, true);
 
 		document.addEventListener('DOMContentLoaded', function() {
 			setupEventListeners();
@@ -520,7 +529,7 @@
                         'linebreak': function() {
                             const range = this.quill.getSelection();
                             if (range) {
-                                this.quill.insertEmbed(range.index, 'break', true, 'user');
+                                this.quill.insertEmbed(range.index, 'linebreak', true, 'user');
                                 this.quill.setSelection(range.index + 1, 'silent');
                             }
                         }
@@ -631,9 +640,9 @@
 			
 			// Function to get full content with header
 			function getFullContent(editor, header) {
-				const editorContent = editor.root.innerHTML.trim();
-				return `<h2>${header}</h2>${editorContent}`;
-			}
+                const editorContent = editor.root.innerHTML.trim();
+                return `<h3>${header}</h3>${editorContent}`;
+            }
 			
 			// Initialize hidden input values with headers
 			document.getElementById('alert-en').value = getFullContent(alertEnEditor, 'Note');
@@ -680,10 +689,10 @@
                 previewContainer.style.display = 'block';
                 
                 previewEn.className = `alert alert-${alertType} alert-preview`;
-                previewEn.innerHTML = `<h2>Note</h2>${alertEnContent || '<em>No English content</em>'}`;
-                
+                previewEn.innerHTML = `<h3>Note</h3>${alertEnContent || '<em>No English content</em>'}`;
+
                 previewFr.className = `alert alert-${alertType} alert-preview`;
-                previewFr.innerHTML = `<h2>Remarque</h2>${alertFrContent || '<em>Aucun contenu français</em>'}`;
+                previewFr.innerHTML = `<h3>Remarque</h3>${alertFrContent || '<em>Aucun contenu français</em>'}`;
             } else {
                 previewContainer.style.display = 'none';
             }
