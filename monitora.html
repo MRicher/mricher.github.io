@@ -479,28 +479,29 @@
         }
 
         // Register line break
-        const Inline = Quill.import('blots/inline');
+        const Embed = Quill.import('blots/embed');
 
-        class LineBreak extends Inline {
+        class LineBreak extends Embed {
             static create() {
-                return super.create();
+                let node = super.create();
+                return node;
             }
 
-            static formats() {
-                return true;
+            static value() {
+                return undefined;
             }
 
             length() {
                 return 1;
             }
 
-            optimize() {
-                super.optimize();
+            insertInto(parent, ref) {
+                super.insertInto(parent, ref);
             }
         }
 
         LineBreak.blotName = 'linebreak';
-        LineBreak.tagName = 'BR';
+        LineBreak.tagName = 'br';
 
         Quill.register(LineBreak, true);
 
@@ -527,10 +528,10 @@
                     ],
                     handlers: {
                         'linebreak': function() {
-                            const range = this.quill.getSelection();
+                            const range = this.quill.getSelection(true);
                             if (range) {
-                                this.quill.insertEmbed(range.index, 'linebreak', true, 'user');
-                                this.quill.setSelection(range.index + 1, 'silent');
+                                this.quill.insertEmbed(range.index, 'linebreak', true, Quill.sources.USER);
+                                this.quill.setSelection(range.index + 1, Quill.sources.SILENT);
                             }
                         }
                     }
@@ -552,10 +553,10 @@
                         ],
                         handlers: {
                             'linebreak': function() {
-                                const range = this.quill.getSelection();
+                                const range = this.quill.getSelection(true);
                                 if (range) {
-                                    this.quill.insertText(range.index, '\n', 'user');
-                                    this.quill.setSelection(range.index + 1, 'silent');
+                                    this.quill.insertEmbed(range.index, 'linebreak', true, Quill.sources.USER);
+                                    this.quill.setSelection(range.index + 1, Quill.sources.SILENT);
                                 }
                             }
                         }
@@ -594,10 +595,10 @@
                         ],
                         handlers: {
                             'linebreak': function() {
-                                const range = this.quill.getSelection();
+                                const range = this.quill.getSelection(true);
                                 if (range) {
-                                    this.quill.insertEmbed(range.index, 'break', true, 'user');
-                                    this.quill.setSelection(range.index + 1, 'silent');
+                                    this.quill.insertEmbed(range.index, 'linebreak', true, Quill.sources.USER);
+                                    this.quill.setSelection(range.index + 1, Quill.sources.SILENT);
                                 }
                             }
                         }
@@ -619,10 +620,10 @@
                         ],
                         handlers: {
                             'linebreak': function() {
-                                const range = this.quill.getSelection();
+                                const range = this.quill.getSelection(true);
                                 if (range) {
-                                    this.quill.insertEmbed(range.index, 'break', true, 'user');
-                                    this.quill.setSelection(range.index + 1, 'silent');
+                                    this.quill.insertEmbed(range.index, 'linebreak', true, Quill.sources.USER);
+                                    this.quill.setSelection(range.index + 1, Quill.sources.SILENT);
                                 }
                             }
                         }
