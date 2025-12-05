@@ -302,7 +302,7 @@
                             <span class="text-danger">(<span data-en="required" data-fr="obligatoire">required</span>)</span>
                             <small id="message-help-1" class="form-text text-muted d-block" data-en="Choose a pre-defined message or select 'Other' to write your own." data-fr="Choisissez un message prédéfini ou sélectionnez « Autre » pour écrire le vôtre.">Choose a pre-defined message or select "Other" to write your own.</small>
                         </label>
-                        <select class="form-control message-select" id="message-1" name="message-1" required aria-required="true" aria-describedby="message-help-1">
+                        <select class="form-control message-select" id="message-1" name="message-1" required aria-describedby="message-help-1">
                             <option value="" data-en="Select a message" data-fr="Sélectionnez un message">Select a message</option>
                             <option value="other" data-en="Other" data-fr="Autre">Other</option>
                         </select>
@@ -313,16 +313,16 @@
                         <h3 class="h5" id="custom-message-heading-1" data-en="Custom message" data-fr="Message personnalisé">Custom message</h3>
                         
                         <div class="form-group">
-                            <label class="bilingual-label" for="custom-en-1">
+                            <label class="bilingual-label" for="custom-en-editor-1">
                                 <span data-en="English message" data-fr="Message en anglais">English message</span>
                                 <small id="custom-en-help-1" class="form-text text-muted d-block" data-en="Enter your custom message in English." data-fr="Entrez votre message personnalisé en anglais.">Enter your custom message in English.</small>
                             </label>
                             <div id="custom-en-editor-1" class="custom-message-en" style="min-height: 150px;"></div>
                             <input type="hidden" id="custom-en-1" name="custom-en-1">
                         </div>
-                        
+
                         <div class="form-group">
-                            <label class="bilingual-label" for="custom-fr-1">
+                            <label class="bilingual-label" for="custom-fr-editor-1">
                                 <span data-en="French message" data-fr="Message en français">French message</span>
                                 <small id="custom-fr-help-1" class="form-text text-muted d-block" data-en="Enter your custom message in French." data-fr="Entrez votre message personnalisé en français.">Enter your custom message in French.</small>
                             </label>
@@ -363,29 +363,29 @@
                     </select>
 				</div>
 
-				<div class="form-group">
-					<label class="bilingual-label" for="alert-en">
-						<span data-en="English alert message" data-fr="Message d'alerte en anglais">English alert message</span>
-						<small id="alert-en-help" class="form-text text-muted d-block" data-en="Enter the alert message in English. The header 'Note' will be automatically added." data-fr="Entrez le message d'alerte en anglais. L'en-tête « Note » sera automatiquement ajouté.">Enter the alert message in English. The header "Note" will be automatically added.</small>
-					</label>
-					<div style="padding: 0.5rem; background-color: var(--card-bg); border: 1px solid var(--border-color); border-bottom: none; border-radius: 0.375rem 0.375rem 0 0;">
+                <div class="form-group">
+                    <label class="bilingual-label" for="alert-en-editor">
+                        <span data-en="English alert message" data-fr="Message d'alerte en anglais">English alert message</span>
+                        <small id="alert-en-help" class="form-text text-muted d-block" data-en="Enter the alert message in English. The header 'Note' will be automatically added." data-fr="Entrez le message d'alerte en anglais. L'en-tête « Note » sera automatiquement ajouté.">Enter the alert message in English. The header "Note" will be automatically added.</small>
+                    </label>
+                    <div style="padding: 0.5rem; background-color: var(--card-bg); border: 1px solid var(--border-color); border-bottom: none; border-radius: 0.375rem 0.375rem 0 0;">
                         <h3 style="margin: 0; font-size: 1.25rem; color: var(--card-text);">Note</h3>
                     </div>
-					<div id="alert-en-editor" style="min-height: 150px; border-radius: 0 0 0.375rem 0.375rem;"></div>
-					<input type="hidden" id="alert-en" name="alert-en">
-				</div>
+                    <div id="alert-en-editor" style="min-height: 150px; border-radius: 0 0 0.375rem 0.375rem;"></div>
+                    <input type="hidden" id="alert-en" name="alert-en">
+                </div>
 
-				<div class="form-group">
-					<label class="bilingual-label" for="alert-fr">
-						<span data-en="French alert message" data-fr="Message d'alerte en français">French alert message</span>
-						<small id="alert-fr-help" class="form-text text-muted d-block" data-en="Enter the alert message in French. The header 'Remarque' will be automatically added." data-fr="Entrez le message d'alerte en français. L'en-tête « Remarque » sera automatiquement ajouté.">Enter the alert message in French. The header "Remarque" will be automatically added.</small>
-					</label>
-					<div style="padding: 0.5rem; background-color: var(--card-bg); border: 1px solid var(--border-color); border-bottom: none; border-radius: 0.375rem 0.375rem 0 0;">
+                <div class="form-group">
+                    <label class="bilingual-label" for="alert-fr-editor">
+                        <span data-en="French alert message" data-fr="Message d'alerte en français">French alert message</span>
+                        <small id="alert-fr-help" class="form-text text-muted d-block" data-en="Enter the alert message in French. The header 'Remarque' will be automatically added." data-fr="Entrez le message d'alerte en français. L'en-tête « Remarque » sera automatiquement ajouté.">Enter the alert message in French. The header "Remarque" will be automatically added.</small>
+                    </label>
+                    <div style="padding: 0.5rem; background-color: var(--card-bg); border: 1px solid var(--border-color); border-bottom: none; border-radius: 0.375rem 0.375rem 0 0;">
                         <h3 style="margin: 0; font-size: 1.25rem; color: var(--card-text);">Remarque</h3>
                     </div>
-					<div id="alert-fr-editor" style="min-height: 150px; border-radius: 0 0 0.375rem 0.375rem;"></div>
-					<input type="hidden" id="alert-fr" name="alert-fr">
-				</div>
+                    <div id="alert-fr-editor" style="min-height: 150px; border-radius: 0 0 0.375rem 0.375rem;"></div>
+                    <input type="hidden" id="alert-fr" name="alert-fr">
+                </div>
 
 				<div id="alert-preview-container" style="display: none;">
 					<h3 class="h5" data-en="Preview" data-fr="Aperçu">Preview</h3>
@@ -939,22 +939,22 @@
                 <div class="custom-message-section" id="custom-message-${entryCounter}" role="region" aria-labelledby="custom-message-heading-${entryCounter}">
                     <h3 class="h5" id="custom-message-heading-${entryCounter}" data-en="Custom message" data-fr="Message personnalisé">Custom message</h3>
 					<div class="form-group">
-                    <label class="bilingual-label" for="custom-en-${entryCounter}">
+                    <label class="bilingual-label" for="custom-en-editor-${entryCounter}">
                         <span data-en="English message" data-fr="Message en anglais">English message</span>
                         <small id="custom-en-help-${entryCounter}" class="form-text text-muted d-block" data-en="Enter your custom message in English." data-fr="Entrez votre message personnalisé en anglais.">Enter your custom message in English.</small>
                     </label>
                     <div id="custom-en-editor-${entryCounter}" class="custom-message-en" style="min-height: 150px;"></div>
-                    <input type="hidden" id="custom-en-${entryCounter}" name="custom-en-${entryCounter}">
-                </div>
+                        <input type="hidden" id="custom-en-${entryCounter}" name="custom-en-${entryCounter}">
+                    </div>
 
-                <div class="form-group">
-                    <label class="bilingual-label" for="custom-fr-${entryCounter}">
-                        <span data-en="French message" data-fr="Message en français">French message</span>
-                        <small id="custom-fr-help-${entryCounter}" class="form-text text-muted d-block" data-en="Enter your custom message in French." data-fr="Entrez votre message personnalisé en français.">Enter your custom message in French.</small>
-                    </label>
-                    <div id="custom-fr-editor-${entryCounter}" class="custom-message-fr" style="min-height: 150px;"></div>
-                    <input type="hidden" id="custom-fr-${entryCounter}" name="custom-fr-${entryCounter}">
-                </div>
+                    <div class="form-group">
+                        <label class="bilingual-label" for="custom-fr-editor-${entryCounter}">
+                            <span data-en="French message" data-fr="Message en français">French message</span>
+                            <small id="custom-fr-help-${entryCounter}" class="form-text text-muted d-block" data-en="Enter your custom message in French." data-fr="Entrez votre message personnalisé en français.">Enter your custom message in French.</small>
+                        </label>
+                        <div id="custom-fr-editor-${entryCounter}" class="custom-message-fr" style="min-height: 150px;"></div>
+                        <input type="hidden" id="custom-fr-${entryCounter}" name="custom-fr-${entryCounter}">
+                    </div>
             </div>
             
             <button type="button" class="btn btn-danger btn-sm remove-entry-btn" data-entry-id="${entryCounter}" data-en="Remove this entry" data-fr="Supprimer cette entrée">Remove this entry</button>
@@ -1190,17 +1190,22 @@
         statusContentEn = `<p class="mb-0"><span class="sr-only">Status: </span><strong>${statusInfo.en}</strong></p>`;
         statusContentFr = `<p class="mb-0"><span class="sr-only">État&#160;:&#160;</span>${statusInfo.fr}</p>`;
     } else {
-        const messageEnHTML = entry.messageEn ? `<p>${entry.messageEn}</p>` : '';
-        const messageFrHTML = entry.messageFr ? `<p>${entry.messageFr}</p>` : '';
+        const messageEnHTML = entry.messageEn ? entry.messageEn : '';
+        const messageFrHTML = entry.messageFr ? entry.messageFr : '';
         
         statusContentEn = `<p class="mb-0">
-                        <span class="sr-only">Status:&#160;</span>${statusInfo.en}
-                    </p>
-                    ${messageEnHTML}`;
+							<span class="sr-only">Status:&#160;</span>${statusInfo.en}
+						</p>
+						${messageEnHTML}
+					</div>
+					<i class="fas ${statusInfo.icon} fa-lg ${statusInfo.color}" aria-label="${statusInfo.ariaLabelEn}" role="img"></i>`;
+        
         statusContentFr = `<p class="mb-0">
-                        <span class="sr-only">État&#160;:&#160;</span>${statusInfo.fr}
-                    </p>
-                    ${messageFrHTML}`;
+							<span class="sr-only">État&#160;:&#160;</span>${statusInfo.fr}
+						</p>
+						${messageFrHTML}
+					</div>
+					<i class="fas ${statusInfo.icon} fa-lg ${statusInfo.color}" aria-label="${statusInfo.ariaLabelFr}" role="img"></i>`;
     }
 
     const shtmlContent = `<!--#if expr="lang=eng" -->
