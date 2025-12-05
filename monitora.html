@@ -120,6 +120,15 @@
 			border-top-left-radius: 0 !important;
 			border-top-right-radius: 0 !important;
 		}
+
+        .ql-linebreak:after {
+            content: '↵';
+            font-weight: bold;
+        }
+
+        .ql-linebreak {
+            width: auto !important;
+        }
     </style>
 </head>
 
@@ -239,7 +248,7 @@
                         <fieldset>
                             <legend class="bilingual-label">
                                 <span data-en="Application" data-fr="Application">Application</span>
-                                <span class="text-danger" aria-label="required">*</span>
+                                <span class="text-danger">(<span data-en="required" data-fr="obligatoire">required</span>)</span>
                                 <small id="application-help-1" class="form-text text-muted d-block" data-en="Choose the application to update." data-fr="Choisissez l'application à mettre à jour.">Choose the application to update.</small>
                             </legend>
                             <div class="form-check">
@@ -262,7 +271,7 @@
                         <fieldset>
                             <legend class="bilingual-label">
                                 <span data-en="Current status" data-fr="Statut actuel">Current status</span>
-                                <span class="text-danger" aria-label="required">*</span>
+                                <span class="text-danger">(<span data-en="required" data-fr="obligatoire">required</span>)</span>
                                 <small id="status-help-1" class="form-text text-muted d-block" data-en="Select the current operational status." data-fr="Sélectionnez le statut opérationnel actuel.">Select the current operational status.</small>
                             </legend>
                             <div class="form-check">
@@ -290,7 +299,7 @@
                     <div class="form-group">
                         <label class="bilingual-label" for="message-1">
                             <span data-en="Status message" data-fr="Message de statut">Status message</span>
-                            <span class="text-danger" aria-label="required">*</span>
+                            <span class="text-danger">(<span data-en="required" data-fr="obligatoire">required</span>)</span>
                             <small id="message-help-1" class="form-text text-muted d-block" data-en="Choose a pre-defined message or select 'Other' to write your own." data-fr="Choisissez un message prédéfini ou sélectionnez « Autre » pour écrire le vôtre.">Choose a pre-defined message or select "Other" to write your own.</small>
                         </label>
                         <select class="form-control message-select" id="message-1" name="message-1" required aria-required="true" aria-describedby="message-help-1">
@@ -335,7 +344,7 @@
         </form>
 
 		<section class="alert-message-section" aria-labelledby="alert-message-heading">
-			<h2 id="alert-message-heading" data-en="Alert message (Optional)" data-fr="Message d'alerte (Optionnel)">Alert message (Optional)</h2>
+			<h2 id="alert-message-heading" data-en="Alert message (optional)" data-fr="Message d'alerte (optionnel)">Alert message (optional)</h2>
 			
 			<p class="lead" data-en="Create a site-wide alert banner to notify users of important information." data-fr="Créez une bannière d'alerte à l'échelle du site pour informer les utilisateurs d'informations importantes.">
 				Create a site-wide alert banner to notify users of important information.
@@ -463,6 +472,29 @@
 			}
 		}
 
+        // Register line break
+        const Break = Quill.import('blots/break');
+        const Embed = Quill.import('blots/embed');
+
+        class LineBreak extends Break {
+            length() {
+                return 1;
+            }
+            
+            value() {
+                return '\n';
+            }
+
+            insertInto(parent, ref) {
+                Embed.prototype.insertInto.call(this, parent, ref);
+            }
+        }
+
+        LineBreak.blotName = 'break';
+        LineBreak.tagName = 'BR';
+
+        Quill.register(LineBreak);
+
 		document.addEventListener('DOMContentLoaded', function() {
 			setupEventListeners();
 			updateMessageOptions(1);
@@ -473,29 +505,53 @@
 
         // Initialize Quill editor for a specific entry
 		function initializeQuillEditor(entryId) {
-			const quillEnEditor = new Quill(`#custom-en-editor-${entryId}`, {
-				theme: 'snow',
-				modules: {
-					toolbar: [
-						['bold'],
-						[{ 'list': 'ordered'}, { 'list': 'bullet' }],
-						['link'],
-						['clean']
-					]
-				},
-				placeholder: 'Enter your custom message in English...'
-			});
+        const quillEnEditor = new Quill(`#custom-en-editor-${entryId}`, {
+            theme: 'snow',
+            modules: {
+                toolbar: {
+                    container: [
+                        ['bold'],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        ['link'],
+                        ['linebreak'],
+                        ['clean']
+                    ],
+                    handlers: {
+                        'linebreak': function() {
+                            const range = this.quill.getSelection();
+                            if (range) {
+                                this.quill.insertEmbed(range.index, 'break', true, 'user');
+                                this.quill.setSelection(range.index + 1, 'silent');
+                            }
+                        }
+                    }
+                }
+            },
+            placeholder: 'Enter your custom message in English...'
+        });
 
 			const quillFrEditor = new Quill(`#custom-fr-editor-${entryId}`, {
 				theme: 'snow',
-				modules: {
-					toolbar: [
-						['bold'],
-						[{ 'list': 'ordered'}, { 'list': 'bullet' }],
-						['link'],
-						['clean']
-					]
-				},
+                modules: {
+                    toolbar: {
+                        container: [
+                            ['bold'],
+                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                            ['link'],
+                            ['linebreak'],
+                            ['clean']
+                        ],
+                        handlers: {
+                            'linebreak': function() {
+                                const range = this.quill.getSelection();
+                                if (range) {
+                                    this.quill.insertText(range.index, '\n', 'user');
+                                    this.quill.setSelection(range.index + 1, 'silent');
+                                }
+                            }
+                        }
+                    }
+                },
 				placeholder: 'Entrez votre message personnalisé en français...'
 			});
 			
@@ -516,31 +572,55 @@
 			// Register custom alert link format
 			Quill.register(AlertLink, true);
 			
-			const alertEnEditor = new Quill('#alert-en-editor', {
-				theme: 'snow',
-				modules: {
-					toolbar: [
-						['bold'],
-						[{ 'list': 'ordered'}, { 'list': 'bullet' }],
-						['link'],
-						['clean']
-					]
-				},
-				placeholder: 'Enter your alert message in English...'
-			});
+            const alertEnEditor = new Quill('#alert-en-editor', {
+                theme: 'snow',
+                modules: {
+                    toolbar: {
+                        container: [
+                            ['bold'],
+                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                            ['link'],
+                            ['linebreak'],
+                            ['clean']
+                        ],
+                        handlers: {
+                            'linebreak': function() {
+                                const range = this.quill.getSelection();
+                                if (range) {
+                                    this.quill.insertEmbed(range.index, 'break', true, 'user');
+                                    this.quill.setSelection(range.index + 1, 'silent');
+                                }
+                            }
+                        }
+                    }
+                },
+                placeholder: 'Enter your alert message in English...'
+            });
 
-			const alertFrEditor = new Quill('#alert-fr-editor', {
-				theme: 'snow',
-				modules: {
-					toolbar: [
-						['bold'],
-						[{ 'list': 'ordered'}, { 'list': 'bullet' }],
-						['link'],
-						['clean']
-					]
-				},
-				placeholder: 'Entrez votre message d\'alerte en français...'
-			});
+            const alertFrEditor = new Quill('#alert-fr-editor', {
+                theme: 'snow',
+                modules: {
+                    toolbar: {
+                        container: [
+                            ['bold'],
+                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                            ['link'],
+                            ['linebreak'],
+                            ['clean']
+                        ],
+                        handlers: {
+                            'linebreak': function() {
+                                const range = this.quill.getSelection();
+                                if (range) {
+                                    this.quill.insertEmbed(range.index, 'break', true, 'user');
+                                    this.quill.setSelection(range.index + 1, 'silent');
+                                }
+                            }
+                        }
+                    }
+                },
+                placeholder: 'Entrez votre message d\'alerte en français...'
+            });
 			
 			// Set default content with headers in editable area
 			alertEnEditor.root.innerHTML = '<p><br></p>';
@@ -588,26 +668,26 @@
 		}
 
 		// Update alert preview
-		function updateAlertPreview() {
-			const alertType = document.getElementById('alert-type').value;
-			const alertEnContent = quillInstances['alert-en'] ? quillInstances['alert-en'].root.innerHTML : '';
-			const alertFrContent = quillInstances['alert-fr'] ? quillInstances['alert-fr'].root.innerHTML : '';
-			const previewContainer = document.getElementById('alert-preview-container');
-			const previewEn = document.getElementById('alert-preview-en');
-			const previewFr = document.getElementById('alert-preview-fr');
-			
-			if (alertType && (alertEnContent.trim() || alertFrContent.trim())) {
-				previewContainer.style.display = 'block';
-				
-				previewEn.className = `alert alert-${alertType} alert-preview`;
-				previewEn.innerHTML = alertEnContent || '<em>No English content</em>';
-				
-				previewFr.className = `alert alert-${alertType} alert-preview`;
-				previewFr.innerHTML = alertFrContent || '<em>Aucun contenu français</em>';
-			} else {
-				previewContainer.style.display = 'none';
-			}
-		}
+        function updateAlertPreview() {
+            const alertType = document.getElementById('alert-type').value;
+            const alertEnContent = quillInstances['alert-en'] ? quillInstances['alert-en'].root.innerHTML : '';
+            const alertFrContent = quillInstances['alert-fr'] ? quillInstances['alert-fr'].root.innerHTML : '';
+            const previewContainer = document.getElementById('alert-preview-container');
+            const previewEn = document.getElementById('alert-preview-en');
+            const previewFr = document.getElementById('alert-preview-fr');
+            
+            if (alertType && (alertEnContent.trim() || alertFrContent.trim())) {
+                previewContainer.style.display = 'block';
+                
+                previewEn.className = `alert alert-${alertType} alert-preview`;
+                previewEn.innerHTML = `<h2>Note</h2>${alertEnContent || '<em>No English content</em>'}`;
+                
+                previewFr.className = `alert alert-${alertType} alert-preview`;
+                previewFr.innerHTML = `<h2>Remarque</h2>${alertFrContent || '<em>Aucun contenu français</em>'}`;
+            } else {
+                previewContainer.style.display = 'none';
+            }
+        }
 
 		// Handle alert form submission
 		function handleAlertFormSubmit(e) {
@@ -798,7 +878,7 @@
                     <fieldset>
                         <legend class="bilingual-label">
                             <span data-en="Application" data-fr="Application">Application</span>
-                            <span class="text-danger" aria-label="required">*</span>
+                            <span class="text-danger">(<span data-en="required" data-fr="obligatoire">required</span>)</span>
                             <small id="application-help-${entryCounter}" class="form-text text-muted d-block" data-en="Choose the application to update." data-fr="Choisissez l'application à mettre à jour.">Choose the application to update.</small>
                         </legend>
                         <div class="form-check">
@@ -820,7 +900,7 @@
                     <fieldset>
                         <legend class="bilingual-label">
                             <span data-en="Current status" data-fr="Statut actuel">Current status</span>
-                            <span class="text-danger" aria-label="required">*</span>
+                            <span class="text-danger">(<span data-en="required" data-fr="obligatoire">required</span>)</span>
                             <small id="status-help-${entryCounter}" class="form-text text-muted d-block" data-en="Select the current operational status." data-fr="Sélectionnez le statut opérationnel actuel.">Select the current operational status.</small>
                         </legend>
                         <div class="form-check">
@@ -847,7 +927,7 @@
                 <div class="form-group">
                     <label class="bilingual-label" for="message-${entryCounter}">
                         <span data-en="Status message" data-fr="Message de statut">Status message</span>
-                        <span class="text-danger" aria-label="required">*</span>
+                        <span class="text-danger">(<span data-en="required" data-fr="obligatoire">required</span>)</span>
                         <small id="message-help-${entryCounter}" class="form-text text-muted d-block" data-en="Choose a pre-defined message or select 'Other' to write your own." data-fr="Choisissez un message prédéfini ou sélectionnez « Autre » pour écrire le vôtre.">Choose a pre-defined message or select "Other" to write your own.</small>
                     </label>
                     <select class="form-control message-select" id="message-${entryCounter}" name="message-${entryCounter}" required aria-required="true" aria-describedby="message-help-${entryCounter}">
