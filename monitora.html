@@ -420,31 +420,21 @@
         // Pre-determined messages for each application
         const messageTemplates = {
             outlook: {
-                'no-issues': [
-                    { value: 'msg1', en: 'All Outlook services are operating normally.', fr: 'Tous les services Outlook fonctionnent normalement.' },
-                    { value: 'msg2', en: 'No current issues affecting Outlook.', fr: 'Aucun problème actuel n\'affecte Outlook.' }
-                ],
                 'incident': [
-                    { value: 'msg3', en: 'We are investigating reports of Outlook connectivity issues.', fr: 'Nous enquêtons sur des rapports de problèmes de connectivité Outlook.' },
-                    { value: 'msg4', en: 'Some users may experience delayed email delivery.', fr: 'Certains utilisateurs peuvent rencontrer des retards de livraison de courriels.' }
+                    { value: 'msg1', en: '<h3>Microsoft Outlook issues (prior to online migration)</h3><p>An issue is preventing some users from accessing their email via Microsoft Outlook. Support staff are actively investigating the matter and working diligently to resolve it as quickly as possible.</p><p>In the interim, there are some possible workarounds users can try to continue to access Microsoft Outlook:</p><ol><li>Sign out and sign back into Microsoft Outlook.</li><li>Access Email through the Samsung email app on your <abbr>RCMP</abbr> issued mobile phone (if applicable).</li><li>Access <a href="https://email-courriel.rcmp-grc.gc.ca/owa/auth/logon.aspx">Outlook Web</a>. Please use your <abbr>HRMIS</abbr> number and <abbr>ROSS</abbr> password for your login credentials.<br><strong>Note</strong>: When accessing email using the web version of Outlook, you cannot decrypt or encrypt email. This feature is only available using Outlook on your desktop or on your mobile phone, if you\'ve enrolled your device for this functionality).</li></ol><p>Refer to <a href="/cio/email-courriel/common-courants-eng.htm">Outlook tips and tricks</a> on Infoweb for additional information on using Microsoft Outlook.</p>', fr: '<h3>Problèmes liés à Microsoft Outlook (avant la migration en ligne)</h3><p>Un problème empêche certains utilisateurs d\'accéder à leur courriel dans Microsoft Outlook. Le personnel de soutien travaille avec diligence pour le résoudre le plus rapidement possible.</p><p>En attendant, les utilisateurs peuvent essayer des solutions de rechange pour accéder à Microsoft Outlook&#160;:</p><ol><li>Déconnectez-vous puis reconnectez-vous à Microsoft Outlook.</li><li>Accédez à vos courriels au moyen de l\'application de courriel Samsung sur votre téléphone mobile de la <abbr>GRC</abbr>.</li><li>Accédez à <a href="https://email-courriel.rcmp-grc.gc.ca/owa/auth/logon.aspx">Outlook Web</a>. Utilisez votre numéro <abbr>SIGRH</abbr> et votre mot de passe <abbr>ROSS</abbr> pour vous connecter.<br><strong>Note</strong>&#160;: Lorsque vous accédez au courriel au moyen de la version Web d\'Outlook, vous ne pouvez pas chiffrer et déchiffrer de courriels. Cette fonction est seulement disponible dans Outlook sur votre ordinateur ou sur votre téléphone mobile, si vous avez inscrit votre appareil pour cette fonctionnalité.)</li></ol><p>Consultez la page Infoweb sur les <a href="/cio/email-courriel/common-courants-fra.htm">trucs et astuces concernant Outlook</a> pour en savoir plus sur comment utiliser Microsoft Outlook.</p>' }
                 ],
                 'outage': [
-                    { value: 'msg5', en: 'Outlook services are currently unavailable. We are working to restore access.', fr: 'Les services Outlook sont actuellement indisponibles. Nous travaillons à rétablir l\'accès.' },
-                    { value: 'msg6', en: 'Major outage affecting all Outlook users. Estimated restoration time: 2 hours.', fr: 'Panne majeure affectant tous les utilisateurs Outlook. Temps de rétablissement estimé : 2 heures.' }
+                    { value: 'msg2', en: '<h3>Microsoft Outlook issues (prior to online migration)</h3><p>An issue is preventing some users from accessing their email via Microsoft Outlook. Support staff are actively investigating the matter and working diligently to resolve it as quickly as possible.</p><p>In the interim, there are some possible workarounds users can try to continue to access Microsoft Outlook:</p><ol><li>Sign out and sign back into Microsoft Outlook.</li><li>Access Email through the Samsung email app on your <abbr>RCMP</abbr> issued mobile phone (if applicable).</li><li>Access <a href="https://email-courriel.rcmp-grc.gc.ca/owa/auth/logon.aspx">Outlook Web</a>. Please use your <abbr>HRMIS</abbr> number and <abbr>ROSS</abbr> password for your login credentials.<br><strong>Note</strong>: When accessing email using the web version of Outlook, you cannot decrypt or encrypt email. This feature is only available using Outlook on your desktop or on your mobile phone, if you\'ve enrolled your device for this functionality).</li></ol><p>Refer to <a href="/cio/email-courriel/common-courants-eng.htm">Outlook tips and tricks</a> on Infoweb for additional information on using Microsoft Outlook.</p>', fr: '<h3>Problèmes liés à Microsoft Outlook (avant la migration en ligne)</h3><p>Un problème empêche certains utilisateurs d\'accéder à leur courriel dans Microsoft Outlook. Le personnel de soutien travaille avec diligence pour le résoudre le plus rapidement possible.</p><p>En attendant, les utilisateurs peuvent essayer des solutions de rechange pour accéder à Microsoft Outlook&#160;:</p><ol><li>Déconnectez-vous puis reconnectez-vous à Microsoft Outlook.</li><li>Accédez à vos courriels au moyen de l\'application de courriel Samsung sur votre téléphone mobile de la <abbr>GRC</abbr>.</li><li>Accédez à <a href="https://email-courriel.rcmp-grc.gc.ca/owa/auth/logon.aspx">Outlook Web</a>. Utilisez votre numéro <abbr>SIGRH</abbr> et votre mot de passe <abbr>ROSS</abbr> pour vous connecter.<br><strong>Note</strong>&#160;: Lorsque vous accédez au courriel au moyen de la version Web d\'Outlook, vous ne pouvez pas chiffrer et déchiffrer de courriels. Cette fonction est seulement disponible dans Outlook sur votre ordinateur ou sur votre téléphone mobile, si vous avez inscrit votre appareil pour cette fonctionnalité.)</li></ol><p>Consultez la page Infoweb sur les <a href="/cio/email-courriel/common-courants-fra.htm">trucs et astuces concernant Outlook</a> pour en savoir plus sur comment utiliser Microsoft Outlook.</p>' }
                 ]
             },
             m365: {
-                'no-issues': [
-                    { value: 'msg7', en: 'All Microsoft 365 services are running smoothly.', fr: 'Tous les services Microsoft 365 fonctionnent correctement.' },
-                    { value: 'msg8', en: 'No disruptions to M365 services at this time.', fr: 'Aucune interruption des services M365 pour le moment.' }
-                ],
                 'incident': [
-                    { value: 'msg9', en: 'We are aware of performance issues affecting some M365 applications.', fr: 'Nous sommes conscients de problèmes de performance affectant certaines applications M365.' },
-                    { value: 'msg10', en: 'Teams and SharePoint may be experiencing intermittent connectivity.', fr: 'Teams et SharePoint peuvent rencontrer une connectivité intermittente.' }
+                    { value: 'msg3', en: 'We are aware of performance issues affecting some M365 applications.', fr: 'Nous sommes conscients de problèmes de performance affectant certaines applications M365.' },
+                    { value: 'msg4', en: 'Teams and SharePoint may be experiencing intermittent connectivity.', fr: 'Teams et SharePoint peuvent rencontrer une connectivité intermittente.' }
                 ],
                 'outage': [
-                    { value: 'msg11', en: 'Microsoft 365 services are experiencing a complete outage. Updates to follow.', fr: 'Les services Microsoft 365 subissent une panne complète. Mises à jour à suivre.' },
-                    { value: 'msg12', en: 'Critical outage impacting all M365 services. Our team is working on resolution.', fr: 'Panne critique affectant tous les services M365. Notre équipe travaille à la résolution.' }
+                    { value: 'msg5', en: 'Microsoft 365 services are experiencing a complete outage. Updates to follow.', fr: 'Les services Microsoft 365 subissent une panne complète. Mises à jour à suivre.' },
+                    { value: 'msg6', en: 'Critical outage impacting all M365 services. Our team is working on resolution.', fr: 'Panne critique affectant tous les services M365. Notre équipe travaille à la résolution.' }
                 ]
             }
         };
@@ -1286,7 +1276,7 @@
             }
             
             // Add abbreviations if not already wrapped
-            const abbrs = ['RCMP', 'GRC', 'ROSS', 'SIGRH'];
+            const abbrs = ['RCMP', 'GRC', 'ROSS', 'HRMIS', 'SIGRH'];
             
             abbrs.forEach(abbr => {
                 const pattern = new RegExp(`\\b${abbr}\\b`, 'g');
