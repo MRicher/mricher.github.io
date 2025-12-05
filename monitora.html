@@ -568,13 +568,13 @@
 			quillInstances[`en-${entryId}`] = quillEnEditor;
 			quillInstances[`fr-${entryId}`] = quillFrEditor;
 			
-			quillEnEditor.on('text-change', function() {
-				document.getElementById(`custom-en-${entryId}`).value = quillEnEditor.root.innerHTML;
-			});
-			
-			quillFrEditor.on('text-change', function() {
-				document.getElementById(`custom-fr-${entryId}`).value = quillFrEditor.root.innerHTML;
-			});
+            quillEnEditor.on('text-change', function() {
+                document.getElementById(`custom-en-${entryId}`).value = sanitizeContent(quillEnEditor.root.innerHTML);
+            });
+
+            quillFrEditor.on('text-change', function() {
+                document.getElementById(`custom-fr-${entryId}`).value = sanitizeContent(quillFrEditor.root.innerHTML);
+            });
 		}
 
 		// Initialize Quill editors for alert messages
@@ -649,15 +649,15 @@
 			document.getElementById('alert-en').value = getFullContent(alertEnEditor, 'Note');
 			document.getElementById('alert-fr').value = getFullContent(alertFrEditor, 'Remarque');
 			
-			alertEnEditor.on('text-change', function() {
-				document.getElementById('alert-en').value = getFullContent(alertEnEditor, 'Note');
-				updateAlertPreview();
-			});
-			
-			alertFrEditor.on('text-change', function() {
-				document.getElementById('alert-fr').value = getFullContent(alertFrEditor, 'Remarque');
-				updateAlertPreview();
-			});
+            alertEnEditor.on('text-change', function() {
+                document.getElementById('alert-en').value = sanitizeContent(getFullContent(alertEnEditor, 'Note'));
+                updateAlertPreview();
+            });
+
+            alertFrEditor.on('text-change', function() {
+                document.getElementById('alert-fr').value = sanitizeContent(getFullContent(alertFrEditor, 'Remarque'));
+                updateAlertPreview();
+            });
 		}
 
 		// Setup alert event listeners
@@ -1255,6 +1255,73 @@
             setTimeout(() => alert.remove(), 150);
         }, 5000);
     }
-</script>
+
+    // Sanitize content to add abbreviations and replace MS with Microsoft
+    function sanitizeContent(html) {
+        // Create a temporary div to parse HTML
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+        
+        // Function to process text nodes
+        function processTextNode(node) {
+            let text = node.textContent;
+            let modified = false;
+            
+            // Replace MS (capital letters only, not inside words) with Microsoft
+            const msReplaced = text.replace(/\bMS\b/g, 'Microsoft');
+            if (msReplaced !== text) {
+                text = msReplaced;
+                modified = true;
+            }
+            
+            // Add abbreviations if not already wrapped
+            const abbrs = ['RCMP', 'GRC', 'ROSS', 'SIGRH'];
+            
+            abbrs.forEach(abbr => {
+                const pattern = new RegExp(`\\b${abbr}\\b`, 'g');
+                if (pattern.test(text)) {
+                    modified = true;
+                }
+            });
+            
+            if (modified) {
+                // Create a new span to hold the processed content
+                const span = document.createElement('span');
+                span.innerHTML = text;
+                
+                // Wrap abbreviations with <abbr> tags
+                abbrs.forEach(abbr => {
+                    const pattern = new RegExp(`\\b${abbr}\\b`, 'g');
+                    span.innerHTML = span.innerHTML.replace(pattern, `<abbr>$&</abbr>`);
+                });
+                
+                node.parentNode.replaceChild(span, node);
+                
+                // Unwrap the span's children to maintain structure
+                while (span.firstChild) {
+                    span.parentNode.insertBefore(span.firstChild, span);
+                }
+                span.parentNode.removeChild(span);
+            }
+        }
+        
+        // Walk through all text nodes
+        function walkNodes(node) {
+            if (node.nodeType === Node.TEXT_NODE) {
+                // Check if parent is not already an <abbr> tag
+                if (node.parentNode.tagName !== 'ABBR') {
+                    processTextNode(node);
+                }
+            } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName !== 'ABBR') {
+                // Process child nodes
+                Array.from(node.childNodes).forEach(walkNodes);
+            }
+        }
+        
+        walkNodes(tempDiv);
+        
+        return tempDiv.innerHTML;
+    }
+    </script>
 </body>
 </html>
