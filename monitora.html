@@ -312,20 +312,19 @@
                     <div class="custom-message-section" id="custom-message-1" role="region" aria-labelledby="custom-message-heading-1">
                         <h3 class="h5" id="custom-message-heading-1" data-en="Custom message" data-fr="Message personnalisé">Custom message</h3>
                         
-                        <div class="form-group">
-                            <label class="bilingual-label" for="custom-en-editor-1">
-                                <span data-en="English message" data-fr="Message en anglais">English message</span>
-                                <small id="custom-en-help-1" class="form-text text-muted d-block" data-en="Enter your custom message in English." data-fr="Entrez votre message personnalisé en anglais.">Enter your custom message in English.</small>
-                            </label>
-                            <div id="custom-en-editor-1" class="custom-message-en" style="min-height: 150px;"></div>
-                            <input type="hidden" id="custom-en-1" name="custom-en-1">
+                        <div class="bilingual-label">
+                            <span data-en="English message" data-fr="Message en anglais">English message</span>
+                            <small id="custom-en-help-1" class="form-text text-muted d-block" data-en="Enter your custom message in English." data-fr="Entrez votre message personnalisé en anglais.">Enter your custom message in English.</small>
+                        </div>
+                        <div id="custom-en-editor-1" class="custom-message-en" style="min-height: 150px;"></div>
+                        <input type="hidden" id="custom-en-1" name="custom-en-1">
                         </div>
 
                         <div class="form-group">
-                            <label class="bilingual-label" for="custom-fr-editor-1">
+                            <div class="bilingual-label">
                                 <span data-en="French message" data-fr="Message en français">French message</span>
                                 <small id="custom-fr-help-1" class="form-text text-muted d-block" data-en="Enter your custom message in French." data-fr="Entrez votre message personnalisé en français.">Enter your custom message in French.</small>
-                            </label>
+                            </div>
                             <div id="custom-fr-editor-1" class="custom-message-fr" style="min-height: 150px;"></div>
                             <input type="hidden" id="custom-fr-1" name="custom-fr-1">
                         </div>
@@ -364,10 +363,10 @@
 				</div>
 
                 <div class="form-group">
-                    <label class="bilingual-label" for="alert-en-editor">
+                    <div class="bilingual-label">
                         <span data-en="English alert message" data-fr="Message d'alerte en anglais">English alert message</span>
                         <small id="alert-en-help" class="form-text text-muted d-block" data-en="Enter the alert message in English. The header 'Note' will be automatically added." data-fr="Entrez le message d'alerte en anglais. L'en-tête « Note » sera automatiquement ajouté.">Enter the alert message in English. The header "Note" will be automatically added.</small>
-                    </label>
+                    </div>
                     <div style="padding: 0.5rem; background-color: var(--card-bg); border: 1px solid var(--border-color); border-bottom: none; border-radius: 0.375rem 0.375rem 0 0;">
                         <h3 style="margin: 0; font-size: 1.25rem; color: var(--card-text);">Note</h3>
                     </div>
@@ -376,10 +375,10 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="bilingual-label" for="alert-fr-editor">
+                    <div class="bilingual-label">
                         <span data-en="French alert message" data-fr="Message d'alerte en français">French alert message</span>
                         <small id="alert-fr-help" class="form-text text-muted d-block" data-en="Enter the alert message in French. The header 'Remarque' will be automatically added." data-fr="Entrez le message d'alerte en français. L'en-tête « Remarque » sera automatiquement ajouté.">Enter the alert message in French. The header "Remarque" will be automatically added.</small>
-                    </label>
+                    </div>
                     <div style="padding: 0.5rem; background-color: var(--card-bg); border: 1px solid var(--border-color); border-bottom: none; border-radius: 0.375rem 0.375rem 0 0;">
                         <h3 style="margin: 0; font-size: 1.25rem; color: var(--card-text);">Remarque</h3>
                     </div>
@@ -421,10 +420,10 @@
         const messageTemplates = {
             outlook: {
                 'incident': [
-                    { value: 'msg1', en: '<h3>Microsoft Outlook issues (prior to online migration)</h3><p>An issue is preventing some users from accessing their email via Microsoft Outlook. Support staff are actively investigating the matter and working diligently to resolve it as quickly as possible.</p><p>In the interim, there are some possible workarounds users can try to continue to access Microsoft Outlook:</p><ol><li>Sign out and sign back into Microsoft Outlook.</li><li>Access Email through the Samsung email app on your <abbr>RCMP</abbr> issued mobile phone (if applicable).</li><li>Access <a href="https://email-courriel.rcmp-grc.gc.ca/owa/auth/logon.aspx">Outlook Web</a>. Please use your <abbr>HRMIS</abbr> number and <abbr>ROSS</abbr> password for your login credentials.<br><strong>Note</strong>: When accessing email using the web version of Outlook, you cannot decrypt or encrypt email. This feature is only available using Outlook on your desktop or on your mobile phone, if you\'ve enrolled your device for this functionality).</li></ol><p>Refer to <a href="/cio/email-courriel/common-courants-eng.htm">Outlook tips and tricks</a> on Infoweb for additional information on using Microsoft Outlook.</p>', fr: '<h3>Problèmes liés à Microsoft Outlook (avant la migration en ligne)</h3><p>Un problème empêche certains utilisateurs d\'accéder à leur courriel dans Microsoft Outlook. Le personnel de soutien travaille avec diligence pour le résoudre le plus rapidement possible.</p><p>En attendant, les utilisateurs peuvent essayer des solutions de rechange pour accéder à Microsoft Outlook&#160;:</p><ol><li>Déconnectez-vous puis reconnectez-vous à Microsoft Outlook.</li><li>Accédez à vos courriels au moyen de l\'application de courriel Samsung sur votre téléphone mobile de la <abbr>GRC</abbr>.</li><li>Accédez à <a href="https://email-courriel.rcmp-grc.gc.ca/owa/auth/logon.aspx">Outlook Web</a>. Utilisez votre numéro <abbr>SIGRH</abbr> et votre mot de passe <abbr>ROSS</abbr> pour vous connecter.<br><strong>Note</strong>&#160;: Lorsque vous accédez au courriel au moyen de la version Web d\'Outlook, vous ne pouvez pas chiffrer et déchiffrer de courriels. Cette fonction est seulement disponible dans Outlook sur votre ordinateur ou sur votre téléphone mobile, si vous avez inscrit votre appareil pour cette fonctionnalité.)</li></ol><p>Consultez la page Infoweb sur les <a href="/cio/email-courriel/common-courants-fra.htm">trucs et astuces concernant Outlook</a> pour en savoir plus sur comment utiliser Microsoft Outlook.</p>' }
+                    { value: 'msg1', label: { en: 'Microsoft Outlook issues (prior to online migration)', fr: 'Problèmes liés à Microsoft Outlook (avant la migration en ligne)' }, en: '<h3>Microsoft Outlook issues (prior to online migration)</h3><p>An issue is preventing some users from accessing their email via Microsoft Outlook. Support staff are actively investigating the matter and working diligently to resolve it as quickly as possible.</p><p>In the interim, there are some possible workarounds users can try to continue to access Microsoft Outlook:</p><ol><li>Sign out and sign back into Microsoft Outlook.</li><li>Access Email through the Samsung email app on your <abbr>RCMP</abbr> issued mobile phone (if applicable).</li><li>Access <a href="https://email-courriel.rcmp-grc.gc.ca/owa/auth/logon.aspx">Outlook Web</a>. Please use your <abbr>HRMIS</abbr> number and <abbr>ROSS</abbr> password for your login credentials.<br><strong>Note</strong>: When accessing email using the web version of Outlook, you cannot decrypt or encrypt email. This feature is only available using Outlook on your desktop or on your mobile phone, if you\'ve enrolled your device for this functionality).</li></ol><p>Refer to <a href="/cio/email-courriel/common-courants-eng.htm">Outlook tips and tricks</a> on Infoweb for additional information on using Microsoft Outlook.</p>', fr: '<h3>Problèmes liés à Microsoft Outlook (avant la migration en ligne)</h3><p>Un problème empêche certains utilisateurs d\'accéder à leur courriel dans Microsoft Outlook. Le personnel de soutien travaille avec diligence pour le résoudre le plus rapidement possible.</p><p>En attendant, les utilisateurs peuvent essayer des solutions de rechange pour accéder à Microsoft Outlook&#160;:</p><ol><li>Déconnectez-vous puis reconnectez-vous à Microsoft Outlook.</li><li>Accédez à vos courriels au moyen de l\'application de courriel Samsung sur votre téléphone mobile de la <abbr>GRC</abbr>.</li><li>Accédez à <a href="https://email-courriel.rcmp-grc.gc.ca/owa/auth/logon.aspx">Outlook Web</a>. Utilisez votre numéro <abbr>SIGRH</abbr> et votre mot de passe <abbr>ROSS</abbr> pour vous connecter.<br><strong>Note</strong>&#160;: Lorsque vous accédez au courriel au moyen de la version Web d\'Outlook, vous ne pouvez pas chiffrer et déchiffrer de courriels. Cette fonction est seulement disponible dans Outlook sur votre ordinateur ou sur votre téléphone mobile, si vous avez inscrit votre appareil pour cette fonctionnalité.)</li></ol><p>Consultez la page Infoweb sur les <a href="/cio/email-courriel/common-courants-fra.htm">trucs et astuces concernant Outlook</a> pour en savoir plus sur comment utiliser Microsoft Outlook.</p>' }
                 ],
                 'outage': [
-                    { value: 'msg2', en: '<h3>Microsoft Outlook issues (prior to online migration)</h3><p>An issue is preventing some users from accessing their email via Microsoft Outlook. Support staff are actively investigating the matter and working diligently to resolve it as quickly as possible.</p><p>In the interim, there are some possible workarounds users can try to continue to access Microsoft Outlook:</p><ol><li>Sign out and sign back into Microsoft Outlook.</li><li>Access Email through the Samsung email app on your <abbr>RCMP</abbr> issued mobile phone (if applicable).</li><li>Access <a href="https://email-courriel.rcmp-grc.gc.ca/owa/auth/logon.aspx">Outlook Web</a>. Please use your <abbr>HRMIS</abbr> number and <abbr>ROSS</abbr> password for your login credentials.<br><strong>Note</strong>: When accessing email using the web version of Outlook, you cannot decrypt or encrypt email. This feature is only available using Outlook on your desktop or on your mobile phone, if you\'ve enrolled your device for this functionality).</li></ol><p>Refer to <a href="/cio/email-courriel/common-courants-eng.htm">Outlook tips and tricks</a> on Infoweb for additional information on using Microsoft Outlook.</p>', fr: '<h3>Problèmes liés à Microsoft Outlook (avant la migration en ligne)</h3><p>Un problème empêche certains utilisateurs d\'accéder à leur courriel dans Microsoft Outlook. Le personnel de soutien travaille avec diligence pour le résoudre le plus rapidement possible.</p><p>En attendant, les utilisateurs peuvent essayer des solutions de rechange pour accéder à Microsoft Outlook&#160;:</p><ol><li>Déconnectez-vous puis reconnectez-vous à Microsoft Outlook.</li><li>Accédez à vos courriels au moyen de l\'application de courriel Samsung sur votre téléphone mobile de la <abbr>GRC</abbr>.</li><li>Accédez à <a href="https://email-courriel.rcmp-grc.gc.ca/owa/auth/logon.aspx">Outlook Web</a>. Utilisez votre numéro <abbr>SIGRH</abbr> et votre mot de passe <abbr>ROSS</abbr> pour vous connecter.<br><strong>Note</strong>&#160;: Lorsque vous accédez au courriel au moyen de la version Web d\'Outlook, vous ne pouvez pas chiffrer et déchiffrer de courriels. Cette fonction est seulement disponible dans Outlook sur votre ordinateur ou sur votre téléphone mobile, si vous avez inscrit votre appareil pour cette fonctionnalité.)</li></ol><p>Consultez la page Infoweb sur les <a href="/cio/email-courriel/common-courants-fra.htm">trucs et astuces concernant Outlook</a> pour en savoir plus sur comment utiliser Microsoft Outlook.</p>' }
+                    { value: 'msg2', label: { en: 'Microsoft Outlook issues (prior to online migration)', fr: 'Problèmes liés à Microsoft Outlook (avant la migration en ligne)' }, en: '<h3>Microsoft Outlook issues (prior to online migration)</h3><p>An issue is preventing some users from accessing their email via Microsoft Outlook. Support staff are actively investigating the matter and working diligently to resolve it as quickly as possible.</p><p>In the interim, there are some possible workarounds users can try to continue to access Microsoft Outlook:</p><ol><li>Sign out and sign back into Microsoft Outlook.</li><li>Access Email through the Samsung email app on your <abbr>RCMP</abbr> issued mobile phone (if applicable).</li><li>Access <a href="https://email-courriel.rcmp-grc.gc.ca/owa/auth/logon.aspx">Outlook Web</a>. Please use your <abbr>HRMIS</abbr> number and <abbr>ROSS</abbr> password for your login credentials.<br><strong>Note</strong>: When accessing email using the web version of Outlook, you cannot decrypt or encrypt email. This feature is only available using Outlook on your desktop or on your mobile phone, if you\'ve enrolled your device for this functionality).</li></ol><p>Refer to <a href="/cio/email-courriel/common-courants-eng.htm">Outlook tips and tricks</a> on Infoweb for additional information on using Microsoft Outlook.</p>', fr: '<h3>Problèmes liés à Microsoft Outlook (avant la migration en ligne)</h3><p>Un problème empêche certains utilisateurs d\'accéder à leur courriel dans Microsoft Outlook. Le personnel de soutien travaille avec diligence pour le résoudre le plus rapidement possible.</p><p>En attendant, les utilisateurs peuvent essayer des solutions de rechange pour accéder à Microsoft Outlook&#160;:</p><ol><li>Déconnectez-vous puis reconnectez-vous à Microsoft Outlook.</li><li>Accédez à vos courriels au moyen de l\'application de courriel Samsung sur votre téléphone mobile de la <abbr>GRC</abbr>.</li><li>Accédez à <a href="https://email-courriel.rcmp-grc.gc.ca/owa/auth/logon.aspx">Outlook Web</a>. Utilisez votre numéro <abbr>SIGRH</abbr> et votre mot de passe <abbr>ROSS</abbr> pour vous connecter.<br><strong>Note</strong>&#160;: Lorsque vous accédez au courriel au moyen de la version Web d\'Outlook, vous ne pouvez pas chiffrer et déchiffrer de courriels. Cette fonction est seulement disponible dans Outlook sur votre ordinateur ou sur votre téléphone mobile, si vous avez inscrit votre appareil pour cette fonctionnalité.)</li></ol><p>Consultez la page Infoweb sur les <a href="/cio/email-courriel/common-courants-fra.htm">trucs et astuces concernant Outlook</a> pour en savoir plus sur comment utiliser Microsoft Outlook.</p>' }
                 ]
             },
             m365: {
@@ -790,7 +789,13 @@
                     option.dataset.fr = msg.fr;
                     
                     const currentLang = document.documentElement.lang?.split('-')[0] || 'en';
-                    option.textContent = currentLang === 'en' ? msg.en : msg.fr;
+                    
+                    // Use label if it exists, otherwise use the full message
+                    if (msg.label) {
+                        option.textContent = currentLang === 'en' ? msg.label.en : msg.label.fr;
+                    } else {
+                        option.textContent = currentLang === 'en' ? msg.en : msg.fr;
+                    }
                     
                     messageSelect.appendChild(option);
                 });
@@ -938,23 +943,22 @@
                 
                 <div class="custom-message-section" id="custom-message-${entryCounter}" role="region" aria-labelledby="custom-message-heading-${entryCounter}">
                     <h3 class="h5" id="custom-message-heading-${entryCounter}" data-en="Custom message" data-fr="Message personnalisé">Custom message</h3>
-					<div class="form-group">
-                    <label class="bilingual-label" for="custom-en-editor-${entryCounter}">
+                    <div class="bilingual-label">
                         <span data-en="English message" data-fr="Message en anglais">English message</span>
                         <small id="custom-en-help-${entryCounter}" class="form-text text-muted d-block" data-en="Enter your custom message in English." data-fr="Entrez votre message personnalisé en anglais.">Enter your custom message in English.</small>
-                    </label>
+                    </div>
                     <div id="custom-en-editor-${entryCounter}" class="custom-message-en" style="min-height: 150px;"></div>
-                        <input type="hidden" id="custom-en-${entryCounter}" name="custom-en-${entryCounter}">
-                    </div>
+                    <input type="hidden" id="custom-en-${entryCounter}" name="custom-en-${entryCounter}">
+                </div>
 
-                    <div class="form-group">
-                        <label class="bilingual-label" for="custom-fr-editor-${entryCounter}">
-                            <span data-en="French message" data-fr="Message en français">French message</span>
-                            <small id="custom-fr-help-${entryCounter}" class="form-text text-muted d-block" data-en="Enter your custom message in French." data-fr="Entrez votre message personnalisé en français.">Enter your custom message in French.</small>
-                        </label>
-                        <div id="custom-fr-editor-${entryCounter}" class="custom-message-fr" style="min-height: 150px;"></div>
-                        <input type="hidden" id="custom-fr-${entryCounter}" name="custom-fr-${entryCounter}">
+                <div class="form-group">
+                    <div class="bilingual-label">
+                        <span data-en="French message" data-fr="Message en français">French message</span>
+                        <small id="custom-fr-help-${entryCounter}" class="form-text text-muted d-block" data-en="Enter your custom message in French." data-fr="Entrez votre message personnalisé en français.">Enter your custom message in French.</small>
                     </div>
+                    <div id="custom-fr-editor-${entryCounter}" class="custom-message-fr" style="min-height: 150px;"></div>
+                    <input type="hidden" id="custom-fr-${entryCounter}" name="custom-fr-${entryCounter}">
+                </div>
             </div>
             
             <button type="button" class="btn btn-danger btn-sm remove-entry-btn" data-entry-id="${entryCounter}" data-en="Remove this entry" data-fr="Supprimer cette entrée">Remove this entry</button>
