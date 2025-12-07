@@ -332,7 +332,7 @@
         let entryCounter = 0;
 
         // Add new entry
-        function updateEntry(id) {
+        function addEntry() {
             const internalOnly = document.getElementById('internal-only').checked;
             let abbrEn = document.getElementById('abbr-en').value.trim();
             let abbrFr = document.getElementById('abbr-fr').value.trim();
@@ -363,30 +363,22 @@
             const checkAbbrEn = abbrEn !== "There are no abbreviations or acronyms for English." ? abbrEn : null;
             const checkAbbrFr = abbrFr !== "Il n'y a pas d'abréviations ou d'acronymes pour le français." ? abbrFr : null;
             
-            if (!checkDuplicates(checkAbbrEn, checkAbbrFr, id)) {
-                return; // User chose to cancel
-            }
-
-            // Check for duplicates (only check actual abbreviations, not auto-filled messages)
-            const checkAbbrEn = abbrEn !== "There are no abbreviations or acronyms for English." ? abbrEn : null;
-            const checkAbbrFr = abbrFr !== "Il n'y a pas d'abréviations ou d'acronymes pour le français." ? abbrFr : null;
-            
             if (!checkDuplicates(checkAbbrEn, checkAbbrFr)) {
                 return; // User chose to cancel
             }
 
             // Create entry object
-                const entry = {
-                    id: entryCounter++,
-                    internalOnly,
-                    abbrEn,
-                    abbrFr,
-                    titleEn,
-                    titleFr,
-                    notesEn,
-                    notesFr,
-                    transparentNotes
-                };
+            const entry = {
+                id: entryCounter++,
+                internalOnly,
+                abbrEn,
+                abbrFr,
+                titleEn,
+                titleFr,
+                notesEn,
+                notesFr,
+                transparentNotes
+            };
 
             entries.push(entry);
             renderEntries();
@@ -578,7 +570,7 @@
             document.getElementById('title-fr').value = entry.titleFr;
             document.getElementById('notes-en').value = entry.notesEn || '';
             document.getElementById('notes-fr').value = entry.notesFr || '';
-            document.getElementById('transparent-notesn').value = entry.transparentNotes || '';
+            document.getElementById('transparent-notes').value = entry.transparentNotes || '';
 
             // Change Add button to Update button
             const addBtn = document.getElementById('add-entry-btn');
@@ -632,6 +624,14 @@
                 abbrFr = "Il n'y a pas d'abréviations ou d'acronymes pour le français.";
             } else if (abbrFr && !abbrEn) {
                 abbrEn = "There are no abbreviations or acronyms for English.";
+            }
+
+            // Check for duplicates (only check actual abbreviations, not auto-filled messages)
+            const checkAbbrEn = abbrEn !== "There are no abbreviations or acronyms for English." ? abbrEn : null;
+            const checkAbbrFr = abbrFr !== "Il n'y a pas d'abréviations ou d'acronymes pour le français." ? abbrFr : null;
+            
+            if (!checkDuplicates(checkAbbrEn, checkAbbrFr, id)) {
+                return; // User chose to cancel
             }
 
             // Find and update entry
