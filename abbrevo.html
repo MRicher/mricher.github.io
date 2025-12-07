@@ -230,31 +230,18 @@
                         </div>
 
                         <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="transparent-notes-en" class="form-label"
-                                    data-en="English transparent notes (optional)"
-                                    data-fr="Notes transparentes en anglais (optionnel)">
-                                    English Transparent Notes (Optional)
+                            <div class="col-md-12">
+                                <label for="transparent-notes" class="form-label"
+                                    data-en="Transparent notes (optional)"
+                                    data-fr="Notes transparentes (optionnel)">
+                                    Transparent Notes (Optional)
                                 </label>
                                 <textarea class="form-control" 
-                                        id="transparent-notes-en"
+                                        id="transparent-notes"
                                         rows="3"
-                                        data-en="Enter English transparent notes"
-                                        data-fr="Entrez les notes transparentes en anglais"
-                                        placeholder="Enter English transparent notes"></textarea>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="transparent-notes-fr" class="form-label"
-                                    data-en="French transparent notes (optional)"
-                                    data-fr="Notes transparentes en français (optionnel)">
-                                    French Transparent Notes (Optional)
-                                </label>
-                                <textarea class="form-control" 
-                                        id="transparent-notes-fr"
-                                        rows="3"
-                                        data-en="Enter French transparent notes"
-                                        data-fr="Entrez les notes transparentes en français"
-                                        placeholder="Enter French transparent notes"></textarea>
+                                        data-en="Enter transparent notes"
+                                        data-fr="Entrez les notes transparentes"
+                                        placeholder="Enter transparent notes"></textarea>
                             </div>
                         </div>
 
@@ -345,7 +332,7 @@
         let entryCounter = 0;
 
         // Add new entry
-        function addEntry() {
+        function updateEntry(id) {
             const internalOnly = document.getElementById('internal-only').checked;
             let abbrEn = document.getElementById('abbr-en').value.trim();
             let abbrFr = document.getElementById('abbr-fr').value.trim();
@@ -353,8 +340,7 @@
             const titleFr = document.getElementById('title-fr').value.trim();
             const notesEn = document.getElementById('notes-en').value.trim();
             const notesFr = document.getElementById('notes-fr').value.trim();
-            const transparentNotesEn = document.getElementById('transparent-notes-en').value.trim();
-            const transparentNotesFr = document.getElementById('transparent-notes-fr').value.trim();
+            const transparentNotes = document.getElementById('transparent-notes').value.trim();
 
             // Validation - at least one abbreviation and both titles required
             if ((!abbrEn && !abbrFr) || !titleEn || !titleFr) {
@@ -373,6 +359,22 @@
                 abbrEn = "There are no abbreviations or acronyms for English.";
             }
 
+            // Check for duplicates (only check actual abbreviations, not auto-filled messages)
+            const checkAbbrEn = abbrEn !== "There are no abbreviations or acronyms for English." ? abbrEn : null;
+            const checkAbbrFr = abbrFr !== "Il n'y a pas d'abréviations ou d'acronymes pour le français." ? abbrFr : null;
+            
+            if (!checkDuplicates(checkAbbrEn, checkAbbrFr, id)) {
+                return; // User chose to cancel
+            }
+
+            // Check for duplicates (only check actual abbreviations, not auto-filled messages)
+            const checkAbbrEn = abbrEn !== "There are no abbreviations or acronyms for English." ? abbrEn : null;
+            const checkAbbrFr = abbrFr !== "Il n'y a pas d'abréviations ou d'acronymes pour le français." ? abbrFr : null;
+            
+            if (!checkDuplicates(checkAbbrEn, checkAbbrFr)) {
+                return; // User chose to cancel
+            }
+
             // Create entry object
                 const entry = {
                     id: entryCounter++,
@@ -383,8 +385,7 @@
                     titleFr,
                     notesEn,
                     notesFr,
-                    transparentNotesEn,
-                    transparentNotesFr
+                    transparentNotes
                 };
 
             entries.push(entry);
@@ -401,8 +402,7 @@
             document.getElementById('title-fr').value = '';
             document.getElementById('notes-en').value = '';
             document.getElementById('notes-fr').value = '';
-            document.getElementById('transparent-notes-en').value = '';
-            document.getElementById('transparent-notes-fr').value = '';
+            document.getElementById('transparent-notes').value = '';
             document.getElementById('abbr-en').focus();
         }
 
@@ -442,8 +442,7 @@
                 titleFr: 'Titre FR',
                 notesEn: 'Notes EN',
                 notesFr: 'Notes FR',
-                transparentNotesEn: 'Notes transp. EN',
-                transparentNotesFr: 'Notes transp. FR',
+                transparentNotes: 'Notes transp.',
                 actions: 'Actions',
                 edit: 'Modifier',
                 delete: 'Supprimer'
@@ -456,8 +455,7 @@
                 titleFr: 'Title FR',
                 notesEn: 'Notes EN',
                 notesFr: 'Notes FR',
-                transparentNotesEn: 'Transp. Notes EN',
-                transparentNotesFr: 'Transp. Notes FR',
+                transparentNotes: 'Transp. Notes',
                 actions: 'Actions',
                 edit: 'Edit',
                 delete: 'Delete'
@@ -480,8 +478,7 @@
                             <th scope="col">${labels.titleFr}</th>
                             <th scope="col">${labels.notesEn}</th>
                             <th scope="col">${labels.notesFr}</th>
-                            <th scope="col">${labels.transparentNotesEn}</th>
-                            <th scope="col">${labels.transparentNotesFr}</th>
+                            <th scope="col">${labels.transparentNotes}</th>
                             <th scope="col">${labels.actions}</th>
                         </tr>
                     </thead>
@@ -496,8 +493,7 @@
                                 <td>${escapeHtml(entry.titleFr)}</td>
                                 <td>${entry.notesEn ? escapeHtml(entry.notesEn) : '<em class="text-muted">—</em>'}</td>
                                 <td>${entry.notesFr ? escapeHtml(entry.notesFr) : '<em class="text-muted">—</em>'}</td>
-                                <td>${entry.transparentNotesEn ? escapeHtml(entry.transparentNotesEn) : '<em class="text-muted">—</em>'}</td>
-                                <td>${entry.transparentNotesFr ? escapeHtml(entry.transparentNotesFr) : '<em class="text-muted">—</em>'}</td>
+                                <td>${entry.transparentNotes ? escapeHtml(entry.transparentNotes) : '<em class="text-muted">—</em>'}</td>
                                 <td class="text-nowrap">
                                     <button type="button" 
                                             class="btn btn-sm btn-primary me-1" 
@@ -528,6 +524,47 @@
             return div.innerHTML;
         }
 
+        // Check for duplicate abbreviations
+        function checkDuplicates(abbrEn, abbrFr, excludeId = null) {
+            const duplicates = entries.filter(entry => {
+                // Skip the entry being edited
+                if (excludeId !== null && entry.id === excludeId) {
+                    return false;
+                }
+                
+                // Check if either abbreviation matches
+                const enMatch = abbrEn && entry.abbrEn && 
+                            abbrEn.toLowerCase() === entry.abbrEn.toLowerCase();
+                const frMatch = abbrFr && entry.abbrFr && 
+                            abbrFr.toLowerCase() === entry.abbrFr.toLowerCase();
+                
+                return enMatch || frMatch;
+            });
+            
+            if (duplicates.length > 0) {
+                const currentLang = document.documentElement.lang?.split('-')[0] || 'en';
+                let message = '';
+                
+                if (currentLang === 'fr') {
+                    message = 'Une entrée avec cette abréviation/acronyme existe déjà:\n\n';
+                    duplicates.forEach(dup => {
+                        message += `• ${dup.abbrEn} / ${dup.abbrFr}\n  ${dup.titleEn} / ${dup.titleFr}\n\n`;
+                    });
+                    message += 'Voulez-vous continuer quand même?';
+                } else {
+                    message = 'An entry with this abbreviation/acronym already exists:\n\n';
+                    duplicates.forEach(dup => {
+                        message += `• ${dup.abbrEn} / ${dup.abbrFr}\n  ${dup.titleEn} / ${dup.titleFr}\n\n`;
+                    });
+                    message += 'Do you want to continue anyway?';
+                }
+                
+                return confirm(message);
+            }
+            
+            return true; // No duplicates found, proceed
+        }
+
         // Edit entry
         function editEntry(id) {
             const entry = entries.find(e => e.id === id);
@@ -541,8 +578,7 @@
             document.getElementById('title-fr').value = entry.titleFr;
             document.getElementById('notes-en').value = entry.notesEn || '';
             document.getElementById('notes-fr').value = entry.notesFr || '';
-            document.getElementById('transparent-notes-en').value = entry.transparentNotesEn || '';
-            document.getElementById('transparent-notes-fr').value = entry.transparentNotesFr || '';
+            document.getElementById('transparent-notesn').value = entry.transparentNotes || '';
 
             // Change Add button to Update button
             const addBtn = document.getElementById('add-entry-btn');
@@ -579,8 +615,7 @@
             const titleFr = document.getElementById('title-fr').value.trim();
             const notesEn = document.getElementById('notes-en').value.trim();
             const notesFr = document.getElementById('notes-fr').value.trim();
-            const transparentNotesEn = document.getElementById('transparent-notes-en').value.trim();
-            const transparentNotesFr = document.getElementById('transparent-notes-fr').value.trim();
+            const transparentNotes = document.getElementById('transparent-notes').value.trim();
 
             // Validation - at least one abbreviation and both titles required
             if ((!abbrEn && !abbrFr) || !titleEn || !titleFr) {
@@ -611,8 +646,7 @@
                     titleFr,
                     notesEn,
                     notesFr,
-                    transparentNotesEn,
-                    transparentNotesFr
+                    transparentNotes
                 };
             }
 
