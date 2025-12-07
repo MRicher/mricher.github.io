@@ -1,494 +1,544 @@
 <!DOCTYPE html>
 <html lang="en-CA">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title data-en="Abbrevo" data-fr="Abbrevo">Abbrevo</title>
-    <meta name="description"
-          content="This application edits, and generates HTML for the RCMP abbreviation and acronym data list template."
-          data-en="This application edits, and generates HTML for the RCMP abbreviation and acronym data list template."
-          data-fr="Cette application modifie et génère le code HTML pour le gabarit de la liste de données des abréviations et acronymes de la GRC.">
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/creavia.css">
-    <link rel="stylesheet" href="css/abbrevo.css">
-</head>
+    <meta
+      name="description"
+      content="This application edits, and generates HTML for the RCMP abbreviation and acronym data list template."
+      data-en="This application edits, and generates HTML for the RCMP abbreviation and acronym data list template."
+      data-fr="Cette application modifie et génère le code HTML pour le gabarit de la liste de données des abréviations et acronymes de la GRC."
+    />
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/creavia.css" />
+    <link rel="stylesheet" href="css/abbrevo.css" />
+  </head>
 
-<body>
-    <a class="skip-link"
-       href="#main-content"
-       data-en="Skip to main content"
-       data-fr="Passer au contenu principal">
-        Skip to main content
+  <body>
+    <a
+      class="skip-link"
+      href="#main-content"
+      data-en="Skip to main content"
+      data-fr="Passer au contenu principal"
+    >
+      Skip to main content
     </a>
 
     <header>
-        <nav class="navbar navbar-expand-lg" aria-label="Main navigation">
-            <div class="container">
-                <div class="navbar-brand d-flex align-items-center">
-                    <img src="img/list.svg"
-                         alt=""
-                         class="me-2"
-                         style="height: 50px; width: auto;">
-                    <span data-en="Abbrevo" data-fr="Abbrevo">Abbrevo</span>
-                </div>
+      <nav class="navbar navbar-expand-lg" aria-label="Main navigation">
+        <div class="container">
+          <div class="navbar-brand d-flex align-items-center">
+            <img src="img/list.svg" alt="" class="me-2" style="height: 50px; width: auto" />
+            <span data-en="Abbrevo" data-fr="Abbrevo">Abbrevo</span>
+          </div>
 
-                <button class="navbar-toggler"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#navbarNav"
-                        aria-controls="navbarNav"
-                        aria-expanded="false"
-                        aria-label="Toggle navigation menu">
-                    <span class="navbar-toggler-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden"
-                          data-en="Toggle navigation menu"
-                          data-fr="Basculer le menu de navigation">
-                        Toggle navigation menu
-                    </span>
-                </button>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation menu"
+          >
+            <span class="navbar-toggler-icon" aria-hidden="true"></span>
+            <span
+              class="visually-hidden"
+              data-en="Toggle navigation menu"
+              data-fr="Basculer le menu de navigation"
+            >
+              Toggle navigation menu
+            </span>
+          </button>
 
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0" role="menubar">
-                        <li class="nav-item" role="none">
-                            <a class="nav-link"
-                               href="/index.html"
-                               role="menuitem"
-                               data-en="Home"
-                               data-fr="Accueil">
-                                Home
-                            </a>
-                        </li>
-                    </ul>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0" role="menubar">
+              <li class="nav-item" role="none">
+                <a
+                  class="nav-link"
+                  href="/index.html"
+                  role="menuitem"
+                  data-en="Home"
+                  data-fr="Accueil"
+                >
+                  Home
+                </a>
+              </li>
+            </ul>
 
-                    <div class="language-switcher" role="group" aria-label="Settings">
-                        <button id="theme-toggle"
-                                type="button"
-                                class="theme-toggle"
-                                aria-label="Toggle dark/light theme"
-                                data-en-dark="Switch to light mode"
-                                data-en-light="Switch to dark mode"
-                                data-fr-dark="Passer au mode clair"
-                                data-fr-light="Passer au mode sombre">
-                            <span id="theme-text"
-                                  data-en="Dark mode"
-                                  data-fr="Mode sombre">
-                                Dark mode
-                            </span>
-                        </button>
+            <div class="language-switcher" role="group" aria-label="Settings">
+              <button
+                id="theme-toggle"
+                type="button"
+                class="theme-toggle"
+                aria-label="Toggle dark/light theme"
+                data-en-dark="Switch to light mode"
+                data-en-light="Switch to dark mode"
+                data-fr-dark="Passer au mode clair"
+                data-fr-light="Passer au mode sombre"
+              >
+                <span id="theme-text" data-en="Dark mode" data-fr="Mode sombre"> Dark mode </span>
+              </button>
 
-                        <button id="lang-fr-btn"
-                                type="button"
-                                class="btn btn-outline-primary btn-sm"
-                                data-lang="fr-CA"
-                                aria-label="Passer au français"
-                                aria-pressed="false"
-                                style="display: none;">
-                            <span data-en="Français" data-fr="Français">Français</span>
-                        </button>
+              <button
+                id="lang-fr-btn"
+                type="button"
+                class="btn btn-outline-primary btn-sm"
+                data-lang="fr-CA"
+                aria-label="Passer au français"
+                aria-pressed="false"
+                style="display: none"
+              >
+                <span data-en="Français" data-fr="Français">Français</span>
+              </button>
 
-                        <button id="lang-en-btn"
-                                type="button"
-                                class="btn btn-outline-primary btn-sm"
-                                data-lang="en-CA"
-                                aria-label="Switch to English"
-                                aria-pressed="false">
-                            <span data-en="English" data-fr="English">English</span>
-                        </button>
-                    </div>
-                </div>
+              <button
+                id="lang-en-btn"
+                type="button"
+                class="btn btn-outline-primary btn-sm"
+                data-lang="en-CA"
+                aria-label="Switch to English"
+                aria-pressed="false"
+              >
+                <span data-en="English" data-fr="English">English</span>
+              </button>
             </div>
-        </nav>
+          </div>
+        </div>
+      </nav>
     </header>
 
     <main class="container" id="main-content">
-        <section aria-labelledby="main-heading">
-            <h1 id="main-heading"
-                class="mb-4"
-                data-en="Abbrevo"
-                data-fr="Abbrevo">
-                Abbrevo
-            </h1>
+      <section aria-labelledby="main-heading">
+        <h1 id="main-heading" class="mb-4" data-en="Abbrevo" data-fr="Abbrevo">Abbrevo</h1>
 
-            <p class="lead" 
-               data-en="Add and manage abbreviations and acronyms with their full titles and notes in both English and French."
-               data-fr="Ajoutez et gérez les abréviations et acronymes avec leurs titres complets et notes en anglais et en français.">
-                Add and manage abbreviations and acronyms with their full titles and notes in both English and French.
-            </p>
+        <p
+          class="lead"
+          data-en="Add and manage abbreviations and acronyms with their full titles and notes in both English and French."
+          data-fr="Ajoutez et gérez les abréviations et acronymes avec leurs titres complets et notes en anglais et en français."
+        >
+          Add and manage abbreviations and acronyms with their full titles and notes in both English
+          and French.
+        </p>
 
-            <!-- Add New Entry Form -->
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h2 class="card-title" 
-                        data-en="Add new entry"
-                        data-fr="Ajouter une nouvelle entrée">
-                        Add new entry
-                    </h2>
+        <!-- Add New Entry Form -->
+        <div class="card mb-4">
+          <div class="card-body">
+            <h2 class="card-title" data-en="Add new entry" data-fr="Ajouter une nouvelle entrée">
+              Add new entry
+            </h2>
 
-                    <div class="row mb-3">
-                        <div class="col-md-12">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" 
-                                    type="checkbox" 
-                                    id="internal-only"
-                                    role="switch">
-                                <label class="form-check-label" for="internal-only"
-                                    data-en="Internal only"
-                                    data-fr="Interne seulement">
-                                    Internal only
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="abbr-en" class="form-label"
-                                data-en="English abbreviation/acronym"
-                                data-fr="Abréviation/acronyme anglais">
-                                English abbreviation/acronym
-                            </label>
-                            <input type="text" 
-                                class="form-control" 
-                                id="abbr-en"
-                                data-en="Enter English abbreviation"
-                                data-fr="Entrez l'abréviation anglaise"
-                                placeholder="Enter English abbreviation">
-                            
-                            <label for="title-en" class="form-label required mt-3"
-                                data-en="English full title"
-                                data-fr="Titre complet anglais">
-                                English full title
-                            </label>
-                            <input type="text" 
-                                class="form-control" 
-                                id="title-en"
-                                data-en="Enter English full title"
-                                data-fr="Entrez le titre complet anglais"
-                                placeholder="Enter English full title"
-                                required>
-                            
-                            <div class="form-check form-switch mt-2">
-                                <input class="form-check-input" 
-                                    type="checkbox" 
-                                    id="title-en-is-french"
-                                    role="switch">
-                                <label class="form-check-label" for="title-en-is-french"
-                                    data-en="Title is in French"
-                                    data-fr="Le titre est en français">
-                                    Title is in French
-                                </label>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-6">
-                            <label for="abbr-fr" class="form-label"
-                                data-en="French abbreviation/acronym"
-                                data-fr="Abréviation/acronyme français">
-                                French abbreviation/acronym
-                            </label>
-                            <input type="text" 
-                                class="form-control" 
-                                id="abbr-fr"
-                                data-en="Enter French abbreviation"
-                                data-fr="Entrez l'abréviation française"
-                                placeholder="Enter French abbreviation">
-                            
-                            <label for="title-fr" class="form-label required mt-3"
-                                data-en="French full title"
-                                data-fr="Titre complet français">
-                                French full title
-                            </label>
-                            <input type="text" 
-                                class="form-control" 
-                                id="title-fr"
-                                data-en="Enter French full title"
-                                data-fr="Entrez le titre complet français"
-                                placeholder="Enter French full title"
-                                required>
-                            
-                            <div class="form-check form-switch mt-2">
-                                <input class="form-check-input" 
-                                    type="checkbox" 
-                                    id="title-fr-is-english"
-                                    role="switch">
-                                <label class="form-check-label" for="title-fr-is-english"
-                                    data-en="Title is in English"
-                                    data-fr="Le titre est en anglais">
-                                    Title is in English
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="notes-en" class="form-label"
-                                data-en="English notes (optional)"
-                                data-fr="Notes en anglais (optionnel)">
-                                English Notes (Optional)
-                            </label>
-                            <textarea class="form-control" 
-                                    id="notes-en"
-                                    rows="3"
-                                    data-en="Enter English notes"
-                                    data-fr="Entrez les notes en anglais"
-                                    placeholder="Enter English notes"></textarea>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="notes-fr" class="form-label"
-                                data-en="French notes (optional)"
-                                data-fr="Notes en français (optionnel)">
-                                French Notes (Optional)
-                            </label>
-                            <textarea class="form-control" 
-                                    id="notes-fr"
-                                    rows="3"
-                                    data-en="Enter French notes"
-                                    data-fr="Entrez les notes en français"
-                                    placeholder="Enter French notes"></textarea>
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-md-12">
-                            <label for="transparent-notes" class="form-label"
-                                data-en="Transparent notes (optional)"
-                                data-fr="Notes transparentes (optionnel)">
-                                Transparent Notes (Optional)
-                            </label>
-                            <textarea class="form-control" 
-                                    id="transparent-notes"
-                                    rows="3"
-                                    data-en="Enter transparent notes"
-                                    data-fr="Entrez les notes transparentes"
-                                    placeholder="Enter transparent notes"></textarea>
-                        </div>
-                    </div>
-
-                        <button type="button"
-                            class="btn btn-primary" 
-                            id="add-entry-btn"
-                            onclick="addEntry()">
-                        <span data-en="Add entry"
-                              data-fr="Ajouter l'entrée">
-                            Add entry
-                        </span>
-                    </button>
+            <div class="row mb-3">
+              <div class="col-md-12">
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="internal-only"
+                    role="switch"
+                  />
+                  <label
+                    class="form-check-label"
+                    for="internal-only"
+                    data-en="Internal only"
+                    data-fr="Interne seulement"
+                  >
+                    Internal only
+                  </label>
                 </div>
+              </div>
             </div>
 
-            <!-- Save and Load Section -->
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h2 class="card-title"
-                        data-en="Save and load"
-                        data-fr="Enregistrer et charger">
-                        Save and load
-                    </h2>
-                    
-                    <div class="d-flex gap-2 flex-wrap">
-                        <button type="button" 
-                                class="btn btn-success" 
-                                onclick="saveToJSON()">
-                            <span data-en="Save as JSON"
-                                  data-fr="Enregistrer en JSON">
-                                Save as JSON
-                            </span>
-                        </button>
-                        
-                        <button type="button" 
-                                class="btn btn-primary" 
-                                onclick="document.getElementById('json-upload').click()">
-                            <span data-en="Upload JSON"
-                                  data-fr="Charger JSON">
-                                Upload JSON
-                            </span>
-                        </button>
-                        
-                        <input type="file" 
-                               id="json-upload" 
-                               accept="application/json,.json" 
-                               style="display: none;" 
-                               onchange="loadFromJSON(event)">
-                    </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label
+                  for="abbr-en"
+                  class="form-label"
+                  data-en="English abbreviation/acronym"
+                  data-fr="Abréviation/acronyme anglais"
+                >
+                  English abbreviation/acronym
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="abbr-en"
+                  data-en="Enter English abbreviation"
+                  data-fr="Entrez l'abréviation anglaise"
+                  placeholder="Enter English abbreviation"
+                />
+
+                <label
+                  for="title-en"
+                  class="form-label required mt-3"
+                  data-en="English full title"
+                  data-fr="Titre complet anglais"
+                >
+                  English full title
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="title-en"
+                  data-en="Enter English full title"
+                  data-fr="Entrez le titre complet anglais"
+                  placeholder="Enter English full title"
+                  required
+                />
+
+                <div class="form-check form-switch mt-2">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="title-en-is-french"
+                    role="switch"
+                  />
+                  <label
+                    class="form-check-label"
+                    for="title-en-is-french"
+                    data-en="Title is in French"
+                    data-fr="Le titre est en français"
+                  >
+                    Title is in French
+                  </label>
                 </div>
+              </div>
+
+              <div class="col-md-6">
+                <label
+                  for="abbr-fr"
+                  class="form-label"
+                  data-en="French abbreviation/acronym"
+                  data-fr="Abréviation/acronyme français"
+                >
+                  French abbreviation/acronym
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="abbr-fr"
+                  data-en="Enter French abbreviation"
+                  data-fr="Entrez l'abréviation française"
+                  placeholder="Enter French abbreviation"
+                />
+
+                <label
+                  for="title-fr"
+                  class="form-label required mt-3"
+                  data-en="French full title"
+                  data-fr="Titre complet français"
+                >
+                  French full title
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="title-fr"
+                  data-en="Enter French full title"
+                  data-fr="Entrez le titre complet français"
+                  placeholder="Enter French full title"
+                  required
+                />
+
+                <div class="form-check form-switch mt-2">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="title-fr-is-english"
+                    role="switch"
+                  />
+                  <label
+                    class="form-check-label"
+                    for="title-fr-is-english"
+                    data-en="Title is in English"
+                    data-fr="Le titre est en anglais"
+                  >
+                    Title is in English
+                  </label>
+                </div>
+              </div>
             </div>
 
-            <!-- Entries List -->
-            <div class="card">
-                <div class="card-body">
-                    <h2 class="card-title"
-                        data-en="Current entries"
-                        data-fr="Entrées actuelles">
-                        Current entries
-                    </h2>
-
-                    <div id="entries-container" class="table-responsive">
-                        <p class="text-muted"
-                           data-en="No entries yet. Add your first abbreviation or acronym above."
-                           data-fr="Aucune entrée pour le moment. Ajoutez votre première abréviation ou acronyme ci-dessus.">
-                            No entries yet. Add your first abbreviation or acronym above.
-                        </p>
-                    </div>
-                </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label
+                  for="notes-en"
+                  class="form-label"
+                  data-en="English notes (optional)"
+                  data-fr="Notes en anglais (optionnel)"
+                >
+                  English Notes (Optional)
+                </label>
+                <textarea
+                  class="form-control"
+                  id="notes-en"
+                  rows="3"
+                  data-en="Enter English notes"
+                  data-fr="Entrez les notes en anglais"
+                  placeholder="Enter English notes"
+                ></textarea>
+              </div>
+              <div class="col-md-6">
+                <label
+                  for="notes-fr"
+                  class="form-label"
+                  data-en="French notes (optional)"
+                  data-fr="Notes en français (optionnel)"
+                >
+                  French Notes (Optional)
+                </label>
+                <textarea
+                  class="form-control"
+                  id="notes-fr"
+                  rows="3"
+                  data-en="Enter French notes"
+                  data-fr="Entrez les notes en français"
+                  placeholder="Enter French notes"
+                ></textarea>
+              </div>
             </div>
 
-        </section>
+            <div class="row mb-3">
+              <div class="col-md-12">
+                <label
+                  for="transparent-notes"
+                  class="form-label"
+                  data-en="Transparent notes (optional)"
+                  data-fr="Notes transparentes (optionnel)"
+                >
+                  Transparent Notes (Optional)
+                </label>
+                <textarea
+                  class="form-control"
+                  id="transparent-notes"
+                  rows="3"
+                  data-en="Enter transparent notes"
+                  data-fr="Entrez les notes transparentes"
+                  placeholder="Enter transparent notes"
+                ></textarea>
+              </div>
+            </div>
+
+            <button type="button" class="btn btn-primary" id="add-entry-btn" onclick="addEntry()">
+              <span data-en="Add entry" data-fr="Ajouter l'entrée"> Add entry </span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Save and Load Section -->
+        <div class="card mb-4">
+          <div class="card-body">
+            <h2 class="card-title" data-en="Save and load" data-fr="Enregistrer et charger">
+              Save and load
+            </h2>
+
+            <div class="d-flex gap-2 flex-wrap">
+              <button type="button" class="btn btn-success" onclick="saveToJSON()">
+                <span data-en="Save as JSON" data-fr="Enregistrer en JSON"> Save as JSON </span>
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-primary"
+                onclick="document.getElementById('json-upload').click()"
+              >
+                <span data-en="Upload JSON" data-fr="Charger JSON"> Upload JSON </span>
+              </button>
+
+              <input
+                type="file"
+                id="json-upload"
+                accept="application/json,.json"
+                style="display: none"
+                onchange="loadFromJSON(event)"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Entries List -->
+        <div class="card">
+          <div class="card-body">
+            <h2 class="card-title" data-en="Current entries" data-fr="Entrées actuelles">
+              Current entries
+            </h2>
+
+            <div id="entries-container" class="table-responsive">
+              <p
+                class="text-muted"
+                data-en="No entries yet. Add your first abbreviation or acronym above."
+                data-fr="Aucune entrée pour le moment. Ajoutez votre première abréviation ou acronyme ci-dessus."
+              >
+                No entries yet. Add your first abbreviation or acronym above.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
 
     <footer class="mt-auto">
-        <div class="container">
-            <div class="text-center">
-                <p id="version-info" class="mb-0" data-en="" data-fr=""></p>
-            </div>
+      <div class="container">
+        <div class="text-center">
+          <p id="version-info" class="mb-0" data-en="" data-fr=""></p>
         </div>
+      </div>
     </footer>
 
     <script src="js/bootstrap.bundle.min.js"></script>
     <script src="js/creavia.js"></script>
     <script>
-        // Store entries
-        let entries = [];
-        let entryCounter = 0;
+      // Store entries
+      let entries = [];
+      let entryCounter = 0;
 
-        // Add new entry
-        function addEntry() {
-            const internalOnly = document.getElementById('internal-only').checked;
-            let abbrEn = document.getElementById('abbr-en').value.trim();
-            let abbrFr = document.getElementById('abbr-fr').value.trim();
-            const titleEn = document.getElementById('title-en').value.trim();
-            const titleFr = document.getElementById('title-fr').value.trim();
-            const titleEnIsFrench = document.getElementById('title-en-is-french').checked;
-            const titleFrIsEnglish = document.getElementById('title-fr-is-english').checked;
-            const notesEn = document.getElementById('notes-en').value.trim();
-            const notesFr = document.getElementById('notes-fr').value.trim();
-            const transparentNotes = document.getElementById('transparent-notes').value.trim();
+      // Add new entry
+      function addEntry() {
+        const internalOnly = document.getElementById("internal-only").checked;
+        let abbrEn = document.getElementById("abbr-en").value.trim();
+        let abbrFr = document.getElementById("abbr-fr").value.trim();
+        const titleEn = document.getElementById("title-en").value.trim();
+        const titleFr = document.getElementById("title-fr").value.trim();
+        const titleEnIsFrench = document.getElementById("title-en-is-french").checked;
+        const titleFrIsEnglish = document.getElementById("title-fr-is-english").checked;
+        const notesEn = document.getElementById("notes-en").value.trim();
+        const notesFr = document.getElementById("notes-fr").value.trim();
+        const transparentNotes = document.getElementById("transparent-notes").value.trim();
 
-            // Validation - at least one abbreviation and both titles required
-            if ((!abbrEn && !abbrFr) || !titleEn || !titleFr) {
-                const currentLang = document.documentElement.lang?.split('-')[0] || 'en';
-                const message = currentLang === 'fr' 
-                    ? 'Veuillez remplir au moins une abréviation et les deux titres complets.' 
-                    : 'Please fill in at least one abbreviation and both full titles.';
-                alert(message);
-                return;
-            }
-
-            // Auto-fill missing abbreviations with message
-            if (abbrEn && !abbrFr) {
-                abbrFr = "Il n'y a pas d'abréviations ou d'acronymes pour le français.";
-            } else if (abbrFr && !abbrEn) {
-                abbrEn = "There are no abbreviations or acronyms for English.";
-            }
-
-            // Check for duplicates (only check actual abbreviations, not auto-filled messages)
-            const checkAbbrEn = abbrEn !== "There are no abbreviations or acronyms for English." ? abbrEn : null;
-            const checkAbbrFr = abbrFr !== "Il n'y a pas d'abréviations ou d'acronymes pour le français." ? abbrFr : null;
-            
-            if (!checkDuplicates(checkAbbrEn, checkAbbrFr)) {
-                return; // User chose to cancel
-            }
-
-            // Create entry object
-                const entry = {
-                    id: entryCounter++,
-                    internalOnly,
-                    abbrEn,
-                    abbrFr,
-                    titleEn,
-                    titleFr,
-                    titleEnIsFrench,
-                    titleFrIsEnglish,
-                    notesEn,
-                    notesFr,
-                    transparentNotes
-                };
-
-            entries.push(entry);
-            renderEntries();
-            clearForm();
+        // Validation - at least one abbreviation and both titles required
+        if ((!abbrEn && !abbrFr) || !titleEn || !titleFr) {
+          const currentLang = document.documentElement.lang?.split("-")[0] || "en";
+          const message =
+            currentLang === "fr"
+              ? "Veuillez remplir au moins une abréviation et les deux titres complets."
+              : "Please fill in at least one abbreviation and both full titles.";
+          alert(message);
+          return;
         }
 
-        // Clear form
-        function clearForm() {
-            document.getElementById('internal-only').checked = false;
-            document.getElementById('abbr-en').value = '';
-            document.getElementById('abbr-fr').value = '';
-            document.getElementById('title-en').value = '';
-            document.getElementById('title-fr').value = '';
-            document.getElementById('title-en-is-french').checked = false;
-            document.getElementById('title-fr-is-english').checked = false;
-            document.getElementById('notes-en').value = '';
-            document.getElementById('notes-fr').value = '';
-            document.getElementById('transparent-notes').value = '';
-            document.getElementById('abbr-en').focus();
+        // Auto-fill missing abbreviations with message
+        if (abbrEn && !abbrFr) {
+          abbrFr = "Il n'y a pas d'abréviations ou d'acronymes pour le français.";
+        } else if (abbrFr && !abbrEn) {
+          abbrEn = "There are no abbreviations or acronyms for English.";
         }
 
-        // Delete entry
-        function deleteEntry(id) {
-            const currentLang = document.documentElement.lang?.split('-')[0] || 'en';
-            const message = currentLang === 'fr' 
-                ? 'Êtes-vous sûr de vouloir supprimer cette entrée?' 
-                : 'Are you sure you want to delete this entry?';
-            
-            if (confirm(message)) {
-                entries = entries.filter(e => e.id !== id);
-                renderEntries();
-            }
+        // Check for duplicates (only check actual abbreviations, not auto-filled messages)
+        const checkAbbrEn =
+          abbrEn !== "There are no abbreviations or acronyms for English." ? abbrEn : null;
+        const checkAbbrFr =
+          abbrFr !== "Il n'y a pas d'abréviations ou d'acronymes pour le français." ? abbrFr : null;
+
+        if (!checkDuplicates(checkAbbrEn, checkAbbrFr)) {
+          return; // User chose to cancel
         }
 
-        // Render all entries
-        function renderEntries() {
-            const container = document.getElementById('entries-container');
-            const currentLang = document.documentElement.lang?.split('-')[0] || 'en';
+        // Create entry object
+        const entry = {
+          id: entryCounter++,
+          internalOnly,
+          abbrEn,
+          abbrFr,
+          titleEn,
+          titleFr,
+          titleEnIsFrench,
+          titleFrIsEnglish,
+          notesEn,
+          notesFr,
+          transparentNotes,
+        };
 
-            if (entries.length === 0) {
-                const noEntriesText = currentLang === 'fr'
-                    ? 'Aucune entrée pour le moment. Ajoutez votre première abréviation ou acronyme ci-dessus.'
-                    : 'No entries yet. Add your first abbreviation or acronym above.';
-                
-                container.innerHTML = `<p class="text-muted" data-en="No entries yet. Add your first abbreviation or acronym above." data-fr="Aucune entrée pour le moment. Ajoutez votre première abréviation ou acronyme ci-dessus.">${noEntriesText}</p>`;
-                return;
-            }
+        entries.push(entry);
+        renderEntries();
+        clearForm();
+      }
 
-            const labels = currentLang === 'fr' ? {
-                num: '#',
-                internal: 'Interne',
-                abbrEn: 'Abrév. EN',
-                abbrFr: 'Abrév. FR',
-                titleEn: 'Titre EN',
-                titleFr: 'Titre FR',
-                titleEnLang: 'EN est FR',
-                titleFrLang: 'FR est EN',
-                notesEn: 'Notes EN',
-                notesFr: 'Notes FR',
-                transparentNotes: 'Notes transp.',
-                actions: 'Actions',
-                edit: 'Modifier',
-                delete: 'Supprimer'
-            } : {
-                num: '#',
-                internal: 'Internal',
-                abbrEn: 'Abbr. EN',
-                abbrFr: 'Abbr. FR',
-                titleEn: 'Title EN',
-                titleFr: 'Title FR',
-                titleEnLang: 'EN is FR',
-                titleFrLang: 'FR is EN',
-                notesEn: 'Notes EN',
-                notesFr: 'Notes FR',
-                transparentNotes: 'Transp. Notes',
-                actions: 'Actions',
-                edit: 'Edit',
-                delete: 'Delete'
-            };
+      // Clear form
+      function clearForm() {
+        document.getElementById("internal-only").checked = false;
+        document.getElementById("abbr-en").value = "";
+        document.getElementById("abbr-fr").value = "";
+        document.getElementById("title-en").value = "";
+        document.getElementById("title-fr").value = "";
+        document.getElementById("title-en-is-french").checked = false;
+        document.getElementById("title-fr-is-english").checked = false;
+        document.getElementById("notes-en").value = "";
+        document.getElementById("notes-fr").value = "";
+        document.getElementById("transparent-notes").value = "";
+        document.getElementById("abbr-en").focus();
+      }
 
-            // Sort entries alphabetically by English abbreviation
-            const sortedEntries = [...entries].sort((a, b) => {
-                return a.abbrEn.toLowerCase().localeCompare(b.abbrEn.toLowerCase());
-            });
+      // Delete entry
+      function deleteEntry(id) {
+        const currentLang = document.documentElement.lang?.split("-")[0] || "en";
+        const message =
+          currentLang === "fr"
+            ? "Êtes-vous sûr de vouloir supprimer cette entrée?"
+            : "Are you sure you want to delete this entry?";
 
-            const tableHTML = `
+        if (confirm(message)) {
+          entries = entries.filter((e) => e.id !== id);
+          renderEntries();
+        }
+      }
+
+      // Render all entries
+      function renderEntries() {
+        const container = document.getElementById("entries-container");
+        const currentLang = document.documentElement.lang?.split("-")[0] || "en";
+
+        if (entries.length === 0) {
+          const noEntriesText =
+            currentLang === "fr"
+              ? "Aucune entrée pour le moment. Ajoutez votre première abréviation ou acronyme ci-dessus."
+              : "No entries yet. Add your first abbreviation or acronym above.";
+
+          container.innerHTML = `<p class="text-muted" data-en="No entries yet. Add your first abbreviation or acronym above." data-fr="Aucune entrée pour le moment. Ajoutez votre première abréviation ou acronyme ci-dessus.">${noEntriesText}</p>`;
+          return;
+        }
+
+        const labels =
+          currentLang === "fr"
+            ? {
+                num: "#",
+                internal: "Interne",
+                abbrEn: "Abrév. EN",
+                abbrFr: "Abrév. FR",
+                titleEn: "Titre EN",
+                titleFr: "Titre FR",
+                titleEnLang: "EN est FR",
+                titleFrLang: "FR est EN",
+                notesEn: "Notes EN",
+                notesFr: "Notes FR",
+                transparentNotes: "Notes transp.",
+                actions: "Actions",
+                edit: "Modifier",
+                delete: "Supprimer",
+              }
+            : {
+                num: "#",
+                internal: "Internal",
+                abbrEn: "Abbr. EN",
+                abbrFr: "Abbr. FR",
+                titleEn: "Title EN",
+                titleFr: "Title FR",
+                titleEnLang: "EN is FR",
+                titleFrLang: "FR is EN",
+                notesEn: "Notes EN",
+                notesFr: "Notes FR",
+                transparentNotes: "Transp. Notes",
+                actions: "Actions",
+                edit: "Edit",
+                delete: "Delete",
+              };
+
+        // Sort entries alphabetically by English abbreviation
+        const sortedEntries = [...entries].sort((a, b) => {
+          return a.abbrEn.toLowerCase().localeCompare(b.abbrEn.toLowerCase());
+        });
+
+        const tableHTML = `
                 <table class="table table-striped table-hover">
                     <thead>
                         <tr>
@@ -507,19 +557,41 @@
                         </tr>
                     </thead>
                     <tbody>
-                        ${sortedEntries.map((entry, index) => `
+                        ${sortedEntries
+                          .map(
+                            (entry, index) => `
                             <tr>
                                 <th scope="row">${index + 1}</th>
-                                <td>${entry.internalOnly ? '✓' : ''}</td>
+                                <td>${entry.internalOnly ? "✓" : ""}</td>
                                 <td>${escapeHtml(entry.abbrEn)}</td>
                                 <td>${escapeHtml(entry.abbrFr)}</td>
-                                <td>${entry.titleEnIsFrench ? '<i lang="fr">' + escapeHtml(entry.titleEn) + '</i>' : escapeHtml(entry.titleEn)}</td>
-                                <td>${entry.titleEnIsFrench ? '✓' : ''}</td>
-                                <td>${entry.titleFrIsEnglish ? '<i lang="en">' + escapeHtml(entry.titleFr) + '</i>' : escapeHtml(entry.titleFr)}</td>
-                                <td>${entry.titleFrIsEnglish ? '✓' : ''}</td>
-                                <td>${entry.notesEn ? escapeHtml(entry.notesEn) : '<em class="text-muted">—</em>'}</td>
-                                <td>${entry.notesFr ? escapeHtml(entry.notesFr) : '<em class="text-muted">—</em>'}</td>
-                                <td>${entry.transparentNotes ? escapeHtml(entry.transparentNotes) : '<em class="text-muted">—</em>'}</td>
+                                <td>${
+                                  entry.titleEnIsFrench
+                                    ? `<i lang="fr">${escapeHtml(entry.titleEn)}</i>`
+                                    : escapeHtml(entry.titleEn)
+                                }</td>
+                                <td>${entry.titleEnIsFrench ? "✓" : ""}</td>
+                                <td>${
+                                  entry.titleFrIsEnglish
+                                    ? `<i lang="en">${escapeHtml(entry.titleFr)}</i>`
+                                    : escapeHtml(entry.titleFr)
+                                }</td>
+                                <td>${entry.titleFrIsEnglish ? "✓" : ""}</td>
+                                <td>${
+                                  entry.notesEn
+                                    ? escapeHtml(entry.notesEn)
+                                    : '<em class="text-muted">—</em>'
+                                }</td>
+                                <td>${
+                                  entry.notesFr
+                                    ? escapeHtml(entry.notesFr)
+                                    : '<em class="text-muted">—</em>'
+                                }</td>
+                                <td>${
+                                  entry.transparentNotes
+                                    ? escapeHtml(entry.transparentNotes)
+                                    : '<em class="text-muted">—</em>'
+                                }</td>
                                 <td class="text-nowrap">
                                     <button type="button" 
                                             class="btn btn-sm btn-primary me-1" 
@@ -535,285 +607,291 @@
                                     </button>
                                 </td>
                             </tr>
-                        `).join('')}
+                        `
+                          )
+                          .join("")}
                     </tbody>
                 </table>
             `;
 
-            container.innerHTML = tableHTML;
-        }
+        container.innerHTML = tableHTML;
+      }
 
-        // Escape HTML to prevent XSS
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
+      // Escape HTML to prevent XSS
+      function escapeHtml(text) {
+        const div = document.createElement("div");
+        div.textContent = text;
+        return div.innerHTML;
+      }
 
-        // Check for duplicate abbreviations
-        function checkDuplicates(abbrEn, abbrFr, excludeId = null) {
-            const duplicates = entries.filter(entry => {
-                // Skip the entry being edited
-                if (excludeId !== null && entry.id === excludeId) {
-                    return false;
-                }
-                
-                // Check if either abbreviation matches
-                const enMatch = abbrEn && entry.abbrEn && 
-                            abbrEn.toLowerCase() === entry.abbrEn.toLowerCase();
-                const frMatch = abbrFr && entry.abbrFr && 
-                            abbrFr.toLowerCase() === entry.abbrFr.toLowerCase();
-                
-                return enMatch || frMatch;
-            });
-            
-            if (duplicates.length > 0) {
-                const currentLang = document.documentElement.lang?.split('-')[0] || 'en';
-                let message = '';
-                
-                if (currentLang === 'fr') {
-                    message = 'Une entrée avec cette abréviation/acronyme existe déjà:\n\n';
-                    duplicates.forEach(dup => {
-                        message += `• ${dup.abbrEn} / ${dup.abbrFr}\n  ${dup.titleEn} / ${dup.titleFr}\n\n`;
-                    });
-                    message += 'Voulez-vous continuer quand même?';
-                } else {
-                    message = 'An entry with this abbreviation/acronym already exists:\n\n';
-                    duplicates.forEach(dup => {
-                        message += `• ${dup.abbrEn} / ${dup.abbrFr}\n  ${dup.titleEn} / ${dup.titleFr}\n\n`;
-                    });
-                    message += 'Do you want to continue anyway?';
-                }
-                
-                return confirm(message);
-            }
-            
-            return true; // No duplicates found, proceed
-        }
+      // Check for duplicate abbreviations
+      function checkDuplicates(abbrEn, abbrFr, excludeId = null) {
+        const duplicates = entries.filter((entry) => {
+          // Skip the entry being edited
+          if (excludeId !== null && entry.id === excludeId) {
+            return false;
+          }
 
-        // Edit entry
-        function editEntry(id) {
-            const entry = entries.find(e => e.id === id);
-            if (!entry) return;
+          // Check if either abbreviation matches
+          const enMatch =
+            abbrEn && entry.abbrEn && abbrEn.toLowerCase() === entry.abbrEn.toLowerCase();
+          const frMatch =
+            abbrFr && entry.abbrFr && abbrFr.toLowerCase() === entry.abbrFr.toLowerCase();
 
-            // Populate form with entry data
-            document.getElementById('internal-only').checked = entry.internalOnly || false;
-            document.getElementById('abbr-en').value = entry.abbrEn;
-            document.getElementById('abbr-fr').value = entry.abbrFr;
-            document.getElementById('title-en').value = entry.titleEn;
-            document.getElementById('title-fr').value = entry.titleFr;
-            document.getElementById('title-en-is-french').checked = entry.titleEnIsFrench || false;
-            document.getElementById('title-fr-is-english').checked = entry.titleFrIsEnglish || false;
-            document.getElementById('notes-en').value = entry.notesEn || '';
-            document.getElementById('notes-fr').value = entry.notesFr || '';
-            document.getElementById('transparent-notes').value = entry.transparentNotes || '';
-
-            // Change Add button to Update button
-            const addBtn = document.getElementById('add-entry-btn');
-            const currentLang = document.documentElement.lang?.split('-')[0] || 'en';
-            const updateText = currentLang === 'fr' ? 'Mettre à jour' : 'Update entry';
-            const cancelText = currentLang === 'fr' ? 'Annuler' : 'Cancel';
-
-            addBtn.innerHTML = `<span data-en="Update entry" data-fr="Mettre à jour">${updateText}</span>`;
-            addBtn.onclick = () => updateEntry(id);
-
-            // Add cancel button if it doesn't exist
-            let cancelBtn = document.getElementById('cancel-edit-btn');
-            if (!cancelBtn) {
-                cancelBtn = document.createElement('button');
-                cancelBtn.type = 'button';
-                cancelBtn.className = 'btn btn-secondary ms-2';
-                cancelBtn.id = 'cancel-edit-btn';
-                cancelBtn.innerHTML = `<span data-en="Cancel" data-fr="Annuler">${cancelText}</span>`;
-                cancelBtn.onclick = cancelEdit;
-                addBtn.parentNode.insertBefore(cancelBtn, addBtn.nextSibling);
-            }
-
-            // Scroll to form
-            document.getElementById('abbr-en').scrollIntoView({ behavior: 'smooth', block: 'center' });
-            document.getElementById('abbr-en').focus();
-        }
-
-        // Update entry
-        function updateEntry(id) {
-            const internalOnly = document.getElementById('internal-only').checked;
-            let abbrEn = document.getElementById('abbr-en').value.trim();
-            let abbrFr = document.getElementById('abbr-fr').value.trim();
-            const titleEn = document.getElementById('title-en').value.trim();
-            const titleFr = document.getElementById('title-fr').value.trim();
-            const titleEnIsFrench = document.getElementById('title-en-is-french').checked;
-            const titleFrIsEnglish = document.getElementById('title-fr-is-english').checked;
-            const notesEn = document.getElementById('notes-en').value.trim();
-            const notesFr = document.getElementById('notes-fr').value.trim();
-            const transparentNotes = document.getElementById('transparent-notes').value.trim();
-
-            // Validation - at least one abbreviation and both titles required
-            if ((!abbrEn && !abbrFr) || !titleEn || !titleFr) {
-                const currentLang = document.documentElement.lang?.split('-')[0] || 'en';
-                const message = currentLang === 'fr' 
-                    ? 'Veuillez remplir au moins une abréviation et les deux titres complets.' 
-                    : 'Please fill in at least one abbreviation and both full titles.';
-                alert(message);
-                return;
-            }
-
-            // Auto-fill missing abbreviations with message
-            if (abbrEn && !abbrFr) {
-                abbrFr = "Il n'y a pas d'abréviations ou d'acronymes pour le français.";
-            } else if (abbrFr && !abbrEn) {
-                abbrEn = "There are no abbreviations or acronyms for English.";
-            }
-
-            // Check for duplicates (only check actual abbreviations, not auto-filled messages)
-            const checkAbbrEn = abbrEn !== "There are no abbreviations or acronyms for English." ? abbrEn : null;
-            const checkAbbrFr = abbrFr !== "Il n'y a pas d'abréviations ou d'acronymes pour le français." ? abbrFr : null;
-            
-            if (!checkDuplicates(checkAbbrEn, checkAbbrFr, id)) {
-                return; // User chose to cancel
-            }
-
-            // Find and update entry
-                const entryIndex = entries.findIndex(e => e.id === id);
-                if (entryIndex !== -1) {
-                    entries[entryIndex] = {
-                        id,
-                        internalOnly,
-                        abbrEn,
-                        abbrFr,
-                        titleEn,
-                        titleFr,
-                        titleEnIsFrench,
-                        titleFrIsEnglish,
-                        notesEn,
-                        notesFr,
-                        transparentNotes
-                    };
-                }
-
-            renderEntries();
-            cancelEdit();
-        }
-
-        // Cancel edit mode
-        function cancelEdit() {
-            const addBtn = document.getElementById('add-entry-btn');
-            const currentLang = document.documentElement.lang?.split('-')[0] || 'en';
-            const addText = currentLang === 'fr' ? 'Ajouter l\'entrée' : 'Add entry';
-
-            addBtn.innerHTML = `<span data-en="Add entry" data-fr="Ajouter l'entrée">${addText}</span>`;
-            addBtn.onclick = addEntry;
-
-            // Remove cancel button
-            const cancelBtn = document.getElementById('cancel-edit-btn');
-            if (cancelBtn) {
-                cancelBtn.remove();
-            }
-
-            clearForm();
-        }
-
-        // Listen for language changes to update displayed entries
-        document.addEventListener('languageChanged', () => {
-            renderEntries();
+          return enMatch || frMatch;
         });
 
-        // Save entries to JSON file
-        function saveToJSON() {
-            if (entries.length === 0) {
-                const currentLang = document.documentElement.lang?.split('-')[0] || 'en';
-                const message = currentLang === 'fr' 
-                    ? 'Aucune entrée à enregistrer.' 
-                    : 'No entries to save.';
-                alert(message);
-                return;
+        if (duplicates.length > 0) {
+          const currentLang = document.documentElement.lang?.split("-")[0] || "en";
+          let message = "";
+
+          if (currentLang === "fr") {
+            message = "Une entrée avec cette abréviation/acronyme existe déjà:\n\n";
+            duplicates.forEach((dup) => {
+              message += `• ${dup.abbrEn} / ${dup.abbrFr}\n  ${dup.titleEn} / ${dup.titleFr}\n\n`;
+            });
+            message += "Voulez-vous continuer quand même?";
+          } else {
+            message = "An entry with this abbreviation/acronym already exists:\n\n";
+            duplicates.forEach((dup) => {
+              message += `• ${dup.abbrEn} / ${dup.abbrFr}\n  ${dup.titleEn} / ${dup.titleFr}\n\n`;
+            });
+            message += "Do you want to continue anyway?";
+          }
+
+          return confirm(message);
+        }
+
+        return true; // No duplicates found, proceed
+      }
+
+      // Edit entry
+      function editEntry(id) {
+        const entry = entries.find((e) => e.id === id);
+        if (!entry) return;
+
+        // Populate form with entry data
+        document.getElementById("internal-only").checked = entry.internalOnly || false;
+        document.getElementById("abbr-en").value = entry.abbrEn;
+        document.getElementById("abbr-fr").value = entry.abbrFr;
+        document.getElementById("title-en").value = entry.titleEn;
+        document.getElementById("title-fr").value = entry.titleFr;
+        document.getElementById("title-en-is-french").checked = entry.titleEnIsFrench || false;
+        document.getElementById("title-fr-is-english").checked = entry.titleFrIsEnglish || false;
+        document.getElementById("notes-en").value = entry.notesEn || "";
+        document.getElementById("notes-fr").value = entry.notesFr || "";
+        document.getElementById("transparent-notes").value = entry.transparentNotes || "";
+
+        // Change Add button to Update button
+        const addBtn = document.getElementById("add-entry-btn");
+        const currentLang = document.documentElement.lang?.split("-")[0] || "en";
+        const updateText = currentLang === "fr" ? "Mettre à jour" : "Update entry";
+        const cancelText = currentLang === "fr" ? "Annuler" : "Cancel";
+
+        addBtn.innerHTML = `<span data-en="Update entry" data-fr="Mettre à jour">${updateText}</span>`;
+        addBtn.onclick = () => updateEntry(id);
+
+        // Add cancel button if it doesn't exist
+        let cancelBtn = document.getElementById("cancel-edit-btn");
+        if (!cancelBtn) {
+          cancelBtn = document.createElement("button");
+          cancelBtn.type = "button";
+          cancelBtn.className = "btn btn-secondary ms-2";
+          cancelBtn.id = "cancel-edit-btn";
+          cancelBtn.innerHTML = `<span data-en="Cancel" data-fr="Annuler">${cancelText}</span>`;
+          cancelBtn.onclick = cancelEdit;
+          addBtn.parentNode.insertBefore(cancelBtn, addBtn.nextSibling);
+        }
+
+        // Scroll to form
+        document.getElementById("abbr-en").scrollIntoView({ behavior: "smooth", block: "center" });
+        document.getElementById("abbr-en").focus();
+      }
+
+      // Update entry
+      function updateEntry(id) {
+        const internalOnly = document.getElementById("internal-only").checked;
+        let abbrEn = document.getElementById("abbr-en").value.trim();
+        let abbrFr = document.getElementById("abbr-fr").value.trim();
+        const titleEn = document.getElementById("title-en").value.trim();
+        const titleFr = document.getElementById("title-fr").value.trim();
+        const titleEnIsFrench = document.getElementById("title-en-is-french").checked;
+        const titleFrIsEnglish = document.getElementById("title-fr-is-english").checked;
+        const notesEn = document.getElementById("notes-en").value.trim();
+        const notesFr = document.getElementById("notes-fr").value.trim();
+        const transparentNotes = document.getElementById("transparent-notes").value.trim();
+
+        // Validation - at least one abbreviation and both titles required
+        if ((!abbrEn && !abbrFr) || !titleEn || !titleFr) {
+          const currentLang = document.documentElement.lang?.split("-")[0] || "en";
+          const message =
+            currentLang === "fr"
+              ? "Veuillez remplir au moins une abréviation et les deux titres complets."
+              : "Please fill in at least one abbreviation and both full titles.";
+          alert(message);
+          return;
+        }
+
+        // Auto-fill missing abbreviations with message
+        if (abbrEn && !abbrFr) {
+          abbrFr = "Il n'y a pas d'abréviations ou d'acronymes pour le français.";
+        } else if (abbrFr && !abbrEn) {
+          abbrEn = "There are no abbreviations or acronyms for English.";
+        }
+
+        // Check for duplicates (only check actual abbreviations, not auto-filled messages)
+        const checkAbbrEn =
+          abbrEn !== "There are no abbreviations or acronyms for English." ? abbrEn : null;
+        const checkAbbrFr =
+          abbrFr !== "Il n'y a pas d'abréviations ou d'acronymes pour le français." ? abbrFr : null;
+
+        if (!checkDuplicates(checkAbbrEn, checkAbbrFr, id)) {
+          return; // User chose to cancel
+        }
+
+        // Find and update entry
+        const entryIndex = entries.findIndex((e) => e.id === id);
+        if (entryIndex !== -1) {
+          entries[entryIndex] = {
+            id,
+            internalOnly,
+            abbrEn,
+            abbrFr,
+            titleEn,
+            titleFr,
+            titleEnIsFrench,
+            titleFrIsEnglish,
+            notesEn,
+            notesFr,
+            transparentNotes,
+          };
+        }
+
+        renderEntries();
+        cancelEdit();
+      }
+
+      // Cancel edit mode
+      function cancelEdit() {
+        const addBtn = document.getElementById("add-entry-btn");
+        const currentLang = document.documentElement.lang?.split("-")[0] || "en";
+        const addText = currentLang === "fr" ? "Ajouter l'entrée" : "Add entry";
+
+        addBtn.innerHTML = `<span data-en="Add entry" data-fr="Ajouter l'entrée">${addText}</span>`;
+        addBtn.onclick = addEntry;
+
+        // Remove cancel button
+        const cancelBtn = document.getElementById("cancel-edit-btn");
+        if (cancelBtn) {
+          cancelBtn.remove();
+        }
+
+        clearForm();
+      }
+
+      // Listen for language changes to update displayed entries
+      document.addEventListener("languageChanged", () => {
+        renderEntries();
+      });
+
+      // Save entries to JSON file
+      function saveToJSON() {
+        if (entries.length === 0) {
+          const currentLang = document.documentElement.lang?.split("-")[0] || "en";
+          const message =
+            currentLang === "fr" ? "Aucune entrée à enregistrer." : "No entries to save.";
+          alert(message);
+          return;
+        }
+
+        // Ensure all fields are present in each entry
+        const normalizedEntries = entries.map((entry) => ({
+          id: entry.id,
+          internalOnly: entry.internalOnly || false,
+          abbrEn: entry.abbrEn || "",
+          abbrFr: entry.abbrFr || "",
+          titleEn: entry.titleEn || "",
+          titleFr: entry.titleFr || "",
+          titleEnIsFrench: entry.titleEnIsFrench || false,
+          titleFrIsEnglish: entry.titleFrIsEnglish || false,
+          notesEn: entry.notesEn || "",
+          notesFr: entry.notesFr || "",
+          transparentNotes: entry.transparentNotes || "",
+        }));
+
+        const dataStr = JSON.stringify(normalizedEntries, null, 2);
+        const dataBlob = new Blob([dataStr], { type: "application/json" });
+        const url = URL.createObjectURL(dataBlob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "abbrevo-entries.json";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
+
+      // Load entries from JSON file
+      function loadFromJSON(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          try {
+            const loadedData = JSON.parse(e.target.result);
+
+            // Validate that it's an array
+            if (!Array.isArray(loadedData)) {
+              throw new Error("Invalid JSON format");
             }
 
-            // Ensure all fields are present in each entry
-            const normalizedEntries = entries.map(entry => ({
-                id: entry.id,
-                internalOnly: entry.internalOnly || false,
-                abbrEn: entry.abbrEn || '',
-                abbrFr: entry.abbrFr || '',
-                titleEn: entry.titleEn || '',
-                titleFr: entry.titleFr || '',
-                titleEnIsFrench: entry.titleEnIsFrench || false,
-                titleFrIsEnglish: entry.titleFrIsEnglish || false,
-                notesEn: entry.notesEn || '',
-                notesFr: entry.notesFr || '',
-                transparentNotes: entry.transparentNotes || ''
-            }));
+            // Validate structure of entries
+            const isValid = loadedData.every(
+              (entry) =>
+                entry.hasOwnProperty("abbrEn") &&
+                entry.hasOwnProperty("abbrFr") &&
+                entry.hasOwnProperty("titleEn") &&
+                entry.hasOwnProperty("titleFr")
+            );
 
-            const dataStr = JSON.stringify(normalizedEntries, null, 2);
-            const dataBlob = new Blob([dataStr], { type: 'application/json' });
-            const url = URL.createObjectURL(dataBlob);
-            
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'abbrevo-entries.json';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-        }
+            if (!isValid) {
+              throw new Error("Invalid entry structure");
+            }
 
-        // Load entries from JSON file
-        function loadFromJSON(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+            // Load the data
+            entries = loadedData;
 
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const loadedData = JSON.parse(e.target.result);
-                    
-                    // Validate that it's an array
-                    if (!Array.isArray(loadedData)) {
-                        throw new Error('Invalid JSON format');
-                    }
+            // Update counter to prevent ID conflicts
+            if (entries.length > 0) {
+              entryCounter = Math.max(...entries.map((e) => e.id || 0)) + 1;
+            }
 
-                    // Validate structure of entries
-                    const isValid = loadedData.every(entry => 
-                        entry.hasOwnProperty('abbrEn') &&
-                        entry.hasOwnProperty('abbrFr') &&
-                        entry.hasOwnProperty('titleEn') &&
-                        entry.hasOwnProperty('titleFr')
-                    );
+            renderEntries();
 
-                    if (!isValid) {
-                        throw new Error('Invalid entry structure');
-                    }
+            const currentLang = document.documentElement.lang?.split("-")[0] || "en";
+            const message =
+              currentLang === "fr"
+                ? `${entries.length} entrée(s) chargée(s) avec succès.`
+                : `${entries.length} entry(ies) loaded successfully.`;
+            alert(message);
+          } catch (error) {
+            const currentLang = document.documentElement.lang?.split("-")[0] || "en";
+            const message =
+              currentLang === "fr"
+                ? "Erreur lors du chargement du fichier JSON. Veuillez vérifier le format."
+                : "Error loading JSON file. Please check the format.";
+            alert(message);
+            console.error("JSON load error:", error);
+          }
+        };
 
-                    // Load the data
-                    entries = loadedData;
-                    
-                    // Update counter to prevent ID conflicts
-                    if (entries.length > 0) {
-                        entryCounter = Math.max(...entries.map(e => e.id || 0)) + 1;
-                    }
+        reader.readAsText(file);
 
-                    renderEntries();
-
-                    const currentLang = document.documentElement.lang?.split('-')[0] || 'en';
-                    const message = currentLang === 'fr' 
-                        ? `${entries.length} entrée(s) chargée(s) avec succès.` 
-                        : `${entries.length} entry(ies) loaded successfully.`;
-                    alert(message);
-
-                } catch (error) {
-                    const currentLang = document.documentElement.lang?.split('-')[0] || 'en';
-                    const message = currentLang === 'fr' 
-                        ? 'Erreur lors du chargement du fichier JSON. Veuillez vérifier le format.' 
-                        : 'Error loading JSON file. Please check the format.';
-                    alert(message);
-                    console.error('JSON load error:', error);
-                }
-            };
-
-            reader.readAsText(file);
-            
-            // Reset the file input so the same file can be loaded again if needed
-            event.target.value = '';
-        }
+        // Reset the file input so the same file can be loaded again if needed
+        event.target.value = "";
+      }
     </script>
-</body>
+  </body>
 </html>
