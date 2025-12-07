@@ -339,7 +339,7 @@
           titleFrIsEnglish,
           notesEn,
           notesFr,
-          transparentNotes
+          transparentNotes,
         };
 
         entries.push(entry);
@@ -404,7 +404,7 @@
                 transparentNotes: "Notes transp.",
                 actions: "Actions",
                 edit: "Modifier",
-                delete: "Supprimer"
+                delete: "Supprimer",
               }
             : {
                 num: "#",
@@ -420,7 +420,7 @@
                 transparentNotes: "Transp. Notes",
                 actions: "Actions",
                 edit: "Edit",
-                delete: "Delete"
+                delete: "Delete",
               };
 
         // Sort entries alphabetically by English abbreviation
@@ -629,7 +629,7 @@
             titleFrIsEnglish,
             notesEn,
             notesFr,
-            transparentNotes
+            transparentNotes,
           };
         }
 
@@ -681,7 +681,7 @@
           titleFrIsEnglish: entry.titleFrIsEnglish || false,
           notesEn: entry.notesEn || "",
           notesFr: entry.notesFr || "",
-          transparentNotes: entry.transparentNotes || ""
+          transparentNotes: entry.transparentNotes || "",
         }));
 
         const dataStr = JSON.stringify(normalizedEntries, null, 2);
