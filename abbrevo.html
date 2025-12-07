@@ -688,7 +688,20 @@
                 return;
             }
 
-            const dataStr = JSON.stringify(entries, null, 2);
+            // Ensure all fields are present in each entry
+            const normalizedEntries = entries.map(entry => ({
+                id: entry.id,
+                internalOnly: entry.internalOnly || false,
+                abbrEn: entry.abbrEn || '',
+                abbrFr: entry.abbrFr || '',
+                titleEn: entry.titleEn || '',
+                titleFr: entry.titleFr || '',
+                notesEn: entry.notesEn || '',
+                notesFr: entry.notesFr || '',
+                transparentNotes: entry.transparentNotes || ''
+            }));
+
+            const dataStr = JSON.stringify(normalizedEntries, null, 2);
             const dataBlob = new Blob([dataStr], { type: 'application/json' });
             const url = URL.createObjectURL(dataBlob);
             
