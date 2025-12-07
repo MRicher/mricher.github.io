@@ -1,21 +1,9 @@
-/* =================================================================
-   CREAVIA.CSS - Global Theme Styles
-   Shared styles for all pages with theme support and accessibility
-   ================================================================= */
-
-/* =================================================================
-   CSS CUSTOM PROPERTIES (Variables)
-   ================================================================= */
-
-/* Light Theme Variables - WCAG AAA Compliant Colors */
 :root {
-  /* Navigation */
   --navbar-bg: #ffffff;
   --navbar-border: #d1d5db;
   --navbar-text: #111827;
   --navbar-text-hover: #1d4ed8;
 
-  /* Body & Content */
   --body-bg: #ffffff;
   --body-color: #111827;
 
@@ -93,9 +81,7 @@
 body {
   background-color: var(--body-bg);
   color: var(--body-color);
-  transition: 
-    background-color 0.3s ease,
-    color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* =================================================================
@@ -163,9 +149,7 @@ body {
 .card {
   background-color: var(--card-bg);
   border-color: var(--card-border);
-  transition: 
-    background-color 0.3s ease,
-    border-color 0.3s ease;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .card-body,
@@ -201,9 +185,7 @@ footer {
   padding: 2rem 0;
   margin-top: 3rem;
   border-top: 1px solid var(--border-color);
-  transition: 
-    background-color 0.3s ease,
-    color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* =================================================================
@@ -221,11 +203,6 @@ footer {
   color: var(--alert-info-color);
 }
 
-/* =================================================================
-   BUTTON COMPONENTS
-   ================================================================= */
-
-/* Primary Button */
 .btn-primary {
   background-color: var(--button-primary-bg);
   border-color: var(--button-primary-bg);
@@ -240,7 +217,6 @@ footer {
   filter: brightness(0.9);
 }
 
-/* Outline Primary Button */
 .btn-outline-primary {
   border-color: var(--button-outline-border);
   color: var(--button-outline-color);
@@ -254,7 +230,6 @@ footer {
   color: var(--button-primary-color);
 }
 
-/* Theme Toggle Button */
 .theme-toggle {
   background: none;
   border: 2px solid var(--navbar-text);
@@ -275,11 +250,6 @@ footer {
   outline-offset: 2px;
 }
 
-/* =================================================================
-   SPECIAL COMPONENTS
-   ================================================================= */
-
-/* Language Switcher */
 .language-switcher {
   display: flex;
   align-items: center;
@@ -293,7 +263,6 @@ footer {
   white-space: nowrap;
 }
 
-/* Back to Top Button */
 .back-to-top {
   position: fixed;
   bottom: 20px;
@@ -340,17 +309,12 @@ footer {
 }
 
 .back-to-top::before {
-  content: '↑';
+  content: "↑";
   font-size: 20px;
   font-weight: bold;
   line-height: 1;
 }
 
-/* =================================================================
-   ACCESSIBILITY FEATURES
-   ================================================================= */
-
-/* Skip Link for Screen Readers */
 .skip-link {
   position: absolute;
   top: -40px;
@@ -392,10 +356,6 @@ footer {
   border: 0;
 }
 
-/* =================================================================
-   UTILITY CLASSES
-   ================================================================= */
-
 .text-light {
   color: var(--link-color) !important;
 }
@@ -410,11 +370,6 @@ footer {
   margin-right: 1rem;
 }
 
-/* =================================================================
-   RESPONSIVE DESIGN
-   ================================================================= */
-
-/* Tablet and Small Desktop */
 @media (max-width: 991px) {
   .language-switcher {
     flex-direction: column;
@@ -422,7 +377,7 @@ footer {
     width: 100%;
     margin-top: 1rem;
   }
-  
+
   .language-switcher .btn,
   .theme-toggle {
     width: 100%;
@@ -460,7 +415,7 @@ footer {
   .back-to-top {
     transition: opacity 0.3s ease;
   }
-  
+
   .back-to-top:hover {
     transform: none;
   }
@@ -468,25 +423,25 @@ footer {
 
 /* Quill toolbar icons white in dark mode */
 [data-theme="dark"] .ql-toolbar .ql-stroke {
-	stroke: #ffffff;
+  stroke: #ffffff;
 }
 
 [data-theme="dark"] .ql-toolbar .ql-fill {
-	fill: #ffffff;
+  fill: #ffffff;
 }
 
 [data-theme="dark"] .ql-toolbar .ql-picker-label {
-	color: #ffffff;
+  color: #ffffff;
 }
 
 [data-theme="dark"] .ql-toolbar button:hover .ql-stroke,
 [data-theme="dark"] .ql-toolbar button:focus .ql-stroke,
 [data-theme="dark"] .ql-toolbar button.ql-active .ql-stroke {
-	stroke: #4dabf7;
+  stroke: #4dabf7;
 }
 
 [data-theme="dark"] .ql-toolbar button:hover .ql-fill,
 [data-theme="dark"] .ql-toolbar button:focus .ql-fill,
 [data-theme="dark"] .ql-toolbar button.ql-active .ql-fill {
-	fill: #4dabf7;
+  fill: #4dabf7;
 }
