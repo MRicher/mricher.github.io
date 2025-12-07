@@ -143,107 +143,127 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="abbr-en" class="form-label"
-                                   data-en="English abbreviation/acronym"
-                                   data-fr="Abréviation/acronyme anglais">
+                                data-en="English abbreviation/acronym"
+                                data-fr="Abréviation/acronyme anglais">
                                 English abbreviation/acronym
                             </label>
                             <input type="text" 
-                                   class="form-control" 
-                                   id="abbr-en"
-                                   data-en="Enter English abbreviation"
-                                   data-fr="Entrez l'abréviation anglaise"
-                                   placeholder="Enter English abbreviation">
+                                class="form-control" 
+                                id="abbr-en"
+                                data-en="Enter English abbreviation"
+                                data-fr="Entrez l'abréviation anglaise"
+                                placeholder="Enter English abbreviation">
+                            
+                            <label for="title-en" class="form-label required mt-3"
+                                data-en="English full title"
+                                data-fr="Titre complet anglais">
+                                English full title
+                            </label>
+                            <input type="text" 
+                                class="form-control" 
+                                id="title-en"
+                                data-en="Enter English full title"
+                                data-fr="Entrez le titre complet anglais"
+                                placeholder="Enter English full title"
+                                required>
+                            
+                            <div class="form-check form-switch mt-2">
+                                <input class="form-check-input" 
+                                    type="checkbox" 
+                                    id="title-en-is-french"
+                                    role="switch">
+                                <label class="form-check-label" for="title-en-is-french"
+                                    data-en="Title is in French"
+                                    data-fr="Le titre est en français">
+                                    Title is in French
+                                </label>
+                            </div>
                         </div>
+                        
                         <div class="col-md-6">
                             <label for="abbr-fr" class="form-label"
-                                   data-en="French abbreviation/acronym"
-                                   data-fr="Abréviation/acronyme français">
+                                data-en="French abbreviation/acronym"
+                                data-fr="Abréviation/acronyme français">
                                 French abbreviation/acronym
                             </label>
                             <input type="text" 
-                                   class="form-control" 
-                                   id="abbr-fr"
-                                   data-en="Enter French abbreviation"
-                                   data-fr="Entrez l'abréviation française"
-                                   placeholder="Enter French abbreviation">
+                                class="form-control" 
+                                id="abbr-fr"
+                                data-en="Enter French abbreviation"
+                                data-fr="Entrez l'abréviation française"
+                                placeholder="Enter French abbreviation">
+                            
+                            <label for="title-fr" class="form-label required mt-3"
+                                data-en="French full title"
+                                data-fr="Titre complet français">
+                                French full title
+                            </label>
+                            <input type="text" 
+                                class="form-control" 
+                                id="title-fr"
+                                data-en="Enter French full title"
+                                data-fr="Entrez le titre complet français"
+                                placeholder="Enter French full title"
+                                required>
+                            
+                            <div class="form-check form-switch mt-2">
+                                <input class="form-check-input" 
+                                    type="checkbox" 
+                                    id="title-fr-is-english"
+                                    role="switch">
+                                <label class="form-check-label" for="title-fr-is-english"
+                                    data-en="Title is in English"
+                                    data-fr="Le titre est en anglais">
+                                    Title is in English
+                                </label>
+                            </div>
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="title-en" class="form-label required"
-                                   data-en="English full title"
-                                   data-fr="Titre complet anglais">
-                                English full title
+                            <label for="notes-en" class="form-label"
+                                data-en="English notes (optional)"
+                                data-fr="Notes en anglais (optionnel)">
+                                English Notes (Optional)
                             </label>
-                            <input type="text" 
-                                   class="form-control" 
-                                   id="title-en"
-                                   data-en="Enter English full title"
-                                   data-fr="Entrez le titre complet anglais"
-                                   placeholder="Enter English full title"
-                                   required>
+                            <textarea class="form-control" 
+                                    id="notes-en"
+                                    rows="3"
+                                    data-en="Enter English notes"
+                                    data-fr="Entrez les notes en anglais"
+                                    placeholder="Enter English notes"></textarea>
                         </div>
                         <div class="col-md-6">
-                            <label for="title-fr" class="form-label required"
-                                   data-en="French full title"
-                                   data-fr="Titre complet français">
-                                French full title
+                            <label for="notes-fr" class="form-label"
+                                data-en="French notes (optional)"
+                                data-fr="Notes en français (optionnel)">
+                                French Notes (Optional)
                             </label>
-                            <input type="text" 
-                                   class="form-control" 
-                                   id="title-fr"
-                                   data-en="Enter French full title"
-                                   data-fr="Entrez le titre complet français"
-                                   placeholder="Enter French full title"
-                                   required>
+                            <textarea class="form-control" 
+                                    id="notes-fr"
+                                    rows="3"
+                                    data-en="Enter French notes"
+                                    data-fr="Entrez les notes en français"
+                                    placeholder="Enter French notes"></textarea>
                         </div>
                     </div>
 
-    <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="notes-en" class="form-label"
-                                    data-en="English notes (optional)"
-                                    data-fr="Notes en anglais (optionnel)">
-                                    English Notes (Optional)
-                                </label>
-                                <textarea class="form-control" 
-                                        id="notes-en"
-                                        rows="3"
-                                        data-en="Enter English notes"
-                                        data-fr="Entrez les notes en anglais"
-                                        placeholder="Enter English notes"></textarea>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="notes-fr" class="form-label"
-                                    data-en="French notes (optional)"
-                                    data-fr="Notes en français (optionnel)">
-                                    French Notes (Optional)
-                                </label>
-                                <textarea class="form-control" 
-                                        id="notes-fr"
-                                        rows="3"
-                                        data-en="Enter French notes"
-                                        data-fr="Entrez les notes en français"
-                                        placeholder="Enter French notes"></textarea>
-                            </div>
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="transparent-notes" class="form-label"
+                                data-en="Transparent notes (optional)"
+                                data-fr="Notes transparentes (optionnel)">
+                                Transparent Notes (Optional)
+                            </label>
+                            <textarea class="form-control" 
+                                    id="transparent-notes"
+                                    rows="3"
+                                    data-en="Enter transparent notes"
+                                    data-fr="Entrez les notes transparentes"
+                                    placeholder="Enter transparent notes"></textarea>
                         </div>
-
-                        <div class="row mb-3">
-                            <div class="col-md-12">
-                                <label for="transparent-notes" class="form-label"
-                                    data-en="Transparent notes (optional)"
-                                    data-fr="Notes transparentes (optionnel)">
-                                    Transparent Notes (Optional)
-                                </label>
-                                <textarea class="form-control" 
-                                        id="transparent-notes"
-                                        rows="3"
-                                        data-en="Enter transparent notes"
-                                        data-fr="Entrez les notes transparentes"
-                                        placeholder="Enter transparent notes"></textarea>
-                            </div>
-                        </div>
+                    </div>
 
                         <button type="button"
                             class="btn btn-primary" 
@@ -338,6 +358,8 @@
             let abbrFr = document.getElementById('abbr-fr').value.trim();
             const titleEn = document.getElementById('title-en').value.trim();
             const titleFr = document.getElementById('title-fr').value.trim();
+            const titleEnIsFrench = document.getElementById('title-en-is-french').checked;
+            const titleFrIsEnglish = document.getElementById('title-fr-is-english').checked;
             const notesEn = document.getElementById('notes-en').value.trim();
             const notesFr = document.getElementById('notes-fr').value.trim();
             const transparentNotes = document.getElementById('transparent-notes').value.trim();
@@ -368,17 +390,19 @@
             }
 
             // Create entry object
-            const entry = {
-                id: entryCounter++,
-                internalOnly,
-                abbrEn,
-                abbrFr,
-                titleEn,
-                titleFr,
-                notesEn,
-                notesFr,
-                transparentNotes
-            };
+                const entry = {
+                    id: entryCounter++,
+                    internalOnly,
+                    abbrEn,
+                    abbrFr,
+                    titleEn,
+                    titleFr,
+                    titleEnIsFrench,
+                    titleFrIsEnglish,
+                    notesEn,
+                    notesFr,
+                    transparentNotes
+                };
 
             entries.push(entry);
             renderEntries();
@@ -392,6 +416,8 @@
             document.getElementById('abbr-fr').value = '';
             document.getElementById('title-en').value = '';
             document.getElementById('title-fr').value = '';
+            document.getElementById('title-en-is-french').checked = false;
+            document.getElementById('title-fr-is-english').checked = false;
             document.getElementById('notes-en').value = '';
             document.getElementById('notes-fr').value = '';
             document.getElementById('transparent-notes').value = '';
@@ -432,6 +458,8 @@
                 abbrFr: 'Abrév. FR',
                 titleEn: 'Titre EN',
                 titleFr: 'Titre FR',
+                titleEnLang: 'EN est FR',
+                titleFrLang: 'FR est EN',
                 notesEn: 'Notes EN',
                 notesFr: 'Notes FR',
                 transparentNotes: 'Notes transp.',
@@ -445,6 +473,8 @@
                 abbrFr: 'Abbr. FR',
                 titleEn: 'Title EN',
                 titleFr: 'Title FR',
+                titleEnLang: 'EN is FR',
+                titleFrLang: 'FR is EN',
                 notesEn: 'Notes EN',
                 notesFr: 'Notes FR',
                 transparentNotes: 'Transp. Notes',
@@ -467,7 +497,9 @@
                             <th scope="col">${labels.abbrEn}</th>
                             <th scope="col">${labels.abbrFr}</th>
                             <th scope="col">${labels.titleEn}</th>
+                            <th scope="col">${labels.titleEnLang}</th>
                             <th scope="col">${labels.titleFr}</th>
+                            <th scope="col">${labels.titleFrLang}</th>
                             <th scope="col">${labels.notesEn}</th>
                             <th scope="col">${labels.notesFr}</th>
                             <th scope="col">${labels.transparentNotes}</th>
@@ -481,8 +513,10 @@
                                 <td>${entry.internalOnly ? '✓' : ''}</td>
                                 <td>${escapeHtml(entry.abbrEn)}</td>
                                 <td>${escapeHtml(entry.abbrFr)}</td>
-                                <td>${escapeHtml(entry.titleEn)}</td>
-                                <td>${escapeHtml(entry.titleFr)}</td>
+                                <td>${entry.titleEnIsFrench ? '<i lang="fr">' + escapeHtml(entry.titleEn) + '</i>' : escapeHtml(entry.titleEn)}</td>
+                                <td>${entry.titleEnIsFrench ? '✓' : ''}</td>
+                                <td>${entry.titleFrIsEnglish ? '<i lang="en">' + escapeHtml(entry.titleFr) + '</i>' : escapeHtml(entry.titleFr)}</td>
+                                <td>${entry.titleFrIsEnglish ? '✓' : ''}</td>
                                 <td>${entry.notesEn ? escapeHtml(entry.notesEn) : '<em class="text-muted">—</em>'}</td>
                                 <td>${entry.notesFr ? escapeHtml(entry.notesFr) : '<em class="text-muted">—</em>'}</td>
                                 <td>${entry.transparentNotes ? escapeHtml(entry.transparentNotes) : '<em class="text-muted">—</em>'}</td>
@@ -568,6 +602,8 @@
             document.getElementById('abbr-fr').value = entry.abbrFr;
             document.getElementById('title-en').value = entry.titleEn;
             document.getElementById('title-fr').value = entry.titleFr;
+            document.getElementById('title-en-is-french').checked = entry.titleEnIsFrench || false;
+            document.getElementById('title-fr-is-english').checked = entry.titleFrIsEnglish || false;
             document.getElementById('notes-en').value = entry.notesEn || '';
             document.getElementById('notes-fr').value = entry.notesFr || '';
             document.getElementById('transparent-notes').value = entry.transparentNotes || '';
@@ -605,6 +641,8 @@
             let abbrFr = document.getElementById('abbr-fr').value.trim();
             const titleEn = document.getElementById('title-en').value.trim();
             const titleFr = document.getElementById('title-fr').value.trim();
+            const titleEnIsFrench = document.getElementById('title-en-is-french').checked;
+            const titleFrIsEnglish = document.getElementById('title-fr-is-english').checked;
             const notesEn = document.getElementById('notes-en').value.trim();
             const notesFr = document.getElementById('notes-fr').value.trim();
             const transparentNotes = document.getElementById('transparent-notes').value.trim();
@@ -635,20 +673,22 @@
             }
 
             // Find and update entry
-            const entryIndex = entries.findIndex(e => e.id === id);
-            if (entryIndex !== -1) {
-                entries[entryIndex] = {
-                    id,
-                    internalOnly,
-                    abbrEn,
-                    abbrFr,
-                    titleEn,
-                    titleFr,
-                    notesEn,
-                    notesFr,
-                    transparentNotes
-                };
-            }
+                const entryIndex = entries.findIndex(e => e.id === id);
+                if (entryIndex !== -1) {
+                    entries[entryIndex] = {
+                        id,
+                        internalOnly,
+                        abbrEn,
+                        abbrFr,
+                        titleEn,
+                        titleFr,
+                        titleEnIsFrench,
+                        titleFrIsEnglish,
+                        notesEn,
+                        notesFr,
+                        transparentNotes
+                    };
+                }
 
             renderEntries();
             cancelEdit();
@@ -696,6 +736,8 @@
                 abbrFr: entry.abbrFr || '',
                 titleEn: entry.titleEn || '',
                 titleFr: entry.titleFr || '',
+                titleEnIsFrench: entry.titleEnIsFrench || false,
+                titleFrIsEnglish: entry.titleFrIsEnglish || false,
                 notesEn: entry.notesEn || '',
                 notesFr: entry.notesFr || '',
                 transparentNotes: entry.transparentNotes || ''
