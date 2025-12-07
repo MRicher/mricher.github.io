@@ -125,8 +125,24 @@
                     </h2>
 
                     <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" 
+                                    type="checkbox" 
+                                    id="internal-only"
+                                    role="switch">
+                                <label class="form-check-label" for="internal-only"
+                                    data-en="Internal only"
+                                    data-fr="Interne seulement">
+                                    Internal only
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="abbr-en" class="form-label" 
+                            <label for="abbr-en" class="form-label"
                                    data-en="English abbreviation/acronym"
                                    data-fr="Abréviation/acronyme anglais">
                                 English abbreviation/acronym
@@ -184,36 +200,65 @@
                         </div>
                     </div>
 
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="notes-en" class="form-label"
-                                   data-en="English notes (optional)"
-                                   data-fr="Notes en anglais (optionnel)">
-                                English Notes (Optional)
-                            </label>
-                            <textarea class="form-control" 
-                                      id="notes-en"
-                                      rows="3"
-                                      data-en="Enter English notes"
-                                      data-fr="Entrez les notes en anglais"
-                                      placeholder="Enter English notes"></textarea>
+    <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="notes-en" class="form-label"
+                                    data-en="English notes (optional)"
+                                    data-fr="Notes en anglais (optionnel)">
+                                    English Notes (Optional)
+                                </label>
+                                <textarea class="form-control" 
+                                        id="notes-en"
+                                        rows="3"
+                                        data-en="Enter English notes"
+                                        data-fr="Entrez les notes en anglais"
+                                        placeholder="Enter English notes"></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="notes-fr" class="form-label"
+                                    data-en="French notes (optional)"
+                                    data-fr="Notes en français (optionnel)">
+                                    French Notes (Optional)
+                                </label>
+                                <textarea class="form-control" 
+                                        id="notes-fr"
+                                        rows="3"
+                                        data-en="Enter French notes"
+                                        data-fr="Entrez les notes en français"
+                                        placeholder="Enter French notes"></textarea>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <label for="notes-fr" class="form-label"
-                                   data-en="French notes (optional)"
-                                   data-fr="Notes en français (optionnel)">
-                                French Notes (Optional)
-                            </label>
-                            <textarea class="form-control" 
-                                      id="notes-fr"
-                                      rows="3"
-                                      data-en="Enter French notes"
-                                      data-fr="Entrez les notes en français"
-                                      placeholder="Enter French notes"></textarea>
-                        </div>
-                    </div>
 
-                    <button type="button" 
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="transparent-notes-en" class="form-label"
+                                    data-en="English transparent notes (optional)"
+                                    data-fr="Notes transparentes en anglais (optionnel)">
+                                    English Transparent Notes (Optional)
+                                </label>
+                                <textarea class="form-control" 
+                                        id="transparent-notes-en"
+                                        rows="3"
+                                        data-en="Enter English transparent notes"
+                                        data-fr="Entrez les notes transparentes en anglais"
+                                        placeholder="Enter English transparent notes"></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="transparent-notes-fr" class="form-label"
+                                    data-en="French transparent notes (optional)"
+                                    data-fr="Notes transparentes en français (optionnel)">
+                                    French Transparent Notes (Optional)
+                                </label>
+                                <textarea class="form-control" 
+                                        id="transparent-notes-fr"
+                                        rows="3"
+                                        data-en="Enter French transparent notes"
+                                        data-fr="Entrez les notes transparentes en français"
+                                        placeholder="Enter French transparent notes"></textarea>
+                            </div>
+                        </div>
+
+                        <button type="button"
                             class="btn btn-primary" 
                             id="add-entry-btn"
                             onclick="addEntry()">
@@ -301,12 +346,15 @@
 
         // Add new entry
         function addEntry() {
+            const internalOnly = document.getElementById('internal-only').checked;
             let abbrEn = document.getElementById('abbr-en').value.trim();
             let abbrFr = document.getElementById('abbr-fr').value.trim();
             const titleEn = document.getElementById('title-en').value.trim();
             const titleFr = document.getElementById('title-fr').value.trim();
             const notesEn = document.getElementById('notes-en').value.trim();
             const notesFr = document.getElementById('notes-fr').value.trim();
+            const transparentNotesEn = document.getElementById('transparent-notes-en').value.trim();
+            const transparentNotesFr = document.getElementById('transparent-notes-fr').value.trim();
 
             // Validation - at least one abbreviation and both titles required
             if ((!abbrEn && !abbrFr) || !titleEn || !titleFr) {
@@ -326,15 +374,18 @@
             }
 
             // Create entry object
-            const entry = {
-                id: entryCounter++,
-                abbrEn,
-                abbrFr,
-                titleEn,
-                titleFr,
-                notesEn,
-                notesFr
-            };
+                const entry = {
+                    id: entryCounter++,
+                    internalOnly,
+                    abbrEn,
+                    abbrFr,
+                    titleEn,
+                    titleFr,
+                    notesEn,
+                    notesFr,
+                    transparentNotesEn,
+                    transparentNotesFr
+                };
 
             entries.push(entry);
             renderEntries();
@@ -343,12 +394,15 @@
 
         // Clear form
         function clearForm() {
+            document.getElementById('internal-only').checked = false;
             document.getElementById('abbr-en').value = '';
             document.getElementById('abbr-fr').value = '';
             document.getElementById('title-en').value = '';
             document.getElementById('title-fr').value = '';
             document.getElementById('notes-en').value = '';
             document.getElementById('notes-fr').value = '';
+            document.getElementById('transparent-notes-en').value = '';
+            document.getElementById('transparent-notes-fr').value = '';
             document.getElementById('abbr-en').focus();
         }
 
@@ -381,23 +435,29 @@
 
             const labels = currentLang === 'fr' ? {
                 num: '#',
+                internal: 'Interne',
                 abbrEn: 'Abrév. EN',
                 abbrFr: 'Abrév. FR',
                 titleEn: 'Titre EN',
                 titleFr: 'Titre FR',
                 notesEn: 'Notes EN',
                 notesFr: 'Notes FR',
+                transparentNotesEn: 'Notes transp. EN',
+                transparentNotesFr: 'Notes transp. FR',
                 actions: 'Actions',
                 edit: 'Modifier',
                 delete: 'Supprimer'
             } : {
                 num: '#',
+                internal: 'Internal',
                 abbrEn: 'Abbr. EN',
                 abbrFr: 'Abbr. FR',
                 titleEn: 'Title EN',
                 titleFr: 'Title FR',
                 notesEn: 'Notes EN',
                 notesFr: 'Notes FR',
+                transparentNotesEn: 'Transp. Notes EN',
+                transparentNotesFr: 'Transp. Notes FR',
                 actions: 'Actions',
                 edit: 'Edit',
                 delete: 'Delete'
@@ -413,12 +473,15 @@
                     <thead>
                         <tr>
                             <th scope="col">${labels.num}</th>
+                            <th scope="col">${labels.internal}</th>
                             <th scope="col">${labels.abbrEn}</th>
                             <th scope="col">${labels.abbrFr}</th>
                             <th scope="col">${labels.titleEn}</th>
                             <th scope="col">${labels.titleFr}</th>
                             <th scope="col">${labels.notesEn}</th>
                             <th scope="col">${labels.notesFr}</th>
+                            <th scope="col">${labels.transparentNotesEn}</th>
+                            <th scope="col">${labels.transparentNotesFr}</th>
                             <th scope="col">${labels.actions}</th>
                         </tr>
                     </thead>
@@ -426,12 +489,15 @@
                         ${sortedEntries.map((entry, index) => `
                             <tr>
                                 <th scope="row">${index + 1}</th>
+                                <td>${entry.internalOnly ? '✓' : ''}</td>
                                 <td>${escapeHtml(entry.abbrEn)}</td>
                                 <td>${escapeHtml(entry.abbrFr)}</td>
                                 <td>${escapeHtml(entry.titleEn)}</td>
                                 <td>${escapeHtml(entry.titleFr)}</td>
                                 <td>${entry.notesEn ? escapeHtml(entry.notesEn) : '<em class="text-muted">—</em>'}</td>
                                 <td>${entry.notesFr ? escapeHtml(entry.notesFr) : '<em class="text-muted">—</em>'}</td>
+                                <td>${entry.transparentNotesEn ? escapeHtml(entry.transparentNotesEn) : '<em class="text-muted">—</em>'}</td>
+                                <td>${entry.transparentNotesFr ? escapeHtml(entry.transparentNotesFr) : '<em class="text-muted">—</em>'}</td>
                                 <td class="text-nowrap">
                                     <button type="button" 
                                             class="btn btn-sm btn-primary me-1" 
@@ -468,12 +534,15 @@
             if (!entry) return;
 
             // Populate form with entry data
+            document.getElementById('internal-only').checked = entry.internalOnly || false;
             document.getElementById('abbr-en').value = entry.abbrEn;
             document.getElementById('abbr-fr').value = entry.abbrFr;
             document.getElementById('title-en').value = entry.titleEn;
             document.getElementById('title-fr').value = entry.titleFr;
             document.getElementById('notes-en').value = entry.notesEn || '';
             document.getElementById('notes-fr').value = entry.notesFr || '';
+            document.getElementById('transparent-notes-en').value = entry.transparentNotesEn || '';
+            document.getElementById('transparent-notes-fr').value = entry.transparentNotesFr || '';
 
             // Change Add button to Update button
             const addBtn = document.getElementById('add-entry-btn');
@@ -503,12 +572,15 @@
 
         // Update entry
         function updateEntry(id) {
+            const internalOnly = document.getElementById('internal-only').checked;
             let abbrEn = document.getElementById('abbr-en').value.trim();
             let abbrFr = document.getElementById('abbr-fr').value.trim();
             const titleEn = document.getElementById('title-en').value.trim();
             const titleFr = document.getElementById('title-fr').value.trim();
             const notesEn = document.getElementById('notes-en').value.trim();
             const notesFr = document.getElementById('notes-fr').value.trim();
+            const transparentNotesEn = document.getElementById('transparent-notes-en').value.trim();
+            const transparentNotesFr = document.getElementById('transparent-notes-fr').value.trim();
 
             // Validation - at least one abbreviation and both titles required
             if ((!abbrEn && !abbrFr) || !titleEn || !titleFr) {
@@ -532,12 +604,15 @@
             if (entryIndex !== -1) {
                 entries[entryIndex] = {
                     id,
+                    internalOnly,
                     abbrEn,
                     abbrFr,
                     titleEn,
                     titleFr,
                     notesEn,
-                    notesFr
+                    notesFr,
+                    transparentNotesEn,
+                    transparentNotesFr
                 };
             }
 
