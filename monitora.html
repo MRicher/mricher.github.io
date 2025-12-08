@@ -394,10 +394,11 @@
 					<div id="alert-preview-fr" class="alert alert-preview" role="alert"></div>
 				</div>
 
-				<div class="action-buttons" role="group" aria-label="Alert form actions">
-					<button type="submit" class="btn btn-success" data-en="Generate alert SHTM file" data-fr="Générer le fichier SHTM d'alerte">Generate alert SHTM file</button>
-					<button type="reset" class="btn btn-outline-secondary" data-en="Clear alert" data-fr="Effacer l'alerte">Clear alert</button>
-				</div>
+                <div class="action-buttons" role="group" aria-label="Alert form actions">
+                    <button type="submit" class="btn btn-success" data-en="Generate alert SHTM file" data-fr="Générer le fichier SHTM d'alerte">Generate alert SHTM file</button>
+                    <button type="button" class="btn btn-danger" id="removeAlertBtn" data-en="Remove alert message" data-fr="Supprimer le message d'alerte">Remove alert message</button>
+                    <button type="reset" class="btn btn-outline-secondary" data-en="Clear alert" data-fr="Effacer l'alerte">Clear alert</button>
+                </div>
 			</form>
 		</section>
 
@@ -711,6 +712,23 @@
 			generateAlertSHTMFile(alertType, alertEnContent, alertFrContent);
 			showAlert(getLocalizedText('Alert SHTM file generated successfully.', 'Fichier SHTM d\'alerte généré avec succès.'), 'success');
 		}
+
+        // Handle remove alert - generates empty alert.shtm
+        function handleRemoveAlert() {
+            const emptyContent = '';
+            const blob = new Blob([emptyContent], { type: 'text/html' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'alert.shtm';
+            document.body.appendChild(a);
+            a.click();
+            
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            
+            showAlert(getLocalizedText('Empty alert SHTM file generated successfully.', 'Fichier SHTM d\'alerte vide généré avec succès.'), 'success');
+        }
 
 		// Generate alert SHTM file
 		function generateAlertSHTMFile(alertType, alertEnContent, alertFrContent) {
