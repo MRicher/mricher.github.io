@@ -652,22 +652,23 @@
             });
 		}
 
-		// Setup alert event listeners
-		function setupAlertEventListeners() {
-			document.getElementById('alert-type').addEventListener('change', updateAlertPreview);
-			document.getElementById('alertForm').addEventListener('submit', handleAlertFormSubmit);
-			document.getElementById('alertForm').addEventListener('reset', function() {
-				setTimeout(() => {
-					if (quillInstances['alert-en']) {
-						quillInstances['alert-en'].setText('');
-					}
-					if (quillInstances['alert-fr']) {
-						quillInstances['alert-fr'].setText('');
-					}
-					document.getElementById('alert-preview-container').style.display = 'none';
-				}, 10);
-			});
-		}
+        // Setup alert event listeners
+        function setupAlertEventListeners() {
+            document.getElementById('alert-type').addEventListener('change', updateAlertPreview);
+            document.getElementById('alertForm').addEventListener('submit', handleAlertFormSubmit);
+            document.getElementById('removeAlertBtn').addEventListener('click', handleRemoveAlert);
+            document.getElementById('alertForm').addEventListener('reset', function() {
+                setTimeout(() => {
+                    if (quillInstances['alert-en']) {
+                        quillInstances['alert-en'].setText('');
+                    }
+                    if (quillInstances['alert-fr']) {
+                        quillInstances['alert-fr'].setText('');
+                    }
+                    document.getElementById('alert-preview-container').style.display = 'none';
+                }, 10);
+            });
+        }
 
 		// Update alert preview
         function updateAlertPreview() {
