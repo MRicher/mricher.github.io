@@ -1,508 +1,533 @@
-import React, { useState, useEffect } from 'react';
-import { Plus, Minus, Trophy, Eye, Edit } from 'lucide-react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeopardy! Score Tracker</title>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div id="root"></div>
 
-export default function JeopardyScorekeeper() {
-  const [mode, setMode] = useState('setup'); // setup, host, viewer
-  const [gameId, setGameId] = useState('');
-  const [teams, setTeams] = useState([
-    { name: 'Team 1', score: 0 },
-    { name: 'Team 2', score: 0 },
-    { name: 'Team 3', score: 0 }
-  ]);
-  
-  const [round, setRound] = useState('jeopardy');
-  const [dailyDoublesUsed, setDailyDoublesUsed] = useState({ jeopardy: 0, double: 0 });
-  const [showFinalJeopardy, setShowFinalJeopardy] = useState(false);
-  const [finalWagers, setFinalWagers] = useState([0, 0, 0]);
-  const [finalResults, setFinalResults] = useState([null, null, null]);
+    <script type="text/babel">
+        const { useState, useEffect } = React;
 
-  // Load game state from storage
-  useEffect(() => {
-    if (mode === 'host' || mode === 'viewer') {
-      loadGameState();
-      const interval = setInterval(loadGameState, 2000); // Refresh every 2 seconds
-      return () => clearInterval(interval);
-    }
-  }, [mode, gameId]);
+        // Simple storage using localStorage
+        const storage = {
+            get: function(key) {
+                try {
+                    const item = localStorage.getItem(key);
+                    return item ? JSON.parse(item) : null;
+                } catch (e) {
+                    return null;
+                }
+            },
+            set: function(key, value) {
+                try {
+                    localStorage.setItem(key, JSON.stringify(value));
+                } catch (e) {
+                    console.error('Storage error:', e);
+                }
+            }
+        };
 
-  const loadGameState = async () => {
-    if (!gameId) return;
-    try {
-      const result = await window.storage.get(`jeopardy:${gameId}`, true);
-      if (result && result.value) {
-        const state = JSON.parse(result.value);
-        setTeams(state.teams);
-        setRound(state.round);
-        setDailyDoublesUsed(state.dailyDoublesUsed);
-      }
-    } catch (error) {
-      console.log('No game found or error loading:', error);
-    }
-  };
+        function DailyDoubleButton(props) {
+            const { teamIndex, maxScore, maxValue, onSubmit } = props;
+            const [showModal, setShowModal] = useState(false);
+            const [wager, setWager] = useState(0);
 
-  const saveGameState = async () => {
-    if (!gameId || mode !== 'host') return;
-    try {
-      const state = {
-        teams,
-        round,
-        dailyDoublesUsed,
-        lastUpdate: Date.now()
-      };
-      await window.storage.set(`jeopardy:${gameId}`, JSON.stringify(state), true);
-    } catch (error) {
-      console.error('Error saving game:', error);
-    }
-  };
+            const handleSubmit = function(isCorrect) {
+                onSubmit(teamIndex, wager, isCorrect);
+                setShowModal(false);
+                setWager(0);
+            };
 
-  useEffect(() => {
-    if (mode === 'host') {
-      saveGameState();
-    }
-  }, [teams, round, dailyDoublesUsed]);
+            const maxWager = Math.max(maxScore, maxValue);
 
-  const startAsHost = () => {
-    const id = Math.random().toString(36).substring(2, 8).toUpperCase();
-    setGameId(id);
-    setMode('host');
-  };
-
-  const joinAsViewer = () => {
-    if (gameId.trim()) {
-      setMode('viewer');
-    }
-  };
-
-  const updateTeamName = (index, newName) => {
-    const newTeams = [...teams];
-    newTeams[index].name = newName;
-    setTeams(newTeams);
-  };
-
-  const addPoints = (teamIndex, points) => {
-    const newTeams = [...teams];
-    newTeams[teamIndex].score += points;
-    setTeams(newTeams);
-  };
-
-  const subtractPoints = (teamIndex, points) => {
-    const newTeams = [...teams];
-    newTeams[teamIndex].score -= points;
-    setTeams(newTeams);
-  };
-
-  const handleDailyDouble = (teamIndex, wager, isCorrect) => {
-    if (round === 'jeopardy' && dailyDoublesUsed.jeopardy >= 1) return;
-    if (round === 'double' && dailyDoublesUsed.double >= 1) return;
-
-    const newTeams = [...teams];
-    newTeams[teamIndex].score += isCorrect ? wager : -wager;
-    setTeams(newTeams);
-
-    const newUsed = { ...dailyDoublesUsed };
-    if (round === 'jeopardy') newUsed.jeopardy += 1;
-    if (round === 'double') newUsed.double += 1;
-    setDailyDoublesUsed(newUsed);
-  };
-
-  const handleFinalJeopardy = () => {
-    const newTeams = teams.map((team, index) => ({
-      ...team,
-      score: team.score + (finalResults[index] === 'correct' ? finalWagers[index] : finalResults[index] === 'incorrect' ? -finalWagers[index] : 0)
-    }));
-    setTeams(newTeams);
-    setShowFinalJeopardy(false);
-    setFinalWagers([0, 0, 0]);
-    setFinalResults([null, null, null]);
-  };
-
-  const resetGame = async () => {
-    setTeams([
-      { name: 'Team 1', score: 0 },
-      { name: 'Team 2', score: 0 },
-      { name: 'Team 3', score: 0 }
-    ]);
-    setRound('jeopardy');
-    setDailyDoublesUsed({ jeopardy: 0, double: 0 });
-    setShowFinalJeopardy(false);
-    setFinalWagers([0, 0, 0]);
-    setFinalResults([null, null, null]);
-  };
-
-  // Setup Screen
-  if (mode === 'setup') {
-    return (
-      <div className="min-h-screen bg-blue-900 flex items-center justify-center p-8">
-        <div className="bg-white rounded-lg shadow-2xl p-12 max-w-2xl w-full">
-          <div className="text-center mb-8">
-            <Trophy className="text-yellow-500 mx-auto mb-4" size={64} />
-            <h1 className="text-5xl font-bold text-blue-900 mb-2">Jeopardy!</h1>
-            <p className="text-xl text-gray-600">Score Tracker</p>
-          </div>
-
-          <div className="space-y-6">
-            <div className="border-2 border-blue-300 rounded-lg p-8">
-              <div className="flex items-center mb-4">
-                <Edit className="text-blue-600 mr-3" size={32} />
-                <h2 className="text-2xl font-bold text-gray-800">Host Game</h2>
-              </div>
-              <p className="text-gray-600 mb-4">Control scoring and share your game ID with viewers</p>
-              <button
-                onClick={startAsHost}
-                className="w-full bg-blue-600 text-white py-4 rounded-lg font-bold text-xl hover:bg-blue-700 transition"
-              >
-                Start as Host
-              </button>
-            </div>
-
-            <div className="border-2 border-green-300 rounded-lg p-8">
-              <div className="flex items-center mb-4">
-                <Eye className="text-green-600 mr-3" size={32} />
-                <h2 className="text-2xl font-bold text-gray-800">View Game</h2>
-              </div>
-              <p className="text-gray-600 mb-4">Enter game ID to view scores (read-only)</p>
-              <input
-                type="text"
-                placeholder="Enter Game ID"
-                value={gameId}
-                onChange={(e) => setGameId(e.target.value.toUpperCase())}
-                className="w-full p-3 border-2 border-gray-300 rounded-lg mb-4 text-center text-xl uppercase"
-              />
-              <button
-                onClick={joinAsViewer}
-                disabled={!gameId.trim()}
-                className="w-full bg-green-600 text-white py-4 rounded-lg font-bold text-xl hover:bg-green-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
-              >
-                Join as Viewer
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Viewer Mode
-  if (mode === 'viewer') {
-    const winner = teams.reduce((max, team) => team.score > max.score ? team : max, teams[0]);
-
-    return (
-      <div className="min-h-screen bg-blue-900 p-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="bg-white rounded-lg shadow-2xl p-8">
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <h1 className="text-4xl font-bold text-blue-900">Jeopardy! Score Tracker</h1>
-                <p className="text-gray-600 mt-2">Game ID: <span className="font-bold text-blue-600">{gameId}</span> (Viewer Mode)</p>
-              </div>
-              <button
-                onClick={() => setMode('setup')}
-                className="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition"
-              >
-                Leave Game
-              </button>
-            </div>
-
-            <div className="mb-6 p-4 bg-blue-50 rounded-lg">
-              <p className="font-semibold text-gray-800 text-xl text-center">
-                Current Round: <span className="text-blue-600">{round === 'jeopardy' ? 'Jeopardy' : 'Double Jeopardy'}</span>
-              </p>
-            </div>
-
-            <div className="grid grid-cols-3 gap-6 mb-8">
-              {teams.map((team, index) => (
-                <div key={index} className="bg-blue-50 rounded-lg p-6 border-4 border-blue-300">
-                  <h2 className="text-3xl font-bold mb-4 text-center text-gray-800">{team.name}</h2>
-                  <div className="text-6xl font-bold text-center text-blue-900">
-                    ${team.score.toLocaleString()}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="text-center p-8 bg-yellow-100 rounded-lg border-4 border-yellow-400">
-              <h2 className="text-3xl font-bold text-gray-800 mb-2">Current Leader</h2>
-              <p className="text-5xl font-bold text-blue-900">{winner.name} - ${winner.score.toLocaleString()}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Host Mode
-  const pointValues = round === 'jeopardy' 
-    ? [200, 400, 600, 800, 1000]
-    : [400, 800, 1200, 1600, 2000];
-
-  const canUseDailyDouble = 
-    (round === 'jeopardy' && dailyDoublesUsed.jeopardy < 1) ||
-    (round === 'double' && dailyDoublesUsed.double < 1);
-
-  const winner = teams.reduce((max, team) => team.score > max.score ? team : max, teams[0]);
-
-  return (
-    <div className="min-h-screen bg-blue-900 p-8">
-      <div className="max-w-6xl mx-auto">
-        <div className="bg-white rounded-lg shadow-2xl p-8">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h1 className="text-4xl font-bold text-blue-900">Jeopardy! Score Tracker</h1>
-              <p className="text-gray-600 mt-2">Game ID: <span className="font-bold text-green-600 text-xl">{gameId}</span> (Host Mode)</p>
-              <p className="text-sm text-gray-500">Share this ID with viewers</p>
-            </div>
-            <Trophy className="text-yellow-500" size={48} />
-          </div>
-
-          {/* Round Selector */}
-          <div className="mb-8 flex gap-4">
-            <button
-              onClick={() => setRound('jeopardy')}
-              className={`px-6 py-3 rounded-lg font-semibold transition ${
-                round === 'jeopardy' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'
-              }`}
-            >
-              Jeopardy Round
-            </button>
-            <button
-              onClick={() => setRound('double')}
-              className={`px-6 py-3 rounded-lg font-semibold transition ${
-                round === 'double' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'
-              }`}
-            >
-              Double Jeopardy
-            </button>
-            <button
-              onClick={() => setShowFinalJeopardy(true)}
-              className="px-6 py-3 rounded-lg font-semibold bg-purple-600 text-white hover:bg-purple-700 transition"
-            >
-              Final Jeopardy
-            </button>
-            <button
-              onClick={resetGame}
-              className="px-6 py-3 rounded-lg font-semibold bg-red-600 text-white hover:bg-red-700 transition"
-            >
-              Reset Game
-            </button>
-            <button
-              onClick={() => setMode('setup')}
-              className="px-6 py-3 rounded-lg font-semibold bg-gray-500 text-white hover:bg-gray-600 transition ml-auto"
-            >
-              End Game
-            </button>
-          </div>
-
-          {/* Daily Double Status */}
-          <div className="mb-6 p-4 bg-yellow-50 rounded-lg">
-            <p className="font-semibold text-gray-800">
-              Daily Doubles Used: Jeopardy ({dailyDoublesUsed.jeopardy}/1) | Double Jeopardy ({dailyDoublesUsed.double}/1)
-            </p>
-          </div>
-
-          {/* Teams Scoring */}
-          <div className="grid grid-cols-3 gap-6 mb-8">
-            {teams.map((team, index) => (
-              <div key={index} className="bg-blue-50 rounded-lg p-6 border-4 border-blue-300">
-                <input
-                  type="text"
-                  value={team.name}
-                  onChange={(e) => updateTeamName(index, e.target.value)}
-                  className="text-2xl font-bold mb-4 w-full text-center bg-transparent border-b-2 border-blue-400 focus:outline-none focus:border-blue-600"
-                />
-                <div className="text-5xl font-bold text-center mb-6 text-blue-900">
-                  ${team.score.toLocaleString()}
-                </div>
-
-                {/* Quick Point Buttons */}
-                <div className="grid grid-cols-5 gap-2 mb-4">
-                  {pointValues.map((value) => (
+            return (
+                <React.Fragment>
                     <button
-                      key={value}
-                      onClick={() => addPoints(index, value)}
-                      className="bg-green-500 text-white py-2 rounded hover:bg-green-600 transition font-semibold"
+                        onClick={function() { setShowModal(true); }}
+                        className="w-full bg-yellow-500 text-white py-3 rounded-lg font-bold hover:bg-yellow-600 transition"
                     >
-                      +{value}
+                        Daily Double
                     </button>
-                  ))}
-                </div>
-                <div className="grid grid-cols-5 gap-2 mb-4">
-                  {pointValues.map((value) => (
-                    <button
-                      key={value}
-                      onClick={() => subtractPoints(index, value)}
-                      className="bg-red-500 text-white py-2 rounded hover:bg-red-600 transition font-semibold"
-                    >
-                      -{value}
-                    </button>
-                  ))}
-                </div>
 
-                {/* Daily Double */}
-                {canUseDailyDouble && (
-                  <DailyDoubleButton 
-                    teamIndex={index} 
-                    maxScore={team.score}
-                    maxValue={Math.max(...pointValues)}
-                    onSubmit={handleDailyDouble}
-                  />
-                )}
-              </div>
-            ))}
-          </div>
+                    {showModal && (
+                        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50">
+                            <div className="bg-white rounded-lg p-6 max-w-md w-full">
+                                <h3 className="text-2xl font-bold mb-4 text-center text-yellow-600">Daily Double!</h3>
+                                <p className="mb-4 text-center">Enter wager (Max: ${maxWager.toLocaleString()})</p>
+                                
+                                <input
+                                    type="number"
+                                    min="0"
+                                    max={maxWager}
+                                    value={wager}
+                                    onChange={function(e) { 
+                                        setWager(Math.min(Math.max(0, parseInt(e.target.value) || 0), maxWager));
+                                    }}
+                                    className="w-full p-3 border-2 border-yellow-400 rounded mb-6 text-xl text-center"
+                                    autoFocus
+                                />
 
-          {/* Winner Display */}
-          <div className="text-center p-6 bg-yellow-100 rounded-lg border-4 border-yellow-400">
-            <h2 className="text-3xl font-bold text-gray-800 mb-2">Current Leader</h2>
-            <p className="text-4xl font-bold text-blue-900">{winner.name} - ${winner.score.toLocaleString()}</p>
-          </div>
-        </div>
-      </div>
+                                <div className="flex gap-4">
+                                    <button
+                                        onClick={function() { handleSubmit(true); }}
+                                        className="flex-1 bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700"
+                                    >
+                                        Correct
+                                    </button>
+                                    <button
+                                        onClick={function() { handleSubmit(false); }}
+                                        className="flex-1 bg-red-600 text-white py-3 rounded-lg font-bold hover:bg-red-700"
+                                    >
+                                        Incorrect
+                                    </button>
+                                </div>
+                                
+                                <button
+                                    onClick={function() { setShowModal(false); }}
+                                    className="w-full mt-4 bg-gray-400 text-white py-2 rounded-lg hover:bg-gray-500"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </React.Fragment>
+            );
+        }
 
-      {/* Final Jeopardy Modal */}
-      {showFinalJeopardy && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg p-8 max-w-4xl w-full">
-            <h2 className="text-4xl font-bold text-center mb-8 text-purple-900">Final Jeopardy!</h2>
+        function JeopardyScorekeeper() {
+            const [mode, setMode] = useState('setup');
+            const [gameId, setGameId] = useState('');
+            const [teams, setTeams] = useState([
+                { name: 'Team 1', score: 0 },
+                { name: 'Team 2', score: 0 },
+                { name: 'Team 3', score: 0 }
+            ]);
             
-            <div className="grid grid-cols-3 gap-6 mb-6">
-              {teams.map((team, index) => (
-                <div key={index} className="bg-purple-50 rounded-lg p-6 border-2 border-purple-300">
-                  <h3 className="text-xl font-bold mb-2">{team.name}</h3>
-                  <p className="text-2xl font-bold mb-4 text-purple-900">
-                    ${team.score.toLocaleString()}
-                  </p>
-                  
-                  <label className="block text-sm font-semibold mb-2">Wager (Max: ${team.score.toLocaleString()})</label>
-                  <input
-                    type="number"
-                    min="0"
-                    max={team.score}
-                    value={finalWagers[index]}
-                    onChange={(e) => {
-                      const newWagers = [...finalWagers];
-                      newWagers[index] = Math.min(Math.max(0, parseInt(e.target.value) || 0), team.score);
-                      setFinalWagers(newWagers);
-                    }}
-                    className="w-full p-2 border-2 border-purple-300 rounded mb-4"
-                  />
-                  
-                  <label className="block text-sm font-semibold mb-2">Result</label>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => {
-                        const newResults = [...finalResults];
-                        newResults[index] = 'correct';
-                        setFinalResults(newResults);
-                      }}
-                      className={`flex-1 py-2 rounded font-semibold ${
-                        finalResults[index] === 'correct' 
-                          ? 'bg-green-600 text-white' 
-                          : 'bg-gray-200 text-gray-700'
-                      }`}
-                    >
-                      Correct
-                    </button>
-                    <button
-                      onClick={() => {
-                        const newResults = [...finalResults];
-                        newResults[index] = 'incorrect';
-                        setFinalResults(newResults);
-                      }}
-                      className={`flex-1 py-2 rounded font-semibold ${
-                        finalResults[index] === 'incorrect' 
-                          ? 'bg-red-600 text-white' 
-                          : 'bg-gray-200 text-gray-700'
-                      }`}
-                    >
-                      Incorrect
-                    </button>
-                  </div>
+            const [round, setRound] = useState('jeopardy');
+            const [dailyDoublesUsed, setDailyDoublesUsed] = useState({ jeopardy: 0, double: 0 });
+            const [showFinalJeopardy, setShowFinalJeopardy] = useState(false);
+            const [finalWagers, setFinalWagers] = useState([0, 0, 0]);
+            const [finalResults, setFinalResults] = useState([null, null, null]);
+
+            useEffect(function() {
+                if (mode === 'host' || mode === 'viewer') {
+                    loadGameState();
+                    const interval = setInterval(loadGameState, 2000);
+                    return function() { clearInterval(interval); };
+                }
+            }, [mode, gameId]);
+
+            const loadGameState = function() {
+                if (!gameId) return;
+                const state = storage.get('jeopardy:' + gameId);
+                if (state) {
+                    setTeams(state.teams);
+                    setRound(state.round);
+                    setDailyDoublesUsed(state.dailyDoublesUsed);
+                }
+            };
+
+            const saveGameState = function() {
+                if (!gameId || mode !== 'host') return;
+                const state = {
+                    teams: teams,
+                    round: round,
+                    dailyDoublesUsed: dailyDoublesUsed,
+                    lastUpdate: Date.now()
+                };
+                storage.set('jeopardy:' + gameId, state);
+            };
+
+            useEffect(function() {
+                if (mode === 'host') {
+                    saveGameState();
+                }
+            }, [teams, round, dailyDoublesUsed]);
+
+            const startAsHost = function() {
+                const id = Math.random().toString(36).substring(2, 8).toUpperCase();
+                setGameId(id);
+                setMode('host');
+            };
+
+            const joinAsViewer = function() {
+                if (gameId.trim()) {
+                    setMode('viewer');
+                }
+            };
+
+            const updateTeamName = function(index, newName) {
+                const newTeams = [...teams];
+                newTeams[index].name = newName;
+                setTeams(newTeams);
+            };
+
+            const addPoints = function(teamIndex, points) {
+                const newTeams = [...teams];
+                newTeams[teamIndex].score += points;
+                setTeams(newTeams);
+            };
+
+            const subtractPoints = function(teamIndex, points) {
+                const newTeams = [...teams];
+                newTeams[teamIndex].score -= points;
+                setTeams(newTeams);
+            };
+
+            const handleDailyDouble = function(teamIndex, wager, isCorrect) {
+                if (round === 'jeopardy' && dailyDoublesUsed.jeopardy >= 1) return;
+                if (round === 'double' && dailyDoublesUsed.double >= 1) return;
+
+                const newTeams = [...teams];
+                newTeams[teamIndex].score += isCorrect ? wager : -wager;
+                setTeams(newTeams);
+
+                const newUsed = { ...dailyDoublesUsed };
+                if (round === 'jeopardy') newUsed.jeopardy += 1;
+                if (round === 'double') newUsed.double += 1;
+                setDailyDoublesUsed(newUsed);
+            };
+
+            const handleFinalJeopardy = function() {
+                const newTeams = teams.map(function(team, index) {
+                    return {
+                        name: team.name,
+                        score: team.score + (finalResults[index] === 'correct' ? finalWagers[index] : finalResults[index] === 'incorrect' ? -finalWagers[index] : 0)
+                    };
+                });
+                setTeams(newTeams);
+                setShowFinalJeopardy(false);
+                setFinalWagers([0, 0, 0]);
+                setFinalResults([null, null, null]);
+            };
+
+            const resetGame = function() {
+                setTeams([
+                    { name: 'Team 1', score: 0 },
+                    { name: 'Team 2', score: 0 },
+                    { name: 'Team 3', score: 0 }
+                ]);
+                setRound('jeopardy');
+                setDailyDoublesUsed({ jeopardy: 0, double: 0 });
+                setShowFinalJeopardy(false);
+                setFinalWagers([0, 0, 0]);
+                setFinalResults([null, null, null]);
+            };
+
+            if (mode === 'setup') {
+                return (
+                    <div className="min-h-screen bg-blue-900 flex items-center justify-center p-8">
+                        <div className="bg-white rounded-lg shadow-2xl p-12 max-w-2xl w-full">
+                            <div className="text-center mb-8">
+                                <div className="text-6xl mb-4">🏆</div>
+                                <h1 className="text-5xl font-bold text-blue-900 mb-2">Jeopardy!</h1>
+                                <p className="text-xl text-gray-600">Score Tracker</p>
+                            </div>
+
+                            <div className="space-y-6">
+                                <div className="border-2 border-blue-300 rounded-lg p-8">
+                                    <div className="flex items-center mb-4">
+                                        <span className="text-3xl mr-3">✏️</span>
+                                        <h2 className="text-2xl font-bold text-gray-800">Host Game</h2>
+                                    </div>
+                                    <p className="text-gray-600 mb-4">Control scoring and share your game ID with viewers</p>
+                                    <button
+                                        onClick={startAsHost}
+                                        className="w-full bg-blue-600 text-white py-4 rounded-lg font-bold text-xl hover:bg-blue-700 transition"
+                                    >
+                                        Start as Host
+                                    </button>
+                                </div>
+
+                                <div className="border-2 border-green-300 rounded-lg p-8">
+                                    <div className="flex items-center mb-4">
+                                        <span className="text-3xl mr-3">👁️</span>
+                                        <h2 className="text-2xl font-bold text-gray-800">View Game</h2>
+                                    </div>
+                                    <p className="text-gray-600 mb-4">Enter game ID to view scores (read-only)</p>
+                                    <input
+                                        type="text"
+                                        placeholder="Enter Game ID"
+                                        value={gameId}
+                                        onChange={function(e) { setGameId(e.target.value.toUpperCase()); }}
+                                        className="w-full p-3 border-2 border-gray-300 rounded-lg mb-4 text-center text-xl uppercase"
+                                    />
+                                    <button
+                                        onClick={joinAsViewer}
+                                        disabled={!gameId.trim()}
+                                        className="w-full bg-green-600 text-white py-4 rounded-lg font-bold text-xl hover:bg-green-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
+                                    >
+                                        Join as Viewer
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (mode === 'viewer') {
+                const winner = teams.reduce(function(max, team) {
+                    return team.score > max.score ? team : max;
+                }, teams[0]);
+
+                return (
+                    <div className="min-h-screen bg-blue-900 p-8">
+                        <div className="max-w-6xl mx-auto">
+                            <div className="bg-white rounded-lg shadow-2xl p-8">
+                                <div className="flex items-center justify-between mb-8">
+                                    <div>
+                                        <h1 className="text-4xl font-bold text-blue-900">Jeopardy! Score Tracker</h1>
+                                        <p className="text-gray-600 mt-2">Game ID: <span className="font-bold text-blue-600">{gameId}</span> (Viewer Mode)</p>
+                                    </div>
+                                    <button
+                                        onClick={function() { setMode('setup'); }}
+                                        className="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition"
+                                    >
+                                        Leave Game
+                                    </button>
+                                </div>
+
+                                <div className="mb-6 p-4 bg-blue-50 rounded-lg">
+                                    <p className="font-semibold text-gray-800 text-xl text-center">
+                                        Current Round: <span className="text-blue-600">{round === 'jeopardy' ? 'Jeopardy' : 'Double Jeopardy'}</span>
+                                    </p>
+                                </div>
+
+                                <div className="grid grid-cols-3 gap-6 mb-8">
+                                    {teams.map(function(team, index) {
+                                        return (
+                                            <div key={index} className="bg-blue-50 rounded-lg p-6 border-4 border-blue-300">
+                                                <h2 className="text-3xl font-bold mb-4 text-center text-gray-800">{team.name}</h2>
+                                                <div className="text-6xl font-bold text-center text-blue-900">
+                                                    ${team.score.toLocaleString()}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+
+                                <div className="text-center p-8 bg-yellow-100 rounded-lg border-4 border-yellow-400">
+                                    <h2 className="text-3xl font-bold text-gray-800 mb-2">Current Leader</h2>
+                                    <p className="text-5xl font-bold text-blue-900">{winner.name} - ${winner.score.toLocaleString()}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            const pointValues = round === 'jeopardy' 
+                ? [200, 400, 600, 800, 1000]
+                : [400, 800, 1200, 1600, 2000];
+
+            const canUseDailyDouble = 
+                (round === 'jeopardy' && dailyDoublesUsed.jeopardy < 1) ||
+                (round === 'double' && dailyDoublesUsed.double < 1);
+
+            const winner = teams.reduce(function(max, team) {
+                return team.score > max.score ? team : max;
+            }, teams[0]);
+
+            return (
+                <div className="min-h-screen bg-blue-900 p-8">
+                    <div className="max-w-6xl mx-auto">
+                        <div className="bg-white rounded-lg shadow-2xl p-8">
+                            <div className="flex items-center justify-between mb-8">
+                                <div>
+                                    <h1 className="text-4xl font-bold text-blue-900">Jeopardy! Score Tracker</h1>
+                                    <p className="text-gray-600 mt-2">Game ID: <span className="font-bold text-green-600 text-xl">{gameId}</span> (Host Mode)</p>
+                                    <p className="text-sm text-gray-500">Share this ID with viewers</p>
+                                </div>
+                                <span className="text-5xl">🏆</span>
+                            </div>
+
+                            <div className="mb-8 flex gap-4 flex-wrap">
+                                <button
+                                    onClick={function() { setRound('jeopardy'); }}
+                                    className={'px-6 py-3 rounded-lg font-semibold transition ' + (round === 'jeopardy' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700')}
+                                >
+                                    Jeopardy Round
+                                </button>
+                                <button
+                                    onClick={function() { setRound('double'); }}
+                                    className={'px-6 py-3 rounded-lg font-semibold transition ' + (round === 'double' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700')}
+                                >
+                                    Double Jeopardy
+                                </button>
+                                <button
+                                    onClick={function() { setShowFinalJeopardy(true); }}
+                                    className="px-6 py-3 rounded-lg font-semibold bg-purple-600 text-white hover:bg-purple-700 transition"
+                                >
+                                    Final Jeopardy
+                                </button>
+                                <button
+                                    onClick={resetGame}
+                                    className="px-6 py-3 rounded-lg font-semibold bg-red-600 text-white hover:bg-red-700 transition"
+                                >
+                                    Reset Game
+                                </button>
+                                <button
+                                    onClick={function() { setMode('setup'); }}
+                                    className="px-6 py-3 rounded-lg font-semibold bg-gray-500 text-white hover:bg-gray-600 transition ml-auto"
+                                >
+                                    End Game
+                                </button>
+                            </div>
+
+                            <div className="mb-6 p-4 bg-yellow-50 rounded-lg">
+                                <p className="font-semibold text-gray-800">
+                                    Daily Doubles Used: Jeopardy ({dailyDoublesUsed.jeopardy}/1) | Double Jeopardy ({dailyDoublesUsed.double}/1)
+                                </p>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                                {teams.map(function(team, index) {
+                                    return (
+                                        <div key={index} className="bg-blue-50 rounded-lg p-6 border-4 border-blue-300">
+                                            <input
+                                                type="text"
+                                                value={team.name}
+                                                onChange={function(e) { updateTeamName(index, e.target.value); }}
+                                                className="text-2xl font-bold mb-4 w-full text-center bg-transparent border-b-2 border-blue-400 focus:outline-none focus:border-blue-600"
+                                            />
+                                            <div className="text-5xl font-bold text-center mb-6 text-blue-900">
+                                                ${team.score.toLocaleString()}
+                                            </div>
+
+                                            <div className="grid grid-cols-5 gap-2 mb-4">
+                                                {pointValues.map(function(value) {
+                                                    return (
+                                                        <button
+                                                            key={value}
+                                                            onClick={function() { addPoints(index, value); }}
+                                                            className="bg-green-500 text-white py-2 rounded hover:bg-green-600 transition font-semibold text-sm"
+                                                        >
+                                                            +{value}
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                            <div className="grid grid-cols-5 gap-2 mb-4">
+                                                {pointValues.map(function(value) {
+                                                    return (
+                                                        <button
+                                                            key={value}
+                                                            onClick={function() { subtractPoints(index, value); }}
+                                                            className="bg-red-500 text-white py-2 rounded hover:bg-red-600 transition font-semibold text-sm"
+                                                        >
+                                                            -{value}
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+
+                                            {canUseDailyDouble && (
+                                                <DailyDoubleButton 
+                                                    teamIndex={index} 
+                                                    maxScore={team.score}
+                                                    maxValue={Math.max.apply(null, pointValues)}
+                                                    onSubmit={handleDailyDouble}
+                                                />
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+
+                            <div className="text-center p-6 bg-yellow-100 rounded-lg border-4 border-yellow-400">
+                                <h2 className="text-3xl font-bold text-gray-800 mb-2">Current Leader</h2>
+                                <p className="text-4xl font-bold text-blue-900">{winner.name} - ${winner.score.toLocaleString()}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {showFinalJeopardy && (
+                        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4">
+                            <div className="bg-white rounded-lg p-8 max-w-4xl w-full max-h-screen overflow-y-auto">
+                                <h2 className="text-4xl font-bold text-center mb-8 text-purple-900">Final Jeopardy!</h2>
+                                
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                                    {teams.map(function(team, index) {
+                                        return (
+                                            <div key={index} className="bg-purple-50 rounded-lg p-6 border-2 border-purple-300">
+                                                <h3 className="text-xl font-bold mb-2">{team.name}</h3>
+                                                <p className="text-2xl font-bold mb-4 text-purple-900">
+                                                    ${team.score.toLocaleString()}
+                                                </p>
+                                                
+                                                <label className="block text-sm font-semibold mb-2">Wager (Max: ${team.score.toLocaleString()})</label>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    max={team.score}
+                                                    value={finalWagers[index]}
+                                                    onChange={function(e) {
+                                                        const newWagers = [...finalWagers];
+                                                        newWagers[index] = Math.min(Math.max(0, parseInt(e.target.value) || 0), team.score);
+                                                        setFinalWagers(newWagers);
+                                                    }}
+                                                    className="w-full p-2 border-2 border-purple-300 rounded mb-4"
+                                                />
+                                                
+                                                <label className="block text-sm font-semibold mb-2">Result</label>
+                                                <div className="flex gap-2">
+                                                    <button
+                                                        onClick={function() {
+                                                            const newResults = [...finalResults];
+                                                            newResults[index] = 'correct';
+                                                            setFinalResults(newResults);
+                                                        }}
+                                                        className={'flex-1 py-2 rounded font-semibold ' + (finalResults[index] === 'correct' ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-700')}
+                                                    >
+                                                        Correct
+                                                    </button>
+                                                    <button
+                                                        onClick={function() {
+                                                            const newResults = [...finalResults];
+                                                            newResults[index] = 'incorrect';
+                                                            setFinalResults(newResults);
+                                                        }}
+                                                        className={'flex-1 py-2 rounded font-semibold ' + (finalResults[index] === 'incorrect' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-700')}
+                                                    >
+                                                        Incorrect
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+
+                                <div className="flex gap-4">
+                                    <button
+                                        onClick={handleFinalJeopardy}
+                                        className="flex-1 bg-purple-600 text-white py-4 rounded-lg font-bold text-xl hover:bg-purple-700 transition"
+                                    >
+                                        Apply Final Jeopardy Results
+                                    </button>
+                                    <button
+                                        onClick={function() { setShowFinalJeopardy(false); }}
+                                        className="px-8 bg-gray-400 text-white py-4 rounded-lg font-bold hover:bg-gray-500 transition"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
-              ))}
-            </div>
+            );
+        }
 
-            <div className="flex gap-4">
-              <button
-                onClick={handleFinalJeopardy}
-                className="flex-1 bg-purple-600 text-white py-4 rounded-lg font-bold text-xl hover:bg-purple-700 transition"
-              >
-                Apply Final Jeopardy Results
-              </button>
-              <button
-                onClick={() => setShowFinalJeopardy(false)}
-                className="px-8 bg-gray-400 text-white py-4 rounded-lg font-bold hover:bg-gray-500 transition"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function DailyDoubleButton({ teamIndex, maxScore, maxValue, onSubmit }) {
-  const [showModal, setShowModal] = useState(false);
-  const [wager, setWager] = useState(0);
-
-  const handleSubmit = (isCorrect) => {
-    onSubmit(teamIndex, wager, isCorrect);
-    setShowModal(false);
-    setWager(0);
-  };
-
-  const maxWager = Math.max(maxScore, maxValue);
-
-  return (
-    <>
-      <button
-        onClick={() => setShowModal(true)}
-        className="w-full bg-yellow-500 text-white py-3 rounded-lg font-bold hover:bg-yellow-600 transition"
-      >
-        Daily Double
-      </button>
-
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-2xl font-bold mb-4 text-center text-yellow-600">Daily Double!</h3>
-            <p className="mb-4 text-center">Enter wager (Max: ${maxWager.toLocaleString()})</p>
-            
-            <input
-              type="number"
-              min="0"
-              max={maxWager}
-              value={wager}
-              onChange={(e) => setWager(Math.min(Math.max(0, parseInt(e.target.value) || 0), maxWager))}
-              className="w-full p-3 border-2 border-yellow-400 rounded mb-6 text-xl text-center"
-              autoFocus
-            />
-
-            <div className="flex gap-4">
-              <button
-                onClick={() => handleSubmit(true)}
-                className="flex-1 bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700"
-              >
-                Correct
-              </button>
-              <button
-                onClick={() => handleSubmit(false)}
-                className="flex-1 bg-red-600 text-white py-3 rounded-lg font-bold hover:bg-red-700"
-              >
-                Incorrect
-              </button>
-            </div>
-            
-            <button
-              onClick={() => setShowModal(false)}
-              className="w-full mt-4 bg-gray-400 text-white py-2 rounded-lg hover:bg-gray-500"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
-    </>
-  );
-}
+        ReactDOM.render(React.createElement(JeopardyScorekeeper), document.getElementById('root'));
+    </script>
+</body>
+</html>
