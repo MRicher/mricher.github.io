@@ -252,7 +252,7 @@
                                     <p className="text-gray-600 mb-4">Enter game ID to view scores (read-only)</p>
                                     <input
                                         type="text"
-                                        placeholder="Enter Game ID"
+                                        placeholder="Enter game ID"
                                         value={gameId}
                                         onChange={function(e) { setGameId(e.target.value.toUpperCase()); }}
                                         className="w-full p-3 border-2 border-gray-300 rounded-lg mb-4 text-center text-xl uppercase"
@@ -289,7 +289,7 @@
                                         onClick={function() { setmode('setup'); }}
                                         className="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition"
                                     >
-                                        Leave Game
+                                        Leave game
                                     </button>
                                 </div>
 
@@ -344,7 +344,6 @@
                                     <p className="text-gray-600 mt-2">Game ID: <span className="font-bold text-green-600 text-xl">{gameId}</span> (Host mode)</p>
                                     <p className="text-sm text-gray-500">Share this ID with viewers</p>
                                 </div>
-                                <span className="text-5xl">🏆</span>
                             </div>
 
                             <div className="mb-8 flex gap-4 flex-wrap">
@@ -370,19 +369,19 @@
                                     onClick={resetGame}
                                     className="px-6 py-3 rounded-lg font-semibold bg-red-600 text-white hover:bg-red-700 transition"
                                 >
-                                    Reset Game
+                                    Reset game
                                 </button>
                                 <button
                                     onClick={function() { setmode('setup'); }}
                                     className="px-6 py-3 rounded-lg font-semibold bg-gray-500 text-white hover:bg-gray-600 transition ml-auto"
                                 >
-                                    End Game
+                                    End game
                                 </button>
                             </div>
 
                             <div className="mb-6 p-4 bg-yellow-50 rounded-lg">
                                 <p className="font-semibold text-gray-800">
-                                    Daily Doubles Used: Jeoparty ({dailyDoublesUsed.Jeoparty}/1) | Double Jeoparty ({dailyDoublesUsed.double}/1)
+                                    Daily Doubles used: Jeoparty ({dailyDoublesUsed.Jeoparty}/1) | Double Jeoparty ({dailyDoublesUsed.double}/1)
                                 </p>
                             </div>
 
@@ -441,7 +440,7 @@
                             </div>
 
                             <div className="text-center p-6 bg-yellow-100 rounded-lg border-4 border-yellow-400">
-                                <h2 className="text-3xl font-bold text-gray-800 mb-2">Current Leader</h2>
+                                <h2 className="text-3xl font-bold text-gray-800 mb-2">Current leader</h2>
                                 <p className="text-4xl font-bold text-blue-900">{winner.name} - ${winner.score.toLocaleString()}</p>
                             </div>
                         </div>
