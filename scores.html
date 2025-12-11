@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jeopardy! Score Tracker</title>
+    <title>Jeoparty! Score tracker</title>
     <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
     <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
@@ -102,8 +102,8 @@
             );
         }
 
-        function JeopardyScorekeeper() {
-            const [mode, setMode] = useState('setup');
+        function JeopartyScorekeeper() {
+            const [mode, setmode] = useState('setup');
             const [gameId, setGameId] = useState('');
             const [teams, setTeams] = useState([
                 { name: 'Team 1', score: 0 },
@@ -111,9 +111,9 @@
                 { name: 'Team 3', score: 0 }
             ]);
             
-            const [round, setRound] = useState('jeopardy');
-            const [dailyDoublesUsed, setDailyDoublesUsed] = useState({ jeopardy: 0, double: 0 });
-            const [showFinalJeopardy, setShowFinalJeopardy] = useState(false);
+            const [round, setround] = useState('Jeoparty');
+            const [dailyDoublesUsed, setDailyDoublesUsed] = useState({ Jeoparty: 0, double: 0 });
+            const [showFinalJeoparty, setShowFinalJeoparty] = useState(false);
             const [finalWagers, setFinalWagers] = useState([0, 0, 0]);
             const [finalResults, setFinalResults] = useState([null, null, null]);
 
@@ -127,10 +127,10 @@
 
             const loadGameState = function() {
                 if (!gameId) return;
-                const state = storage.get('jeopardy:' + gameId);
+                const state = storage.get('Jeoparty:' + gameId);
                 if (state) {
                     setTeams(state.teams);
-                    setRound(state.round);
+                    setround(state.round);
                     setDailyDoublesUsed(state.dailyDoublesUsed);
                 }
             };
@@ -143,7 +143,7 @@
                     dailyDoublesUsed: dailyDoublesUsed,
                     lastUpdate: Date.now()
                 };
-                storage.set('jeopardy:' + gameId, state);
+                storage.set('Jeoparty:' + gameId, state);
             };
 
             useEffect(function() {
@@ -155,12 +155,12 @@
             const startAsHost = function() {
                 const id = Math.random().toString(36).substring(2, 8).toUpperCase();
                 setGameId(id);
-                setMode('host');
+                setmode('host');
             };
 
             const joinAsViewer = function() {
                 if (gameId.trim()) {
-                    setMode('viewer');
+                    setmode('viewer');
                 }
             };
 
@@ -183,7 +183,7 @@
             };
 
             const handleDailyDouble = function(teamIndex, wager, isCorrect) {
-                if (round === 'jeopardy' && dailyDoublesUsed.jeopardy >= 1) return;
+                if (round === 'Jeoparty' && dailyDoublesUsed.Jeoparty >= 1) return;
                 if (round === 'double' && dailyDoublesUsed.double >= 1) return;
 
                 const newTeams = [...teams];
@@ -191,12 +191,12 @@
                 setTeams(newTeams);
 
                 const newUsed = { ...dailyDoublesUsed };
-                if (round === 'jeopardy') newUsed.jeopardy += 1;
+                if (round === 'Jeoparty') newUsed.Jeoparty += 1;
                 if (round === 'double') newUsed.double += 1;
                 setDailyDoublesUsed(newUsed);
             };
 
-            const handleFinalJeopardy = function() {
+            const handleFinalJeoparty = function() {
                 const newTeams = teams.map(function(team, index) {
                     return {
                         name: team.name,
@@ -204,7 +204,7 @@
                     };
                 });
                 setTeams(newTeams);
-                setShowFinalJeopardy(false);
+                setShowFinalJeoparty(false);
                 setFinalWagers([0, 0, 0]);
                 setFinalResults([null, null, null]);
             };
@@ -215,9 +215,9 @@
                     { name: 'Team 2', score: 0 },
                     { name: 'Team 3', score: 0 }
                 ]);
-                setRound('jeopardy');
-                setDailyDoublesUsed({ jeopardy: 0, double: 0 });
-                setShowFinalJeopardy(false);
+                setround('Jeoparty');
+                setDailyDoublesUsed({ Jeoparty: 0, double: 0 });
+                setShowFinalJeoparty(false);
                 setFinalWagers([0, 0, 0]);
                 setFinalResults([null, null, null]);
             };
@@ -227,30 +227,27 @@
                     <div className="min-h-screen bg-blue-900 flex items-center justify-center p-8">
                         <div className="bg-white rounded-lg shadow-2xl p-12 max-w-2xl w-full">
                             <div className="text-center mb-8">
-                                <div className="text-6xl mb-4">🏆</div>
-                                <h1 className="text-5xl font-bold text-blue-900 mb-2">Jeopardy!</h1>
-                                <p className="text-xl text-gray-600">Score Tracker</p>
+                                <h1 className="text-5xl font-bold text-blue-900 mb-2">Jeoparty!</h1>
+                                <p className="text-xl text-gray-600">Score tracker</p>
                             </div>
 
                             <div className="space-y-6">
                                 <div className="border-2 border-blue-300 rounded-lg p-8">
                                     <div className="flex items-center mb-4">
-                                        <span className="text-3xl mr-3">✏️</span>
-                                        <h2 className="text-2xl font-bold text-gray-800">Host Game</h2>
+                                        <h2 className="text-2xl font-bold text-gray-800">Host game</h2>
                                     </div>
                                     <p className="text-gray-600 mb-4">Control scoring and share your game ID with viewers</p>
                                     <button
                                         onClick={startAsHost}
                                         className="w-full bg-blue-600 text-white py-4 rounded-lg font-bold text-xl hover:bg-blue-700 transition"
                                     >
-                                        Start as Host
+                                        Start as host
                                     </button>
                                 </div>
 
                                 <div className="border-2 border-green-300 rounded-lg p-8">
                                     <div className="flex items-center mb-4">
-                                        <span className="text-3xl mr-3">👁️</span>
-                                        <h2 className="text-2xl font-bold text-gray-800">View Game</h2>
+                                        <h2 className="text-2xl font-bold text-gray-800">View game</h2>
                                     </div>
                                     <p className="text-gray-600 mb-4">Enter game ID to view scores (read-only)</p>
                                     <input
@@ -265,7 +262,7 @@
                                         disabled={!gameId.trim()}
                                         className="w-full bg-green-600 text-white py-4 rounded-lg font-bold text-xl hover:bg-green-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
                                     >
-                                        Join as Viewer
+                                        Join as viewer
                                     </button>
                                 </div>
                             </div>
@@ -285,11 +282,11 @@
                             <div className="bg-white rounded-lg shadow-2xl p-8">
                                 <div className="flex items-center justify-between mb-8">
                                     <div>
-                                        <h1 className="text-4xl font-bold text-blue-900">Jeopardy! Score Tracker</h1>
-                                        <p className="text-gray-600 mt-2">Game ID: <span className="font-bold text-blue-600">{gameId}</span> (Viewer Mode)</p>
+                                        <h1 className="text-4xl font-bold text-blue-900">Jeoparty! Score tracker</h1>
+                                        <p className="text-gray-600 mt-2">Game ID: <span className="font-bold text-blue-600">{gameId}</span> (Viewer mode)</p>
                                     </div>
                                     <button
-                                        onClick={function() { setMode('setup'); }}
+                                        onClick={function() { setmode('setup'); }}
                                         className="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition"
                                     >
                                         Leave Game
@@ -298,7 +295,7 @@
 
                                 <div className="mb-6 p-4 bg-blue-50 rounded-lg">
                                     <p className="font-semibold text-gray-800 text-xl text-center">
-                                        Current Round: <span className="text-blue-600">{round === 'jeopardy' ? 'Jeopardy' : 'Double Jeopardy'}</span>
+                                        Current round: <span className="text-blue-600">{round === 'Jeoparty' ? 'Jeoparty' : 'Double Jeoparty'}</span>
                                     </p>
                                 </div>
 
@@ -325,12 +322,12 @@
                 );
             }
 
-            const pointValues = round === 'jeopardy' 
+            const pointValues = round === 'Jeoparty' 
                 ? [200, 400, 600, 800, 1000]
                 : [400, 800, 1200, 1600, 2000];
 
             const canUseDailyDouble = 
-                (round === 'jeopardy' && dailyDoublesUsed.jeopardy < 1) ||
+                (round === 'Jeoparty' && dailyDoublesUsed.Jeoparty < 1) ||
                 (round === 'double' && dailyDoublesUsed.double < 1);
 
             const winner = teams.reduce(function(max, team) {
@@ -343,8 +340,8 @@
                         <div className="bg-white rounded-lg shadow-2xl p-8">
                             <div className="flex items-center justify-between mb-8">
                                 <div>
-                                    <h1 className="text-4xl font-bold text-blue-900">Jeopardy! Score Tracker</h1>
-                                    <p className="text-gray-600 mt-2">Game ID: <span className="font-bold text-green-600 text-xl">{gameId}</span> (Host Mode)</p>
+                                    <h1 className="text-4xl font-bold text-blue-900">Jeoparty! Score tracker</h1>
+                                    <p className="text-gray-600 mt-2">Game ID: <span className="font-bold text-green-600 text-xl">{gameId}</span> (Host mode)</p>
                                     <p className="text-sm text-gray-500">Share this ID with viewers</p>
                                 </div>
                                 <span className="text-5xl">🏆</span>
@@ -352,22 +349,22 @@
 
                             <div className="mb-8 flex gap-4 flex-wrap">
                                 <button
-                                    onClick={function() { setRound('jeopardy'); }}
-                                    className={'px-6 py-3 rounded-lg font-semibold transition ' + (round === 'jeopardy' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700')}
+                                    onClick={function() { setround('Jeoparty'); }}
+                                    className={'px-6 py-3 rounded-lg font-semibold transition ' + (round === 'Jeoparty' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700')}
                                 >
-                                    Jeopardy Round
+                                    Jeoparty round
                                 </button>
                                 <button
-                                    onClick={function() { setRound('double'); }}
+                                    onClick={function() { setround('double'); }}
                                     className={'px-6 py-3 rounded-lg font-semibold transition ' + (round === 'double' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700')}
                                 >
-                                    Double Jeopardy
+                                    Double Jeoparty
                                 </button>
                                 <button
-                                    onClick={function() { setShowFinalJeopardy(true); }}
+                                    onClick={function() { setShowFinalJeoparty(true); }}
                                     className="px-6 py-3 rounded-lg font-semibold bg-purple-600 text-white hover:bg-purple-700 transition"
                                 >
-                                    Final Jeopardy
+                                    Final Jeoparty
                                 </button>
                                 <button
                                     onClick={resetGame}
@@ -376,7 +373,7 @@
                                     Reset Game
                                 </button>
                                 <button
-                                    onClick={function() { setMode('setup'); }}
+                                    onClick={function() { setmode('setup'); }}
                                     className="px-6 py-3 rounded-lg font-semibold bg-gray-500 text-white hover:bg-gray-600 transition ml-auto"
                                 >
                                     End Game
@@ -385,7 +382,7 @@
 
                             <div className="mb-6 p-4 bg-yellow-50 rounded-lg">
                                 <p className="font-semibold text-gray-800">
-                                    Daily Doubles Used: Jeopardy ({dailyDoublesUsed.jeopardy}/1) | Double Jeopardy ({dailyDoublesUsed.double}/1)
+                                    Daily Doubles Used: Jeoparty ({dailyDoublesUsed.Jeoparty}/1) | Double Jeoparty ({dailyDoublesUsed.double}/1)
                                 </p>
                             </div>
 
@@ -450,10 +447,10 @@
                         </div>
                     </div>
 
-                    {showFinalJeopardy && (
+                    {showFinalJeoparty && (
                         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4">
                             <div className="bg-white rounded-lg p-8 max-w-4xl w-full max-h-screen overflow-y-auto">
-                                <h2 className="text-4xl font-bold text-center mb-8 text-purple-900">Final Jeopardy!</h2>
+                                <h2 className="text-4xl font-bold text-center mb-8 text-purple-900">Final Jeoparty!</h2>
                                 
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                                     {teams.map(function(team, index) {
@@ -508,13 +505,13 @@
 
                                 <div className="flex gap-4">
                                     <button
-                                        onClick={handleFinalJeopardy}
+                                        onClick={handleFinalJeoparty}
                                         className="flex-1 bg-purple-600 text-white py-4 rounded-lg font-bold text-xl hover:bg-purple-700 transition"
                                     >
-                                        Apply Final Jeopardy Results
+                                        Apply Final Jeoparty Results
                                     </button>
                                     <button
-                                        onClick={function() { setShowFinalJeopardy(false); }}
+                                        onClick={function() { setShowFinalJeoparty(false); }}
                                         className="px-8 bg-gray-400 text-white py-4 rounded-lg font-bold hover:bg-gray-500 transition"
                                     >
                                         Cancel
@@ -527,7 +524,7 @@
             );
         }
 
-        ReactDOM.render(React.createElement(JeopardyScorekeeper), document.getElementById('root'));
+        ReactDOM.render(React.createElement(JeopartyScorekeeper), document.getElementById('root'));
     </script>
 </body>
 </html>
