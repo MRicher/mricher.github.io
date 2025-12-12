@@ -701,41 +701,99 @@
       function loadFromJSON(event) {
         const file = event.target.files[0];
         if (!file) return;
-
+      
         const reader = new FileReader();
         reader.onload = function (e) {
           try {
             const loadedData = JSON.parse(e.target.result);
-
+      
             // Validate that it's an array
             if (!Array.isArray(loadedData)) {
               throw new Error("Invalid JSON format");
             }
-
+      
             // Validate structure of entries
             const isValid = loadedData.every(
               (entry) =>
                 entry.hasOwnProperty("abbrEn") && entry.hasOwnProperty("abbrFr") && entry.hasOwnProperty("titleEn") && entry.hasOwnProperty("titleFr")
             );
-
+      
             if (!isValid) {
               throw new Error("Invalid entry structure");
             }
-
-            // Load the data
-            entries = loadedData;
-
-            // Update counter to prevent ID conflicts
-            if (entries.length > 0) {
-              entryCounter = Math.max(...entries.map((e) => e.id || 0)) + 1;
-            }
-
-            renderEntries();
-
+      
             const currentLang = document.documentElement.lang?.split("-")[0] || "en";
-            const message =
-              currentLang === "fr" ? `${entries.length} entrée(s) chargée(s) avec succès.` : `${entries.length} entry(ies) loaded successfully.`;
-            alert(message);
+            let addedCount = 0;
+            let skippedCount = 0;
+      
+            // Process each loaded entry
+            for (const loadedEntry of loadedData) {
+              const checkAbbrEn = loadedEntry.abbrEn !== "There are no abbreviations or acronyms for English." ? loadedEntry.abbrEn : null;
+              const checkAbbrFr = loadedEntry.abbrFr !== "Il n'y a pas d'abréviations ou d'acronymes pour le français." ? loadedEntry.abbrFr : null;
+      
+              // Check for duplicates
+              const duplicates = entries.filter((entry) => {
+                const enMatch = checkAbbrEn && entry.abbrEn && checkAbbrEn.toLowerCase() === entry.abbrEn.toLowerCase();
+                const frMatch = checkAbbrFr && entry.abbrFr && checkAbbrFr.toLowerCase() === entry.abbrFr.toLowerCase();
+                return enMatch || frMatch;
+              });
+      
+              if (duplicates.length > 0) {
+                // Ask user if they want to add duplicate
+                let message = "";
+                if (currentLang === "fr") {
+                  message = `Une entrée avec cette abréviation/acronyme existe déjà:\n\n`;
+                  duplicates.forEach((dup) => {
+                    message += `• ${dup.abbrEn} / ${dup.abbrFr}\n  ${dup.titleEn} / ${dup.titleFr}\n\n`;
+                  });
+                  message += `Voulez-vous ajouter quand même:\n${loadedEntry.abbrEn} / ${loadedEntry.abbrFr}\n${loadedEntry.titleEn} / ${loadedEntry.titleFr}?`;
+                } else {
+                  message = `An entry with this abbreviation/acronym already exists:\n\n`;
+                  duplicates.forEach((dup) => {
+                    message += `• ${dup.abbrEn} / ${dup.abbrFr}\n  ${dup.titleEn} / ${dup.titleFr}\n\n`;
+                  });
+                  message += `Do you want to add anyway:\n${loadedEntry.abbrEn} / ${loadedEntry.abbrFr}\n${loadedEntry.titleEn} / ${loadedEntry.titleFr}?`;
+                }
+      
+                if (confirm(message)) {
+                  // Add entry with new ID
+                  entries.push({
+                    ...loadedEntry,
+                    id: entryCounter++
+                  });
+                  addedCount++;
+                } else {
+                  skippedCount++;
+                }
+              } else {
+                // No duplicate, add entry
+                entries.push({
+                  ...loadedEntry,
+                  id: entryCounter++
+                });
+                addedCount++;
+              }
+            }
+      
+            renderEntries();
+      
+            // Show summary message
+            let summaryMessage = "";
+            if (currentLang === "fr") {
+              summaryMessage = `${addedCount} entrée(s) ajoutée(s)`;
+              if (skippedCount > 0) {
+                summaryMessage += `, ${skippedCount} ignorée(s)`;
+              }
+              summaryMessage += ".";
+            } else {
+              summaryMessage = `${addedCount} entry(ies) added`;
+              if (skippedCount > 0) {
+                summaryMessage += `, ${skippedCount} skipped`;
+              }
+              summaryMessage += ".";
+            }
+            alert(summaryMessage);
+      
           } catch (error) {
             const currentLang = document.documentElement.lang?.split("-")[0] || "en";
             const message =
@@ -746,9 +804,9 @@
             console.error("JSON load error:", error);
           }
         };
-
+      
         reader.readAsText(file);
-
+      
         // Reset the file input so the same file can be loaded again if needed
         event.target.value = "";
       }
