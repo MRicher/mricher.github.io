@@ -212,9 +212,16 @@
                 const response = await fetch(url);
                 const data = await response.json();
                 
-                if (data && data.length > 0) {
+                // Filter to only show Canadian addresses
+                const canadianResults = data.filter(item => 
+                    item.display_name.includes('Canada') || 
+                    item.address?.country === 'Canada' ||
+                    item.address?.country_code === 'ca'
+                );
+                
+                if (canadianResults && canadianResults.length > 0) {
                     suggestionsDiv.innerHTML = '';
-                    data.forEach(item => {
+                    canadianResults.forEach(item => {
                         const div = document.createElement('div');
                         div.className = 'suggestion-item';
                         div.textContent = item.display_name;
