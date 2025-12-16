@@ -56,6 +56,50 @@
             background: #ccc;
             cursor: not-allowed;
         }
+        .input-group {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .input-group button {
+            margin-top: 10px;
+        }
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            color: #999;
+            position: relative;
+        }
+        .divider:before,
+        .divider:after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 45%;
+            height: 1px;
+            background: #ddd;
+        }
+        .divider:before {
+            left: 0;
+        }
+        .divider:after {
+            right: 0;
+        }
         #map {
             height: 600px;
             margin-top: 20px;
@@ -70,7 +114,16 @@
 <body>
     <div class="container">
         <h1>Find Closest RCMP Detachment</h1>
-        <button id="findBtn" onclick="findClosest()">Find Closest Detachment</button>
+        <button id="findBtn" onclick="findClosest()">Use My Current Location</button>
+        
+        <div class="divider">OR</div>
+        
+        <div class="input-group">
+            <label for="addressInput">Enter an address in Yukon:</label>
+            <input type="text" id="addressInput" placeholder="e.g., 100 Main Street, Whitehorse, YT" />
+            <button onclick="findByAddress()">Find from Address</button>
+        </div>
+        
         <div id="result"></div>
         <div id="map"></div>
     </div>
@@ -94,6 +147,49 @@
 
         let map = null;
 
+        async function geocodeAddress(address) {
+            const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`;
+            const response = await fetch(url);
+            const data = await response.json();
+            
+            if (data && data.length > 0) {
+                return {
+                    lat: parseFloat(data[0].lat),
+                    lon: parseFloat(data[0].lon)
+                };
+            }
+            return null;
+        }
+
+        async function findByAddress() {
+            const addressInput = document.getElementById('addressInput');
+            const address = addressInput.value.trim();
+            
+            if (!address) {
+                alert('Please enter an address');
+                return;
+            }
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = 'result loading';
+            resultDiv.textContent = 'Looking up address...';
+            
+            try {
+                const coords = await geocodeAddress(address);
+                
+                if (!coords) {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = 'Could not find that address. Please try a different address or be more specific.';
+                    return;
+                }
+                
+                await calculateClosest(coords.lat, coords.lon, `Address: ${address}`);
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = 'Error looking up address: ' + error.message;
+            }
+        }
+
         async function findClosest() {
             const resultDiv = document.getElementById('result');
             const mapDiv = document.getElementById('map');
@@ -106,7 +202,7 @@
 
             if (!navigator.geolocation) {
                 resultDiv.className = 'result error';
-                resultDiv.textContent = 'Geolocation is not supported by your browser';
+                resultDiv.textContent = 'Geolocation is not supported by your browser. Please use the address lookup instead.';
                 btn.disabled = false;
                 return;
             }
@@ -114,8 +210,22 @@
             navigator.geolocation.getCurrentPosition(async (position) => {
                 const userLat = position.coords.latitude;
                 const userLon = position.coords.longitude;
+                
+                await calculateClosest(userLat, userLon, 'Your Location');
+                btn.disabled = false;
+            }, (error) => {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = 'Error getting location: ' + error.message + '. Please use the address lookup instead.';
+                btn.disabled = false;
+            });
+        }
 
-                resultDiv.textContent = 'Calculating distances to detachments...';
+        async function calculateClosest(userLat, userLon, locationLabel) {
+            const resultDiv = document.getElementById('result');
+            const mapDiv = document.getElementById('map');
+
+            resultDiv.className = 'result loading';
+            resultDiv.textContent = 'Calculating distances to detachments...';
 
                 try {
                     let closestDetachment = null;
@@ -163,7 +273,7 @@
                         // Add user marker
                         L.marker([userLat, userLon])
                             .addTo(map)
-                            .bindPopup('Your Location')
+                            .bindPopup(locationLabel)
                             .openPopup();
                         
                         // Add detachment marker
@@ -192,13 +302,7 @@
                     resultDiv.className = 'result error';
                     resultDiv.textContent = 'Error calculating routes: ' + error.message;
                 }
-
-                btn.disabled = false;
-            }, (error) => {
-                resultDiv.className = 'result error';
-                resultDiv.textContent = 'Error getting location: ' + error.message;
-                btn.disabled = false;
-            });
+            }
         }
     </script>
 </body>
