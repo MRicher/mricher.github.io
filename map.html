@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Closest RCMP Detachment</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 600px;
-            margin: 50px auto;
+            margin: 0;
             padding: 20px;
             background: #f5f5f5;
         }
@@ -17,6 +18,8 @@
             padding: 30px;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 1200px;
+            margin: 0 auto;
         }
         h1 {
             color: #333;
@@ -53,6 +56,15 @@
             background: #ccc;
             cursor: not-allowed;
         }
+        #map {
+            height: 600px;
+            margin-top: 20px;
+            border-radius: 5px;
+            display: none;
+        }
+        #map.show {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -60,6 +72,7 @@
         <h1>Find Closest RCMP Detachment</h1>
         <button id="findBtn" onclick="findClosest()">Find Closest Detachment</button>
         <div id="result"></div>
+        <div id="map"></div>
     </div>
 
     <script>
@@ -79,13 +92,17 @@
             { name: "M Division Headquarters and Whitehorse Detachment", lat: 60.71812221174552, lon: -135.056315169137 }
         ];
 
+        let map = null;
+
         async function findClosest() {
             const resultDiv = document.getElementById('result');
+            const mapDiv = document.getElementById('map');
             const btn = document.getElementById('findBtn');
             
             btn.disabled = true;
             resultDiv.className = 'result loading';
             resultDiv.textContent = 'Getting your location...';
+            mapDiv.classList.remove('show');
 
             if (!navigator.geolocation) {
                 resultDiv.className = 'result error';
@@ -102,10 +119,12 @@
 
                 try {
                     let closestDetachment = null;
+                    let closestDetachmentData = null;
                     let shortestDistance = Infinity;
+                    let routeGeometry = null;
 
                     for (const det of detachments) {
-                        const url = `https://router.project-osrm.org/route/v1/driving/${userLon},${userLat};${det.lon},${det.lat}?overview=false`;
+                        const url = `https://router.project-osrm.org/route/v1/driving/${userLon},${userLat};${det.lon},${det.lat}?overview=full&geometries=geojson`;
                         
                         const response = await fetch(url);
                         const data = await response.json();
@@ -116,13 +135,55 @@
                             if (distance < shortestDistance) {
                                 shortestDistance = distance;
                                 closestDetachment = det.name;
+                                closestDetachmentData = det;
+                                routeGeometry = data.routes[0].geometry;
                             }
                         }
                     }
 
-                    if (closestDetachment) {
+                    if (closestDetachment && closestDetachmentData) {
+                        const distanceKm = (shortestDistance / 1000).toFixed(1);
                         resultDiv.className = 'result';
-                        resultDiv.innerHTML = `<strong>Closest Detachment:</strong><br>${closestDetachment}`;
+                        resultDiv.innerHTML = `<strong>Closest Detachment:</strong><br>${closestDetachment}<br><small>Distance: ${distanceKm} km</small>`;
+                        
+                        // Show map
+                        mapDiv.classList.add('show');
+                        
+                        // Initialize or clear map
+                        if (map) {
+                            map.remove();
+                        }
+                        
+                        map = L.map('map').setView([userLat, userLon], 8);
+                        
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            attribution: '© OpenStreetMap contributors'
+                        }).addTo(map);
+                        
+                        // Add user marker
+                        L.marker([userLat, userLon])
+                            .addTo(map)
+                            .bindPopup('Your Location')
+                            .openPopup();
+                        
+                        // Add detachment marker
+                        L.marker([closestDetachmentData.lat, closestDetachmentData.lon])
+                            .addTo(map)
+                            .bindPopup(closestDetachment);
+                        
+                        // Add route
+                        if (routeGeometry) {
+                            const coords = routeGeometry.coordinates.map(c => [c[1], c[0]]);
+                            L.polyline(coords, {color: 'blue', weight: 4}).addTo(map);
+                        }
+                        
+                        // Fit bounds to show both markers
+                        const bounds = L.latLngBounds([
+                            [userLat, userLon],
+                            [closestDetachmentData.lat, closestDetachmentData.lon]
+                        ]);
+                        map.fitBounds(bounds, {padding: [50, 50]});
+                        
                     } else {
                         resultDiv.className = 'result error';
                         resultDiv.textContent = 'Could not calculate routes';
