@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Closest RCMP Detachment</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            background: #e8f5e9;
+            border-radius: 5px;
+            font-size: 18px;
+        }
+        .loading {
+            color: #666;
+            font-style: italic;
+        }
+        .error {
+            background: #ffebee;
+            color: #c62828;
+        }
+        button {
+            background: #1976d2;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #1565c0;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Find Closest RCMP Detachment</h1>
+        <button id="findBtn" onclick="findClosest()">Find Closest Detachment</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const detachments = [
+            { name: "Beaver Creek Detachment", lat: 62.3831637285805, lon: -140.8743807289492 },
+            { name: "Carcross Detachment", lat: 60.166842761232076, lon: -134.70471147722677 },
+            { name: "Carmacks Detachment", lat: 62.08977602096233, lon: -136.2892672357153 },
+            { name: "Dawson City Detachment", lat: 64.05703780887602, lon: -139.44013443540706 },
+            { name: "Faro Detachment", lat: 62.230668086728734, lon: -133.3566635472941 },
+            { name: "Haines Junction Detachment", lat: 60.75197178125077, lon: -137.5107280314997 },
+            { name: "Mayo Detachment", lat: 63.59558344607216, lon: -135.89777955257398 },
+            { name: "Old Crow Detachment", lat: 67.5690690966879, lon: -139.8324246923276 },
+            { name: "Pelly Crossing Detachment", lat: 62.82380827372366, lon: -136.5775172208898 },
+            { name: "Ross River Detachment", lat: 61.9822740918631, lon: -132.45395262314642 },
+            { name: "Teslin Detachment", lat: 60.164617768451336, lon: -132.7245611215806 },
+            { name: "Watson Lake Detachment", lat: 60.05559404325373, lon: -128.67228345534656 },
+            { name: "M Division Headquarters and Whitehorse Detachment", lat: 60.71812221174552, lon: -135.056315169137 }
+        ];
+
+        async function findClosest() {
+            const resultDiv = document.getElementById('result');
+            const btn = document.getElementById('findBtn');
+            
+            btn.disabled = true;
+            resultDiv.className = 'result loading';
+            resultDiv.textContent = 'Getting your location...';
+
+            if (!navigator.geolocation) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = 'Geolocation is not supported by your browser';
+                btn.disabled = false;
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(async (position) => {
+                const userLat = position.coords.latitude;
+                const userLon = position.coords.longitude;
+
+                resultDiv.textContent = 'Calculating distances to detachments...';
+
+                try {
+                    let closestDetachment = null;
+                    let shortestDistance = Infinity;
+
+                    for (const det of detachments) {
+                        const url = `https://router.project-osrm.org/route/v1/driving/${userLon},${userLat};${det.lon},${det.lat}?overview=false`;
+                        
+                        const response = await fetch(url);
+                        const data = await response.json();
+
+                        if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
+                            const distance = data.routes[0].distance;
+                            
+                            if (distance < shortestDistance) {
+                                shortestDistance = distance;
+                                closestDetachment = det.name;
+                            }
+                        }
+                    }
+
+                    if (closestDetachment) {
+                        resultDiv.className = 'result';
+                        resultDiv.innerHTML = `<strong>Closest Detachment:</strong><br>${closestDetachment}`;
+                    } else {
+                        resultDiv.className = 'result error';
+                        resultDiv.textContent = 'Could not calculate routes';
+                    }
+                } catch (error) {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = 'Error calculating routes: ' + error.message;
+                }
+
+                btn.disabled = false;
+            }, (error) => {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = 'Error getting location: ' + error.message;
+                btn.disabled = false;
+            });
+        }
+    </script>
+</body>
+</html>
