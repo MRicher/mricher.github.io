@@ -326,7 +326,7 @@
             return R * c;
         }
 
-        async function calculateClosest(userLat, userLon, locationLabel) {
+async function calculateClosest(userLat, userLon, locationLabel) {
             const resultDiv = document.getElementById('result');
             const mapDiv = document.getElementById('map');
 
@@ -338,9 +338,7 @@
                 let closestDetachmentData = null;
                 let shortestDistance = Infinity;
                 let routeGeometry = null;
-                let roadAccessible = false;
 
-                // Try to find closest by driving distance
                 for (const det of detachments) {
                     const url = `https://router.project-osrm.org/route/v1/driving/${userLon},${userLat};${det.lon},${det.lat}?overview=full&geometries=geojson`;
                     
@@ -355,20 +353,6 @@
                             closestDetachment = det.name;
                             closestDetachmentData = det;
                             routeGeometry = data.routes[0].geometry;
-                            roadAccessible = true;
-                        }
-                    }
-                }
-
-                // If no road route found, use straight-line distance
-                if (!roadAccessible) {
-                    for (const det of detachments) {
-                        const distance = calculateHaversineDistance(userLat, userLon, det.lat, det.lon) * 1000; // Convert to meters
-                        
-                        if (distance < shortestDistance) {
-                            shortestDistance = distance;
-                            closestDetachment = det.name;
-                            closestDetachmentData = det;
                         }
                     }
                 }
@@ -376,12 +360,7 @@
                 if (closestDetachment && closestDetachmentData) {
                     const distanceKm = (shortestDistance / 1000).toFixed(1);
                     resultDiv.className = 'result';
-                    
-                    if (roadAccessible) {
-                        resultDiv.innerHTML = `<strong>Closest Detachment:</strong><br>${closestDetachment}<br><small>Driving Distance: ${distanceKm} km</small>`;
-                    } else {
-                        resultDiv.innerHTML = `<strong>Closest Detachment:</strong><br>${closestDetachment}<br><small>Straight-line Distance: ${distanceKm} km</small><br><span style="color: #c62828;">⚠️ No accessible roads found to this detachment</span>`;
-                    }
+                    resultDiv.innerHTML = `<strong>Closest Detachment:</strong><br>${closestDetachment}<br><small>Driving Distance: ${distanceKm} km</small>`;
                     
                     mapDiv.classList.add('show');
                     
@@ -442,7 +421,7 @@
                         }
                     });
                     
-                    if (routeGeometry && roadAccessible) {
+                    if (routeGeometry) {
                         const coords = routeGeometry.coordinates.map(c => [c[1], c[0]]);
                         L.polyline(coords, {color: 'blue', weight: 4}).addTo(map);
                     }
@@ -455,7 +434,7 @@
                     
                 } else {
                     resultDiv.className = 'result error';
-                    resultDiv.textContent = 'Could not calculate distances';
+                    resultDiv.innerHTML = '<strong>No direct road access</strong><br>There are no accessible roads connecting your location to any RCMP detachment. This may occur in remote areas or locations without road infrastructure.';
                 }
             } catch (error) {
                 resultDiv.className = 'result error';
