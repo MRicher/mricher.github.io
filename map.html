@@ -469,8 +469,105 @@
                     map.fitBounds(bounds, {padding: [50, 50]});
                     
                 } else {
+                    // No road routes found, find closest by straight-line distance
+                    let closestStraightLine = null;
+                    let closestStraightLineData = null;
+                    let shortestStraightDistance = Infinity;
+                    
+                    for (const det of detachments) {
+                        // Calculate straight-line distance using Haversine formula
+                        const R = 6371000; // Earth's radius in meters
+                        const dLat = (det.lat - userLat) * Math.PI / 180;
+                        const dLon = (det.lon - userLon) * Math.PI / 180;
+                        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                                  Math.cos(userLat * Math.PI / 180) * Math.cos(det.lat * Math.PI / 180) *
+                                  Math.sin(dLon/2) * Math.sin(dLon/2);
+                        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                        const distance = R * c;
+                        
+                        if (distance < shortestStraightDistance) {
+                            shortestStraightDistance = distance;
+                            closestStraightLine = det.name;
+                            closestStraightLineData = det;
+                        }
+                    }
+                    
+                    const distanceKm = (shortestStraightDistance / 1000).toFixed(1);
                     resultDiv.className = 'result error';
-                    resultDiv.innerHTML = '<strong>No Direct Road Access</strong><br>There are no accessible roads connecting your location to any RCMP detachment. This may occur in remote areas or locations without road infrastructure.';
+                    resultDiv.innerHTML = `<strong>Closest Detachment:</strong><br>${closestStraightLine}<br><small>Straight-line Distance: ${distanceKm} km</small><br><br><span style="color: #c62828; font-weight: bold;">⚠️ NO DIRECT ROAD ACCESS</span><br><small>There are no accessible roads connecting your location to any RCMP detachment.</small>`;
+                    
+                    mapDiv.classList.add('show');
+                    
+                    if (map) {
+                        map.remove();
+                    }
+                    
+                    map = L.map('map').setView([userLat, userLon], 8);
+                    
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '© OpenStreetMap contributors'
+                    }).addTo(map);
+                    
+                    // Green marker for user location
+                    const greenIcon = L.icon({
+                        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34],
+                        shadowSize: [41, 41]
+                    });
+                    
+                    L.marker([userLat, userLon], {icon: greenIcon})
+                        .addTo(map)
+                        .bindPopup(locationLabel)
+                        .openPopup();
+                    
+                    // Red marker for closest detachment
+                    const redIcon = L.icon({
+                        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34],
+                        shadowSize: [41, 41]
+                    });
+                    
+                    L.marker([closestStraightLineData.lat, closestStraightLineData.lon], {icon: redIcon})
+                        .addTo(map)
+                        .bindPopup(closestStraightLine + '<br><span style="color: #c62828;">⚠️ No road access</span>');
+                    
+                    // Blue markers for other detachments
+                    const blueIcon = L.icon({
+                        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34],
+                        shadowSize: [41, 41]
+                    });
+                    
+                    detachments.forEach(det => {
+                        if (det.name !== closestStraightLine) {
+                            L.marker([det.lat, det.lon], {icon: blueIcon})
+                                .addTo(map)
+                                .bindPopup(det.name);
+                        }
+                    });
+                    
+                    // Draw a dashed line to show it's not a road route
+                    L.polyline([[userLat, userLon], [closestStraightLineData.lat, closestStraightLineData.lon]], {
+                        color: 'red',
+                        weight: 2,
+                        dashArray: '10, 10',
+                        opacity: 0.6
+                    }).addTo(map);
+                    
+                    const bounds = L.latLngBounds([
+                        [userLat, userLon],
+                        [closestStraightLineData.lat, closestStraightLineData.lon]
+                    ]);
+                    map.fitBounds(bounds, {padding: [50, 50]});
                 }
             } catch (error) {
                 resultDiv.className = 'result error';
