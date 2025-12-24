@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rosie's Story - Parrot Partners Canada</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: #2c5f2d;
+            color: white;
+            padding: 8px;
+            text-decoration: none;
+            z-index: 100;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #ffffff;
+        }
+
+        *:focus-visible {
+            outline: 3px solid #2c5f2d;
+            outline-offset: 2px;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #2c5f2d 0%, #5a8a3d 100%);
+            color: white;
+            padding: 2rem 2rem 4rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+
+
+        .breadcrumb {
+            display: none;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .profile-header {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3rem;
+            align-items: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(to right, #f0f8f0, #ffffff);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 3px solid #e8f5e8;
+        }
+
+        .profile-image-container {
+            flex-shrink: 0;
+        }
+
+        .profile-image-wrapper {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 5px solid #2c5f2d;
+            box-shadow: 0 8px 24px rgba(44, 95, 45, 0.3);
+            position: relative;
+        }
+
+
+
+        .profile-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-info {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .profile-title {
+            font-size: 3rem;
+            color: #2c5f2d;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+        }
+
+        .profile-subtitle {
+            font-size: 1.3rem;
+            color: #5a8a3d;
+            margin-bottom: 1rem;
+            font-style: italic;
+        }
+
+        .profile-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .detail-badge {
+            background: white;
+            border: 2px solid #2c5f2d;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            color: #2c5f2d;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detail-badge::before {
+            display: none;
+        }
+
+        .story-section {
+            background: white;
+            padding: 3rem;
+            border-radius: 16px;
+            margin-bottom: 3rem;
+            border: 3px solid #e8f5e8;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        }
+
+        .story-section h2 {
+            font-size: 2rem;
+            color: #2c5f2d;
+            margin-bottom: 1.5rem;
+        }
+
+        .story-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #333;
+        }
+
+        .story-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        .story-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .sponsor-cta {
+            background: linear-gradient(135deg, #2c5f2d 0%, #5a8a3d 100%);
+            color: white;
+            padding: 3rem;
+            border-radius: 16px;
+            text-align: center;
+            margin: 3rem 0;
+            box-shadow: 0 8px 24px rgba(44, 95, 45, 0.3);
+        }
+
+        .sponsor-cta h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .sponsor-cta p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        .sponsor-btn {
+            display: inline-block;
+            background: white;
+            color: #2c5f2d;
+            padding: 1rem 3rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.2rem;
+            border: 3px solid white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .sponsor-btn:focus {
+            outline: 3px solid white;
+            outline-offset: 3px;
+        }
+
+        .photo-gallery {
+            margin-top: 3rem;
+        }
+
+        .photo-gallery h2 {
+            font-size: 2rem;
+            color: #2c5f2d;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .gallery-item {
+            border-radius: 12px;
+            overflow: hidden;
+            border: 3px solid #e8f5e8;
+            cursor: pointer;
+        }
+
+        .gallery-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .back-link {
+            display: none;
+        }
+
+        footer {
+            background: #1a1a1a;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        footer p {
+            margin-bottom: 0.5rem;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .profile-title {
+                font-size: 2.5rem;
+            }
+
+            .story-section {
+                padding: 1.5rem;
+            }
+
+            .sponsor-cta {
+                padding: 2rem 1.5rem;
+            }
+
+            .profile-details {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <header role="banner">
+        <div class="hero">
+            <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem;">Meet Rosie!</h1>
+            <p style="font-size: 1.2rem; opacity: 0.95;">Resident Diva of the Safari Aviary</p>
+        </div>
+        
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+            <a href="https://parrotpartners.org/">Home</a> / 
+            <a href="https://parrotpartners.org/get-involved/">Get Involved</a> / 
+            <a href="https://parrotpartners.org/get-involved/sponsor-parrot/">Sponsor A Parrot</a> / 
+            <span aria-current="page">Rosie's Story</span>
+        </nav>
+    </header>
+
+    <main id="main-content" role="main">
+        <a href="https://parrotpartners.org/get-involved/sponsor-parrot/" class="back-link">
+            Back to All Parrots
+        </a>
+
+        <div class="profile-header">
+            <div class="profile-image-container">
+                <div class="profile-image-wrapper">
+                    <img src="https://parrotpartners.org/wp-content/uploads/2025/12/Rosie_ALEX-scaled.jpg" 
+                         alt="Rosie, a beautiful Alexandrine Parakeet with green and pink feathers" 
+                         class="profile-image">
+                </div>
+            </div>
+            
+            <div class="profile-info">
+                <h2 class="profile-title">Rosie</h2>
+                <p class="profile-subtitle">"Speaking for myself, thank you"</p>
+                
+                <div class="profile-details">
+                    <span class="detail-badge species">Alexandrine Parakeet</span>
+                    <span class="detail-badge year">Born 1996</span>
+                    <span class="detail-badge gender">Female</span>
+                    <span class="detail-badge size">Medium</span>
+                </div>
+            </div>
+        </div>
+
+        <article class="story-section">
+            <h2>About Rosie</h2>
+            <div class="story-content">
+                <p>Hello. I'm Rosie. Alexandrine Parakeet. Hatched in 1996, which makes me a classic edition with only minor cosmetic wear. I live in the Safari Aviary on long-term medical boarding, which is a polite way of saying I've simply decided to stay.</p>
+
+                <p>I came to Parrot Partners after my person—the human I adored and trusted for decades—passed away. He was my constant. I didn't understand it at first. I waited. I called for him. I listened for his footsteps because he always answered me. But he didn't come back, and my world went quiet in a way I didn't know how to navigate.</p>
+
+                <p>Grief in parrots isn't loud. Mine came as stillness. I perched more than I played. I tucked into myself. I wasn't sure I wanted new people. You don't just replace someone you loved for twenty-plus years.</p>
+
+                <p>The staff here didn't rush me. They talked to me gently, the way you approach someone who has lost a piece of their map. They let me watch from a distance until one day, without ceremony, I stepped closer. Not because I forgot him, but because I learned I could feel safe again.</p>
+
+                <p>I'm older now, with clear preferences and the full confidence of a bird who knows her worth. I enjoy warm lights, crunchy treats, and supervising humans as they attempt to decipher my extremely sophisticated signals. I'm not demanding. I'm just very committed to quality control.</p>
+
+                <p>Your sponsorship helps cover my medical support, my specialized routines, and the calm predictability that keeps my heart steady. I don't need grand gestures. I need stability, gentleness, and the kind of care my beloved human would be relieved to know I'm receiving.</p>
+
+                <p>If you choose to sponsor me, I'll recognize you. I'll tilt my head, soften my eyes, and let you into the small but fiercely protected circle of beings I trust.</p>
+
+                <p><strong>I'm Rosie. I loved deeply once. I can love again, slowly and on my terms. Your support makes that possible.</strong></p>
+            </div>
+        </article>
+
+        <div class="sponsor-cta">
+            <h2>💚 Sponsor Rosie Today!</h2>
+            <p>Help provide Rosie with the care, stability, and love she deserves</p>
+            <a href="https://give-can.keela.co/sponsor-rosie-alexandrine" 
+               class="sponsor-btn"
+               aria-label="Become Rosie's sponsor today">
+                Become a Sponsor Now
+            </a>
+        </div>
+
+        <section class="photo-gallery">
+            <h2>Photos of Rosie</h2>
+            <div class="gallery-grid">
+                <a href="https://parrotpartners.org/wp-content/uploads/2025/12/Rosie_1.jpg" 
+                   class="gallery-item"
+                   target="_blank"
+                   aria-label="View larger image of Rosie perched on a branch">
+                    <img src="https://parrotpartners.org/wp-content/uploads/2025/12/Rosie_1.jpg" 
+                         alt="Rosie perched elegantly on a branch" 
+                         class="gallery-image"
+                         loading="lazy">
+                </a>
+                
+                <a href="https://parrotpartners.org/wp-content/uploads/2025/12/Rosie_2_sponsor.jpg" 
+                   class="gallery-item"
+                   target="_blank"
+                   aria-label="View larger image of Rosie showing her beautiful feathers">
+                    <img src="https://parrotpartners.org/wp-content/uploads/2025/12/Rosie_2_sponsor.jpg" 
+                         alt="Rosie displaying her colorful plumage" 
+                         class="gallery-image"
+                         loading="lazy">
+                </a>
+                
+                <a href="https://parrotpartners.org/wp-content/uploads/2025/12/Rosie_2.jpg" 
+                   class="gallery-item"
+                   target="_blank"
+                   aria-label="View larger image of Rosie looking at the camera">
+                    <img src="https://parrotpartners.org/wp-content/uploads/2025/12/Rosie_2.jpg" 
+                         alt="Rosie looking directly at the camera with her intelligent eyes" 
+                         class="gallery-image"
+                         loading="lazy">
+                </a>
+                
+                <a href="https://parrotpartners.org/wp-content/uploads/2025/12/Rosie_3-scaled.jpg" 
+                   class="gallery-item"
+                   target="_blank"
+                   aria-label="View larger image of Rosie in her aviary">
+                    <img src="https://parrotpartners.org/wp-content/uploads/2025/12/Rosie_3-scaled.jpg" 
+                         alt="Rosie relaxing in her comfortable aviary home" 
+                         class="gallery-image"
+                         loading="lazy">
+                </a>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
