@@ -494,7 +494,7 @@
                     
                     const distanceKm = (shortestStraightDistance / 1000).toFixed(1);
                     resultDiv.className = 'result error';
-                    resultDiv.innerHTML = `<strong>Closest Detachment:</strong><br>${closestStraightLine}<br><small>Straight-line Distance: ${distanceKm} km</small><br><br><span style="color: #c62828; font-weight: bold;">⚠️ NO DIRECT ROAD ACCESS</span><br><small>There are no accessible roads connecting your location to any RCMP detachment.</small>`;
+                    resultDiv.innerHTML = `<strong>Closest Detachment:</strong><br>${closestStraightLine}<br><small>Straight-line Distance: ${distanceKm} km</small><br><br><span style="color: #c62828; font-weight: bold;">No directroad acess</span><br><small>There are no accessible roads connecting your location to any RCMP detachment.</small>`;
                     
                     mapDiv.classList.add('show');
                     
@@ -535,7 +535,7 @@
                     
                     L.marker([closestStraightLineData.lat, closestStraightLineData.lon], {icon: redIcon})
                         .addTo(map)
-                        .bindPopup(closestStraightLine + '<br><span style="color: #c62828;">⚠️ No road access</span>');
+                        .bindPopup(closestStraightLine + '<br><span style="color: #c62828;">No road access</span>');
                     
                     // Blue markers for other detachments
                     const blueIcon = L.icon({
