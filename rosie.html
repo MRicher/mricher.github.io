@@ -131,8 +131,73 @@
             gap: 0.5rem;
         }
 
-        .detail-badge::before {
+        .lightbox {
             display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .lightbox.active {
+            display: flex;
+        }
+
+        .lightbox-content {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 10px;
+            line-height: 1;
+        }
+
+        .lightbox-close:hover,
+        .lightbox-close:focus {
+            color: #ccc;
+        }
+
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            padding: 20px;
+            line-height: 1;
+        }
+
+        .lightbox-nav:hover,
+        .lightbox-nav:focus {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .lightbox-prev {
+            left: 20px;
+        }
+
+        .lightbox-next {
+            right: 20px;
         }
 
         .story-section {
@@ -225,6 +290,11 @@
             overflow: hidden;
             border: 3px solid #e8f5e8;
             cursor: pointer;
+            display: block;
+        }
+
+        .gallery-item:focus {
+            border-color: #2c5f2d;
         }
 
         .gallery-image {
@@ -348,7 +418,7 @@
         </article>
 
         <div class="sponsor-cta">
-            <h2>💚 Sponsor Rosie Today!</h2>
+            <h2>Sponsor Rosie Today!</h2>
             <p>Help provide Rosie with the care, stability, and love she deserves</p>
             <a href="https://give-can.keela.co/sponsor-rosie-alexandrine" 
                class="sponsor-btn"
@@ -360,47 +430,129 @@
         <section class="photo-gallery">
             <h2>Photos of Rosie</h2>
             <div class="gallery-grid">
-                <a href="https://parrotpartners.org/wp-content/uploads/2025/12/Rosie_1.jpg" 
-                   class="gallery-item"
-                   target="_blank"
-                   aria-label="View larger image of Rosie perched on a branch">
+                <button class="gallery-item" 
+                        data-image="https://parrotpartners.org/wp-content/uploads/2025/12/Rosie_1.jpg"
+                        aria-label="View larger image of Rosie perched on a branch">
                     <img src="https://parrotpartners.org/wp-content/uploads/2025/12/Rosie_1.jpg" 
                          alt="Rosie perched elegantly on a branch" 
                          class="gallery-image"
                          loading="lazy">
-                </a>
+                </button>
                 
-                <a href="https://parrotpartners.org/wp-content/uploads/2025/12/Rosie_2_sponsor.jpg" 
-                   class="gallery-item"
-                   target="_blank"
-                   aria-label="View larger image of Rosie showing her beautiful feathers">
+                <button class="gallery-item"
+                        data-image="https://parrotpartners.org/wp-content/uploads/2025/12/Rosie_2_sponsor.jpg"
+                        aria-label="View larger image of Rosie showing her beautiful feathers">
                     <img src="https://parrotpartners.org/wp-content/uploads/2025/12/Rosie_2_sponsor.jpg" 
                          alt="Rosie displaying her colorful plumage" 
                          class="gallery-image"
                          loading="lazy">
-                </a>
+                </button>
                 
-                <a href="https://parrotpartners.org/wp-content/uploads/2025/12/Rosie_2.jpg" 
-                   class="gallery-item"
-                   target="_blank"
-                   aria-label="View larger image of Rosie looking at the camera">
+                <button class="gallery-item"
+                        data-image="https://parrotpartners.org/wp-content/uploads/2025/12/Rosie_2.jpg"
+                        aria-label="View larger image of Rosie looking at the camera">
                     <img src="https://parrotpartners.org/wp-content/uploads/2025/12/Rosie_2.jpg" 
                          alt="Rosie looking directly at the camera with her intelligent eyes" 
                          class="gallery-image"
                          loading="lazy">
-                </a>
+                </button>
                 
-                <a href="https://parrotpartners.org/wp-content/uploads/2025/12/Rosie_3-scaled.jpg" 
-                   class="gallery-item"
-                   target="_blank"
-                   aria-label="View larger image of Rosie in her aviary">
+                <button class="gallery-item"
+                        data-image="https://parrotpartners.org/wp-content/uploads/2025/12/Rosie_3-scaled.jpg"
+                        aria-label="View larger image of Rosie in her aviary">
                     <img src="https://parrotpartners.org/wp-content/uploads/2025/12/Rosie_3-scaled.jpg" 
                          alt="Rosie relaxing in her comfortable aviary home" 
                          class="gallery-image"
                          loading="lazy">
-                </a>
+                </button>
             </div>
         </section>
+
+        <!-- Lightbox -->
+        <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer">
+            <button class="lightbox-close" id="lightbox-close" aria-label="Close image viewer">&times;</button>
+            <button class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="Previous image">&lt;</button>
+            <img class="lightbox-content" id="lightbox-img" alt="">
+            <button class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="Next image">&gt;</button>
+        </div>
     </main>
+
+    <footer role="contentinfo">
+        <p><strong>Parrot Partners Canada</strong></p>
+        <p>Registered Charity Number: 81068 8135 RR0001</p>
+        <p style="margin-top: 1rem;">Help support our wonderful flock today!</p>
+    </footer>
+
+    <script>
+        // Lightbox functionality
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const lightboxClose = document.getElementById('lightbox-close');
+        const lightboxPrev = document.getElementById('lightbox-prev');
+        const lightboxNext = document.getElementById('lightbox-next');
+        const galleryItems = document.querySelectorAll('.gallery-item');
+        
+        let currentIndex = 0;
+        const images = Array.from(galleryItems).map(item => ({
+            src: item.dataset.image,
+            alt: item.querySelector('img').alt
+        }));
+
+        function openLightbox(index) {
+            currentIndex = index;
+            lightboxImg.src = images[index].src;
+            lightboxImg.alt = images[index].alt;
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            lightboxClose.focus();
+        }
+
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+            galleryItems[currentIndex].focus();
+        }
+
+        function showPrevious() {
+            currentIndex = (currentIndex - 1 + images.length) % images.length;
+            lightboxImg.src = images[currentIndex].src;
+            lightboxImg.alt = images[currentIndex].alt;
+        }
+
+        function showNext() {
+            currentIndex = (currentIndex + 1) % images.length;
+            lightboxImg.src = images[currentIndex].src;
+            lightboxImg.alt = images[currentIndex].alt;
+        }
+
+        // Event listeners
+        galleryItems.forEach((item, index) => {
+            item.addEventListener('click', () => openLightbox(index));
+        });
+
+        lightboxClose.addEventListener('click', closeLightbox);
+        lightboxPrev.addEventListener('click', showPrevious);
+        lightboxNext.addEventListener('click', showNext);
+
+        // Click outside image to close
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (!lightbox.classList.contains('active')) return;
+            
+            if (e.key === 'Escape') {
+                closeLightbox();
+            } else if (e.key === 'ArrowLeft') {
+                showPrevious();
+            } else if (e.key === 'ArrowRight') {
+                showNext();
+            }
+        });
+    </script>
 </body>
 </html>
