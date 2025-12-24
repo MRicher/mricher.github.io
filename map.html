@@ -326,7 +326,7 @@
             return R * c;
         }
 
-async function calculateClosest(userLat, userLon, locationLabel) {
+        async function calculateClosest(userLat, userLon, locationLabel) {
             const resultDiv = document.getElementById('result');
             const mapDiv = document.getElementById('map');
 
@@ -340,20 +340,30 @@ async function calculateClosest(userLat, userLon, locationLabel) {
                 let routeGeometry = null;
 
                 for (const det of detachments) {
-                    const url = `https://router.project-osrm.org/route/v1/driving/${userLon},${userLat};${det.lon},${det.lat}?overview=full&geometries=geojson`;
-                    
-                    const response = await fetch(url);
-                    const data = await response.json();
-
-                    if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
-                        const distance = data.routes[0].distance;
+                    try {
+                        const url = `https://router.project-osrm.org/route/v1/driving/${userLon},${userLat};${det.lon},${det.lat}?overview=full&geometries=geojson`;
                         
-                        if (distance < shortestDistance) {
-                            shortestDistance = distance;
-                            closestDetachment = det.name;
-                            closestDetachmentData = det;
-                            routeGeometry = data.routes[0].geometry;
+                        const response = await fetch(url);
+                        const data = await response.json();
+
+                        // Only accept routes that are actually valid and connected
+                        if (data.code === 'Ok' && data.routes && data.routes.length > 0 && data.routes[0].distance > 0) {
+                            const distance = data.routes[0].distance;
+                            const route = data.routes[0];
+                            
+                            // Verify the route actually connects the points (check waypoints)
+                            if (route.legs && route.legs.length > 0) {
+                                if (distance < shortestDistance) {
+                                    shortestDistance = distance;
+                                    closestDetachment = det.name;
+                                    closestDetachmentData = det;
+                                    routeGeometry = data.routes[0].geometry;
+                                }
+                            }
                         }
+                    } catch (err) {
+                        console.log(`Could not route to ${det.name}:`, err);
+                        continue;
                     }
                 }
 
@@ -434,7 +444,7 @@ async function calculateClosest(userLat, userLon, locationLabel) {
                     
                 } else {
                     resultDiv.className = 'result error';
-                    resultDiv.innerHTML = '<strong>No direct road access</strong><br>There are no accessible roads connecting your location to any RCMP detachment. This may occur in remote areas or locations without road infrastructure.';
+                    resultDiv.innerHTML = '<strong>No Direct Road Access</strong><br>There are no accessible roads connecting your location to any RCMP detachment. This may occur in remote areas or locations without road infrastructure.';
                 }
             } catch (error) {
                 resultDiv.className = 'result error';
