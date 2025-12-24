@@ -341,23 +341,49 @@
 
                 for (const det of detachments) {
                     try {
-                        const url = `https://router.project-osrm.org/route/v1/driving/${userLon},${userLat};${det.lon},${det.lat}?overview=full&geometries=geojson`;
+                        const url = `https://router.project-osrm.org/route/v1/driving/${userLon},${userLat};${det.lon},${det.lat}?overview=full&geometries=geojson&steps=true`;
                         
                         const response = await fetch(url);
                         const data = await response.json();
 
-                        // Only accept routes that are actually valid and connected
-                        if (data.code === 'Ok' && data.routes && data.routes.length > 0 && data.routes[0].distance > 0) {
-                            const distance = data.routes[0].distance;
+                        // Check if route was successfully calculated
+                        if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
                             const route = data.routes[0];
                             
-                            // Verify the route actually connects the points (check waypoints)
-                            if (route.legs && route.legs.length > 0) {
-                                if (distance < shortestDistance) {
+                            // Get the actual starting and ending points of the route from waypoints
+                            if (data.waypoints && data.waypoints.length >= 2) {
+                                const startWaypoint = data.waypoints[0];
+                                const endWaypoint = data.waypoints[1];
+                                const startLat = startWaypoint.location[1];
+                                const startLon = startWaypoint.location[0];
+                                const endLat = endWaypoint.location[1];
+                                const endLon = endWaypoint.location[0];
+                                
+                                // Calculate distance between user location and route start point (in meters)
+                                const startSnapDist = Math.sqrt(
+                                    Math.pow((startLat - userLat) * 111000, 2) + 
+                                    Math.pow((startLon - userLon) * 111000 * Math.cos(userLat * Math.PI / 180), 2)
+                                );
+                                
+                                // Calculate distance between detachment and route end point (in meters)
+                                const endSnapDist = Math.sqrt(
+                                    Math.pow((endLat - det.lat) * 111000, 2) + 
+                                    Math.pow((endLon - det.lon) * 111000 * Math.cos(det.lat * Math.PI / 180), 2)
+                                );
+                                
+                                // If either endpoint is too far (>1km), there's no proper road connection
+                                if (startSnapDist > 1000 || endSnapDist > 1000) {
+                                    console.log(`${det.name}: Start snap: ${startSnapDist.toFixed(0)}m, End snap: ${endSnapDist.toFixed(0)}m - no direct road access`);
+                                    continue;
+                                }
+                                
+                                const distance = route.distance;
+                                
+                                if (distance > 0 && distance < shortestDistance) {
                                     shortestDistance = distance;
                                     closestDetachment = det.name;
                                     closestDetachmentData = det;
-                                    routeGeometry = data.routes[0].geometry;
+                                    routeGeometry = route.geometry;
                                 }
                             }
                         }
