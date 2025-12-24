@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sponsor A Parrot - Parrot Partners Canada</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Skip to main content link for screen readers */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: #2c5f2d;
+            color: white;
+            padding: 8px;
+            text-decoration: none;
+            z-index: 100;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #ffffff;
+        }
+
+        /* Focus visible for keyboard navigation */
+        *:focus-visible {
+            outline: 3px solid #2c5f2d;
+            outline-offset: 2px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c5f2d 0%, #5a8a3d 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .intro-section {
+            background: #f5f5f5;
+            padding: 3rem 2rem;
+            text-align: center;
+            border-bottom: 3px solid #5a8a3d;
+        }
+
+        .intro-section p {
+            font-size: 1.15rem;
+            max-width: 700px;
+            margin: 0 auto 1rem;
+            color: #1a1a1a;
+        }
+
+        main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            color: #1a1a1a;
+            margin-bottom: 3rem;
+            font-weight: 700;
+        }
+
+        .parrot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .parrot-card {
+            background: white;
+            border: 2px solid #d4d4d4;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            height: 550px;
+        }
+
+        .parrot-card:hover,
+        .parrot-card:focus-within {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            border-color: #2c5f2d;
+        }
+
+        .parrot-image-wrapper {
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+            background: #f0f0f0;
+        }
+
+        .parrot-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .parrot-content {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .parrot-name {
+            font-size: 1.75rem;
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .parrot-subtitle {
+            font-size: 1rem;
+            color: #333333;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+            flex-grow: 1;
+        }
+
+        /* WCAG AA compliant button - 4.5:1 contrast ratio */
+        .parrot-btn {
+            display: inline-block;
+            background: #2c5f2d;
+            color: white;
+            padding: 0.875rem 1.75rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            text-align: center;
+            transition: background 0.2s ease;
+            border: 2px solid transparent;
+            font-size: 1rem;
+        }
+
+        .parrot-btn:hover {
+            background: #1f4320;
+        }
+
+        .parrot-btn:focus {
+            background: #1f4320;
+            border-color: white;
+            outline: 3px solid #2c5f2d;
+            outline-offset: 2px;
+        }
+
+        .footer {
+            background: #1a1a1a;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        .footer p {
+            margin-bottom: 0.5rem;
+        }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            .parrot-card {
+                border-width: 3px;
+            }
+            
+            .parrot-btn {
+                border-width: 3px;
+            }
+        }
+
+        /* Reduced motion for users who prefer it */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+            
+            .parrot-card:hover,
+            .parrot-card:focus-within {
+                transform: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .parrot-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .parrot-card {
+                height: auto;
+                min-height: 500px;
+            }
+        }
+
+        /* Screen reader only content */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip to main content for keyboard users -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <header role="banner">
+        <div class="header">
+            <h1>Sponsor A Parrot!</h1>
+            <p>Each of our birds has a story. Help support one of our wonderful parrots and become part of their journey.</p>
+        </div>
+    </header>
+
+    <div class="intro-section" role="contentinfo">
+        <p>If you would like to help one of our wonderful parrots, you've come to the right place!</p>
+        <p>We look forward to hearing from you and introducing you to our wonderful flock!</p>
+        <p><strong>Read the stories of our birds below.</strong></p>
+    </div>
+
+    <main id="main-content" role="main">
+        <h2 class="section-title">Meet Our Parrots Available for Sponsorship</h2>
+        
+        <div class="parrot-grid" role="list">
+            <article class="parrot-card" role="listitem">
+                <div class="parrot-image-wrapper">
+                    <img src="https://parrotpartners.org/wp-content/uploads/2025/12/Rosie_1.jpg" 
+                         alt="Rosie, a colorful parrot looking at the camera" 
+                         class="parrot-image"
+                         loading="lazy">
+                </div>
+                <div class="parrot-content">
+                    <h3 class="parrot-name">Rosie</h3>
+                    <p class="parrot-subtitle">Resident diva of the Safari Aviary. Speaking for myself, thank you.</p>
+                    <a href="https://parrotpartners.org/get-involved/parrot-biographies/rosies-story/" 
+                       class="parrot-btn"
+                       aria-label="Read Rosie's full story">
+                        Read Rosie's Story
+                    </a>
+                </div>
+            </article>
+
+            <article class="parrot-card" role="listitem">
+                <div class="parrot-image-wrapper">
+                    <img src="https://parrotpartners.org/wp-content/uploads/2025/12/Paulie_s550.jpeg" 
+                         alt="Paulie, a large macaw with blue and gold feathers" 
+                         class="parrot-image"
+                         loading="lazy">
+                </div>
+                <div class="parrot-content">
+                    <h3 class="parrot-name">Paulie</h3>
+                    <p class="parrot-subtitle">Gentleman Giant of the Main Boarding Aviary. I'll tell my own story.</p>
+                    <a href="https://parrotpartners.org/get-involved/parrot-biographies/paulies-story/" 
+                       class="parrot-btn"
+                       aria-label="Read Paulie's full story">
+                        Read Paulie's Story
+                    </a>
+                </div>
+            </article>
+
+            <article class="parrot-card" role="listitem">
+                <div class="parrot-image-wrapper">
+                    <img src="https://parrotpartners.org/wp-content/uploads/2025/12/Jessie_BGM3-scaled.jpg" 
+                         alt="Jesse, a blue and gold macaw perched on a branch" 
+                         class="parrot-image"
+                         loading="lazy">
+                </div>
+                <div class="parrot-content">
+                    <h3 class="parrot-name">Jesse</h3>
+                    <p class="parrot-subtitle">The blue and gold macaw who chooses carefully.</p>
+                    <a href="https://parrotpartners.org/get-involved/parrot-biographies/jessies-story/" 
+                       class="parrot-btn"
+                       aria-label="Read Jesse's full story">
+                        Read Jesse's Story
+                    </a>
+                </div>
+            </article>
+
+            <article class="parrot-card" role="listitem">
+                <div class="parrot-image-wrapper">
+                    <img src="https://parrotpartners.org/wp-content/uploads/2025/12/Munchkin_s550_sponsor_1.jpg" 
+                         alt="Munchkin, a gentle-looking parrot" 
+                         class="parrot-image"
+                         loading="lazy">
+                </div>
+                <div class="parrot-content">
+                    <h3 class="parrot-name">Munchkin</h3>
+                    <p class="parrot-subtitle">Quiet heart of the Safari Aviary.</p>
+                    <a href="https://parrotpartners.org/get-involved/parrot-biographies/munchkins-story/" 
+                       class="parrot-btn"
+                       aria-label="Read Munchkin's full story">
+                        Read Munchkin's Story
+                    </a>
+                </div>
+            </article>
+
+            <article class="parrot-card" role="listitem">
+                <div class="parrot-image-wrapper">
+                    <img src="https://parrotpartners.org/wp-content/uploads/2025/12/Nikki_2.jpg" 
+                         alt="Nikki, a white Moluccan cockatoo with pink crest" 
+                         class="parrot-image"
+                         loading="lazy">
+                </div>
+                <div class="parrot-content">
+                    <h3 class="parrot-name">Nikki</h3>
+                    <p class="parrot-subtitle">The Moluccan cockatoo who refuses to be ignored.</p>
+                    <a href="https://parrotpartners.org/get-involved/sponsor-parrot/nikkis-story/" 
+                       class="parrot-btn"
+                       aria-label="Read Nikki's full story">
+                        Read Nikki's Story
+                    </a>
+                </div>
+            </article>
+
+            <article class="parrot-card" role="listitem">
+                <div class="parrot-image-wrapper">
+                    <img src="https://parrotpartners.org/wp-content/uploads/2025/12/Harley_1-scaled.jpg" 
+                         alt="Harley, a friendly-looking parrot" 
+                         class="parrot-image"
+                         loading="lazy">
+                </div>
+                <div class="parrot-content">
+                    <h3 class="parrot-name">Harley</h3>
+                    <p class="parrot-subtitle">Gentleman Greeter of the Safari Aviary.</p>
+                    <a href="https://parrotpartners.org/get-involved/parrot-biographies/harleys-story/" 
+                       class="parrot-btn"
+                       aria-label="Read Harley's full story">
+                        Read Harley's Story
+                    </a>
+                </div>
+            </article>
+
+            <article class="parrot-card" role="listitem">
+                <div class="parrot-image-wrapper">
+                    <img src="https://parrotpartners.org/wp-content/uploads/2025/12/Rio_1.jpg" 
+                         alt="Rio, a red-bellied parrot observing surroundings" 
+                         class="parrot-image"
+                         loading="lazy">
+                </div>
+                <div class="parrot-content">
+                    <h3 class="parrot-name">Rio</h3>
+                    <p class="parrot-subtitle">The red-bellied observer with a mind of her own.</p>
+                    <a href="https://parrotpartners.org/get-involved/parrot-biographies/rios-story/" 
+                       class="parrot-btn"
+                       aria-label="Read Rio's full story">
+                        Read Rio's Story
+                    </a>
+                </div>
+            </article>
+
+            <article class="parrot-card" role="listitem">
+                <div class="parrot-image-wrapper">
+                    <img src="https://parrotpartners.org/wp-content/uploads/2025/12/Archie3.jpg" 
+                         alt="Archie, a blue-headed amazon parrot" 
+                         class="parrot-image"
+                         loading="lazy">
+                </div>
+                <div class="parrot-content">
+                    <h3 class="parrot-name">Archie</h3>
+                    <p class="parrot-subtitle">The blue-headed amazon who believes in clear communication.</p>
+                    <a href="https://parrotpartners.org/get-involved/parrot-biographies/archies-story/" 
+                       class="parrot-btn"
+                       aria-label="Read Archie's full story">
+                        Read Archie's Story
+                    </a>
+                </div>
+            </article>
+
+            <article class="parrot-card" role="listitem">
+                <div class="parrot-image-wrapper">
+                    <img src="https://parrotpartners.org/wp-content/uploads/2025/12/boady-1-scaled.jpg" 
+                         alt="Boady, a blue and gold macaw" 
+                         class="parrot-image"
+                         loading="lazy">
+                </div>
+                <div class="parrot-content">
+                    <h3 class="parrot-name">Boady</h3>
+                    <p class="parrot-subtitle">The blue and gold macaw who chose a different life.</p>
+                    <a href="https://parrotpartners.org/get-involved/parrot-biographies/boadys-story/" 
+                       class="parrot-btn"
+                       aria-label="Read Boady's full story">
+                        Read Boady's Story
+                    </a>
+                </div>
+            </article>
+
+            <article class="parrot-card" role="listitem">
+                <div class="parrot-image-wrapper">
+                    <img src="https://parrotpartners.org/wp-content/uploads/2025/12/Kali_2-scaled.jpg" 
+                         alt="Kali, a black-headed caique parrot" 
+                         class="parrot-image"
+                         loading="lazy">
+                </div>
+                <div class="parrot-content">
+                    <h3 class="parrot-name">Kali</h3>
+                    <p class="parrot-subtitle">The black-headed caique who was built for battle and affection.</p>
+                    <a href="https://parrotpartners.org/get-involved/parrot-biographies/kalis-story/" 
+                       class="parrot-btn"
+                       aria-label="Read Kali's full story">
+                        Read Kali's Story
+                    </a>
+                </div>
+            </article>
+
+            <article class="parrot-card" role="listitem">
+                <div class="parrot-image-wrapper">
+                    <img src="https://parrotpartners.org/wp-content/uploads/2025/12/Madmax_1-scaled.jpg" 
+                         alt="Mad Max, a black-headed caique parrot" 
+                         class="parrot-image"
+                         loading="lazy">
+                </div>
+                <div class="parrot-content">
+                    <h3 class="parrot-name">Mad Max</h3>
+                    <p class="parrot-subtitle">The Bad Boy from Brazil - Black-headed caique who rewrote his own story.</p>
+                    <a href="https://parrotpartners.org/get-involved/parrot-biographies/mad-maxs-story/" 
+                       class="parrot-btn"
+                       aria-label="Read Mad Max's full story">
+                        Read Mad Max's Story
+                    </a>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <footer role="contentinfo" class="footer">
+        <p><strong>Parrot Partners Canada</strong></p>
+        <p>Registered Charity Number: 81068 8135 RR0001</p>
+        <p style="margin-top: 1rem;">Help support our wonderful flock today!</p>
+    </footer>
+</body>
+</html>
