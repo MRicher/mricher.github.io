@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paulie's Story - Parrot Partners Canada</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: #2c5f2d;
+            color: white;
+            padding: 8px;
+            text-decoration: none;
+            z-index: 100;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #ffffff;
+        }
+
+        *:focus-visible {
+            outline: 3px solid #2c5f2d;
+            outline-offset: 2px;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #2c5f2d 0%, #5a8a3d 100%);
+            color: white;
+            padding: 2rem 2rem 4rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .breadcrumb {
+            display: none;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .profile-header {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3rem;
+            align-items: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(to right, #f0f8f0, #ffffff);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 3px solid #e8f5e8;
+        }
+
+        .profile-image-container {
+            flex-shrink: 0;
+        }
+
+        .profile-image-wrapper {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 5px solid #2c5f2d;
+            box-shadow: 0 8px 24px rgba(44, 95, 45, 0.3);
+            position: relative;
+        }
+
+        .profile-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-info {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .profile-title {
+            font-size: 3rem;
+            color: #2c5f2d;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+        }
+
+        .profile-subtitle {
+            font-size: 1.3rem;
+            color: #5a8a3d;
+            margin-bottom: 1rem;
+            font-style: italic;
+        }
+
+        .profile-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .detail-badge {
+            background: white;
+            border: 2px solid #2c5f2d;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            color: #2c5f2d;
+        }
+
+        .story-section {
+            background: white;
+            padding: 3rem;
+            border-radius: 16px;
+            margin-bottom: 3rem;
+            border: 3px solid #e8f5e8;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        }
+
+        .story-section h2 {
+            font-size: 2rem;
+            color: #2c5f2d;
+            margin-bottom: 1.5rem;
+        }
+
+        .story-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #333;
+        }
+
+        .story-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        .story-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .sponsor-cta {
+            background: linear-gradient(135deg, #2c5f2d 0%, #5a8a3d 100%);
+            color: white;
+            padding: 3rem;
+            border-radius: 16px;
+            text-align: center;
+            margin: 3rem 0;
+            box-shadow: 0 8px 24px rgba(44, 95, 45, 0.3);
+        }
+
+        .sponsor-cta h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .sponsor-cta p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        .sponsor-btn {
+            display: inline-block;
+            background: white;
+            color: #2c5f2d;
+            padding: 1rem 3rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.2rem;
+            border: 3px solid white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .sponsor-btn:focus {
+            outline: 3px solid white;
+            outline-offset: 3px;
+        }
+
+        .photo-gallery {
+            margin-top: 3rem;
+        }
+
+        .photo-gallery h2 {
+            font-size: 2rem;
+            color: #2c5f2d;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .gallery-item {
+            border-radius: 12px;
+            overflow: hidden;
+            border: 3px solid #e8f5e8;
+            cursor: pointer;
+            display: block;
+            background: none;
+            padding: 0;
+            width: 100%;
+        }
+
+        .gallery-item:focus {
+            border-color: #2c5f2d;
+        }
+
+        .gallery-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .back-link {
+            display: none;
+        }
+
+        .lightbox {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .lightbox.active {
+            display: flex;
+        }
+
+        .lightbox-content {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 10px;
+            line-height: 1;
+        }
+
+        .lightbox-close:hover,
+        .lightbox-close:focus {
+            color: #ccc;
+        }
+
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            padding: 20px;
+            line-height: 1;
+        }
+
+        .lightbox-nav:hover,
+        .lightbox-nav:focus {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .lightbox-prev {
+            left: 20px;
+        }
+
+        .lightbox-next {
+            right: 20px;
+        }
+
+        footer {
+            background: #1a1a1a;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        footer p {
+            margin-bottom: 0.5rem;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .profile-title {
+                font-size: 2.5rem;
+            }
+
+            .story-section {
+                padding: 1.5rem;
+            }
+
+            .sponsor-cta {
+                padding: 2rem 1.5rem;
+            }
+
+            .profile-details {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <header role="banner">
+        <div class="hero">
+            <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem;">Meet Paulie!</h1>
+            <p style="font-size: 1.2rem; opacity: 0.95;">Gentleman Giant of the Main Boarding Aviary</p>
+        </div>
+    </header>
+
+    <main id="main-content" role="main">
+        <div class="profile-header">
+            <div class="profile-image-container">
+                <div class="profile-image-wrapper">
+                    <img src="https://parrotpartners.org/wp-content/uploads/2025/12/Paulie_s550.jpeg" 
+                         alt="Paulie, a magnificent Greenwing Macaw with red and green feathers" 
+                         class="profile-image">
+                </div>
+            </div>
+            
+            <div class="profile-info">
+                <h2 class="profile-title">Paulie</h2>
+                <p class="profile-subtitle">"I'll tell my own story"</p>
+                
+                <div class="profile-details">
+                    <span class="detail-badge">Greenwing Macaw</span>
+                    <span class="detail-badge">Born 1995</span>
+                    <span class="detail-badge">Male</span>
+                    <span class="detail-badge">Extra Large</span>
+                </div>
+            </div>
+        </div>
+
+        <article class="story-section">
+            <h2>About Paulie</h2>
+            <div class="story-content">
+                <p>Hello. Paulie here. Green-wing Macaw. Extra-large. Extra-observant. Hatched in 1995, and carrying the full weight of a life lived in chapters.</p>
+
+                <p>Before Parrot Partners, I spent many years as the mascot in a cabinet-making shop in Toronto. The humans there adored me. They genuinely believed that keeping me in the office protected me from the sawdust, varnish fumes, and industrial haze drifting through the building. Their intentions were kind. The air was not.</p>
+
+                <p>Macaw lungs and air sacs are sensitive, far more than most people realize. Years of exposure left me with a form of COPD, the chronic kind that shapes how I breathe every day now. When your lungs work harder than they're built for, your whole body feels it.</p>
+
+                <p>My feather plucking began during those years. It wasn't "behavioural" in the way people often assume. It was discomfort. When you can't breathe cleanly, when your air sacs burn or feel tight, a bird tries to self-soothe. For me, that meant over-preening until my feathers thinned. Even now, when my respiratory system flares, I feel that urge return.</p>
+
+                <p>This is why I'm a permanent resident. I don't just need affection. I need specialized care, stable humidity, clean air, careful veterinary oversight, and people who understand what respiratory discomfort looks like in a bird built on air itself.</p>
+
+                <p>Since arriving in 2019, I've been given all of that. My breathing is monitored, my environment kept safe, and my enrichment tailored so my mind stays busy and my body stays calm. And when I do pluck, the staff know it's not "misbehaviour" but a message.</p>
+
+                <p>Macaws like me don't give trust lightly. When I look at someone and soften, when I offer that low macaw purr, it's deliberate. I choose my people.</p>
+
+                <p>Your sponsorship supports my respiratory care, my ongoing medical needs, the enrichment that helps regulate my body and mind, and the dignified, predictable life a bird like me needs to age well.</p>
+
+                <p>If you choose me, I'll acknowledge you. Maybe it's a slow blink. Maybe a small feather ruffle in your direction. I'm not theatrical. I'm sincere.</p>
+
+                <p><strong>I'm Paulie. My lungs carry a hard history, but my life now is steady, respected, and safe. Your support keeps it that way.</strong></p>
+            </div>
+        </article>
+
+        <div class="sponsor-cta">
+            <h2>Sponsor Paulie Today!</h2>
+            <p>Help provide Paulie with the specialized care and stability he deserves</p>
+            <a href="https://give-can.keela.co/sponsor-paulie-green-wing-macaw" 
+               class="sponsor-btn"
+               aria-label="Become Paulie's sponsor today">
+                Become a Sponsor Now
+            </a>
+        </div>
+
+        <section class="photo-gallery">
+            <h2>Photos of Paulie</h2>
+            <div class="gallery-grid">
+                <button class="gallery-item" 
+                        data-image="https://parrotpartners.org/wp-content/uploads/2025/12/Paulie_3_sponsor_s550.jpg"
+                        aria-label="View larger image of Paulie showing his beautiful plumage">
+                    <img src="https://parrotpartners.org/wp-content/uploads/2025/12/Paulie_3_sponsor_s550.jpg" 
+                         alt="Paulie displaying his magnificent red and green feathers" 
+                         class="gallery-image"
+                         loading="lazy">
+                </button>
+                
+                <button class="gallery-item"
+                        data-image="https://parrotpartners.org/wp-content/uploads/2025/12/Paulie_4.jpg"
+                        aria-label="View larger image of Paulie looking majestic">
+                    <img src="https://parrotpartners.org/wp-content/uploads/2025/12/Paulie_4.jpg" 
+                         alt="Paulie looking regal and observant" 
+                         class="gallery-image"
+                         loading="lazy">
+                </button>
+                
+                <button class="gallery-item"
+                        data-image="https://parrotpartners.org/wp-content/uploads/2025/12/Paulie20190927_1-scaled.jpg"
+                        aria-label="View larger image of Paulie perched">
+                    <img src="https://parrotpartners.org/wp-content/uploads/2025/12/Paulie20190927_1-scaled.jpg" 
+                         alt="Paulie perched comfortably in his aviary" 
+                         class="gallery-image"
+                         loading="lazy">
+                </button>
+                
+                <button class="gallery-item"
+                        data-image="https://parrotpartners.org/wp-content/uploads/2025/12/Paulie_2_sponsor_s550.jpg"
+                        aria-label="View larger image of Paulie up close">
+                    <img src="https://parrotpartners.org/wp-content/uploads/2025/12/Paulie_2_sponsor_s550.jpg" 
+                         alt="Close-up portrait of Paulie showing his expressive eyes" 
+                         class="gallery-image"
+                         loading="lazy">
+                </button>
+                
+                <button class="gallery-item"
+                        data-image="https://parrotpartners.org/wp-content/uploads/2025/12/Paulie_1_sponsor_s550.jpg"
+                        aria-label="View larger image of Paulie in his home">
+                    <img src="https://parrotpartners.org/wp-content/uploads/2025/12/Paulie_1_sponsor_s550.jpg" 
+                         alt="Paulie relaxing in his comfortable aviary environment" 
+                         class="gallery-image"
+                         loading="lazy">
+                </button>
+            </div>
+        </section>
+
+        <!-- Lightbox -->
+        <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer">
+            <button class="lightbox-close" id="lightbox-close" aria-label="Close image viewer">&times;</button>
+            <button class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="Previous image">&lt;</button>
+            <img class="lightbox-content" id="lightbox-img" alt="">
+            <button class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="Next image">&gt;</button>
+        </div>
+    </main>
+
+    <script>
+        // Lightbox functionality
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const lightboxClose = document.getElementById('lightbox-close');
+        const lightboxPrev = document.getElementById('lightbox-prev');
+        const lightboxNext = document.getElementById('lightbox-next');
+        const galleryItems = document.querySelectorAll('.gallery-item');
+        
+        let currentIndex = 0;
+        const images = Array.from(galleryItems).map(item => ({
+            src: item.dataset.image,
+            alt: item.querySelector('img').alt
+        }));
+
+        function openLightbox(index) {
+            currentIndex = index;
+            lightboxImg.src = images[index].src;
+            lightboxImg.alt = images[index].alt;
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            lightboxClose.focus();
+        }
+
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+            galleryItems[currentIndex].focus();
+        }
+
+        function showPrevious() {
+            currentIndex = (currentIndex - 1 + images.length) % images.length;
+            lightboxImg.src = images[currentIndex].src;
+            lightboxImg.alt = images[currentIndex].alt;
+        }
+
+        function showNext() {
+            currentIndex = (currentIndex + 1) % images.length;
+            lightboxImg.src = images[currentIndex].src;
+            lightboxImg.alt = images[currentIndex].alt;
+        }
+
+        // Event listeners
+        galleryItems.forEach((item, index) => {
+            item.addEventListener('click', () => openLightbox(index));
+        });
+
+        lightboxClose.addEventListener('click', closeLightbox);
+        lightboxPrev.addEventListener('click', showPrevious);
+        lightboxNext.addEventListener('click', showNext);
+
+        // Click outside image to close
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (!lightbox.classList.contains('active')) return;
+            
+            if (e.key === 'Escape') {
+                closeLightbox();
+            } else if (e.key === 'ArrowLeft') {
+                showPrevious();
+            } else if (e.key === 'ArrowRight') {
+                showNext();
+            }
+        });
+    </script>
+</body>
+</html>
