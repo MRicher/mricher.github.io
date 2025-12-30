@@ -148,22 +148,12 @@
         </button>
         
         <div class="divider">OR</div>
-        
-        <label for="addressInput">Enter an address:</label>
-        <input type="text" id="addressInput" placeholder="e.g., 100 Main Street, Whitehorse" />
-        
-        <label for="addressInput">Enter an address</label>
-        <input 
-            type="text" 
-            id="addressInput" 
-            placeholder="Example: 100 Main Street, Whitehorse"
-            aria-describedby="address-hint"
-            aria-autocomplete="list"
-            aria-controls="suggestions"
-            aria-expanded="false"
-        />
-        <div id="address-hint" class="hint-text">
-            Enter a Canadian address to find the nearest detachment
+
+        <div class="input-group">
+            <label for="addressInput">Enter an address:</label>
+            <input type="text" id="addressInput" />
+            <div id="suggestions" class="suggestions"></div>
+            <button onclick="findByAddress()">Find from Address</button>
         </div>
         
         <div id="result"></div>
