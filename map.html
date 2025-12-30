@@ -142,16 +142,28 @@
 </head>
 <body>
     <div class="container">
-        <h1>Find Closest RCMP Detachment</h1>
-        <button id="findBtn" onclick="findClosest()">Use My Current Location</button>
+        <h1>Find your nearest RCMP detachment</h1>
+        <button id="findBtn" onclick="findClosest()" aria-label="Find closest RCMP detachment using your current location">
+            Use my current location
+        </button>
         
         <div class="divider">OR</div>
         
-        <div class="input-group">
-            <label for="addressInput">Enter an address:</label>
-            <input type="text" id="addressInput" placeholder="e.g., 100 Main Street, Whitehorse" />
-            <div id="suggestions" class="suggestions"></div>
-            <button onclick="findByAddress()">Find from Address</button>
+        <label for="addressInput">Enter an address:</label>
+        <input type="text" id="addressInput" placeholder="e.g., 100 Main Street, Whitehorse" />
+        
+        <label for="addressInput">Enter an address</label>
+        <input 
+            type="text" 
+            id="addressInput" 
+            placeholder="Example: 100 Main Street, Whitehorse"
+            aria-describedby="address-hint"
+            aria-autocomplete="list"
+            aria-controls="suggestions"
+            aria-expanded="false"
+        />
+        <div id="address-hint" class="hint-text">
+            Enter a Canadian address to find the nearest detachment
         </div>
         
         <div id="result"></div>
@@ -721,7 +733,7 @@
                 await calculateClosest(coords.lat, coords.lon, coords.display_name);
             } catch (error) {
                 resultDiv.className = 'result error';
-                resultDiv.textContent = 'Error looking up address: ' + error.message;
+                resultDiv.textContent = 'We could not access your location. Please enter an address instead.';
             }
         }
 
