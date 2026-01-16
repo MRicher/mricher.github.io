@@ -310,7 +310,7 @@ function handleRemoveAlert() {
 }
 
 function generateAlertSHTMFile(alertType, alertEnContent, alertFrContent) {
-  const shtmlContent = `<!--#if expr="$` + `{pg-lang1} = 'eng'" -->
+  const shtmlContent = `<!--#if expr="$` + `{pg-lang1}='eng'" -->
 <div class="alert alert-${alertType}" role="alert">
 ${alertEnContent}
 </div>
@@ -320,7 +320,7 @@ ${alertFrContent}
 </div>
 <!--#endif -->`;
 
-  const blob = new Blob([shtmlContent], { type: "text/html" });
+  const blob = new Blob([shtmlContent], { type: "text/html;charset=utf-8" });
   const url = window.URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
@@ -328,8 +328,10 @@ ${alertFrContent}
   document.body.appendChild(a);
   a.click();
 
-  window.URL.revokeObjectURL(url);
-  document.body.removeChild(a);
+  setTimeout(() => {
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+  }, 100);
 }
 
 function setupEventListeners() {
