@@ -303,15 +303,15 @@ function handleRemoveAlert() {
 }
 
 function generateAlertSHTMFile(alertType, alertEnContent, alertFrContent) {
-  const shtmlContent = `<!--#if expr="\${pg-lang1} = 'eng'"-->
-		<div class="alert alert-${alertType}" role="alert">
-			${alertEnContent}
-		</div>
-		<!--#else -->
-		<div class="alert alert-${alertType}" role="alert">
-			${alertFrContent}
-		</div>
-		<!--#endif -->`;
+  const shtmlContent = `<!--#if expr="\${pg-lang1} = 'eng'" -->
+<div class="alert alert-${alertType}" role="alert">
+${alertEnContent}
+</div>
+<!--#else -->
+<div class="alert alert-${alertType}" role="alert">
+${alertFrContent}
+</div>
+<!--#endif -->`;
 
   const blob = new Blob([shtmlContent], { type: "text/html" });
   const url = window.URL.createObjectURL(blob);
