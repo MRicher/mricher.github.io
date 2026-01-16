@@ -269,8 +269,12 @@ function handleAlertFormSubmit(e) {
   e.preventDefault();
 
   const alertType = document.getElementById("alert-type").value;
-  const alertEnContent = document.getElementById("alert-en").value.trim();
-  const alertFrContent = document.getElementById("alert-fr").value.trim();
+  
+  const alertEnEditor = quillInstances["alert-en"];
+  const alertFrEditor = quillInstances["alert-fr"];
+  
+  const alertEnContent = alertEnEditor ? sanitizeContent(alertEnEditor.root.innerHTML.trim()) : "";
+  const alertFrContent = alertFrEditor ? sanitizeContent(alertFrEditor.root.innerHTML.trim()) : "";
 
   if (!alertType) {
     showAlert(getLocalizedText("Please select an alert type.", "Veuillez sélectionner un type d'alerte."), "danger");
@@ -282,7 +286,10 @@ function handleAlertFormSubmit(e) {
     return;
   }
 
-  generateAlertSHTMFile(alertType, alertEnContent, alertFrContent);
+  const fullEnContent = alertEnContent ? `<h3>Note</h3>${alertEnContent}` : "";
+  const fullFrContent = alertFrContent ? `<h3>Remarque</h3>${alertFrContent}` : "";
+
+  generateAlertSHTMFile(alertType, fullEnContent, fullFrContent);
   showAlert(getLocalizedText("Alert SHTM file generated successfully.", "Fichier SHTM d'alerte généré avec succès."), "success");
 }
 
