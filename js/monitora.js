@@ -303,7 +303,7 @@ function handleRemoveAlert() {
 }
 
 function generateAlertSHTMFile(alertType, alertEnContent, alertFrContent) {
-  const shtmlContent = `<!--#if expr="\${pg-lang1} = 'eng'" -->
+  const shtmlContent = `<!--#if expr="$` + `{pg-lang1} = 'eng'" -->
 <div class="alert alert-${alertType}" role="alert">
 ${alertEnContent}
 </div>
