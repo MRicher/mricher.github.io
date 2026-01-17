@@ -666,8 +666,9 @@ function handleFormSubmit(e) {
     generateSHTMFile(entry);
   });
 
+  const totalFiles = formData.length * 2;
   showAlert(
-    getLocalizedText(`Successfully generated ${formData.length} SHTM file(s).`, `${formData.length} fichier(s) SHTM généré(s) avec succès.`),
+    getLocalizedText(`Successfully generated ${totalFiles} SHTM file(s).`, `${totalFiles} fichier(s) SHTM généré(s) avec succès.`),
     "success"
   );
 }
@@ -774,7 +775,7 @@ function collectFormData() {
 
 function generateSHTMFile(entry) {
   const timestamp = new Date().toISOString();
-  const filename = entry.application === "outlook" ? "outlook.shtm" : "m365.shtm";
+  const filenameBase = entry.application === "outlook" ? "outlook" : "m365";
 
   const appDisplayNames = {
     outlook: {
@@ -818,32 +819,44 @@ function generateSHTMFile(entry) {
   const appNameFr = appDisplayNames[entry.application].fr;
   const statusInfo = statusConfig[entry.status];
 
-  let shtmlContent;
-
   const messageEnHTML = entry.messageEn ? entry.messageEn : "";
   const messageFrHTML = entry.messageFr ? entry.messageFr : "";
 
-  shtmlContent = `<!--#if expr="\${pg-lang1} = 'eng'"-->
-        <p class="mb-0"><span class="sr-only">Status: </span><strong>${statusInfo.en}</strong></p>
-        ${messageEnHTML}
-        </div>
-        <i class="fas ${statusInfo.icon} fa-lg ${statusInfo.color} m-3" aria-label="${statusInfo.ariaLabelEn}" role="img"></i>
-        <!--#else -->
-        <p class="mb-0"><span class="sr-only">État&#160;:&#160;</span><strong>${statusInfo.fr}</strong></p>
-        ${messageFrHTML}
-        </div>
-        <i class="fas ${statusInfo.icon} fa-lg ${statusInfo.color} m-3" aria-label="${statusInfo.ariaLabelFr}" role="img"></i>
-        <!--#endif -->`;
-  const blob = new Blob([shtmlContent], { type: "text/html" });
-  const url = window.URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
+  const shtmlEnContent = `<p class="mb-0"><span class="sr-only">Status: </span><strong>${statusInfo.en}</strong></p>
+${messageEnHTML}
+</div>
+<i class="fas ${statusInfo.icon} fa-lg ${statusInfo.color} m-3" aria-label="${statusInfo.ariaLabelEn}" role="img"></i>`;
 
-  window.URL.revokeObjectURL(url);
-  document.body.removeChild(a);
+  const blobEn = new Blob([shtmlEnContent], { type: "text/html;charset=utf-8" });
+  const urlEn = window.URL.createObjectURL(blobEn);
+  const aEn = document.createElement("a");
+  aEn.href = urlEn;
+  aEn.download = `${filenameBase}-en.shtm`;
+  document.body.appendChild(aEn);
+  aEn.click();
+
+  setTimeout(() => {
+    window.URL.revokeObjectURL(urlEn);
+    document.body.removeChild(aEn);
+  }, 100);
+
+  const shtmlFrContent = `<p class="mb-0"><span class="sr-only">État&#160;:&#160;</span><strong>${statusInfo.fr}</strong></p>
+${messageFrHTML}
+</div>
+<i class="fas ${statusInfo.icon} fa-lg ${statusInfo.color} m-3" aria-label="${statusInfo.ariaLabelFr}" role="img"></i>`;
+
+  const blobFr = new Blob([shtmlFrContent], { type: "text/html;charset=utf-8" });
+  const urlFr = window.URL.createObjectURL(blobFr);
+  const aFr = document.createElement("a");
+  aFr.href = urlFr;
+  aFr.download = `${filenameBase}-fr.shtm`;
+  document.body.appendChild(aFr);
+  aFr.click();
+
+  setTimeout(() => {
+    window.URL.revokeObjectURL(urlFr);
+    document.body.removeChild(aFr);
+  }, 150);
 }
 
 function showAlert(message, type) {
