@@ -289,49 +289,82 @@ function handleAlertFormSubmit(e) {
   const fullEnContent = alertEnContent ? `<h3>Note</h3>${alertEnContent}` : "";
   const fullFrContent = alertFrContent ? `<h3>Remarque</h3>${alertFrContent}` : "";
 
-  generateAlertSHTMFile(alertType, fullEnContent, fullFrContent);
-  showAlert(getLocalizedText("Alert SHTM file generated successfully.", "Fichier SHTM d'alerte généré avec succès."), "success");
+  generateAlertSHTMFiles(alertType, fullEnContent, fullFrContent);
+  showAlert(getLocalizedText("Alert SHTM files generated successfully.", "Fichiers SHTM d'alerte générés avec succès."), "success");
 }
 
 function handleRemoveAlert() {
   const emptyContent = "";
-  const blob = new Blob([emptyContent], { type: "text/html" });
-  const url = window.URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "alert.shtm";
-  document.body.appendChild(a);
-  a.click();
-
-  window.URL.revokeObjectURL(url);
-  document.body.removeChild(a);
-
-  showAlert(getLocalizedText("Empty alert SHTM file generated successfully.", "Fichier SHTM d'alerte vide généré avec succès."), "success");
-}
-
-function generateAlertSHTMFile(alertType, alertEnContent, alertFrContent) {
-  const shtmlContent = `<!--#if expr="$` + `{pg-lang1}='eng'" -->
-<div class="alert alert-${alertType}" role="alert">
-${alertEnContent}
-</div>
-<!--#else -->
-<div class="alert alert-${alertType}" role="alert">
-${alertFrContent}
-</div>
-<!--#endif -->`;
-
-  const blob = new Blob([shtmlContent], { type: "text/html;charset=utf-8" });
-  const url = window.URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "alert.shtm";
-  document.body.appendChild(a);
-  a.click();
+  
+  const blobEn = new Blob([emptyContent], { type: "text/html;charset=utf-8" });
+  const urlEn = window.URL.createObjectURL(blobEn);
+  const aEn = document.createElement("a");
+  aEn.href = urlEn;
+  aEn.download = "alert-en.shtm";
+  document.body.appendChild(aEn);
+  aEn.click();
 
   setTimeout(() => {
-    window.URL.revokeObjectURL(url);
-    document.body.removeChild(a);
+    window.URL.revokeObjectURL(urlEn);
+    document.body.removeChild(aEn);
   }, 100);
+
+  const blobFr = new Blob([emptyContent], { type: "text/html;charset=utf-8" });
+  const urlFr = window.URL.createObjectURL(blobFr);
+  const aFr = document.createElement("a");
+  aFr.href = urlFr;
+  aFr.download = "alert-fr.shtm";
+  document.body.appendChild(aFr);
+  aFr.click();
+
+  setTimeout(() => {
+    window.URL.revokeObjectURL(urlFr);
+    document.body.removeChild(aFr);
+  }, 150);
+
+  showAlert(getLocalizedText("Empty alert SHTM files generated successfully.", "Fichiers SHTM d'alerte vides générés avec succès."), "success");
+}
+
+function generateAlertSHTMFiles(alertType, alertEnContent, alertFrContent) {
+  // Generate English file
+  if (alertEnContent) {
+    const shtmlEnContent = `<div class="alert alert-${alertType}" role="alert">
+${alertEnContent}
+</div>`;
+
+    const blobEn = new Blob([shtmlEnContent], { type: "text/html;charset=utf-8" });
+    const urlEn = window.URL.createObjectURL(blobEn);
+    const aEn = document.createElement("a");
+    aEn.href = urlEn;
+    aEn.download = "alert-en.shtm";
+    document.body.appendChild(aEn);
+    aEn.click();
+
+    setTimeout(() => {
+      window.URL.revokeObjectURL(urlEn);
+      document.body.removeChild(aEn);
+    }, 100);
+  }
+
+  // Generate French file
+  if (alertFrContent) {
+    const shtmlFrContent = `<div class="alert alert-${alertType}" role="alert">
+${alertFrContent}
+</div>`;
+
+    const blobFr = new Blob([shtmlFrContent], { type: "text/html;charset=utf-8" });
+    const urlFr = window.URL.createObjectURL(blobFr);
+    const aFr = document.createElement("a");
+    aFr.href = urlFr;
+    aFr.download = "alert-fr.shtm";
+    document.body.appendChild(aFr);
+    aFr.click();
+
+    setTimeout(() => {
+      window.URL.revokeObjectURL(urlFr);
+      document.body.removeChild(aFr);
+    }, 100);
+  }
 }
 
 function setupEventListeners() {
