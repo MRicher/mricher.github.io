@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loading Spinner Demo</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    #loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.3s ease;
+    }
+
+    #loader.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .spinner {
+      animation: rotate 2s linear infinite;
+    }
+
+    @keyframes rotate {
+      100% { transform: rotate(360deg); }
+    }
+
+    .content {
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading Overlay -->
+  <div id="loader">
+    <svg class="spinner" width="80" height="80" viewBox="0 0 50 50">
+      <circle cx="25" cy="25" r="20" fill="none" stroke="#3498db" stroke-width="4" stroke-linecap="round" stroke-dasharray="31.4 31.4">
+        <animateTransform attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="1s" repeatCount="indefinite"/>
+      </circle>
+    </svg>
+  </div>
+
+  <!-- Page Content -->
+  <div class="content">
+    <h1>Page with Loading Spinner</h1>
+    <p>This page displays a loading spinner until all assets are loaded.</p>
+    
+    <!-- Sample images to demonstrate loading -->
+    <img src="https://picsum.photos/800/400?random=1" alt="Sample image 1">
+    <img src="https://picsum.photos/800/400?random=2" alt="Sample image 2">
+    <img src="https://picsum.photos/800/400?random=3" alt="Sample image 3">
+    <img src="https://picsum.photos/800/400?random=4" alt="Sample image 4">
+    <img src="https://picsum.photos/800/400?random=5" alt="Sample image 5">
+    <img src="https://picsum.photos/800/400?random=6" alt="Sample image 6">
+    <img src="https://picsum.photos/800/400?random=7" alt="Sample image 7">
+    <img src="https://picsum.photos/800/400?random=8" alt="Sample image 8">
+    <img src="https://picsum.photos/800/400?random=9" alt="Sample image 9">
+    <img src="https://picsum.photos/800/400?random=10" alt="Sample image 10">
+    <img src="https://picsum.photos/800/400?random=11" alt="Sample image 11">
+    <img src="https://picsum.photos/800/400?random=12" alt="Sample image 12">
+    <img src="https://picsum.photos/800/400?random=13" alt="Sample image 13">
+    <img src="https://picsum.photos/800/400?random=14" alt="Sample image 14">
+    <img src="https://picsum.photos/800/400?random=15" alt="Sample image 15">
+    <img src="https://picsum.photos/800/400?random=16" alt="Sample image 16">
+    <img src="https://picsum.photos/800/400?random=17" alt="Sample image 17">
+    <img src="https://picsum.photos/800/400?random=18" alt="Sample image 18">
+    <img src="https://picsum.photos/800/400?random=19" alt="Sample image 19">
+    <img src="https://picsum.photos/800/400?random=20" alt="Sample image 20">
+    <img src="https://picsum.photos/800/400?random=21" alt="Sample image 21">
+    <img src="https://picsum.photos/800/400?random=22" alt="Sample image 22">
+    <img src="https://picsum.photos/800/400?random=23" alt="Sample image 23">
+    <img src="https://picsum.photos/800/400?random=24" alt="Sample image 24">
+    <img src="https://picsum.photos/800/400?random=25" alt="Sample image 25">
+    <img src="https://picsum.photos/800/400?random=26" alt="Sample image 26">
+    <img src="https://picsum.photos/800/400?random=27" alt="Sample image 27">
+    <img src="https://picsum.photos/800/400?random=28" alt="Sample image 28">
+    <img src="https://picsum.photos/800/400?random=29" alt="Sample image 29">
+    <img src="https://picsum.photos/800/400?random=30" alt="Sample image 30">
+    <img src="https://picsum.photos/800/400?random=31" alt="Sample image 31">
+    <img src="https://picsum.photos/800/400?random=32" alt="Sample image 32">
+    <img src="https://picsum.photos/800/400?random=33" alt="Sample image 33">
+    <img src="https://picsum.photos/800/400?random=34" alt="Sample image 34">
+    <img src="https://picsum.photos/800/400?random=35" alt="Sample image 35">
+    <img src="https://picsum.photos/800/400?random=36" alt="Sample image 36">
+    <img src="https://picsum.photos/800/400?random=37" alt="Sample image 37">
+    <img src="https://picsum.photos/800/400?random=38" alt="Sample image 38">
+    <img src="https://picsum.photos/800/400?random=39" alt="Sample image 39">
+    <img src="https://picsum.photos/800/400?random=40" alt="Sample image 40">
+    <img src="https://picsum.photos/800/400?random=41" alt="Sample image 41">
+    <img src="https://picsum.photos/800/400?random=42" alt="Sample image 42">
+    <img src="https://picsum.photos/800/400?random=43" alt="Sample image 43">
+  </div>
+
+  <script>
+    window.addEventListener('load', function() {
+      const loader = document.getElementById('loader');
+      loader.classList.add('hidden');
+      
+      // Remove from DOM after transition
+      setTimeout(() => {
+        loader.style.display = 'none';
+      }, 300);
+    });
+  </script>
+</body>
+</html>
