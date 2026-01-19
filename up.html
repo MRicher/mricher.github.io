@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Loading Spinner Demo</title>
   <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
     #loader {
       position: fixed;
       top: 0;
@@ -24,12 +29,16 @@
       pointer-events: none;
     }
 
-    .spinner {
-      animation: rotate 2s linear infinite;
-    }
-
-    @keyframes rotate {
-      100% { transform: rotate(360deg); }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border-width: 0;
     }
 
     .content {
@@ -47,12 +56,9 @@
 </head>
 <body>
   <!-- Loading Overlay -->
-  <div id="loader">
-    <svg class="spinner" width="80" height="80" viewBox="0 0 50 50">
-      <circle cx="25" cy="25" r="20" fill="none" stroke="#3498db" stroke-width="4" stroke-linecap="round" stroke-dasharray="31.4 31.4">
-        <animateTransform attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="1s" repeatCount="indefinite"/>
-      </circle>
-    </svg>
+  <div id="loader" role="status" aria-live="polite" aria-label="Page loading">
+    <img src="/rcmp-grc.svg" alt="" class="spinner" width="80" height="80" aria-hidden="true">
+    <span class="sr-only">Loading page content, please wait...</span>
   </div>
 
   <div class="content">
@@ -101,13 +107,27 @@
   <script>
     window.addEventListener('load', function() {
       const loader = document.getElementById('loader');
+      
+      const srText = loader.querySelector('.sr-only');
+      srText.textContent = 'Page loaded successfully';
+      
       loader.classList.add('hidden');
       
-      // Remove from DOM after transition
       setTimeout(() => {
+        loader.setAttribute('aria-hidden', 'true');
         loader.style.display = 'none';
+        
+        const mainContent = document.querySelector('h1');
+        if (mainContent) {
+          mainContent.setAttribute('tabindex', '-1');
+          mainContent.focus();
+        }
       }, 300);
     });
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.querySelector('.spinner').style.animation = 'none';
+    }
   </script>
 </body>
 </html>
