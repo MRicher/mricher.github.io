@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Grid</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            padding: 20px;
+        }
+
+        .image-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 100%;
+            overflow: hidden;
+            border-radius: 10px;
+            background: #f0f0f0;
+        }
+
+        .image-container img {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="grid" id="imageGrid">
+            <div class="image-container" data-id="0">
+                <img src="https://www.services.rcmp-grc.gc.ca/missing-disparus/showImage?id=22292&size=s&thumb=small" alt="Person 1" style="object-position: 50% 50%;">
+            </div>
+            <div class="image-container" data-id="1">
+                <img src="https://www.services.rcmp-grc.gc.ca/missing-disparus/showImage?id=9603&size=s&thumb=small" alt="Person 2" style="object-position: 50% 50%;">
+            </div>
+            <div class="image-container" data-id="2">
+                <img src="https://www.services.rcmp-grc.gc.ca/missing-disparus/showImage?id=10183&size=s&thumb=small" alt="Person 3" style="object-position: 50% 50%;">
+            </div>
+            <div class="image-container" data-id="3">
+                <img src="https://www.services.rcmp-grc.gc.ca/missing-disparus/showImage?id=15971&size=s&thumb=small" alt="Person 4" style="object-position: 50% 50%;">
+            </div>
+            <div class="image-container" data-id="4">
+                <img src="https://www.services.rcmp-grc.gc.ca/missing-disparus/showImage?id=48063&size=s&thumb=small" alt="Person 5" style="object-position: 50% 50%;">
+            </div>
+            <div class="image-container" data-id="5">
+                <img src="https://www.services.rcmp-grc.gc.ca/missing-disparus/showImage?id=3927&size=s&thumb=small" alt="Person 6" style="object-position: 50% 50%;">
+            </div>
+            <div class="image-container" data-id="6">
+                <img src="https://www.services.rcmp-grc.gc.ca/missing-disparus/showImage?id=63536&size=s&thumb=small" alt="Person 7" style="object-position: 50% 50%;">
+            </div>
+            <div class="image-container" data-id="7">
+                <img src="https://www.services.rcmp-grc.gc.ca/missing-disparus/showImage?id=457&size=s&thumb=small" alt="Person 8" style="object-position: 50% 50%;">
+            </div>
+            <div class="image-container" data-id="8">
+                <img src="https://www.services.rcmp-grc.gc.ca/missing-disparus/showImage?id=1743&size=s&thumb=small" alt="Person 9" style="object-position: 50% 50%;">
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.12/model"></script>
+    <script>
+        let modelsLoaded = false;
+
+        async function loadModels() {
+            try {
+                const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.12/model';
+                await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+                await faceapi.nets.faceLandmark68TinyNet.loadFromUri(MODEL_URL);
+                modelsLoaded = true;
+                autoDetectAllFaces();
+            } catch (error) {
+                console.error('Error loading models:', error);
+                modelsLoaded = false;
+                showAllImages();
+            }
+        }
+
+        async function detectFaceInImage(img) {
+            if (!modelsLoaded) {
+                return { x: 50, y: 30 };
+            }
+
+            try {
+                const detection = await faceapi.detectSingleFace(
+                    img, 
+                    new faceapi.TinyFaceDetectorOptions()
+                ).withFaceLandmarks(true);
+
+                if (detection) {
+                    const box = detection.detection.box;
+                    const imgWidth = img.naturalWidth;
+                    const imgHeight = img.naturalHeight;
+                    
+                    const faceCenterX = (box.x + box.width / 2) / imgWidth * 100;
+                    const faceCenterY = (box.y + box.height / 2) / imgHeight * 100;
+                    
+                    return { x: faceCenterX, y: faceCenterY };
+                }
+            } catch (error) {
+                console.error('Face detection error:', error);
+            }
+            
+            return { x: 50, y: 30 };
+        }
+
+        async function autoDetectAllFaces() {
+            const containers = document.querySelectorAll('.image-container');
+            
+            for (let container of containers) {
+                const img = container.querySelector('img');
+                
+                await new Promise((resolve) => {
+                    if (img.complete) {
+                        resolve();
+                    } else {
+                        img.onload = resolve;
+                    }
+                });
+                
+                const position = await detectFaceInImage(img);
+                img.style.objectPosition = `${position.x}% ${position.y}%`;
+                img.classList.add('loaded');
+            }
+        }
+
+        function showAllImages() {
+            const images = document.querySelectorAll('.image-container img');
+            images.forEach(img => {
+                img.style.objectPosition = '50% 30%';
+                img.classList.add('loaded');
+            });
+        }
+
+        loadModels();
+    </script>
+</body>
+</html>
