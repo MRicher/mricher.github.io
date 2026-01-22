@@ -1,4 +1,4 @@
-const ORCAVIA_APP_VERSION = "1.0.2";
+const ORCAVIA_APP_VERSION = "1.1.0";
 const ORCAVIA_VERSION_STRING = `Version ${ORCAVIA_APP_VERSION}`;
 document.addEventListener('DOMContentLoaded', () => {
 	const versionElement = document.getElementById('version-info');
@@ -709,7 +709,7 @@ getCurrentDateFormatted() {
 			}
 		}
 		const isFrench = (window.languageSwitcher && window.languageSwitcher.currentLang === 'fr') || document.documentElement.lang === 'fr' || document.documentElement.getAttribute('lang') === 'fr-CA';
-		const errorMsg = isFrench ? 'Nombre maximum de mises à jour (6) atteint pour cet enregistrement.' : 'Maximum number of updates (6) reached for this record.';
+		const errorMsg = isFrench ? 'Nombre maximum de mises à jour (10) atteint pour cet enregistrement.' : 'Maximum number of updates (10) reached for this record.';
 		this.showUpdateAlert(recordIndex, errorMsg, 'danger');
 	}
 	deleteUpdate(recordIndex, updateNumber) {
