@@ -38,7 +38,6 @@ class RCMPDataEditor {
 		const alert = document.createElement('div');
 		alert.className = `alert alert-${type} alert-dismissible fade show`;
 		const closeButtonLabel = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr' ? 'Fermer' : 'Close';
-		// Handle both string messages and object messages with en/fr properties
 		let messageContent;
 		if (typeof message === 'object' && message.en && message.fr) {
 			const currentLang = window.languageSwitcher ? window.languageSwitcher.currentLang : 'en';
@@ -52,7 +51,6 @@ class RCMPDataEditor {
 	        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="${closeButtonLabel}"></button>
 	    `;
 		container.appendChild(alert);
-		// Apply current language to the alert content
 		if (window.languageSwitcher) {
 			window.languageSwitcher.switchLanguage(window.languageSwitcher.currentLang);
 		}
@@ -65,7 +63,6 @@ class RCMPDataEditor {
 	showUpdateAlert(recordIndex, message, type = 'danger') {
 		const container = document.getElementById(`update-alerts-${recordIndex}`);
 		if (!container) return;
-		// Clear any existing alerts in this container
 		container.innerHTML = '';
 		const alert = document.createElement('div');
 		alert.className = `alert alert-${type} alert-dismissible fade show`;
@@ -75,7 +72,6 @@ class RCMPDataEditor {
 			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="${closeButtonLabel}"></button>
 		`;
 		container.appendChild(alert);
-		// Auto-dismiss after 5 seconds
 		setTimeout(() => {
 			if (alert.parentNode) {
 				alert.remove();
@@ -85,19 +81,12 @@ class RCMPDataEditor {
 	sanitizeText(text) {
 		if (!text || typeof text !== 'string') return text;
 		let sanitized = text;
-		// Replace straight apostrophes with smart apostrophes
-		sanitized = sanitized.replace(/’/g, "'");
-		// Replace space before closing guillemet with non-breaking space
+		sanitized = sanitized.replace(/'/g, "'");
 		sanitized = sanitized.replace(/ »/g, "&#160;»");
-		// Replace space after opening guillemet with non-breaking space
 		sanitized = sanitized.replace(/« /g, "«&#160;");
-	    // Remove empty paragraph tags with line breaks
 	    sanitized = sanitized.replace(/<p><br><\/p>/g, "");
-		// Replace double spaces with space + non-breaking space
 		sanitized = sanitized.replace(/  /g, " &#160;");
-		// Check if this is Quill content (contains <p> tags or Quill classes)
 		const isQuillContent = sanitized.includes('<p>') || sanitized.includes('ql-');
-		// Handle email addresses (but not if already in mailto links)
 		const emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g;
 		sanitized = sanitized.replace(emailRegex, (match) => {
 			const lowercaseEmail = match.toLowerCase();
@@ -106,20 +95,17 @@ class RCMPDataEditor {
 			if (beforeMatch.includes('<a href="mailto:') && !beforeMatch.includes('</a>') && afterMatch.includes('</a>')) {
 				return lowercaseEmail;
 			}
-			// Don't auto-wrap emails in Quill content as Quill handles links
 			if (isQuillContent && beforeMatch.includes('<a ') && afterMatch.includes('</a>')) {
 				return lowercaseEmail;
 			}
 			return isQuillContent ? match : `<a href="mailto:${lowercaseEmail}">${lowercaseEmail}</a>`;
 		});
-		// Wrap acronyms in abbr tags (works for both Quill and non-Quill content)
 		const wrapWithAbbr = (text, acronym) => {
 			return text.replace(new RegExp(`(?<!<abbr[^>]*>)\\b${acronym}\\b(?!</abbr>)`, 'g'), (match, offset, string) => {
 				const beforeText = string.substring(0, offset);
 				const afterText = string.substring(offset + match.length);
 				const lastAbbrOpen = beforeText.lastIndexOf('<abbr');
 				const lastAbbrClose = beforeText.lastIndexOf('</abbr>');
-				// Skip if already inside an abbr tag
 				if (lastAbbrOpen > lastAbbrClose && afterText.includes('</abbr>')) {
 					return match;
 				}
@@ -156,7 +142,6 @@ class RCMPDataEditor {
 				attempts++;
 				const currentHeight = document.documentElement.scrollHeight;
 				const viewportHeight = window.innerHeight;
-				// Only restore if content height allows it or we've tried enough times
 				if (targetScrollPosition <= currentHeight - viewportHeight || attempts >= maxAttempts) {
 					window.scrollTo({
 						top: Math.min(targetScrollPosition, currentHeight - viewportHeight),
@@ -164,7 +149,6 @@ class RCMPDataEditor {
 					});
 					resolve();
 				} else {
-					// Content still loading, try again
 					requestAnimationFrame(tryRestore);
 				}
 			};
@@ -175,7 +159,6 @@ class RCMPDataEditor {
 		const url = 'mcc.json';
 		const button = document.getElementById('load-from-url-btn');
 		const originalText = button.textContent;
-		// Store current scroll position
 		const currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
 		try {
 			button.textContent = 'Loading...';
@@ -185,10 +168,9 @@ class RCMPDataEditor {
 				throw new Error(`HTTP error! status: ${response.status}`);
 			}
 			const jsonData = await response.json();
-			if (jsonData.data && Array.isArray(jsonData.data)) {
-				this.data = jsonData;
+   			jsonData.data = jsonData.data.map(record => this.normalizeRecord(record));
+			this.data = jsonData;
 				this.render();
-				// Enhanced scroll restoration
 				await this.restoreScrollPosition(currentScrollPosition);
 				this.showAlert({
 					en: `Successfully loaded ${jsonData.data.length} records from website!`,
@@ -209,16 +191,15 @@ class RCMPDataEditor {
 	async handleFileUpload(event) {
 		const file = event.target.files[0];
 		if (!file) return;
-		// Store current scroll position
 		const currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
 		const reader = new FileReader();
 		reader.onload = async (e) => {
-			try {
-				const jsonData = JSON.parse(e.target.result);
-				if (jsonData.data && Array.isArray(jsonData.data)) {
-					this.data = jsonData;
-					this.render();
-					// Use the class method to restore scroll position
+		    try {
+		        const jsonData = JSON.parse(e.target.result);
+		        if (jsonData.data && Array.isArray(jsonData.data)) {
+		            jsonData.data = jsonData.data.map(record => this.normalizeRecord(record));
+		            this.data = jsonData;
+		            this.render();
 					await this.restoreScrollPosition(currentScrollPosition);
 					this.showAlert({
 						en: 'JSON file loaded successfully!',
@@ -268,12 +249,23 @@ class RCMPDataEditor {
 			"french-update-5": "",
 			"update-6-date": "",
 			"english-update-6": "",
-			"french-update-6": ""
+			"french-update-6": "",
+	        "update-7-date": "",
+	        "english-update-7": "",
+	        "french-update-7": "",
+	        "update-8-date": "",
+	        "english-update-8": "",
+	        "french-update-8": "",
+	        "update-9-date": "",
+	        "english-update-9": "",
+	        "french-update-9": "",
+	        "update-10-date": "",
+	        "english-update-10": "",
+	        "french-update-10": ""
 		};
 		this.data.data.push(newRecord);
 		this.render();
 		
-		// Scroll to the new record
 		setTimeout(() => {
 			const recordCards = document.querySelectorAll('.record-card');
 			const lastCard = recordCards[recordCards.length - 1];
@@ -287,7 +279,33 @@ class RCMPDataEditor {
 			fr: 'Nouvel enregistrement ajouté avec succès !'
 		});
 	}
-	getCurrentDateFormatted() {
+normalizeRecord(record) {
+    const template = {
+        "last-updated": "",
+        "english-theme": "",
+        "french-theme": "",
+        "english-commitment": "",
+        "french-commitment": "",
+        "english-title": "",
+        "french-title": "",
+        "english-summary": "",
+        "french-summary": "",
+        "english-progress": "To be actioned",
+        "french-progress": "À mettre en œuvre",
+        "recommendations-1": "",
+        "recommendations-2": "",
+        "recommendations-3": ""
+    };
+    
+    for (let i = 1; i <= 10; i++) {
+        template[`update-${i}-date`] = "";
+        template[`english-update-${i}`] = "";
+        template[`french-update-${i}`] = "";
+    }
+    
+    return { ...template, ...record };
+}
+getCurrentDateFormatted() {
 		const now = new Date();
 		const year = now.getFullYear();
 		const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -324,12 +342,10 @@ class RCMPDataEditor {
 	}
 	updateRecord(index, field, value) {
 		if (!this.data.data[index]) return;
-		// For date fields, just store the string as-is if it matches yyyy-mm-dd
 		if ((field.includes('date') || field === 'last-updated') && value) {
 			if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
 				this.data.data[index][field] = value;
 			} else {
-				// Try to parse and reformat if needed
 				const d = new Date(value);
 				if (!isNaN(d.getTime())) {
 					const year = d.getFullYear();
@@ -343,7 +359,6 @@ class RCMPDataEditor {
 		} else {
 			this.data.data[index][field] = value;
 		}
-		// Handle theme linking
 		if (field === 'english-theme' && this.themeMapping[value]) {
 			this.data.data[index]['french-theme'] = this.themeMapping[value];
 			const frenchSelect = document.getElementById(`french-theme-${index}`);
@@ -353,7 +368,6 @@ class RCMPDataEditor {
 			const englishSelect = document.getElementById(`english-theme-${index}`);
 			if (englishSelect) englishSelect.value = this.reversedThemeMapping[value];
 		}
-		// Handle progress linking
 		else if (field === 'english-progress') {
 			const progressMap = {
 				'To be actioned': 'À mettre en œuvre',
@@ -387,7 +401,6 @@ class RCMPDataEditor {
 		const themes = isEnglish ? Object.keys(this.themeMapping) : Object.values(this.themeMapping);
 		return themes.map(theme => `<option value="${theme}" ${selectedValue === theme ? 'selected' : ''}>${theme}</option>`).join('');
 	}
-	// Fixed: Added the missing formatAllDateInputs method
 	formatAllDateInputs() {
 		const dateInputs = document.querySelectorAll('input[type="date"]');
 		dateInputs.forEach(input => {
@@ -396,7 +409,6 @@ class RCMPDataEditor {
 	}
 	initializeQuillEditors() {
 		if (typeof Quill === 'undefined') return;
-		// Register custom formats for abbr tag (only once)
 		if (!Quill.imports['formats/abbr']) {
 			const Inline = Quill.import('blots/inline');
 			class AbbrBlot extends Inline {
@@ -405,7 +417,6 @@ class RCMPDataEditor {
 			}
 			Quill.register(AbbrBlot);
 		}
-		// Override italic to use cite tag instead of em
 		if (!Quill.imports['formats/cite']) {
 			const Inline = Quill.import('blots/inline');
 			class CiteBlot extends Inline {
@@ -414,12 +425,10 @@ class RCMPDataEditor {
 			}
 			Quill.register(CiteBlot, true);
 		}
-		// Initialize Quill for all summary and update fields
 		document.querySelectorAll('.quill-editor').forEach(container => {
 			const editorId = container.getAttribute('data-editor-id');
 			const field = container.getAttribute('data-field');
 			const recordIndex = parseInt(container.getAttribute('data-record-index'));
-			// Skip if already initialized
 			if (container.querySelector('.ql-toolbar')) return;
 			const quill = new Quill(container, {
 				theme: 'snow',
@@ -436,11 +445,9 @@ class RCMPDataEditor {
 							tab: {
 								key: 9,
 								handler: function() {
-									// Find all focusable elements
 									const focusableElements = Array.from(document.querySelectorAll(
 										'input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]):not([style*="display: none"]), .ql-editor'
 									)).filter(el => {
-										// Filter out hidden elements
 										return el.offsetParent !== null;
 									});
 									
@@ -449,20 +456,18 @@ class RCMPDataEditor {
 									
 									if (nextElement) {
 										nextElement.focus();
-										return false; // Prevent default tab behavior
+										return false;
 									}
-									return true; // Allow default if no next element
+									return true;
 								}
 							},
 							shiftTab: {
 								key: 9,
 								shiftKey: true,
 								handler: function() {
-									// Find all focusable elements
 									const focusableElements = Array.from(document.querySelectorAll(
 										'input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]):not([style*="display: none"]), .ql-editor'
 									)).filter(el => {
-										// Filter out hidden elements
 										return el.offsetParent !== null;
 									});
 									
@@ -471,39 +476,33 @@ class RCMPDataEditor {
 									
 									if (prevElement) {
 										prevElement.focus();
-										return false; // Prevent default tab behavior
+										return false;
 									}
-									return true; // Allow default if no previous element
+									return true;
 								}
 							}
 						}
 					}
 				}
 			});
-			// Set initial content preserving HTML
 			const record = this.data.data[recordIndex];
 			if (record && record[field]) {
 				const content = record[field] || '';
 				if (content) {
-					// Use pasteHTML method to properly insert HTML content
 					quill.clipboard.dangerouslyPasteHTML(content);
 				}
 			}
-			// Handle content changes
 			quill.on('text-change', () => {
 				let html = quill.root.innerHTML;
-				// Clean up empty paragraph tags
 				if (html === '<p><br></p>') {
 					html = '';
 				}
-				// Preserve abbr tags and links
 				this.updateRecord(recordIndex, field, html);
 			});
 		});
 	}
 	render() {
 		const container = document.getElementById('records-container');
-		// Store focused element to restore later
 		const activeElement = document.activeElement;
 		const focusedElementId = activeElement ? activeElement.id : null;
 		if (this.data.data.length === 0) {
@@ -513,15 +512,12 @@ class RCMPDataEditor {
                     <p data-en="Upload a JSON file or add a new record to get started." data-fr="Téléversez un fichier JSON ou ajoutez un nouvel enregistrement pour commencer.">Upload a JSON file or add a new record to get started.</p>
                 </div>
             `;
-			// Apply current language to the newly rendered content
 			if (window.languageSwitcher) {
 				window.languageSwitcher.switchLanguage(window.languageSwitcher.currentLang);
 			}
-			// Fixed: Moved formatAllDateInputs call before the return and made it a method call
 			this.formatAllDateInputs();
 			return;
 		}
-		// Create document fragment to minimize reflows
 		const fragment = document.createDocumentFragment();
 		const tempDiv = document.createElement('div');
 		tempDiv.innerHTML = this.data.data.map((record, index) => `
@@ -614,7 +610,7 @@ class RCMPDataEditor {
 
                     <div class="update-section">
                         <h3 class="h5" data-en="Progress updates" data-fr="Mises à jour du progrès">Progress updates</h3>
-                        ${[1, 2, 3, 4, 5, 6].map(updateNum => {
+                        ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(updateNum => {
                             const hasUpdate = record[`update-${updateNum}-date`] || record[`english-update-${updateNum}`] || record[`french-update-${updateNum}`];
                             return hasUpdate ? `
                                 <div class="update-item">
@@ -651,21 +647,16 @@ class RCMPDataEditor {
                 </div>
             </div>
         `).join('');
-		// Move nodes from temp div to fragment
 		while (tempDiv.firstChild) {
 			fragment.appendChild(tempDiv.firstChild);
 		}
-		// Batch DOM update
 		container.innerHTML = '';
 		container.appendChild(fragment);
-		// Format all date inputs after rendering
 		this.formatAllDateInputs();
-		// Set today's date for new update date fields
 		const todayFormatted = this.getCurrentDateFormatted();
 		const newDateInputs = container.querySelectorAll('input[type="date"]:not([data-initialized])');
 		newDateInputs.forEach(input => {
 			if (!input.value && input.id.includes('update-') && input.id.includes('-date-')) {
-				// Check if this is a newly added update by looking at the record data
 				const matches = input.id.match(/update-(\d+)-date-(\d+)/);
 				if (matches) {
 					const updateNum = matches[1];
@@ -678,7 +669,6 @@ class RCMPDataEditor {
 			}
 			input.setAttribute('data-initialized', 'true');
 		});
-		// Restore focus if it was on a form element
 		if (focusedElementId) {
 			requestAnimationFrame(() => {
 				const elementToFocus = document.getElementById(focusedElementId);
@@ -687,29 +677,25 @@ class RCMPDataEditor {
 				}
 			});
 		}
-		// Apply current language to the newly rendered content
 		if (window.languageSwitcher) {
 			window.languageSwitcher.switchLanguage(window.languageSwitcher.currentLang);
 		}
-		// Initialize Quill editors
 		this.initializeQuillEditors();
 	}
 	addUpdate(recordIndex) {
 		const record = this.data.data[recordIndex];
 		if (!record) return;
-		// Clear any existing update alerts for this record first
 		const alertContainer = document.getElementById(`update-alerts-${recordIndex}`);
 		if (alertContainer) {
 			alertContainer.innerHTML = '';
 		}
-		for (let i = 1; i <= 6; i++) {
+		for (let i = 1; i <= 10; i++) {
 			if (!record[`update-${i}-date`] && !record[`english-update-${i}`] && !record[`french-update-${i}`]) {
 				const todaysDate = this.getCurrentDateFormatted();
 				record[`update-${i}-date`] = todaysDate;
 				record[`english-update-${i}`] = '';
 				record[`french-update-${i}`] = '';
 				this.render();
-				// Ensure the new date input gets today's date
 				setTimeout(() => {
 					const dateInput = document.getElementById(`update-${i}-date-${recordIndex}`);
 					if (dateInput) {
@@ -721,7 +707,6 @@ class RCMPDataEditor {
 				return;
 			}
 		}
-		// More robust language detection for error message
 		const isFrench = (window.languageSwitcher && window.languageSwitcher.currentLang === 'fr') || document.documentElement.lang === 'fr' || document.documentElement.getAttribute('lang') === 'fr-CA';
 		const errorMsg = isFrench ? 'Nombre maximum de mises à jour (6) atteint pour cet enregistrement.' : 'Maximum number of updates (6) reached for this record.';
 		this.showUpdateAlert(recordIndex, errorMsg, 'danger');
@@ -750,10 +735,8 @@ class RCMPDataEditor {
 	}
 	formatDateInput(input) {
 		if (!input) return;
-		// Ensure the input shows yyyy-mm-dd format
 		input.setAttribute('pattern', '\\d{4}-\\d{2}-\\d{2}');
 		input.setAttribute('placeholder', 'YYYY-MM-DD');
-		// Only add event listener once
 		if (!input.hasAttribute('data-formatted')) {
 			input.addEventListener('change', (e) => {
 				this.ensureDateFormat(e.target);
@@ -763,7 +746,6 @@ class RCMPDataEditor {
 	}
 	ensureDateFormat(input) {
 		if (!input.value) return;
-		// Only reformat if not already in yyyy-mm-dd
 		if (!/^\d{4}-\d{2}-\d{2}$/.test(input.value)) {
 			const d = new Date(input.value);
 			if (!isNaN(d.getTime())) {
@@ -782,7 +764,6 @@ class RCMPDataEditor {
 		}
 	}
 }
-// Initialize the editor when the page loads
 document.addEventListener('DOMContentLoaded', function() {
 	window.editor = new RCMPDataEditor();
 });
