@@ -165,20 +165,21 @@ class RCMPDataEditor {
 			button.disabled = true;
 			const response = await fetch(url);
 			if (!response.ok) {
-				throw new Error(`HTTP error! status: ${response.status}`);
+			    throw new Error(`HTTP error! status: ${response.status}`);
 			}
 			const jsonData = await response.json();
-   			jsonData.data = jsonData.data.map(record => this.normalizeRecord(record));
-			this.data = jsonData;
-				this.render();
-				await this.restoreScrollPosition(currentScrollPosition);
-				this.showAlert({
-					en: `Successfully loaded ${jsonData.data.length} records from website!`,
-					fr: `${jsonData.data.length} enregistrements chargés avec succès depuis le site web !`
-				});
+			if (jsonData.data && Array.isArray(jsonData.data)) {
+			    jsonData.data = jsonData.data.map(record => this.normalizeRecord(record));
+			    this.data = jsonData;
+			    this.render();
+			    await this.restoreScrollPosition(currentScrollPosition);
+			    this.showAlert({
+			        en: `Successfully loaded ${jsonData.data.length} records from website!`,
+			        fr: `${jsonData.data.length} enregistrements chargés avec succès depuis le site web !`
+			    });
 			} else {
-				const errorMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr' ? 'Structure JSON invalide depuis l\'URL' : 'Invalid JSON structure from URL';
-				throw new Error(errorMsg);
+			    const errorMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr' ? 'Structure JSON invalide depuis l\'URL' : 'Invalid JSON structure from URL';
+			    throw new Error(errorMsg);
 			}
 		} catch (error) {
 			const errorMsg = window.languageSwitcher && window.languageSwitcher.currentLang === 'fr' ? 'Erreur lors du chargement des données depuis le site web : ' + error.message : 'Error loading data from website: ' + error.message;
@@ -318,8 +319,8 @@ getCurrentDateFormatted() {
 			this.data.data.splice(index, 1);
 			this.render();
 			this.showAlert({
-				en: 'Enregistrement supprimé avec succès !',
-				fr: 'Record deleted successfully!'
+			    en: 'Record deleted successfully!',
+			    fr: 'Enregistrement supprimé avec succès !'
 			});
 		}
 	}
