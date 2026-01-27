@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RCMP Applicant Readiness Check</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #1a1a1a;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            border-bottom: 3px solid #af3c43;
+            padding-bottom: 10px;
+        }
+
+        .intro {
+            color: #333;
+            font-size: 1rem;
+            margin-bottom: 30px;
+            margin-top: 20px;
+        }
+
+        .progress-container {
+            margin-bottom: 30px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background-color: #e0e0e0;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: #0066cc;
+            transition: width 0.3s ease;
+            border-radius: 6px;
+        }
+
+        .question-container {
+            margin-bottom: 30px;
+        }
+
+        .question-number {
+            color: #555;
+            font-weight: 400;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .question-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #1a1a1a;
+        }
+
+        .question-details {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .question-details ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .question-details li {
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .question-details p {
+            color: #333;
+        }
+
+        .question-text {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: 2px solid #0066cc;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: white;
+            color: #0066cc;
+        }
+
+        button:hover {
+            background-color: #0066cc;
+            color: white;
+        }
+
+        button:focus {
+            outline: 3px solid #ffbf47;
+            outline-offset: 2px;
+        }
+
+        button.selected {
+            background-color: #0066cc;
+            color: white;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .nav-button {
+            padding: 12px 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: 2px solid #666;
+            background: white;
+            color: #666;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .nav-button:hover:not(:disabled) {
+            background-color: #666;
+            color: white;
+        }
+
+        .nav-button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .nav-button.primary {
+            background-color: #0066cc;
+            border-color: #0066cc;
+            color: white;
+        }
+
+        .nav-button.primary:hover:not(:disabled) {
+            background-color: #0052a3;
+            border-color: #0052a3;
+        }
+
+        .results {
+            padding: 40px 20px;
+        }
+
+        .results h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #1a1a1a;
+        }
+
+        .results-content {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .results .restart-button {
+            display: block;
+            margin: 0 auto;
+        }
+
+        .results.success {
+            background-color: #e8f5e9;
+            border: 2px solid #4caf50;
+            border-radius: 8px;
+        }
+
+        .results.success h2 {
+            color: #2e7d32;
+        }
+
+        .results.warning {
+            background-color: #fff3e0;
+            border: 2px solid #ff9800;
+            border-radius: 8px;
+        }
+
+        .results.warning h2 {
+            color: #e65100;
+        }
+
+        .restart-button {
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .restart-button:hover {
+            background-color: #0052a3;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .navigation {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>RCMP applicant readiness check</h1>
+            <p class="intro">This readiness check is a self-assessment created to help you determine if you're ready and fit for a career in policing with the RCMP, before applying. Answer each question honestly to determine whether a career as a police officer is right for you.</p>
+        </div>
+
+        <div id="quiz-section">
+            <div class="progress-container" role="region" aria-label="Quiz progress">
+                <div class="progress-label">
+                    <span id="progress-text">Question <span id="current-question">1</span> of <span id="total-questions">9</span></span>
+                    <span id="progress-percent">0%</span>
+                </div>
+                <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+            </div>
+
+            <div id="question-container" class="question-container"></div>
+
+            <div class="navigation">
+                <button id="prev-button" class="nav-button" aria-label="Previous question">Previous</button>
+                <button id="next-button" class="nav-button primary" aria-label="Next question">Next</button>
+            </div>
+        </div>
+
+        <div id="results-section" class="hidden"></div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                number: 1,
+                title: "Operational driving",
+                details: "RCMP officers are expected to handle driving in various scenarios. Would you be comfortable driving in the following scenarios?",
+                bullets: [
+                    "Emergency response driving",
+                    "Pursuit scenarios",
+                    "Rural and remote terrain driving",
+                    "Extreme weather conditions",
+                    "Transporting detainees"
+                ],
+                question: "Are you comfortable driving in these scenarios?",
+                info: "You must have a valid unrestricted Canadian driver's licence to apply to be a police officer. An unrestricted licence means you can drive unsupervised at any time, on any road, with passengers. In addition, applicants must be confident drivers, capable of driving in various scenarios."
+            },
+            {
+                number: 2,
+                title: "First Aid certification",
+                details: "You must have a valid Standard First Aid certification. Would you feel comfortable carrying out the following expectations in case of emergency?",
+                bullets: [
+                    "Providing immediate, basic medical assistance",
+                    "Seeking and calling for medical assistance",
+                    "Documenting and reporting incidents"
+                ],
+                question: "Are you comfortable providing First Aid in emergencies?",
+                info: "As a police officer you may often be the first responder to a scene, you must be comfortable assessing the situation and providing standard First Aid support. You must have Level C CPR for infant, child and adult. Proof of your certification will be requested during the application process and must be valid during your cadet training if you advance in the process."
+            },
+            {
+                number: 3,
+                title: "Operational decision-making and the use of force",
+                details: "As a police officer you are required to make sound, time-sensitive decisions, and at times apply the use of force.",
+                bullets: [],
+                question: "Would you be comfortable making timely decisions and using force as needed?",
+                info: "Operational decision-making and the use of force are two of four critical health requirements related to the role of a police officer."
+            },
+            {
+                number: 4,
+                title: "Use of firearms and other intervention equipment",
+                details: "As a police officer you are required to carry and use a firearm and other intervention tools as needed.",
+                bullets: [],
+                question: "Are you prepared and able to use and carry a firearm and other intervention tools as needed to support your duties?",
+                info: "Police officers must maintain public order and safety, which includes using intervention techniques and firearms when required. If you're not comfortable with this, a career in policing may not be the right fit for you."
+            },
+            {
+                number: 5,
+                title: "Physical fitness",
+                details: "Policing is a physically demanding job. Police officers are required to successfully complete the Police Fitness Assessment to be deemed fit for duty.",
+                bullets: [],
+                question: "Are you in good physical shape and prepared for the demands of police work and the Cadet Training Program?",
+                info: "Applicant must arrive to Cadet training fit and ready to meet the physical demands of policing. Cadet training at Depot isn't designed to build fitness. Arriving unprepared increases risk of injury and makes training harder."
+            },
+            {
+                number: 6,
+                title: "Training commitment",
+                details: "",
+                bullets: [],
+                question: "Are you willing to spend 26 weeks living on-site at Depot, the RCMP's training academy in Saskatchewan?",
+                info: "Training is full-time and includes evenings and weekends. Food, accommodation, and a weekly allowance are provided."
+            },
+            {
+                number: 7,
+                title: "Mobility",
+                details: "",
+                bullets: [],
+                question: "Are you willing to relocate anywhere within Canada after graduation from the Cadet Training Program?",
+                info: "The RCMP is a national service. While preference is a consideration, postings are ultimately based on operational needs."
+            },
+            {
+                number: 8,
+                title: "Flexibility to shift work",
+                details: "",
+                bullets: [],
+                question: "Are you willing to work shift work, including nights, weekends, and holidays?",
+                info: "Policing is a 24/7 service. You can expect to work irregular hours and holiday shifts as needed."
+            },
+            {
+                number: 9,
+                title: "Legal requirements",
+                details: "",
+                bullets: [],
+                question: "Are you a law-abiding citizen and prepared to disclose any past criminal records, and be open to a full criminal records check?",
+                info: "Police officers should uphold the law and must not be engaged in any criminal activities. Review the criminal activities and misconduct that could prevent you from being successful in your application."
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let answers = new Array(questions.length).fill(null);
+
+        const questionContainer = document.getElementById('question-container');
+        const prevButton = document.getElementById('prev-button');
+        const nextButton = document.getElementById('next-button');
+        const quizSection = document.getElementById('quiz-section');
+        const resultsSection = document.getElementById('results-section');
+        const progressFill = document.getElementById('progress-fill');
+        const currentQuestionSpan = document.getElementById('current-question');
+        const totalQuestionsSpan = document.getElementById('total-questions');
+        const progressPercent = document.getElementById('progress-percent');
+        const progressBar = document.querySelector('.progress-bar');
+
+        totalQuestionsSpan.textContent = questions.length;
+
+        function renderQuestion() {
+            const question = questions[currentQuestionIndex];
+            
+            let html = `
+                <div class="question-number" aria-label="Question ${question.number} of ${questions.length}">
+                    Question ${question.number} of ${questions.length}
+                </div>
+                <h2 class="question-title">${question.title}</h2>
+            `;
+
+            if (question.details || question.bullets.length > 0) {
+                html += '<div class="question-details">';
+                if (question.details) {
+                    html += `<p>${question.details}</p>`;
+                }
+                if (question.bullets.length > 0) {
+                    html += '<ul>';
+                    question.bullets.forEach(bullet => {
+                        html += `<li>${bullet}</li>`;
+                    });
+                    html += '</ul>';
+                }
+                html += '</div>';
+            }
+
+            html += `
+                <div class="question-text" id="question-text">${question.question}</div>
+                <div class="button-group" role="group" aria-labelledby="question-text">
+                    <button 
+                        type="button" 
+                        id="yes-button" 
+                        class="${answers[currentQuestionIndex] === 'yes' ? 'selected' : ''}"
+                        aria-pressed="${answers[currentQuestionIndex] === 'yes'}"
+                    >Yes</button>
+                    <button 
+                        type="button" 
+                        id="no-button" 
+                        class="${answers[currentQuestionIndex] === 'no' ? 'selected' : ''}"
+                        aria-pressed="${answers[currentQuestionIndex] === 'no'}"
+                    >No</button>
+                </div>
+                <div class="question-details" id="info-section" style="display: ${answers[currentQuestionIndex] === 'no' ? 'block' : 'none'}">
+                    <p>${question.info}</p>
+                </div>
+            `;
+
+            questionContainer.innerHTML = html;
+
+            document.getElementById('yes-button').addEventListener('click', () => selectAnswer('yes'));
+            document.getElementById('no-button').addEventListener('click', () => selectAnswer('no'));
+
+            updateNavigation();
+            updateProgress();
+        }
+
+        function selectAnswer(answer) {
+            answers[currentQuestionIndex] = answer;
+            
+            const yesButton = document.getElementById('yes-button');
+            const noButton = document.getElementById('no-button');
+            const infoSection = document.getElementById('info-section');
+            
+            if (answer === 'yes') {
+                yesButton.classList.add('selected');
+                noButton.classList.remove('selected');
+                yesButton.setAttribute('aria-pressed', 'true');
+                noButton.setAttribute('aria-pressed', 'false');
+                infoSection.style.display = 'none';
+            } else {
+                noButton.classList.add('selected');
+                yesButton.classList.remove('selected');
+                noButton.setAttribute('aria-pressed', 'true');
+                yesButton.setAttribute('aria-pressed', 'false');
+                infoSection.style.display = 'block';
+            }
+
+            updateNavigation();
+        }
+
+        function updateNavigation() {
+            prevButton.disabled = currentQuestionIndex === 0;
+            
+            if (currentQuestionIndex === questions.length - 1) {
+                nextButton.textContent = 'View Results';
+                nextButton.disabled = answers[currentQuestionIndex] === null;
+            } else {
+                nextButton.textContent = 'Next';
+                nextButton.disabled = answers[currentQuestionIndex] === null;
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestionIndex) / questions.length) * 100;
+            progressFill.style.width = progress + '%';
+            progressBar.setAttribute('aria-valuenow', Math.round(progress));
+            currentQuestionSpan.textContent = currentQuestionIndex + 1;
+            progressPercent.textContent = Math.round(progress) + '%';
+        }
+
+        function showResults() {
+            const yesCount = answers.filter(a => a === 'yes').length;
+            const noCount = answers.filter(a => a === 'no').length;
+
+            let html = '';
+            
+            if (yesCount === questions.length) {
+                html = `
+                    <div class="results success" role="alert" aria-live="polite">
+                        <h2>Congratulations!</h2>
+                        <div class="results-content">
+                            <p>Looks like you are suited to be an RCMP police officer. If you've already reviewed the basic requirements, read through the application process to know what you can expect.</p>
+                        </div>
+                        <button type="button" class="restart-button" onclick="restartQuiz()">Start Over</button>
+                    </div>
+                `;
+            } else {
+                html = `
+                    <div class="results warning" role="alert" aria-live="polite">
+                        <h2>Additional Preparation Needed</h2>
+                        <div class="results-content">
+                            <p>Looks like you don't meet all the requirements just yet. Before you apply, review the basic requirements to be an RCMP police officer to make sure you're fit and ready for a career in policing.</p>
+                            <p style="margin-top: 15px;">You answered "Yes" to ${yesCount} out of ${questions.length} questions.</p>
+                        </div>
+                        <button type="button" class="restart-button" onclick="restartQuiz()">Start Over</button>
+                    </div>
+                `;
+            }
+
+            resultsSection.innerHTML = html;
+            quizSection.classList.add('hidden');
+            resultsSection.classList.remove('hidden');
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            answers = new Array(questions.length).fill(null);
+            quizSection.classList.remove('hidden');
+            resultsSection.classList.add('hidden');
+            renderQuestion();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        prevButton.addEventListener('click', () => {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+
+        nextButton.addEventListener('click', () => {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                renderQuestion();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                showResults();
+            }
+        });
+
+        // Initialize
+        renderQuestion();
+    </script>
+</body>
+</html>
