@@ -1,0 +1,450 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Technology consulting and digital transformation services. Strategic guidance for modern businesses navigating complex technical landscapes.">
+    <meta property="og:title" content="Technology Consulting & Digital Services">
+    <meta property="og:description" content="Strategic technology guidance for modern businesses. Expert consulting in digital transformation, systems architecture, and technical leadership.">
+    <meta property="og:type" content="website">
+    <title>Technology Consulting & Digital Services</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #1a1d24;
+            --bg-secondary: #22252e;
+            --text-primary: #e4e6eb;
+            --text-secondary: #b0b3ba;
+            --accent: #6b8cae;
+            --accent-muted: #4a5f7a;
+            --border: #2d3139;
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 2rem;
+            --spacing-lg: 4rem;
+            --spacing-xl: 6rem;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-md);
+        }
+
+        header {
+            padding: var(--spacing-lg) 0;
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            letter-spacing: -0.02em;
+            margin-bottom: var(--spacing-sm);
+            color: var(--text-primary);
+        }
+
+        .subtitle {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto var(--spacing-lg);
+            line-height: 1.6;
+        }
+
+        .contact-info {
+            display: flex;
+            gap: var(--spacing-md);
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: var(--spacing-md);
+        }
+
+        .contact-info a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: color 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .contact-info a:hover {
+            color: var(--text-primary);
+        }
+
+        .social-links {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+        }
+
+        .social-links a:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        section {
+            padding: var(--spacing-xl) 0;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 300;
+            text-align: center;
+            margin-bottom: var(--spacing-lg);
+            color: var(--text-primary);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-lg);
+        }
+
+        .service-card {
+            background: var(--bg-secondary);
+            padding: var(--spacing-md);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            transition: border-color 0.2s ease;
+        }
+
+        .service-card:hover {
+            border-color: var(--accent-muted);
+        }
+
+        .service-card i {
+            font-size: 1.5rem;
+            color: var(--accent);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .service-card h3 {
+            font-size: 1.25rem;
+            font-weight: 400;
+            margin-bottom: var(--spacing-sm);
+            color: var(--text-primary);
+        }
+
+        .service-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .about-content {
+            max-width: 700px;
+            margin: 0 auto;
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            line-height: 1.8;
+        }
+
+        .about-content p {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .contact-form {
+            max-width: 600px;
+            margin: var(--spacing-lg) auto 0;
+        }
+
+        .form-group {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: var(--spacing-xs);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: var(--spacing-sm);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        button[type="submit"]:hover {
+            background: var(--accent-muted);
+        }
+
+        .form-message {
+            margin-top: var(--spacing-sm);
+            padding: var(--spacing-sm);
+            border-radius: 4px;
+            text-align: center;
+            display: none;
+        }
+
+        .form-message.success {
+            background: rgba(107, 140, 174, 0.1);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+        }
+
+        .form-message.error {
+            background: rgba(200, 100, 100, 0.1);
+            border: 1px solid #c86464;
+            color: #c86464;
+        }
+
+        footer {
+            padding: var(--spacing-lg) 0;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-info {
+                flex-direction: column;
+                gap: var(--spacing-sm);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Technology Consulting</h1>
+            <p class="subtitle">Strategic guidance for organizations navigating digital transformation, systems modernization, and technical leadership challenges.</p>
+            <div class="contact-info">
+                <a href="mailto:contact@techconsult.io">
+                    <i class="fas fa-envelope"></i>
+                    contact@techconsult.io
+                </a>
+                <div class="social-links">
+                    <a href="https://linkedin.com/in/yourprofile" aria-label="LinkedIn" target="_blank" rel="noopener">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    <a href="https://github.com/yourprofile" aria-label="GitHub" target="_blank" rel="noopener">
+                        <i class="fab fa-github"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="services">
+            <div class="container">
+                <h2>Services</h2>
+                <div class="services-grid">
+                    <div class="service-card">
+                        <i class="fas fa-project-diagram"></i>
+                        <h3>Digital Strategy</h3>
+                        <p>Technology roadmaps and strategic planning aligned with business objectives. Clear frameworks for decision-making in complex technical environments.</p>
+                    </div>
+                    <div class="service-card">
+                        <i class="fas fa-server"></i>
+                        <h3>Systems Architecture</h3>
+                        <p>Scalable, maintainable architecture design for modern applications. Infrastructure planning, cloud migration, and technical debt management.</p>
+                    </div>
+                    <div class="service-card">
+                        <i class="fas fa-users-cog"></i>
+                        <h3>Technical Leadership</h3>
+                        <p>Engineering team development, process improvement, and organizational design. Building sustainable practices for long-term success.</p>
+                    </div>
+                    <div class="service-card">
+                        <i class="fas fa-shield-alt"></i>
+                        <h3>Security & Compliance</h3>
+                        <p>Security architecture review, compliance frameworks, and risk assessment. Practical approaches to protecting systems and data.</p>
+                    </div>
+                    <div class="service-card">
+                        <i class="fas fa-chart-line"></i>
+                        <h3>Performance Optimization</h3>
+                        <p>System performance analysis, bottleneck identification, and optimization strategies. Data-driven approaches to improving efficiency and reliability.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about">
+            <div class="container">
+                <h2>About</h2>
+                <div class="about-content">
+                    <p>I work with organizations at the intersection of technology and business strategy. Over fifteen years in the industry, I've helped companies ranging from early-stage startups to established enterprises navigate complex technical decisions.</p>
+                    <p>My approach is grounded in practical experience building and scaling systems, leading engineering teams, and understanding the real constraints organizations face. I believe good technology decisions come from clear thinking, honest assessment, and alignment with actual business needs.</p>
+                    <p>I focus on sustainable solutions rather than trends, building internal capability rather than dependency, and creating clarity in ambiguous situations. My goal is to help you move forward with confidence.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact">
+            <div class="container">
+                <h2>Get in Touch</h2>
+                <form class="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" required></textarea>
+                    </div>
+                    <button type="submit">Send Message</button>
+                    <div class="form-message" id="formMessage"></div>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Technology Consulting. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Intersection Observer for scroll reveal
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Form handling
+        const form = document.querySelector('.contact-form');
+        const formMessage = document.getElementById('formMessage');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(form);
+            
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    formMessage.textContent = 'Message sent successfully. I\'ll be in touch soon.';
+                    formMessage.className = 'form-message success';
+                    formMessage.style.display = 'block';
+                    form.reset();
+                } else {
+                    throw new Error('Form submission failed');
+                }
+            } catch (error) {
+                formMessage.textContent = 'Something went wrong. Please try emailing directly.';
+                formMessage.className = 'form-message error';
+                formMessage.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
+```
