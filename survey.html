@@ -15,9 +15,27 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             line-height: 1.6;
-            color: #333;
+            color: #1a1a1a;
             background-color: #f5f5f5;
             padding: 20px;
+        }
+
+        /* Skip link for keyboard navigation */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: #b50315;
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            border-radius: 0 0 4px 0;
+            font-weight: 600;
+            z-index: 100;
+        }
+
+        .skip-link:focus {
+            top: 0;
         }
 
         .container {
@@ -43,7 +61,7 @@
         }
 
         .intro {
-            color: #333;
+            color: #1a1a1a;
             font-size: 1rem;
             margin-bottom: 30px;
             margin-top: 20px;
@@ -58,7 +76,8 @@
             justify-content: space-between;
             margin-bottom: 8px;
             font-size: 0.9rem;
-            color: #666;
+            color: #1a1a1a;
+            font-weight: 600;
         }
 
         .progress-bar {
@@ -81,8 +100,8 @@
         }
 
         .question-number {
-            color: #555;
-            font-weight: 400;
+            color: #1a1a1a;
+            font-weight: 600;
             font-size: 0.9rem;
             margin-bottom: 10px;
         }
@@ -99,6 +118,7 @@
             padding: 20px;
             border-radius: 6px;
             margin-bottom: 20px;
+            border: 1px solid #dee2e6;
         }
 
         .question-details ul {
@@ -108,28 +128,49 @@
 
         .question-details li {
             margin-bottom: 8px;
-            color: #333;
+            color: #1a1a1a;
         }
 
         .question-details p {
-            color: #333;
+            color: #1a1a1a;
         }
 
-        .question-text {
+        /* Proper fieldset and legend styling */
+        fieldset {
+            border: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        legend {
             font-size: 1rem;
             font-weight: 700;
             margin-bottom: 20px;
-            color: #333;
+            color: #1a1a1a;
+            padding: 0;
         }
 
-        .button-group {
+        /* Radio button group styling */
+        .radio-group {
             display: flex;
             gap: 15px;
             margin-bottom: 20px;
         }
 
-        button {
+        .radio-option {
             flex: 1;
+            position: relative;
+        }
+
+        .radio-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .radio-label {
+            display: block;
             padding: 15px 30px;
             font-size: 1.1rem;
             font-weight: 600;
@@ -139,19 +180,24 @@
             transition: all 0.2s ease;
             background: white;
             color: #b50315;
+            text-align: center;
+            min-height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        button:hover {
+        .radio-option input[type="radio"]:checked + .radio-label {
             background-color: #b50315;
             color: white;
         }
 
-        button:focus {
+        .radio-option input[type="radio"]:focus + .radio-label {
             outline: 3px solid #ffbf47;
             outline-offset: 2px;
         }
 
-        button.selected {
+        .radio-option input[type="radio"]:hover:not(:disabled) + .radio-label {
             background-color: #b50315;
             color: white;
         }
@@ -164,25 +210,34 @@
         }
 
         .nav-button {
-            padding: 12px 30px;
+            padding: 15px 30px;
             font-size: 1rem;
             font-weight: 600;
-            border: 2px solid #666;
+            border: 2px solid #1a1a1a;
             background: white;
-            color: #666;
+            color: #1a1a1a;
             border-radius: 6px;
             cursor: pointer;
             transition: all 0.2s ease;
+            min-height: 56px;
+            min-width: 120px;
         }
 
         .nav-button:hover:not(:disabled) {
-            background-color: #666;
+            background-color: #1a1a1a;
             color: white;
+        }
+
+        .nav-button:focus {
+            outline: 3px solid #ffbf47;
+            outline-offset: 2px;
         }
 
         .nav-button:disabled {
             opacity: 0.4;
             cursor: not-allowed;
+            border-color: #6c757d;
+            color: #6c757d;
         }
 
         .nav-button.primary {
@@ -200,9 +255,10 @@
             background-color: #fff8e1;
             padding: 20px;
             border-radius: 6px;
-            border-left: 4px solid #ffa726;
+            border-left: 4px solid #f57c00;
             margin-top: 20px;
             display: none;
+            border: 2px solid #f57c00;
         }
 
         .did-you-know.show {
@@ -220,11 +276,11 @@
 
         .did-you-know-header i {
             font-size: 2rem;
-            color: #ff9800;
+            color: #f57c00;
         }
 
         .did-you-know p {
-            color: #333;
+            color: #1a1a1a;
             margin: 0;
         }
 
@@ -242,7 +298,7 @@
         .results-content {
             font-size: 1rem;
             line-height: 1.6;
-            color: #333;
+            color: #1a1a1a;
             margin-bottom: 30px;
         }
 
@@ -253,42 +309,76 @@
 
         .results.success {
             background-color: #e8f5e9;
-            border: 2px solid #4caf50;
+            border: 3px solid #2e7d32;
             border-radius: 8px;
         }
 
         .results.success h2 {
-            color: #2e7d32;
+            color: #1b5e20;
         }
 
         .results.warning {
             background-color: #fff3e0;
-            border: 2px solid #ff9800;
+            border: 3px solid #e65100;
             border-radius: 8px;
         }
 
         .results.warning h2 {
-            color: #e65100;
+            color: #bf360c;
         }
 
-        .restart-button {
+        .restart-button,
+        .apply-button {
             padding: 15px 40px;
             font-size: 1.1rem;
             font-weight: 600;
             background-color: #b50315;
             color: white;
-            border: none;
+            border: 2px solid #b50315;
             border-radius: 6px;
             cursor: pointer;
             transition: background-color 0.2s ease;
+            min-height: 56px;
+            text-decoration: none;
+            display: inline-block;
         }
 
-        .restart-button:hover {
+        .restart-button:hover,
+        .apply-button:hover {
             background-color: #8f0210;
+            border-color: #8f0210;
+        }
+
+        .restart-button:focus,
+        .apply-button:focus {
+            outline: 3px solid #ffbf47;
+            outline-offset: 2px;
         }
 
         .hidden {
             display: none;
+        }
+
+        /* Screen reader only content */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
+        /* Live region for announcements */
+        .live-region {
+            position: absolute;
+            left: -10000px;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
         }
 
         @media (max-width: 600px) {
@@ -300,43 +390,78 @@
                 font-size: 1.5rem;
             }
 
-            .button-group {
+            .radio-group {
                 flex-direction: column;
             }
 
             .navigation {
                 flex-direction: column;
             }
+
+            .nav-button {
+                width: 100%;
+            }
+        }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            .radio-label,
+            .nav-button {
+                border-width: 3px;
+            }
+        }
+
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
         }
     </style>
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <!-- Live region for screen reader announcements -->
+    <div aria-live="polite" aria-atomic="true" class="live-region" id="live-region"></div>
+
     <div class="container">
-        <div class="header">
+        <header class="header">
             <h1>RCMP applicant readiness check</h1>
             <p class="intro">This readiness check is a self-assessment created to help you determine if you're ready and fit for a career in policing with the RCMP, before applying. Answer each question honestly to determine whether a career as a police officer is right for you.</p>
-        </div>
+        </header>
 
-        <div id="quiz-section">
-            <div class="progress-container" role="region" aria-label="Quiz progress">
-                <div class="progress-label">
-                    <span id="progress-text">Question <span id="current-question">1</span> of <span id="total-questions">9</span></span>
-                    <span id="progress-percent">0%</span>
+        <main id="main-content">
+            <div id="quiz-section">
+                <div class="progress-container" role="region" aria-label="Quiz progress">
+                    <div class="progress-label">
+                        <span id="progress-text">Question <span id="current-question">1</span> of <span id="total-questions">9</span></span>
+                        <span id="progress-percent">0%</span>
+                    </div>
+                    <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Quiz completion progress">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
                 </div>
-                <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                    <div class="progress-fill" id="progress-fill"></div>
-                </div>
+
+                <form id="quiz-form" novalidate>
+                    <div id="question-container" class="question-container"></div>
+
+                    <nav class="navigation" aria-label="Quiz navigation">
+                        <button type="button" id="prev-button" class="nav-button" aria-label="Go to previous question">
+                            <span aria-hidden="true">← </span>Previous
+                        </button>
+                        <button type="button" id="next-button" class="nav-button primary" aria-label="Go to next question">
+                            Next<span aria-hidden="true"> →</span>
+                        </button>
+                    </nav>
+                </form>
             </div>
 
-            <div id="question-container" class="question-container"></div>
-
-            <div class="navigation">
-                <button id="prev-button" class="nav-button" aria-label="Previous question">Previous</button>
-                <button id="next-button" class="nav-button primary" aria-label="Next question">Next</button>
-            </div>
-        </div>
-
-        <div id="results-section" class="hidden"></div>
+            <div id="results-section" class="hidden" role="region" aria-live="polite"></div>
+        </main>
     </div>
 
     <script>
@@ -438,8 +563,16 @@
         const totalQuestionsSpan = document.getElementById('total-questions');
         const progressPercent = document.getElementById('progress-percent');
         const progressBar = document.querySelector('.progress-bar');
+        const liveRegion = document.getElementById('live-region');
 
         totalQuestionsSpan.textContent = questions.length;
+
+        function announce(message) {
+            liveRegion.textContent = message;
+            setTimeout(() => {
+                liveRegion.textContent = '';
+            }, 1000);
+        }
 
         function renderQuestion() {
             const question = questions[currentQuestionIndex];
@@ -448,7 +581,7 @@
                 <div class="question-number" aria-label="Question ${question.number} of ${questions.length}">
                     Question ${question.number} of ${questions.length}
                 </div>
-                <h2 class="question-title">${question.title}</h2>
+                <h2 class="question-title" id="question-title-${question.number}">${question.title}</h2>
             `;
 
             if (question.details || question.bullets.length > 0) {
@@ -467,24 +600,37 @@
             }
 
             html += `
-                <div class="question-text" id="question-text">${question.question}</div>
-                <div class="button-group" role="group" aria-labelledby="question-text">
-                    <button 
-                        type="button" 
-                        id="yes-button" 
-                        class="${answers[currentQuestionIndex] === 'yes' ? 'selected' : ''}"
-                        aria-pressed="${answers[currentQuestionIndex] === 'yes'}"
-                    >Yes</button>
-                    <button 
-                        type="button" 
-                        id="no-button" 
-                        class="${answers[currentQuestionIndex] === 'no' ? 'selected' : ''}"
-                        aria-pressed="${answers[currentQuestionIndex] === 'no'}"
-                    >No</button>
-                </div>
-                <div class="did-you-know ${answers[currentQuestionIndex] !== null ? 'show' : ''}" id="info-section">
+                <fieldset>
+                    <legend id="question-legend-${question.number}">${question.question}</legend>
+                    <div class="radio-group" role="radiogroup" aria-labelledby="question-legend-${question.number}">
+                        <div class="radio-option">
+                            <input 
+                                type="radio" 
+                                id="yes-${question.number}" 
+                                name="question-${question.number}" 
+                                value="yes"
+                                ${answers[currentQuestionIndex] === 'yes' ? 'checked' : ''}
+                            >
+                            <label for="yes-${question.number}" class="radio-label">Yes</label>
+                        </div>
+                        <div class="radio-option">
+                            <input 
+                                type="radio" 
+                                id="no-${question.number}" 
+                                name="question-${question.number}" 
+                                value="no"
+                                ${answers[currentQuestionIndex] === 'no' ? 'checked' : ''}
+                            >
+                            <label for="no-${question.number}" class="radio-label">No</label>
+                        </div>
+                    </div>
+                </fieldset>
+                <div class="did-you-know ${answers[currentQuestionIndex] !== null ? 'show' : ''}" 
+                     id="info-section-${question.number}"
+                     role="region"
+                     aria-label="Additional information">
                     <div class="did-you-know-header">
-                        <i class="fas fa-lightbulb"></i>
+                        <i class="fas fa-lightbulb" aria-hidden="true"></i>
                         <span>Did you know?</span>
                     </div>
                     <p>${question.info}</p>
@@ -493,34 +639,43 @@
 
             questionContainer.innerHTML = html;
 
-            document.getElementById('yes-button').addEventListener('click', () => selectAnswer('yes'));
-            document.getElementById('no-button').addEventListener('click', () => selectAnswer('no'));
+            // Add event listeners to radio buttons
+            const yesRadio = document.getElementById(`yes-${question.number}`);
+            const noRadio = document.getElementById(`no-${question.number}`);
+
+            yesRadio.addEventListener('change', () => selectAnswer('yes'));
+            noRadio.addEventListener('change', () => selectAnswer('no'));
 
             updateNavigation();
             updateProgress();
+
+            // Focus management
+            const questionTitle = document.getElementById(`question-title-${question.number}`);
+            if (questionTitle) {
+                questionTitle.focus();
+                questionTitle.setAttribute('tabindex', '-1');
+            }
+
+            // Announce question change
+            announce(`Question ${question.number} of ${questions.length}: ${question.title}`);
         }
 
         function selectAnswer(answer) {
+            const wasNull = answers[currentQuestionIndex] === null;
             answers[currentQuestionIndex] = answer;
             
-            const yesButton = document.getElementById('yes-button');
-            const noButton = document.getElementById('no-button');
-            const infoSection = document.getElementById('info-section');
+            const question = questions[currentQuestionIndex];
+            const infoSection = document.getElementById(`info-section-${question.number}`);
             
-            if (answer === 'yes') {
-                yesButton.classList.add('selected');
-                noButton.classList.remove('selected');
-                yesButton.setAttribute('aria-pressed', 'true');
-                noButton.setAttribute('aria-pressed', 'false');
-            } else {
-                noButton.classList.add('selected');
-                yesButton.classList.remove('selected');
-                noButton.setAttribute('aria-pressed', 'true');
-                yesButton.setAttribute('aria-pressed', 'false');
+            // Show the "Did you know?" section
+            if (infoSection) {
+                infoSection.classList.add('show');
+                
+                // Announce to screen readers when info appears for first time
+                if (wasNull) {
+                    announce('Additional information is now available below the answer choices.');
+                }
             }
-
-            // Show the "Did you know?" section for both yes and no
-            infoSection.classList.add('show');
 
             updateNavigation();
         }
@@ -530,15 +685,22 @@
             
             if (currentQuestionIndex === questions.length - 1) {
                 nextButton.textContent = 'View results';
+                nextButton.setAttribute('aria-label', 'View your results');
                 nextButton.disabled = answers[currentQuestionIndex] === null;
             } else {
-                nextButton.textContent = 'Next';
+                const nextText = document.createElement('span');
+                nextText.innerHTML = 'Next<span aria-hidden="true"> →</span>';
+                nextButton.innerHTML = '';
+                nextButton.appendChild(nextText.firstChild);
+                nextButton.appendChild(nextText.lastChild);
+                nextButton.setAttribute('aria-label', 'Go to next question');
                 nextButton.disabled = answers[currentQuestionIndex] === null;
             }
         }
 
         function updateProgress() {
-            const progress = ((currentQuestionIndex) / questions.length) * 100;
+            const answeredQuestions = answers.filter(a => a !== null).length;
+            const progress = (answeredQuestions / questions.length) * 100;
             progressFill.style.width = progress + '%';
             progressBar.setAttribute('aria-valuenow', Math.round(progress));
             currentQuestionSpan.textContent = currentQuestionIndex + 1;
@@ -553,18 +715,25 @@
             
             if (yesCount === questions.length) {
                 html = `
-                    <div class="results success" role="alert" aria-live="polite">
-                        <h2>Congratulations!</h2>
+                    <div class="results success">
+                        <h2 id="results-heading">Congratulations!</h2>
                         <div class="results-content">
                             <p>Looks like you are suited to be an RCMP police officer. If you've already reviewed the basic requirements, read through the application process to know what you can expect.</p>
                         </div>
-                        <button type="button" class="restart-button" onclick="window.open('https://www.rcmp-grc.gc.ca/en/police-officers', '_blank')">Apply now</button>
+                        <a href="https://www.rcmp-grc.gc.ca/en/police-officers" 
+                           class="apply-button" 
+                           target="_blank" 
+                           rel="noopener noreferrer"
+                           aria-label="Apply now - Opens in a new window">
+                            Apply now
+                            <span class="sr-only">(opens in new window)</span>
+                        </a>
                     </div>
                 `;
             } else {
                 html = `
-                    <div class="results warning" role="alert" aria-live="polite">
-                        <h2>Additional preparation needed</h2>
+                    <div class="results warning">
+                        <h2 id="results-heading">Additional preparation needed</h2>
                         <div class="results-content">
                             <p>Looks like you don't meet all the requirements just yet. Before you apply, review the basic requirements to be an RCMP police officer to make sure you're fit and ready for a career in policing.</p>
                             <p style="margin-top: 15px;">You answered "Yes" to ${yesCount} out of ${questions.length} questions.</p>
@@ -578,6 +747,20 @@
             quizSection.classList.add('hidden');
             resultsSection.classList.remove('hidden');
             
+            // Focus management
+            const resultsHeading = document.getElementById('results-heading');
+            if (resultsHeading) {
+                resultsHeading.setAttribute('tabindex', '-1');
+                resultsHeading.focus();
+            }
+
+            // Announce results
+            if (yesCount === questions.length) {
+                announce('Quiz complete! Congratulations, you appear suited to be an RCMP police officer.');
+            } else {
+                announce(`Quiz complete! You answered yes to ${yesCount} out of ${questions.length} questions. Additional preparation may be needed.`);
+            }
+            
             // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -588,6 +771,7 @@
             quizSection.classList.remove('hidden');
             resultsSection.classList.add('hidden');
             renderQuestion();
+            announce('Quiz restarted. You are back at question 1.');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -606,6 +790,18 @@
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             } else {
                 showResults();
+            }
+        });
+
+        // Keyboard navigation enhancement
+        document.addEventListener('keydown', (e) => {
+            // Allow arrow keys to navigate between questions when not focused on a radio button
+            if (e.target.type !== 'radio') {
+                if (e.key === 'ArrowRight' && !nextButton.disabled) {
+                    nextButton.click();
+                } else if (e.key === 'ArrowLeft' && !prevButton.disabled) {
+                    prevButton.click();
+                }
             }
         });
 
