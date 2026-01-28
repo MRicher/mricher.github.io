@@ -1,9 +1,45 @@
+current code: make it that it shows the paragraph after selecting no to show also when selecting yes. But add a visual element like a did you know icon from font awesome. Change the blue in the buttons for #b50315 and make sure it phrase case.
+10:15 PM
+
+I'll help you modify the code to show the information paragraph for both "Yes" and "No" answers with a "Did you know" icon, change the blue color to #b50315, and ensure proper phrase case formatting.
+
+I've updated your RCMP readiness check with all the requested changes:
+
+Key updates:
+
+    ✅ Info box now appears for both "Yes" and "No" answers
+    ✅ Added Font Awesome lightbulb icon with "Did you know?" header in an attractive yellow box
+    ✅ Changed all blue colors to #b50315 (buttons, progress bar, primary navigation)
+    ✅ Updated all text to phrase case (e.g., "First aid certification", "Start over", "View results")
+
+The "Did you know?" box has a warm yellow background (#fff8e1) with an orange border and icon to make it visually distinct and informative, appearing after any answer is selected.
+Rcmp readiness check
+Code · HTML 
+
+make the icon more prevelent in the paragraph
+10:17 PM
+
+I've made the icon much more prominent! The lightbulb icon is now larger (2rem instead of 1.2rem) and has a bright orange color (#ff9800) to stand out more in the "Did you know?" section.
+Rcmp readiness check
+Code · HTML 
+
+on the success make Apply now then a start over.
+10:21 PM
+
+Perfect! I've added an "Apply now" button that appears first in the success results, followed by the "Start over" button. The "Apply now" button links to the RCMP police officers page and opens in a new tab. Both buttons are displayed side-by-side with equal styling.
+Rcmp readiness check
+Code · HTML 
+
+
+Claude is AI and can make mistakes. Please double-check responses.
+Rcmp readiness check · HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RCMP Applicant Readiness Check</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -70,7 +106,7 @@
 
         .progress-fill {
             height: 100%;
-            background-color: #0066cc;
+            background-color: #b50315;
             transition: width 0.3s ease;
             border-radius: 6px;
         }
@@ -132,16 +168,16 @@
             padding: 15px 30px;
             font-size: 1.1rem;
             font-weight: 600;
-            border: 2px solid #0066cc;
+            border: 2px solid #b50315;
             border-radius: 6px;
             cursor: pointer;
             transition: all 0.2s ease;
             background: white;
-            color: #0066cc;
+            color: #b50315;
         }
 
         button:hover {
-            background-color: #0066cc;
+            background-color: #b50315;
             color: white;
         }
 
@@ -151,7 +187,7 @@
         }
 
         button.selected {
-            background-color: #0066cc;
+            background-color: #b50315;
             color: white;
         }
 
@@ -185,14 +221,46 @@
         }
 
         .nav-button.primary {
-            background-color: #0066cc;
-            border-color: #0066cc;
+            background-color: #b50315;
+            border-color: #b50315;
             color: white;
         }
 
         .nav-button.primary:hover:not(:disabled) {
-            background-color: #0052a3;
-            border-color: #0052a3;
+            background-color: #8f0210;
+            border-color: #8f0210;
+        }
+
+        .did-you-know {
+            background-color: #fff8e1;
+            padding: 20px;
+            border-radius: 6px;
+            border-left: 4px solid #ffa726;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .did-you-know.show {
+            display: block;
+        }
+
+        .did-you-know-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 12px;
+            font-weight: 700;
+            color: #e65100;
+        }
+
+        .did-you-know-header i {
+            font-size: 2rem;
+            color: #ff9800;
+        }
+
+        .did-you-know p {
+            color: #333;
+            margin: 0;
         }
 
         .results {
@@ -242,7 +310,7 @@
             padding: 15px 40px;
             font-size: 1.1rem;
             font-weight: 600;
-            background-color: #0066cc;
+            background-color: #b50315;
             color: white;
             border: none;
             border-radius: 6px;
@@ -251,7 +319,7 @@
         }
 
         .restart-button:hover {
-            background-color: #0052a3;
+            background-color: #8f0210;
         }
 
         .hidden {
@@ -324,15 +392,15 @@
             },
             {
                 number: 2,
-                title: "First Aid certification",
+                title: "First aid certification",
                 details: "You must have a valid Standard First Aid certification. Would you feel comfortable carrying out the following expectations in case of emergency?",
                 bullets: [
                     "Providing immediate, basic medical assistance",
                     "Seeking and calling for medical assistance",
                     "Documenting and reporting incidents"
                 ],
-                question: "Are you comfortable providing First Aid in emergencies?",
-                info: "As a police officer you may often be the first responder to a scene, you must be comfortable assessing the situation and providing standard First Aid support. You must have Level C CPR for infant, child and adult. Proof of your certification will be requested during the application process and must be valid during your cadet training if you advance in the process."
+                question: "Are you comfortable providing first aid in emergencies?",
+                info: "As a police officer you may often be the first responder to a scene, you must be comfortable assessing the situation and providing standard first aid support. You must have Level C CPR for infant, child and adult. Proof of your certification will be requested during the application process and must be valid during your cadet training if you advance in the process."
             },
             {
                 number: 3,
@@ -356,7 +424,7 @@
                 details: "Policing is a physically demanding job. Police officers are required to successfully complete the Police Fitness Assessment to be deemed fit for duty.",
                 bullets: [],
                 question: "Are you in good physical shape and prepared for the demands of police work and the Cadet Training Program?",
-                info: "Applicant must arrive to Cadet training fit and ready to meet the physical demands of policing. Cadet training at Depot isn't designed to build fitness. Arriving unprepared increases risk of injury and makes training harder."
+                info: "Applicant must arrive to cadet training fit and ready to meet the physical demands of policing. Cadet training at Depot isn't designed to build fitness. Arriving unprepared increases risk of injury and makes training harder."
             },
             {
                 number: 6,
@@ -449,7 +517,11 @@
                         aria-pressed="${answers[currentQuestionIndex] === 'no'}"
                     >No</button>
                 </div>
-                <div class="question-details" id="info-section" style="display: ${answers[currentQuestionIndex] === 'no' ? 'block' : 'none'}">
+                <div class="did-you-know ${answers[currentQuestionIndex] !== null ? 'show' : ''}" id="info-section">
+                    <div class="did-you-know-header">
+                        <i class="fas fa-lightbulb"></i>
+                        <span>Did you know?</span>
+                    </div>
                     <p>${question.info}</p>
                 </div>
             `;
@@ -475,14 +547,15 @@
                 noButton.classList.remove('selected');
                 yesButton.setAttribute('aria-pressed', 'true');
                 noButton.setAttribute('aria-pressed', 'false');
-                infoSection.style.display = 'none';
             } else {
                 noButton.classList.add('selected');
                 yesButton.classList.remove('selected');
                 noButton.setAttribute('aria-pressed', 'true');
                 yesButton.setAttribute('aria-pressed', 'false');
-                infoSection.style.display = 'block';
             }
+
+            // Show the "Did you know?" section for both yes and no
+            infoSection.classList.add('show');
 
             updateNavigation();
         }
@@ -491,7 +564,7 @@
             prevButton.disabled = currentQuestionIndex === 0;
             
             if (currentQuestionIndex === questions.length - 1) {
-                nextButton.textContent = 'View Results';
+                nextButton.textContent = 'View results';
                 nextButton.disabled = answers[currentQuestionIndex] === null;
             } else {
                 nextButton.textContent = 'Next';
@@ -520,18 +593,21 @@
                         <div class="results-content">
                             <p>Looks like you are suited to be an RCMP police officer. If you've already reviewed the basic requirements, read through the application process to know what you can expect.</p>
                         </div>
-                        <button type="button" class="restart-button" onclick="restartQuiz()">Start Over</button>
+                        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                            <button type="button" class="restart-button" onclick="window.open('https://www.rcmp-grc.gc.ca/en/police-officers', '_blank')">Apply now</button>
+                            <button type="button" class="restart-button" onclick="restartQuiz()">Start over</button>
+                        </div>
                     </div>
                 `;
             } else {
                 html = `
                     <div class="results warning" role="alert" aria-live="polite">
-                        <h2>Additional Preparation Needed</h2>
+                        <h2>Additional preparation needed</h2>
                         <div class="results-content">
                             <p>Looks like you don't meet all the requirements just yet. Before you apply, review the basic requirements to be an RCMP police officer to make sure you're fit and ready for a career in policing.</p>
                             <p style="margin-top: 15px;">You answered "Yes" to ${yesCount} out of ${questions.length} questions.</p>
                         </div>
-                        <button type="button" class="restart-button" onclick="restartQuiz()">Start Over</button>
+                        <button type="button" class="restart-button" onclick="restartQuiz()">Start over</button>
                     </div>
                 `;
             }
