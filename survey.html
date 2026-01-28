@@ -20,7 +20,6 @@
             padding: 20px;
         }
 
-        /* Skip link for keyboard navigation */
         .skip-link {
             position: absolute;
             top: -40px;
@@ -135,7 +134,6 @@
             color: #1a1a1a;
         }
 
-        /* Proper fieldset and legend styling */
         fieldset {
             border: none;
             padding: 0;
@@ -150,7 +148,6 @@
             padding: 0;
         }
 
-        /* Radio button group styling */
         .radio-group {
             display: flex;
             gap: 15px;
@@ -359,7 +356,6 @@
             display: none;
         }
 
-        /* Screen reader only content */
         .sr-only {
             position: absolute;
             width: 1px;
@@ -372,7 +368,6 @@
             border-width: 0;
         }
 
-        /* Live region for announcements */
         .live-region {
             position: absolute;
             left: -10000px;
@@ -403,7 +398,6 @@
             }
         }
 
-        /* High contrast mode support */
         @media (prefers-contrast: high) {
             .radio-label,
             .nav-button {
@@ -411,7 +405,6 @@
             }
         }
 
-        /* Reduced motion support */
         @media (prefers-reduced-motion: reduce) {
             * {
                 animation-duration: 0.01ms !important;
@@ -425,7 +418,6 @@
 <body>
     <a href="#main-content" class="skip-link">Skip to main content</a>
     
-    <!-- Live region for screen reader announcements -->
     <div aria-live="polite" aria-atomic="true" class="live-region" id="live-region"></div>
 
     <div class="container">
@@ -451,10 +443,10 @@
 
                     <nav class="navigation" aria-label="Quiz navigation">
                         <button type="button" id="prev-button" class="nav-button" aria-label="Go to previous question">
-                            <span aria-hidden="true">← </span>Previous
+                            Previous
                         </button>
                         <button type="button" id="next-button" class="nav-button primary" aria-label="Go to next question">
-                            Next<span aria-hidden="true"> →</span>
+                            Next
                         </button>
                     </nav>
                 </form>
@@ -639,7 +631,6 @@
 
             questionContainer.innerHTML = html;
 
-            // Add event listeners to radio buttons
             const yesRadio = document.getElementById(`yes-${question.number}`);
             const noRadio = document.getElementById(`no-${question.number}`);
 
@@ -649,14 +640,12 @@
             updateNavigation();
             updateProgress();
 
-            // Focus management
             const questionTitle = document.getElementById(`question-title-${question.number}`);
             if (questionTitle) {
                 questionTitle.focus();
                 questionTitle.setAttribute('tabindex', '-1');
             }
 
-            // Announce question change
             announce(`Question ${question.number} of ${questions.length}: ${question.title}`);
         }
 
@@ -667,11 +656,9 @@
             const question = questions[currentQuestionIndex];
             const infoSection = document.getElementById(`info-section-${question.number}`);
             
-            // Show the "Did you know?" section
             if (infoSection) {
                 infoSection.classList.add('show');
                 
-                // Announce to screen readers when info appears for first time
                 if (wasNull) {
                     announce('Additional information is now available below the answer choices.');
                 }
@@ -688,11 +675,7 @@
                 nextButton.setAttribute('aria-label', 'View your results');
                 nextButton.disabled = answers[currentQuestionIndex] === null;
             } else {
-                const nextText = document.createElement('span');
-                nextText.innerHTML = 'Next<span aria-hidden="true"> →</span>';
-                nextButton.innerHTML = '';
-                nextButton.appendChild(nextText.firstChild);
-                nextButton.appendChild(nextText.lastChild);
+                nextButton.textContent = 'Next';
                 nextButton.setAttribute('aria-label', 'Go to next question');
                 nextButton.disabled = answers[currentQuestionIndex] === null;
             }
@@ -747,21 +730,18 @@
             quizSection.classList.add('hidden');
             resultsSection.classList.remove('hidden');
             
-            // Focus management
             const resultsHeading = document.getElementById('results-heading');
             if (resultsHeading) {
                 resultsHeading.setAttribute('tabindex', '-1');
                 resultsHeading.focus();
             }
 
-            // Announce results
             if (yesCount === questions.length) {
                 announce('Quiz complete! Congratulations, you appear suited to be an RCMP police officer.');
             } else {
                 announce(`Quiz complete! You answered yes to ${yesCount} out of ${questions.length} questions. Additional preparation may be needed.`);
             }
             
-            // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -793,9 +773,7 @@
             }
         });
 
-        // Keyboard navigation enhancement
         document.addEventListener('keydown', (e) => {
-            // Allow arrow keys to navigate between questions when not focused on a radio button
             if (e.target.type !== 'radio') {
                 if (e.key === 'ArrowRight' && !nextButton.disabled) {
                     nextButton.click();
@@ -805,7 +783,6 @@
             }
         });
 
-        // Initialize
         renderQuestion();
     </script>
 </body>
