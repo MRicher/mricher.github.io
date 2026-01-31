@@ -442,6 +442,24 @@
         const challengeIcon = document.getElementById('challengeIcon');
         const participantCountSpan = document.getElementById('participantCount');
 
+        // Color palette - MUST be defined before getRandomColor()
+        const colors = [
+            '#601973', // Purple
+            '#42145F', // Dark Purple
+            '#8FCAE7', // Light Blue
+            '#BED18A', // Light Green
+            '#D97706', // Orange
+            '#DC2626', // Red
+            '#7C3AED', // Violet
+            '#0891B2', // Cyan
+            '#EA580C', // Dark Orange
+            '#16A34A'  // Green
+        ];
+
+        function getRandomColor() {
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
         // Set canvas size
         function resizeCanvas() {
             const rect = canvas.getBoundingClientRect();
@@ -450,14 +468,6 @@
         }
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
-
-        // Game state
-        let gameActive = false;
-        let timeLeft = 60;
-        let timerInterval = null;
-        let participants = new Map();
-        let myColor = getRandomColor();
-        let participantId = 'user_' + Date.now();
 
         // Challenges
         const challenges = [
@@ -475,23 +485,13 @@
 
         let currentChallenge = challenges[0];
 
-        // Color palette
-        const colors = [
-            '#601973', // Purple
-            '#42145F', // Dark Purple
-            '#8FCAE7', // Light Blue
-            '#BED18A', // Light Green
-            '#D97706', // Orange
-            '#DC2626', // Red
-            '#7C3AED', // Violet
-            '#0891B2', // Cyan
-            '#EA580C', // Dark Orange
-            '#16A34A'  // Green
-        ];
-
-        function getRandomColor() {
-            return colors[Math.floor(Math.random() * colors.length)];
-        }
+        // Game state
+        let gameActive = false;
+        let timeLeft = 60;
+        let timerInterval = null;
+        let participants = new Map();
+        let myColor = getRandomColor();
+        let participantId = 'user_' + Date.now();
 
         // Drawing
         let isDrawing = false;
