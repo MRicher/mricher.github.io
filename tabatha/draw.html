@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="The Chaos Cursor - A collaborative art game where teams work together to draw shapes">
+    <title>The Chaos Cursor - TabTalks</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Oxygen:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Brand Colors */
+            --purple: #601973;
+            --dark-grey: #58595b;
+            --light-grey: #BBBDC0;
+            --lightest-grey: #E2E3E4;
+            --light-blue: #8FCAE7;
+            --light-green: #BED18A;
+            --dark-purple: #42145F;
+            --white: #FFFFFF;
+            --black: #000000;
+            
+            /* Semantic Color Assignments */
+            --bg-primary: var(--white);
+            --bg-secondary: var(--lightest-grey);
+            --bg-accent: #F8F8F9;
+            --text-primary: var(--black);
+            --text-secondary: var(--dark-grey);
+            --text-light: #6B6C6E;
+            --accent: var(--purple);
+            --accent-dark: var(--dark-purple);
+            --border: var(--light-grey);
+            --border-light: #D5D6D8;
+            
+            /* Spacing */
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 2rem;
+            --spacing-lg: 4rem;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Oxygen', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-md);
+        }
+
+        header {
+            padding: var(--spacing-md) 0;
+            border-bottom: 2px solid var(--border-light);
+            background: var(--bg-primary);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-link {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-small {
+            width: 40px;
+            height: 40px;
+            background: var(--purple);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 700;
+        }
+
+        .brand-text {
+            font-family: 'Dancing Script', cursive;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--purple);
+        }
+
+        .back-link {
+            color: var(--purple);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: color 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: var(--dark-purple);
+        }
+
+        main {
+            padding: var(--spacing-lg) 0;
+        }
+
+        h1 {
+            font-family: 'Oxygen', sans-serif;
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--dark-purple);
+            text-align: center;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .subtitle {
+            font-family: 'Oxygen', sans-serif;
+            font-size: 16px;
+            font-weight: 300;
+            color: var(--text-secondary);
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto var(--spacing-lg);
+            line-height: 1.8;
+        }
+
+        .game-container {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-light);
+            border-radius: 8px;
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+            flex-wrap: wrap;
+            gap: var(--spacing-sm);
+        }
+
+        .challenge-display {
+            font-family: 'Oxygen', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--dark-purple);
+        }
+
+        .challenge-icon {
+            font-size: 48px;
+            margin: 0 var(--spacing-sm);
+            vertical-align: middle;
+        }
+
+        .timer {
+            font-family: 'Oxygen', sans-serif;
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--purple);
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .timer.warning {
+            color: #D97706;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .canvas-container {
+            position: relative;
+            background: var(--white);
+            border: 2px solid var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: var(--spacing-md);
+        }
+
+        #drawingCanvas {
+            display: block;
+            width: 100%;
+            height: 500px;
+            cursor: crosshair;
+            touch-action: none;
+        }
+
+        .participants-overlay {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: var(--spacing-sm);
+            border-radius: 4px;
+            border: 1px solid var(--border-light);
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .controls {
+            display: flex;
+            gap: var(--spacing-sm);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: none;
+            border-radius: 4px;
+            font-family: 'Oxygen', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: var(--purple);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--dark-purple);
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--dark-grey);
+            border: 2px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--purple);
+            color: var(--purple);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .color-picker-container {
+            display: flex;
+            gap: var(--spacing-xs);
+            align-items: center;
+        }
+
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+
+        .color-option.active {
+            border-color: var(--dark-grey);
+            box-shadow: 0 0 0 2px var(--white), 0 0 0 4px var(--dark-grey);
+        }
+
+        .instructions {
+            background: var(--white);
+            border: 2px solid var(--border-light);
+            border-radius: 4px;
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .instructions h2 {
+            font-family: 'Oxygen', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--dark-purple);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .instructions ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .instructions li {
+            padding-left: 1.5rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+
+        .instructions li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--light-blue);
+            font-weight: 700;
+        }
+
+        .game-over {
+            text-align: center;
+            padding: var(--spacing-lg);
+            background: var(--bg-secondary);
+            border: 2px solid var(--light-green);
+            border-radius: 8px;
+            margin-top: var(--spacing-md);
+            display: none;
+        }
+
+        .game-over.show {
+            display: block;
+        }
+
+        .game-over h2 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 30px;
+            font-weight: 700;
+            color: var(--purple);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 28px;
+            }
+
+            .timer {
+                font-size: 28px;
+            }
+
+            #drawingCanvas {
+                height: 400px;
+            }
+
+            .game-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo-link">
+                    <div class="logo-small">TT</div>
+                    <span class="brand-text">TabTalks</span>
+                </a>
+                <a href="index.html" class="back-link">
+                    <i class="fas fa-arrow-left"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <h1>The Chaos Cursor</h1>
+            <p class="subtitle">A collaborative drawing game where everyone's mouse creates colorful trails. Work together to draw the challenge shape before time runs out!</p>
+
+            <div class="instructions">
+                <h2>How to Play</h2>
+                <ul>
+                    <li>Each participant gets a unique color trail</li>
+                    <li>Move your mouse or finger across the canvas to draw</li>
+                    <li>Work together to create the challenge shape in 60 seconds</li>
+                    <li>Choose "New Challenge" to get a different shape to draw</li>
+                    <li>Clear the canvas anytime to start fresh</li>
+                </ul>
+            </div>
+
+            <div class="game-container">
+                <div class="game-header">
+                    <div class="challenge-display">
+                        Draw: <span id="currentChallenge">Circle</span>
+                        <span class="challenge-icon" id="challengeIcon">⭕</span>
+                    </div>
+                    <div class="timer" id="timer">60</div>
+                </div>
+
+                <div class="canvas-container">
+                    <canvas id="drawingCanvas"></canvas>
+                    <div class="participants-overlay">
+                        <i class="fas fa-users"></i> <span id="participantCount">1</span> drawing
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn btn-primary" id="startBtn">Start Game</button>
+                    <button class="btn btn-secondary" id="newChallengeBtn">New Challenge</button>
+                    <button class="btn btn-secondary" id="clearBtn">Clear Canvas</button>
+                </div>
+
+                <div class="game-over" id="gameOver">
+                    <h2>Time's Up!</h2>
+                    <p>Great collaboration! Ready for another challenge?</p>
+                    <button class="btn btn-primary" id="playAgainBtn">Play Again</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Canvas setup
+        const canvas = document.getElementById('drawingCanvas');
+        const ctx = canvas.getContext('2d');
+        const startBtn = document.getElementById('startBtn');
+        const newChallengeBtn = document.getElementById('newChallengeBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const timerDisplay = document.getElementById('timer');
+        const gameOverDiv = document.getElementById('gameOver');
+        const playAgainBtn = document.getElementById('playAgainBtn');
+        const currentChallengeText = document.getElementById('currentChallenge');
+        const challengeIcon = document.getElementById('challengeIcon');
+        const participantCountSpan = document.getElementById('participantCount');
+
+        // Set canvas size
+        function resizeCanvas() {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Game state
+        let gameActive = false;
+        let timeLeft = 60;
+        let timerInterval = null;
+        let participants = new Map();
+        let myColor = getRandomColor();
+        let participantId = 'user_' + Date.now();
+
+        // Challenges
+        const challenges = [
+            { name: 'Circle', icon: '⭕' },
+            { name: 'Square', icon: '⬜' },
+            { name: 'Triangle', icon: '🔺' },
+            { name: 'Star', icon: '⭐' },
+            { name: 'Heart', icon: '❤️' },
+            { name: 'House', icon: '🏠' },
+            { name: 'Tree', icon: '🌲' },
+            { name: 'Sun', icon: '☀️' },
+            { name: 'Smiley Face', icon: '😊' },
+            { name: 'Arrow', icon: '➡️' }
+        ];
+
+        let currentChallenge = challenges[0];
+
+        // Color palette
+        const colors = [
+            '#601973', // Purple
+            '#42145F', // Dark Purple
+            '#8FCAE7', // Light Blue
+            '#BED18A', // Light Green
+            '#D97706', // Orange
+            '#DC2626', // Red
+            '#7C3AED', // Violet
+            '#0891B2', // Cyan
+            '#EA580C', // Dark Orange
+            '#16A34A'  // Green
+        ];
+
+        function getRandomColor() {
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        // Drawing
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+
+        function startDrawing(e) {
+            if (!gameActive) return;
+            isDrawing = true;
+            const pos = getPosition(e);
+            lastX = pos.x;
+            lastY = pos.y;
+        }
+
+        function draw(e) {
+            if (!isDrawing || !gameActive) return;
+            
+            const pos = getPosition(e);
+            drawLine(lastX, lastY, pos.x, pos.y, myColor, 3);
+            
+            lastX = pos.x;
+            lastY = pos.y;
+
+            // Simulate other participants (in real app, this would come from server)
+            simulateOtherParticipants();
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+        }
+
+        function getPosition(e) {
+            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches ? e.touches[0] : e;
+            return {
+                x: touch.clientX - rect.left,
+                y: touch.clientY - rect.top
+            };
+        }
+
+        function drawLine(x1, y1, x2, y2, color, width) {
+            ctx.strokeStyle = color;
+            ctx.lineWidth = width;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+        }
+
+        // Simulate other participants for demo
+        function simulateOtherParticipants() {
+            // Add random participant movements occasionally
+            if (Math.random() < 0.1) {
+                const otherColor = colors[Math.floor(Math.random() * colors.length)];
+                const x1 = Math.random() * canvas.width;
+                const y1 = Math.random() * canvas.height;
+                const x2 = x1 + (Math.random() - 0.5) * 50;
+                const y2 = y1 + (Math.random() - 0.5) * 50;
+                drawLine(x1, y1, x2, y2, otherColor, 3);
+            }
+
+            // Update participant count
+            const count = Math.floor(Math.random() * 3) + 1;
+            participantCountSpan.textContent = count;
+        }
+
+        // Event listeners for drawing
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+
+        // Touch events
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            startDrawing(e);
+        });
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            draw(e);
+        });
+        canvas.addEventListener('touchend', stopDrawing);
+
+        // Game controls
+        function startGame() {
+            gameActive = true;
+            timeLeft = 60;
+            gameOverDiv.classList.remove('show');
+            startBtn.disabled = true;
+            startBtn.textContent = 'Game in Progress';
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerDisplay.textContent = timeLeft;
+                
+                if (timeLeft <= 10) {
+                    timerDisplay.classList.add('warning');
+                }
+                
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        function endGame() {
+            gameActive = false;
+            clearInterval(timerInterval);
+            gameOverDiv.classList.add('show');
+            startBtn.disabled = false;
+            startBtn.textContent = 'Start Game';
+            timerDisplay.classList.remove('warning');
+        }
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function newChallenge() {
+            currentChallenge = challenges[Math.floor(Math.random() * challenges.length)];
+            currentChallengeText.textContent = currentChallenge.name;
+            challengeIcon.textContent = currentChallenge.icon;
+            clearCanvas();
+            
+            if (gameActive) {
+                timeLeft = 60;
+                timerDisplay.textContent = timeLeft;
+                timerDisplay.classList.remove('warning');
+            }
+        }
+
+        // Button event listeners
+        startBtn.addEventListener('click', startGame);
+        clearBtn.addEventListener('click', clearCanvas);
+        newChallengeBtn.addEventListener('click', newChallenge);
+        playAgainBtn.addEventListener('click', () => {
+            clearCanvas();
+            startGame();
+        });
+
+        // Initialize
+        myColor = getRandomColor();
+        participantCountSpan.textContent = '1';
+    </script>
+</body>
+</html>
