@@ -391,7 +391,7 @@
                 <ul>
                     <li>Each participant gets a unique color trail</li>
                     <li>Move your mouse or finger across the canvas to draw</li>
-                    <li>Work together to create the challenge shape in 60 seconds</li>
+                    <li>Work together to create the challenge shape in 30 seconds</li>
                     <li>Choose "New Challenge" to get a different shape to draw</li>
                     <li>Clear the canvas anytime to start fresh</li>
                 </ul>
@@ -403,7 +403,7 @@
                         Draw: <span id="currentChallenge">Circle</span>
                         <span class="challenge-icon" id="challengeIcon">⭕</span>
                     </div>
-                    <div class="timer" id="timer">60</div>
+                    <div class="timer" id="timer">30</div>
                 </div>
 
                 <div class="canvas-container">
@@ -487,7 +487,7 @@
 
         // Game state
         let gameActive = false;
-        let timeLeft = 60;
+        let timeLeft = 30;
         let timerInterval = null;
         let participants = new Map();
         let myColor = getRandomColor();
@@ -514,9 +514,6 @@
             
             lastX = pos.x;
             lastY = pos.y;
-
-            // Simulate other participants (in real app, this would come from server)
-            simulateOtherParticipants();
         }
 
         function stopDrawing() {
@@ -544,23 +541,6 @@
             ctx.stroke();
         }
 
-        // Simulate other participants for demo
-        function simulateOtherParticipants() {
-            // Add random participant movements occasionally
-            if (Math.random() < 0.1) {
-                const otherColor = colors[Math.floor(Math.random() * colors.length)];
-                const x1 = Math.random() * canvas.width;
-                const y1 = Math.random() * canvas.height;
-                const x2 = x1 + (Math.random() - 0.5) * 50;
-                const y2 = y1 + (Math.random() - 0.5) * 50;
-                drawLine(x1, y1, x2, y2, otherColor, 3);
-            }
-
-            // Update participant count
-            const count = Math.floor(Math.random() * 3) + 1;
-            participantCountSpan.textContent = count;
-        }
-
         // Event listeners for drawing
         canvas.addEventListener('mousedown', startDrawing);
         canvas.addEventListener('mousemove', draw);
@@ -581,7 +561,7 @@
         // Game controls
         function startGame() {
             gameActive = true;
-            timeLeft = 60;
+            timeLeft = 30;
             gameOverDiv.classList.remove('show');
             startBtn.disabled = true;
             startBtn.textContent = 'Game in Progress';
@@ -620,7 +600,7 @@
             clearCanvas();
             
             if (gameActive) {
-                timeLeft = 60;
+                timeLeft = 30;
                 timerDisplay.textContent = timeLeft;
                 timerDisplay.classList.remove('warning');
             }
@@ -637,7 +617,6 @@
 
         // Initialize
         myColor = getRandomColor();
-        participantCountSpan.textContent = '1';
     </script>
 </body>
 </html>
