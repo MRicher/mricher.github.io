@@ -431,7 +431,7 @@
             <div id="quiz-section">
                 <div class="progress-container" role="region" aria-label="Quiz progress">
                     <div class="progress-label">
-                        <span id="progress-text">Question <span id="current-question">1</span> of <span id="total-questions">9</span></span>
+                        <span id="progress-text sr-only">Question <span id="current-question">1</span> of <span id="total-questions">9</span></span>
                         <span id="progress-percent">0%</span>
                     </div>
                     <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Quiz completion progress">
@@ -475,15 +475,15 @@
             },
             {
                 number: 2,
-                title: "First aid certification",
-                details: "You must have a valid Standard First Aid certification. Would you feel comfortable carrying out the following expectations in case of emergency?",
+                title: "First Aid certification",
+                details: "You must have a valid Standard First Aid certification.",
                 bullets: [
                     "Providing immediate, basic medical assistance",
                     "Seeking and calling for medical assistance",
                     "Documenting and reporting incidents"
                 ],
-                question: "Are you comfortable providing first aid in emergencies?",
-                info: "As a police officer you may often be the first responder to a scene, you must be comfortable assessing the situation and providing standard first aid support. You must have Level C CPR for infant, child and adult. Proof of your certification will be requested during the application process and must be valid during your cadet training if you advance in the process."
+                question: "Would you feel comfortable carrying out the following expectations in case of emergency?",
+                info: "As a police officer you may often be the first responder to a scene, you must be comfortable assessing the situation and providing standard First Aid support. You must have Level C <abbr>CPR</abbr> for infant, child and adult. Proof of your certification will be requested during the application process and must be valid during your cadet training if you advance in the process."
             },
             {
                 number: 3,
@@ -499,22 +499,22 @@
                 details: "As a police officer you are required to carry and use a firearm and other intervention tools as needed.",
                 bullets: [],
                 question: "Are you prepared and able to use and carry a firearm and other intervention tools as needed to support your duties?",
-                info: "Police officers must maintain public order and safety, which includes using intervention techniques and firearms when required. If you're not comfortable with this, a career in policing may not be the right fit for you."
+                info: "Police officers must maintain public order and safety, which includes using intervention techniques and firearms when required. If you’re not comfortable with this, a career in policing may not be the right fit for you."
             },
             {
                 number: 5,
                 title: "Physical fitness",
-                details: "Policing is a physically demanding job. Police officers are required to successfully complete the Police Fitness Assessment to be deemed fit for duty.",
+                details: "Policing is a physically demanding job. Police officers are required to successfully complete the Police Fitness Assessment to be considered fit for duty.</p><p>Cadets are expected to be able to be able to run 5 kilometres in 30 minutes as the minimum standard.",
                 bullets: [],
                 question: "Are you in good physical shape and prepared for the demands of police work and the Cadet Training Program?",
-                info: "Applicant must arrive to cadet training fit and ready to meet the physical demands of policing. Cadet training at Depot isn't designed to build fitness. Arriving unprepared increases risk of injury and makes training harder."
+                info: "Applicant must arrive to Cadet training fit and ready to meet the physical demands of policing. Cadet training at Depot isn’t designed to build fitness. Arriving unprepared increases risk of injury and makes training harder."
             },
             {
                 number: 6,
                 title: "Training commitment",
                 details: "",
                 bullets: [],
-                question: "Are you willing to spend 26 weeks living on-site at Depot, the <abbr>RCMP</abbr>'s training academy in Saskatchewan?",
+                question: "Are you willing to spend 26 weeks living on-site at Depot, the <abbr>RCMP</abbr>’s training academy in Saskatchewan?",
                 info: "Training is full-time and includes evenings and weekends. Food, accommodation, and a weekly allowance are provided."
             },
             {
@@ -702,9 +702,9 @@
                     <div class="results success">
                         <h2 id="results-heading">Congratulations!</h2>
                         <div class="results-content">
-                            <p>Looks like you are suited to be an <abbr>RCMP</abbr> police officer. If you've already reviewed the basic requirements, read through the application process to know what you can expect.</p>
+                            <p>Looks like you are suited to be an <abbr>RCMP</abbr> police officer. If you’ve already reviewed the basic requirements, read through the application process to know what you can expect.</p>
                         </div>
-                        <a href="https://www.rcmp-grc.gc.ca/en/police-officers" 
+                        <a href="https://rcmp.ca/en/careers-rcmp/police-officer-careers" 
                            class="apply-button" 
                            target="_blank" 
                            rel="noopener noreferrer"
@@ -719,7 +719,7 @@
                     <div class="results warning">
                         <h2 id="results-heading">Additional preparation needed</h2>
                         <div class="results-content">
-                            <p>Looks like you don't meet all the requirements just yet. Before you apply, review the basic requirements to be an RCMP police officer to make sure you're fit and ready for a career in policing.</p>
+                            <p>Looks like you don’t meet all the requirements just yet. Before you apply, review the basic requirements to be an <abbr>RCMP</abbr> police officer to make sure you’re fit and ready for a career in policing.</p>
                             <p style="margin-top: 15px;">You answered "Yes" to ${yesCount} out of ${questions.length} questions.</p>
                         </div>
                         <button type="button" class="restart-button" onclick="restartQuiz()">Start over</button>
@@ -738,7 +738,7 @@
             }
 
             if (yesCount === questions.length) {
-                announce('Quiz complete! Congratulations, you appear suited to be an RCMP police officer.');
+                announce('Quiz complete! Congratulations, you appear suited to be an <abbr>RCMP</abbr> police officer.');
             } else {
                 announce(`Quiz complete! You answered yes to ${yesCount} out of ${questions.length} questions. Additional preparation may be needed.`);
             }
