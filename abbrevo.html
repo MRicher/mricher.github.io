@@ -245,6 +245,10 @@
                 <span data-en="Save as JSON" data-fr="Enregistrer en JSON"> Save as JSON </span>
               </button>
 
+              <button type="button" class="btn btn-success" onclick="saveToHTML()">
+                <span data-en="Save as HTML" data-fr="Enregistrer en HTML"> Save as HTML </span>
+              </button>
+
               <button type="button" class="btn btn-primary" onclick="document.getElementById('json-upload').click()">
                 <span data-en="Upload JSON" data-fr="Charger JSON"> Upload JSON </span>
               </button>
@@ -695,6 +699,245 @@
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
+      }
+
+      // Save entries to HTML file with bilingual tables
+      function saveToHTML() {
+        if (entries.length === 0) {
+          const currentLang = document.documentElement.lang?.split("-")[0] || "en";
+          const message = currentLang === "fr" ? "Aucune entrée à enregistrer." : "No entries to save.";
+          alert(message);
+          return;
+        }
+
+        // Filter entries - exclude internal-only items
+        const publicEntries = entries.filter(entry => !entry.internalOnly);
+        
+        if (publicEntries.length === 0) {
+          const currentLang = document.documentElement.lang?.split("-")[0] || "en";
+          const message = currentLang === "fr" 
+            ? "Toutes les entrées sont marquées comme internes seulement. Aucune entrée publique à exporter." 
+            : "All entries are marked as internal only. No public entries to export.";
+          alert(message);
+          return;
+        }
+
+        // Sort entries alphabetically by English abbreviation
+        const sortedEntries = [...publicEntries].sort((a, b) => {
+          return a.abbrEn.toLowerCase().localeCompare(b.abbrEn.toLowerCase());
+        });
+
+        // Generate English table
+        const englishTable = generateEnglishTable(sortedEntries);
+        
+        // Generate French table
+        const frenchTable = generateFrenchTable(sortedEntries);
+
+        // Combine both tables in one HTML file
+        const htmlContent = `<!DOCTYPE html>
+<html lang="en-CA">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RCMP Abbreviations and Acronyms / Abréviations et acronymes de la GRC</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .table-container {
+            margin-bottom: 60px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        caption {
+            font-size: 1.5em;
+            font-weight: bold;
+            text-align: left;
+            margin-bottom: 10px;
+            padding: 10px 0;
+        }
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+        }
+        .language-section {
+            page-break-after: always;
+        }
+        @media print {
+            .language-section {
+                page-break-after: always;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="language-section">
+        <h1>English Version</h1>
+        ${englishTable}
+    </div>
+    
+    <div class="language-section">
+        <h1>Version française</h1>
+        ${frenchTable}
+    </div>
+</body>
+</html>`;
+
+        // Create and download the file
+        const blob = new Blob([htmlContent], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'abbrevo-bilingual-tables.html';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
+
+      // Generate English table
+      function generateEnglishTable(sortedEntries) {
+        const rows = sortedEntries.map(entry => {
+          // Handle abbreviations
+          const abbrEn = entry.abbrEn === "There are no abbreviations or acronyms for English." ? "" : escapeHtml(entry.abbrEn);
+          const abbrFr = entry.abbrFr === "Il n'y a pas d'abréviations ou d'acronymes pour le français." ? "" : escapeHtml(entry.abbrFr);
+          
+          // Handle titles with language tags
+          const titleEn = entry.titleEnIsFrench 
+            ? `<span lang="fr">${escapeHtml(entry.titleEn)}</span>` 
+            : escapeHtml(entry.titleEn);
+          const titleFr = entry.titleFrIsEnglish 
+            ? `<span lang="en">${escapeHtml(entry.titleFr)}</span>` 
+            : escapeHtml(entry.titleFr);
+          
+          // Combine notes
+          let previousNotes = '';
+          if (entry.notesEn || entry.notesFr || entry.transparentNotes) {
+            const noteParts = [];
+            if (entry.notesEn) noteParts.push(escapeHtml(entry.notesEn));
+            if (entry.notesFr) noteParts.push(`<span lang="fr">${escapeHtml(entry.notesFr)}</span>`);
+            if (entry.transparentNotes) noteParts.push(escapeHtml(entry.transparentNotes));
+            previousNotes = noteParts.join(' / ');
+          }
+          
+          return `\t\t\t<tr>
+\t\t\t\t<td>${abbrEn}</td>
+\t\t\t\t<td>${titleEn}</td>
+\t\t\t\t<td lang="fr">${abbrFr}</td>
+\t\t\t\t<td lang="fr">${titleFr}</td>
+\t\t\t\t<td>${previousNotes}</td>
+\t\t\t</tr>`;
+        }).join('\n');
+
+        return `<div class="table-container">
+\t<table>
+\t\t<caption>
+\t\t\tBilingual abbreviations and acronyms
+\t\t\t<span class="sr-only">This table contains five columns: English abbreviation or acronym, English full form, French abbreviation or acronym, French full form, and previous abbreviations and acronyms</span>
+\t\t</caption>
+\t\t<thead>
+\t\t\t<tr>
+\t\t\t\t<th scope="col">English abbreviation or acronym</th>
+\t\t\t\t<th scope="col">English full form</th>
+\t\t\t\t<th scope="col">French abbreviation or acronym</th>
+\t\t\t\t<th scope="col">French full form</th>
+\t\t\t\t<th scope="col">Previous abbreviations and acronyms</th>
+\t\t\t</tr>
+\t\t</thead>
+\t\t<tbody>
+${rows}
+\t\t</tbody>
+\t</table>
+</div>`;
+      }
+
+      // Generate French table
+      function generateFrenchTable(sortedEntries) {
+        const rows = sortedEntries.map(entry => {
+          // Handle abbreviations
+          const abbrEn = entry.abbrEn === "There are no abbreviations or acronyms for English." ? "" : escapeHtml(entry.abbrEn);
+          const abbrFr = entry.abbrFr === "Il n'y a pas d'abréviations ou d'acronymes pour le français." ? "" : escapeHtml(entry.abbrFr);
+          
+          // Handle titles with language tags
+          const titleEn = entry.titleEnIsFrench 
+            ? `<span lang="fr">${escapeHtml(entry.titleEn)}</span>` 
+            : escapeHtml(entry.titleEn);
+          const titleFr = entry.titleFrIsEnglish 
+            ? `<span lang="en">${escapeHtml(entry.titleFr)}</span>` 
+            : escapeHtml(entry.titleFr);
+          
+          // Combine notes
+          let previousNotes = '';
+          if (entry.notesEn || entry.notesFr || entry.transparentNotes) {
+            const noteParts = [];
+            if (entry.notesFr) noteParts.push(escapeHtml(entry.notesFr));
+            if (entry.notesEn) noteParts.push(`<span lang="en">${escapeHtml(entry.notesEn)}</span>`);
+            if (entry.transparentNotes) noteParts.push(escapeHtml(entry.transparentNotes));
+            previousNotes = noteParts.join(' / ');
+          }
+          
+          return `\t\t\t<tr>
+\t\t\t\t<td>${abbrFr}</td>
+\t\t\t\t<td>${titleFr}</td>
+\t\t\t\t<td lang="en">${abbrEn}</td>
+\t\t\t\t<td lang="en">${titleEn}</td>
+\t\t\t\t<td>${previousNotes}</td>
+\t\t\t</tr>`;
+        }).join('\n');
+
+        return `<div class="table-container">
+\t<table>
+\t\t<caption>
+\t\t\tAbréviations et acronymes bilingues
+\t\t\t<span class="sr-only">Ce tableau contient cinq colonnes: abréviation ou acronyme français, forme complète en français, abréviation ou acronyme anglais, forme complète en anglais, et abréviations et acronymes précédents</span>
+\t\t</caption>
+\t\t<thead>
+\t\t\t<tr>
+\t\t\t\t<th scope="col">Abréviation ou acronyme français</th>
+\t\t\t\t<th scope="col">Forme complète en français</th>
+\t\t\t\t<th scope="col">Abréviation ou acronyme anglais</th>
+\t\t\t\t<th scope="col">Forme complète en anglais</th>
+\t\t\t\t<th scope="col">Abréviations et acronymes précédents</th>
+\t\t\t</tr>
+\t\t</thead>
+\t\t<tbody>
+${rows}
+\t\t</tbody>
+\t</table>
+</div>`;
       }
 
       // Load entries from JSON file
