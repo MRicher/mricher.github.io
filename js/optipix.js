@@ -1,11 +1,22 @@
 const BISOLUX_APP_VERSION = "1.2.0";
 const BISOLUX_VERSION_STRING = `Version ${BISOLUX_APP_VERSION}`;
 
-// Image Cropper JavaScript - Page-specific functionality only
+// ===================================================================
+// GLOBAL VARIABLES
+// ===================================================================
+
 let cropper = null;
+let currentCategory = null;
+let currentPresetWidth = null;
+let currentPresetHeight = null;
+let currentPresetName = null;
 let originalImageData = null;
 let selectedPreset = null;
 let activePresetButton = null;
+
+// ===================================================================
+// INITIALIZATION
+// ===================================================================
 
 /**
  * Initialize version info display
@@ -26,6 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 /**
  * Initialize the image cropper functionality
+ * Sets up event listeners for file upload, drag and drop
  */
 function initializeImageCropper() {
     const uploadArea = document.getElementById('upload-area');
@@ -52,8 +64,13 @@ function initializeImageCropper() {
     }
 }
 
+// ===================================================================
+// FILE UPLOAD HANDLERS
+// ===================================================================
+
 /**
  * Handle file selection from input
+ * @param {Event} event - The change event from file input
  */
 function handleFileSelect(event) {
     const file = event.target.files[0];
@@ -64,6 +81,7 @@ function handleFileSelect(event) {
 
 /**
  * Handle drag over event
+ * @param {DragEvent} event - The dragover event
  */
 function handleDragOver(event) {
     event.preventDefault();
@@ -73,6 +91,7 @@ function handleDragOver(event) {
 
 /**
  * Handle drag leave event
+ * @param {DragEvent} event - The dragleave event
  */
 function handleDragLeave(event) {
     event.preventDefault();
@@ -82,6 +101,7 @@ function handleDragLeave(event) {
 
 /**
  * Handle file drop event
+ * @param {DragEvent} event - The drop event
  */
 function handleDrop(event) {
     event.preventDefault();
@@ -99,17 +119,27 @@ function handleDrop(event) {
 
 /**
  * Load and validate image file
+ * Validates file type and size, then displays category selection
+ * @param {File} file - The image file to load
  */
 function loadImage(file) {
     // Validate file type
     if (!file.type.match(/^image\/(png|jpe?g)$/i)) {
-        alert('Please select a PNG or JPG image.');
+        const currentLang = document.documentElement.lang || 'en-CA';
+        const message = currentLang === 'fr-CA' ? 
+            'Veuillez sélectionner une image PNG ou JPG.' :
+            'Please select a PNG or JPG image.';
+        alert(message);
         return;
     }
     
     // Validate file size (max 10MB)
     if (file.size > 10 * 1024 * 1024) {
-        alert('File size must be less than 10MB.');
+        const currentLang = document.documentElement.lang || 'en-CA';
+        const message = currentLang === 'fr-CA' ? 
+            'La taille du fichier doit être inférieure à 10 Mo.' :
+            'File size must be less than 10MB.';
+        alert(message);
         return;
     }
     
@@ -118,29 +148,255 @@ function loadImage(file) {
         const imageData = event.target.result;
         originalImageData = imageData;
         
-        // Show cropper section
+        // Show category selection section
+        const categorySection = document.getElementById('category-section');
         const cropperSection = document.getElementById('cropper-section');
+        const presetSection = document.getElementById('preset-section');
+        const freeCropSection = document.getElementById('free-crop-section');
         const previewSection = document.getElementById('preview-section');
         
-        if (cropperSection) {
-            cropperSection.style.display = 'block';
-            cropperSection.scrollIntoView({ behavior: 'smooth' });
+        if (categorySection) {
+            categorySection.style.display = 'block';
+            categorySection.scrollIntoView({ behavior: 'smooth' });
         }
         
-        if (previewSection) {
-            previewSection.style.display = 'none';
-        }
-        
-        // Initialize cropper
-        initializeCropper(imageData);
+        if (cropperSection) cropperSection.style.display = 'none';
+        if (presetSection) presetSection.style.display = 'none';
+        if (freeCropSection) freeCropSection.style.display = 'none';
+        if (previewSection) previewSection.style.display = 'none';
     };
     reader.readAsDataURL(file);
 }
 
+// ===================================================================
+// CATEGORY AND PRESET SELECTION
+// ===================================================================
+
 /**
- * Initialize the Cropper.js instance
+ * Handle category selection (RCMP, Infoweb, or Free crop)
+ * @param {string} category - The selected category ('rcmp', 'infoweb', or 'free')
  */
-function initializeCropper(imageSrc) {
+function selectCategory(category) {
+    currentCategory = category;
+    
+    const categorySection = document.getElementById('category-section');
+    const presetSection = document.getElementById('preset-section');
+    const freeCropSection = document.getElementById('free-crop-section');
+    const rcmpPresets = document.getElementById('rcmp-presets');
+    const infowebPresets = document.getElementById('infoweb-presets');
+    const presetTitle = document.getElementById('preset-section-title');
+    
+    // Hide category section
+    if (categorySection) categorySection.style.display = 'none';
+    
+    const currentLang = document.documentElement.lang || 'en-CA';
+    
+    if (category === 'rcmp') {
+        // Show RCMP preset section
+        if (presetSection) {
+            presetSection.style.display = 'block';
+            presetSection.scrollIntoView({ behavior: 'smooth' });
+        }
+        if (rcmpPresets) rcmpPresets.style.display = 'block';
+        if (infowebPresets) infowebPresets.style.display = 'none';
+        if (presetTitle) {
+            presetTitle.setAttribute('data-en', 'RCMP.ca preset sizes');
+            presetTitle.setAttribute('data-fr', 'Formats prédéfinis GRC.ca');
+            presetTitle.textContent = currentLang === 'fr-CA' ? 
+                'Formats prédéfinis GRC.ca' : 
+                'RCMP.ca preset sizes';
+        }
+    } else if (category === 'infoweb') {
+        // Show Infoweb preset section
+        if (presetSection) {
+            presetSection.style.display = 'block';
+            presetSection.scrollIntoView({ behavior: 'smooth' });
+        }
+        if (rcmpPresets) rcmpPresets.style.display = 'none';
+        if (infowebPresets) infowebPresets.style.display = 'block';
+        if (presetTitle) {
+            presetTitle.setAttribute('data-en', 'Infoweb preset sizes');
+            presetTitle.setAttribute('data-fr', 'Formats prédéfinis Infoweb');
+            presetTitle.textContent = currentLang === 'fr-CA' ? 
+                'Formats prédéfinis Infoweb' : 
+                'Infoweb preset sizes';
+        }
+    } else if (category === 'free') {
+        // Show free crop dimension input
+        if (freeCropSection) {
+            freeCropSection.style.display = 'block';
+            freeCropSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+}
+
+/**
+ * Go back to category selection
+ * Destroys the cropper and resets category-related state
+ */
+function backToCategory() {
+    const categorySection = document.getElementById('category-section');
+    const presetSection = document.getElementById('preset-section');
+    const freeCropSection = document.getElementById('free-crop-section');
+    const cropperSection = document.getElementById('cropper-section');
+    
+    if (categorySection) {
+        categorySection.style.display = 'block';
+        categorySection.scrollIntoView({ behavior: 'smooth' });
+    }
+    if (presetSection) presetSection.style.display = 'none';
+    if (freeCropSection) freeCropSection.style.display = 'none';
+    if (cropperSection) cropperSection.style.display = 'none';
+    
+    // Destroy cropper if it exists
+    if (cropper) {
+        cropper.destroy();
+        cropper = null;
+    }
+    
+    currentCategory = null;
+    currentPresetWidth = null;
+    currentPresetHeight = null;
+    currentPresetName = null;
+}
+
+/**
+ * Go back to preset selection or category
+ * Navigates back one step in the workflow
+ */
+function backToPresetOrCategory() {
+    const presetSection = document.getElementById('preset-section');
+    const freeCropSection = document.getElementById('free-crop-section');
+    const cropperSection = document.getElementById('cropper-section');
+    
+    if (cropperSection) cropperSection.style.display = 'none';
+    
+    // Destroy cropper if it exists
+    if (cropper) {
+        cropper.destroy();
+        cropper = null;
+    }
+    
+    if (currentCategory === 'free') {
+        if (freeCropSection) {
+            freeCropSection.style.display = 'block';
+            freeCropSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    } else {
+        if (presetSection) {
+            presetSection.style.display = 'block';
+            presetSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+}
+
+/**
+ * Set preset size and continue to cropper
+ * @param {number} width - The preset width in pixels
+ * @param {number} height - The preset height in pixels
+ * @param {string} name - The preset name (e.g., 'Landing', 'Square')
+ * @param {HTMLElement} buttonElement - The button that was clicked
+ */
+function setPresetAndContinue(width, height, name, buttonElement) {
+    currentPresetWidth = width;
+    currentPresetHeight = height;
+    currentPresetName = name;
+    
+    // Hide preset section and show cropper
+    const presetSection = document.getElementById('preset-section');
+    const cropperSection = document.getElementById('cropper-section');
+    
+    if (presetSection) presetSection.style.display = 'none';
+    if (cropperSection) {
+        cropperSection.style.display = 'block';
+        cropperSection.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    // Update preset info display
+    updatePresetInfo();
+    
+    // Initialize cropper with preset
+    initializeCropperWithPreset(width, height);
+}
+
+/**
+ * Apply free crop dimensions and continue
+ * Validates user input and initializes cropper with custom dimensions
+ */
+function applyFreeCropDimensions() {
+    const widthInput = document.getElementById('free-width');
+    const heightInput = document.getElementById('free-height');
+    
+    const width = parseInt(widthInput.value);
+    const height = parseInt(heightInput.value);
+    
+    const currentLang = document.documentElement.lang || 'en-CA';
+    
+    // Validate width
+    if (!width || width < 1 || width > 5000) {
+        const message = currentLang === 'fr-CA' ? 
+            'Veuillez entrer une largeur valide (1-5000 pixels).' :
+            'Please enter a valid width (1-5000 pixels).';
+        alert(message);
+        return;
+    }
+    
+    // Validate height
+    if (!height || height < 1 || height > 5000) {
+        const message = currentLang === 'fr-CA' ? 
+            'Veuillez entrer une hauteur valide (1-5000 pixels).' :
+            'Please enter a valid height (1-5000 pixels).';
+        alert(message);
+        return;
+    }
+    
+    currentPresetWidth = width;
+    currentPresetHeight = height;
+    currentPresetName = currentLang === 'fr-CA' ? 
+        `Libre (${width}×${height})` :
+        `Free (${width}×${height})`;
+    
+    // Hide free crop section and show cropper
+    const freeCropSection = document.getElementById('free-crop-section');
+    const cropperSection = document.getElementById('cropper-section');
+    
+    if (freeCropSection) freeCropSection.style.display = 'none';
+    if (cropperSection) {
+        cropperSection.style.display = 'block';
+        cropperSection.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    // Update preset info display
+    updatePresetInfo();
+    
+    // Initialize cropper with preset
+    initializeCropperWithPreset(width, height);
+}
+
+/**
+ * Update preset info display
+ * Shows the currently selected preset dimensions
+ */
+function updatePresetInfo() {
+    const presetText = document.getElementById('current-preset-text');
+    if (presetText && currentPresetName) {
+        presetText.textContent = `${currentPresetName} (${currentPresetWidth}×${currentPresetHeight})`;
+    }
+}
+
+// ===================================================================
+// CROPPER INITIALIZATION
+// ===================================================================
+
+/**
+ * Initialize cropper with preset dimensions
+ * Creates a new Cropper.js instance with the specified aspect ratio
+ * @param {number} width - The preset width in pixels
+ * @param {number} height - The preset height in pixels
+ */
+function initializeCropperWithPreset(width, height) {
+    if (!originalImageData) return;
+    
     const cropperImage = document.getElementById('cropper-image');
     if (!cropperImage) return;
     
@@ -150,12 +406,12 @@ function initializeCropper(imageSrc) {
     }
     
     // Set image source
-    cropperImage.src = imageSrc;
+    cropperImage.src = originalImageData;
     
-    // Initialize cropper
+    // Initialize cropper with aspect ratio
     cropper = new Cropper(cropperImage, {
-        aspectRatio: NaN,
-        viewMode: 0, // Changed from 1 to 0 to allow crop area to extend beyond image
+        aspectRatio: width / height,
+        viewMode: 0,
         dragMode: 'move',
         autoCropArea: 0.8,
         restore: false,
@@ -170,106 +426,43 @@ function initializeCropper(imageSrc) {
         minCropBoxWidth: 50,
         minCropBoxHeight: 50,
         ready: function() {
-            // Set default "None" preset as active
-            const noneButton = document.getElementById('none-preset');
-            if (noneButton) {
-                setActivePresetButton(noneButton);
-                selectedPreset = 'None';
+            // Set crop box to match aspect ratio
+            const containerData = cropper.getContainerData();
+            const aspectRatio = width / height;
+            
+            let newWidth, newHeight;
+            
+            if (containerData.width / containerData.height > aspectRatio) {
+                // Container is wider than aspect ratio, height is limiting
+                newHeight = Math.min(containerData.height - 40, 400);
+                newWidth = newHeight * aspectRatio;
+            } else {
+                // Container is taller than aspect ratio, width is limiting
+                newWidth = Math.min(containerData.width - 40, 600);
+                newHeight = newWidth / aspectRatio;
             }
+            
+            cropper.setCropBoxData({
+                left: (containerData.width - newWidth) / 2,
+                top: (containerData.height - newHeight) / 2,
+                width: newWidth,
+                height: newHeight
+            });
         }
     });
-}
-
-/**
- * Set the active preset button
- */
-function setActivePresetButton(button) {
-    // Remove active class from all preset buttons
-    const allButtons = document.querySelectorAll('.preset-buttons .btn');
-    allButtons.forEach(btn => btn.classList.remove('active'));
     
-    // Add active class to clicked button
-    if (button) {
-        button.classList.add('active');
-        activePresetButton = button;
-    }
-}
-
-/**
- * Set preset size for cropping
- */
-function setPresetSize(width, height, buttonElement) {
-    if (!cropper) return;
-    
-    // Set active button
-    setActivePresetButton(buttonElement);
-    
-    // Store the preset dimensions for later use
+    // Store preset dimensions on the cropper instance
     cropper.presetWidth = width;
     cropper.presetHeight = height;
-    
-    // Determine preset name based on dimensions
-    selectedPreset = getPresetName(width, height);
-    
-    // Set aspect ratio
-    cropper.setAspectRatio(width / height);
-    
-    // Get container and current crop box data
-    const containerData = cropper.getContainerData();
-    const aspectRatio = width / height;
-    
-    // Calculate new dimensions that fit within the container
-    let newWidth, newHeight;
-    
-    if (containerData.width / containerData.height > aspectRatio) {
-        // Container is wider than aspect ratio, height is limiting
-        newHeight = Math.min(containerData.height - 40, 400);
-        newWidth = newHeight * aspectRatio;
-    } else {
-        // Container is taller than aspect ratio, width is limiting
-        newWidth = Math.min(containerData.width - 40, 600);
-        newHeight = newWidth / aspectRatio;
-    }
-    
-    // Set new crop box centered in container
-    cropper.setCropBoxData({
-        left: (containerData.width - newWidth) / 2,
-        top: (containerData.height - newHeight) / 2,
-        width: newWidth,
-        height: newHeight
-    });
 }
 
-/**
- * Set "None" preset for free cropping
- */
-function setNonePreset() {
-    if (!cropper) return;
-    
-    // Set active button
-    const noneButton = document.getElementById('none-preset');
-    setActivePresetButton(noneButton);
-    
-    // Clear preset dimensions
-    cropper.presetWidth = null;
-    cropper.presetHeight = null;
-    
-    // Set preset name to None
-    selectedPreset = 'None';
-    
-    // Remove aspect ratio constraint (free crop)
-    cropper.setAspectRatio(NaN);
-}
-
-/**
- * Get preset name based on dimensions
- */
-function getPresetName(width, height) {
-    return `${width}x${height}`;
-}
+// ===================================================================
+// IMAGE MANIPULATION FUNCTIONS
+// ===================================================================
 
 /**
  * Flip image horizontally
+ * Mirrors the image along the vertical axis
  */
 function flipHorizontal() {
     if (!cropper) return;
@@ -281,6 +474,7 @@ function flipHorizontal() {
 
 /**
  * Flip image vertically
+ * Mirrors the image along the horizontal axis
  */
 function flipVertical() {
     if (!cropper) return;
@@ -290,37 +484,124 @@ function flipVertical() {
     cropper.scaleY(-currentScaleY);
 }
 
+// ===================================================================
+// ZOOM CONTROL FUNCTIONS
+// ===================================================================
+
 /**
- * Reset crop settings to default
+ * Zoom in on the image
+ * Increases the zoom level by 10%
  */
-function resetCrop() {
+function zoomIn() {
     if (!cropper) return;
-    
-    // Clear stored preset dimensions and selected preset
-    cropper.presetWidth = null;
-    cropper.presetHeight = null;
-    selectedPreset = null;
-    
-    // Remove active class from all buttons
-    const allButtons = document.querySelectorAll('.preset-buttons .btn');
-    allButtons.forEach(btn => btn.classList.remove('active'));
-    
-    // Reset cropper and set None as active
-    cropper.reset();
-    
-    // Wait for reset to complete, then set None as active
-    setTimeout(() => {
-        setNonePreset();
-    }, 100);
+    cropper.zoom(0.1);
 }
 
 /**
+ * Zoom out on the image
+ * Decreases the zoom level by 10%
+ */
+function zoomOut() {
+    if (!cropper) return;
+    cropper.zoom(-0.1);
+}
+
+/**
+ * Reset zoom to default level
+ * Returns the image to 100% zoom (1:1)
+ */
+function resetZoom() {
+    if (!cropper) return;
+    cropper.zoomTo(1);
+}
+
+// ===================================================================
+// IMAGE MOVEMENT FUNCTIONS
+// ===================================================================
+
+/**
+ * Move the image within the crop area
+ * @param {string} direction - The direction to move ('up', 'down', 'left', 'right')
+ */
+function moveImage(direction) {
+    if (!cropper) return;
+    
+    const moveStep = 10; // pixels to move
+    
+    switch(direction) {
+        case 'up':
+            cropper.move(0, -moveStep);
+            break;
+        case 'down':
+            cropper.move(0, moveStep);
+            break;
+        case 'left':
+            cropper.move(-moveStep, 0);
+            break;
+        case 'right':
+            cropper.move(moveStep, 0);
+            break;
+    }
+}
+
+/**
+ * Move the crop box/area
+ * @param {string} direction - The direction to move ('up', 'down', 'left', 'right')
+ */
+function moveCropBox(direction) {
+    if (!cropper) return;
+    
+    const moveStep = 10; // pixels to move
+    const cropBoxData = cropper.getCropBoxData();
+    
+    switch(direction) {
+        case 'up':
+            cropper.setCropBoxData({
+                left: cropBoxData.left,
+                top: cropBoxData.top - moveStep,
+                width: cropBoxData.width,
+                height: cropBoxData.height
+            });
+            break;
+        case 'down':
+            cropper.setCropBoxData({
+                left: cropBoxData.left,
+                top: cropBoxData.top + moveStep,
+                width: cropBoxData.width,
+                height: cropBoxData.height
+            });
+            break;
+        case 'left':
+            cropper.setCropBoxData({
+                left: cropBoxData.left - moveStep,
+                top: cropBoxData.top,
+                width: cropBoxData.width,
+                height: cropBoxData.height
+            });
+            break;
+        case 'right':
+            cropper.setCropBoxData({
+                left: cropBoxData.left + moveStep,
+                top: cropBoxData.top,
+                width: cropBoxData.width,
+                height: cropBoxData.height
+            });
+            break;
+    }
+}
+
+// ===================================================================
+// CROP AND PREVIEW FUNCTIONS
+// ===================================================================
+
+/**
  * Crop the image with the current settings
+ * Generates a canvas with the cropped image at the preset dimensions
  */
 function cropImage() {
     if (!cropper) return;
     
-    // Determine if we should force exact dimensions based on preset
+    // Use stored preset dimensions
     let canvasOptions = {
         imageSmoothingEnabled: true,
         imageSmoothingQuality: 'high',
@@ -328,23 +609,25 @@ function cropImage() {
         maxHeight: 2000
     };
     
-    // If a specific preset size was selected (not "None"), force those exact dimensions
-    if (cropper.presetWidth && cropper.presetHeight && selectedPreset !== 'None') {
-        canvasOptions.width = cropper.presetWidth;
-        canvasOptions.height = cropper.presetHeight;
+    // Force exact dimensions based on preset
+    if (currentPresetWidth && currentPresetHeight) {
+        canvasOptions.width = currentPresetWidth;
+        canvasOptions.height = currentPresetHeight;
     }
     
     const canvas = cropper.getCroppedCanvas(canvasOptions);
     
     if (!canvas) {
-        alert('Failed to crop image. Please try again.');
+        const currentLang = document.documentElement.lang || 'en-CA';
+        const message = currentLang === 'fr-CA' ? 
+            'Échec du recadrage de l\'image. Veuillez réessayer.' :
+            'Failed to crop image. Please try again.';
+        alert(message);
         return;
     }
     
-    // If "None" preset was used, update selectedPreset with actual crop dimensions
-    if (selectedPreset === 'None') {
-        selectedPreset = `${canvas.width}x${canvas.height}`;
-    }
+    // Use current preset name for the filename
+    selectedPreset = currentPresetName || `${canvas.width}x${canvas.height}`;
     
     // Show preview
     displayPreview(canvas);
@@ -359,6 +642,8 @@ function cropImage() {
 
 /**
  * Display the cropped image preview
+ * Shows the preview image and displays its dimensions
+ * @param {HTMLCanvasElement} canvas - The canvas containing the cropped image
  */
 function displayPreview(canvas) {
     const previewImage = document.getElementById('preview-image');
@@ -374,7 +659,7 @@ function displayPreview(canvas) {
     if (dimensionsElement) {
         const currentLang = document.documentElement.lang || 'en-CA';
         const dimensionsText = currentLang === 'fr-CA' ? 
-            `Dimensions: ${canvas.width} × ${canvas.height} pixels` :
+            `Dimensions : ${canvas.width} × ${canvas.height} pixels` :
             `Dimensions: ${canvas.width} × ${canvas.height} pixels`;
         dimensionsElement.textContent = dimensionsText;
     }
@@ -383,15 +668,24 @@ function displayPreview(canvas) {
     previewImage.canvas = canvas;
 }
 
+// ===================================================================
+// DOWNLOAD FUNCTIONS
+// ===================================================================
+
 /**
  * Download the processed image
+ * @param {string} format - The file format ('png' or 'jpg')
  */
 function downloadImage(format) {
     const previewImage = document.getElementById('preview-image');
     const canvas = previewImage?.canvas;
     
     if (!canvas) {
-        alert('No image to download. Please crop an image first.');
+        const currentLang = document.documentElement.lang || 'en-CA';
+        const message = currentLang === 'fr-CA' ? 
+            'Aucune image à télécharger. Veuillez d\'abord recadrer une image.' :
+            'No image to download. Please crop an image first.';
+        alert(message);
         return;
     }
     
@@ -440,6 +734,9 @@ function downloadImage(format) {
 
 /**
  * Download blob as file
+ * Creates a temporary download link and triggers the download
+ * @param {Blob} blob - The image blob to download
+ * @param {string} filename - The filename for the download
  */
 function downloadBlob(blob, filename) {
     // Create download link
@@ -457,14 +754,25 @@ function downloadBlob(blob, filename) {
     URL.revokeObjectURL(url);
 }
 
+// ===================================================================
+// RESET FUNCTION
+// ===================================================================
+
 /**
  * Reset the application to initial state
+ * Hides all sections, destroys the cropper, and clears all state
  */
 function startOver() {
-    // Hide sections
+    // Hide all sections except upload
+    const categorySection = document.getElementById('category-section');
+    const presetSection = document.getElementById('preset-section');
+    const freeCropSection = document.getElementById('free-crop-section');
     const cropperSection = document.getElementById('cropper-section');
     const previewSection = document.getElementById('preview-section');
     
+    if (categorySection) categorySection.style.display = 'none';
+    if (presetSection) presetSection.style.display = 'none';
+    if (freeCropSection) freeCropSection.style.display = 'none';
     if (cropperSection) cropperSection.style.display = 'none';
     if (previewSection) previewSection.style.display = 'none';
     
@@ -478,118 +786,27 @@ function startOver() {
     const imageInput = document.getElementById('image-input');
     if (imageInput) imageInput.value = '';
     
-    // Clear original image data and selected preset
+    // Clear all state variables
     originalImageData = null;
     selectedPreset = null;
     activePresetButton = null;
+    currentCategory = null;
+    currentPresetWidth = null;
+    currentPresetHeight = null;
+    currentPresetName = null;
+    
+    // Clear free crop inputs
+    const widthInput = document.getElementById('free-width');
+    const heightInput = document.getElementById('free-height');
+    if (widthInput) widthInput.value = '';
+    if (heightInput) heightInput.value = '';
     
     // Remove active class from all buttons
-    const allButtons = document.querySelectorAll('.preset-buttons .btn');
+    const allButtons = document.querySelectorAll('.preset-buttons .btn, .category-buttons .btn');
     allButtons.forEach(btn => btn.classList.remove('active'));
     
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-// ===================================================================
-// ZOOM CONTROL FUNCTIONS
-// ===================================================================
-
-/**
- * Zoom in on the image
- */
-function zoomIn() {
-    if (!cropper) return;
-    cropper.zoom(0.1);
-}
-
-/**
- * Zoom out on the image
- */
-function zoomOut() {
-    if (!cropper) return;
-    cropper.zoom(-0.1);
-}
-
-/**
- * Reset zoom to default level
- */
-function resetZoom() {
-    if (!cropper) return;
-    cropper.zoomTo(1);
-}
-
-// ===================================================================
-// IMAGE MOVEMENT FUNCTIONS
-// ===================================================================
-
-/**
- * Move the image within the crop area
- */
-function moveImage(direction) {
-    if (!cropper) return;
-    
-    const moveStep = 10; // pixels to move
-    
-    switch(direction) {
-        case 'up':
-            cropper.move(0, -moveStep);
-            break;
-        case 'down':
-            cropper.move(0, moveStep);
-            break;
-        case 'left':
-            cropper.move(-moveStep, 0);
-            break;
-        case 'right':
-            cropper.move(moveStep, 0);
-            break;
-    }
-}
-
-/**
- * Move the crop box/area
- */
-function moveCropBox(direction) {
-    if (!cropper) return;
-    
-    const moveStep = 10; // pixels to move
-    const cropBoxData = cropper.getCropBoxData();
-    
-    switch(direction) {
-        case 'up':
-            cropper.setCropBoxData({
-                left: cropBoxData.left,
-                top: cropBoxData.top - moveStep,
-                width: cropBoxData.width,
-                height: cropBoxData.height
-            });
-            break;
-        case 'down':
-            cropper.setCropBoxData({
-                left: cropBoxData.left,
-                top: cropBoxData.top + moveStep,
-                width: cropBoxData.width,
-                height: cropBoxData.height
-            });
-            break;
-        case 'left':
-            cropper.setCropBoxData({
-                left: cropBoxData.left - moveStep,
-                top: cropBoxData.top,
-                width: cropBoxData.width,
-                height: cropBoxData.height
-            });
-            break;
-        case 'right':
-            cropper.setCropBoxData({
-                left: cropBoxData.left + moveStep,
-                top: cropBoxData.top,
-                width: cropBoxData.width,
-                height: cropBoxData.height
-            });
-            break;
-    }
 }
 
 // ===================================================================
@@ -598,6 +815,8 @@ function moveCropBox(direction) {
 
 /**
  * Format file size in human readable format
+ * @param {number} bytes - The file size in bytes
+ * @returns {string} Formatted file size string
  */
 function formatFileSize(bytes) {
     if (bytes === 0) return '0 Bytes';
