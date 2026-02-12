@@ -1,269 +1,258 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en-CA">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
+    />
     <title data-en="Créavia" data-fr="Créavia">Créavia</title>
-    <meta name="description"
-        content="Explore a variety of easy-to-use web tools to help you find information, complete tasks, and access services online."
-          data-en="Explore a variety of easy-to-use web tools to help you find information, complete tasks, and access services online."
-          data-fr="Découvrez une variété d'outils Web simples pour vous aider à trouver de l'information, accomplir des tâches et accéder aux services en ligne.">
-    <link rel="stylesheet" href="css/bootstrap.min.css" integrity="sha384-Udxgg4VHR51mMdsD4PH6114beIhJohbGl/ddw27AEtnbzWn9Tah3ot3CA1pZZe8v" crossorigin="anonymous">
-    <link rel="stylesheet" href="css/creavia.css" integrity="sha384-Nxq+k28JiScgIchbfDN0f//cQAIYVMUIEJS66/apLKE8dpGHr1NJSk8JUcBElL2w" crossorigin="anonymous">
-</head>
+    <meta
+      name="description"
+      content="Explore a variety of easy-to-use web tools to help you find information, complete tasks, and access services online."
+      data-en="Explore a variety of easy-to-use web tools to help you find information, complete tasks, and access services online."
+      data-fr="Découvrez une variété d'outils Web simples pour vous aider à trouver de l'information, accomplir des tâches et accéder aux services en ligne."
+    />
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/creavia.css" />
+  </head>
 
-<body>
-    <a class="skip-link"
-       href="#main-content"
-       data-en="Skip to main content"
-       data-fr="Passer au contenu principal">
-        Skip to main content
-    </a>
+  <body>
+    <a class="skip-link" href="#main-content" data-en="Skip to main content" data-fr="Passer au contenu principal"> Skip to main content </a>
 
     <header>
-        <nav class="navbar navbar-expand-lg" aria-label="Main navigation" data-en="Main navigation" data-fr="Navigation principale">
-            <div class="container">
+      <nav class="navbar navbar-expand-lg" aria-label="Main navigation" data-en="Main navigation" data-fr="Navigation principale">
+        <div class="container">
+          <div class="navbar-brand d-flex align-items-center">
+            <img src="img/seedling.svg" alt="" class="me-2" style="height: 50px; width: auto" />
+            <span data-en="Créavia" data-fr="Créavia">Créavia</span>
+          </div>
 
-                <div class="navbar-brand d-flex align-items-center">
-                    <img src="img/seedling.svg"
-                         alt=""
-                         class="me-2"
-                         style="height: 50px; width: auto;">
-                    <span data-en="Créavia" data-fr="Créavia">Créavia</span>
-                </div>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation menu"
+            data-en-label="Toggle navigation menu"
+            data-fr-label="Basculer le menu de navigation"
+          >
+            <span class="navbar-toggler-icon" aria-hidden="true"></span>
+            <span class="visually-hidden" data-en="Toggle navigation menu" data-fr="Basculer le menu de navigation"> Toggle navigation menu </span>
+          </button>
 
-                <button class="navbar-toggler"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#navbarNav"
-                        aria-controls="navbarNav"
-                        aria-expanded="false"
-                        aria-label="Toggle navigation menu" data-en-label="Toggle navigation menu" data-fr-label="Basculer le menu de navigation">
-                    <span class="navbar-toggler-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden"
-                          data-en="Toggle navigation menu"
-                          data-fr="Basculer le menu de navigation">
-                        Toggle navigation menu
-                    </span>
-                </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="navbar-nav me-auto"></div>
 
-                <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="language-switcher" role="group" aria-label="Settings" data-en="Settings" data-fr="Paramètres">
+              <button
+                id="theme-toggle"
+                type="button"
+                class="theme-toggle"
+                aria-label="Toggle dark/light theme"
+                data-en-label="Toggle dark/light theme"
+                data-fr-label="Basculer le thème clair/sombre"
+                data-en-dark="Switch to light mode"
+                data-en-light="Switch to dark mode"
+                data-fr-dark="Passer au mode clair"
+                data-fr-light="Passer au mode sombre"
+              >
+                <span id="theme-text" data-en="Dark mode" data-fr="Mode sombre"> Dark mode </span>
+              </button>
 
-                    <div class="navbar-nav me-auto"></div>
+              <button
+                id="lang-fr-btn"
+                type="button"
+                class="btn btn-outline-primary btn-sm"
+                data-lang="fr-CA"
+                aria-label="Passer au français"
+                aria-pressed="false"
+                style="display: none"
+              >
+                <span data-en="Français" data-fr="Français">Français</span>
+              </button>
 
-                    <div class="language-switcher" role="group" aria-label="Settings" data-en="Settings" data-fr="Paramètres">
-
-                        <button id="theme-toggle"
-                                type="button"
-                                class="theme-toggle"
-                                aria-label="Toggle dark/light theme" data-en-label="Toggle dark/light theme" data-fr-label="Basculer le thème clair/sombre"
-                                data-en-dark="Switch to light mode"
-                                data-en-light="Switch to dark mode"
-                                data-fr-dark="Passer au mode clair"
-                                data-fr-light="Passer au mode sombre">
-                            <span id="theme-text"
-                                  data-en="Dark mode"
-                                  data-fr="Mode sombre">
-                                Dark mode
-                            </span>
-                        </button>
-
-                        <button id="lang-fr-btn"
-                                type="button"
-                                class="btn btn-outline-primary btn-sm"
-                                data-lang="fr-CA"
-                                aria-label="Passer au français"
-                                aria-pressed="false"
-                                style="display: none;">
-                            <span data-en="Français" data-fr="Français">Français</span>
-                        </button>
-
-                        <button id="lang-en-btn"
-                                type="button"
-                                class="btn btn-outline-primary btn-sm"
-                                data-lang="en-CA"
-                                aria-label="Switch to English"
-                                aria-pressed="false">
-                            <span data-en="English" data-fr="English">English</span>
-                        </button>
-
-                    </div>
-
-                </div>
-
+              <button
+                id="lang-en-btn"
+                type="button"
+                class="btn btn-outline-primary btn-sm"
+                data-lang="en-CA"
+                aria-label="Switch to English"
+                aria-pressed="false"
+              >
+                <span data-en="English" data-fr="English">English</span>
+              </button>
             </div>
-        </nav>
+          </div>
+        </div>
+      </nav>
     </header>
 
     <main class="container" id="main-content">
-        <section aria-labelledby="main-heading">
+      <section aria-labelledby="main-heading">
+        <h1 id="main-heading" class="mb-4" data-en="Web tools" data-fr="Outils Web">Web tools</h1>
 
-            <h1 id="main-heading"
-                class="mb-4"
-                data-en="Web tools"
-                data-fr="Outils Web">
-                Web tools
-            </h1>
-
-            <div class="row">
-
-                <!-- OptiPix -->
-                <div class="col-lg-4 mb-4">
-                    <div class="d-flex align-items-center mb-2">
-                        <img src="img/photo-scan.svg" class="me-2" alt="">
-                        <h3 class="mb-0">OptiPix</h3>
-                    </div>
-
-                    <p data-en="Easily crop and optimize your images for the web. This simple tool helps you resize photos and save them in web-friendly formats with the right balance of quality and file size."
-                       data-fr="Recadrez et optimisez vos images pour le web en toute simplicité. Cet outil facile à utiliser vous permet de redimensionner vos photos et de les enregistrer dans des formats adaptés au web, avec un bon équilibre entre la qualité et la taille du fichier.">
-                        Easily crop and optimize your images for the web. This simple tool helps you resize photos and save them in web-friendly formats with the right balance of quality and file size.
-                    </p>
-
-                    <p>
-                        <a class="btn btn-outline-secondary btn-lg"
-                           href="optipix.html"
-                           role="button"
-                           data-en="Use OptiPix"
-                           data-fr="Utiliser OptiPix">
-                            Use OptiPix
-                        </a>
-                    </p>
-                </div>
-
-                <!-- Validata - MCC -->
-                <div class="col-lg-4 mb-4">
-                    <div class="d-flex align-items-center mb-2">
-                        <img src="img/horse.svg" class="me-2" alt="">
-                        <h3 class="mb-0"
-                            data-en="Validata - &lt;abbr&gt;MCC&lt;/abbr&gt;"
-                            data-fr="Validata - &lt;abbr&gt;CPM&lt;/abbr&gt;">
-                            Validata - <abbr title="Mass Casualty Commission">MCC</abbr>
-                        </h3>
-                    </div>
-
-                    <p data-en="Create, edit, and check Mass Casualty Commission (&lt;abbr&gt;MCC&lt;/abbr&gt;) &lt;abbr&gt;JSON&lt;/abbr&gt; files with this powerful and easy-to-use tool. Validata helps you speed up the publishing process with a clear, user-friendly interface for building even complex &lt;abbr&gt;JSON&lt;/abbr&gt; structures."
-                       data-fr="Créez, modifiez et validez des fichiers &lt;abbr&gt;JSON&lt;/abbr&gt; de la Commission des pertes massives (&lt;abbr&gt;CPM&lt;/abbr&gt;) grâce à cet outil puissant et facile à utiliser. Validata vous aide à accélérer le processus de publication avec une interface conviviale et claire, même pour créer des structures &lt;abbr&gt;JSON&lt;/abbr&gt; complexes.">
-                        Create, edit, and check Mass Casualty Commission (<abbr>MCC</abbr>) <abbr>JSON</abbr> files with this powerful and easy-to-use tool. Validata helps you speed up the publishing process with a clear, user-friendly interface for building even complex <abbr>JSON</abbr> structures.
-                    </p>
-
-                    <p>
-                        <a class="btn btn-outline-secondary btn-lg"
-                           href="validata-mcc.html"
-                           role="button"
-                           data-en="Use Validata - &lt;abbr&gt;MCC&lt;/abbr&gt;"
-                           data-fr="Utiliser Validata - &lt;abbr&gt;CPM&lt;/abbr&gt;">
-                            Use Validata - <abbr title="Mass Casualty Commission">MCC</abbr>
-                        </a>
-                    </p>
-                </div>
-
-                <!-- Validata - Bastarache -->
-                <div class="col-lg-4 mb-4">
-                    <div class="d-flex align-items-center mb-2">
-                        <img src="img/feather.svg" class="me-2" alt="">
-                        <h3 class="mb-0">Validata - Bastarache</h3>
-                    </div>
-
-                    <p data-en="Create, edit, and check Bastarache &lt;abbr&gt;JSON&lt;/abbr&gt; files with this powerful and easy-to-use tool. Validata - Bastarache helps you speed up the publishing process with a clear, user-friendly interface for building even complex &lt;abbr&gt;JSON&lt;/abbr&gt; structures."
-                       data-fr="Créez, modifiez et validez des fichiers &lt;abbr&gt;JSON&lt;/abbr&gt; du rapport Bastarache grâce à cet outil puissant et facile à utiliser. Validata - Bastarache vous aide à accélérer le processus de publication avec une interface conviviale et claire, même pour créer des structures &lt;abbr&gt;JSON&lt;/abbr&gt; complexes.">
-                        Create, edit, and check Bastarache <abbr>JSON</abbr> files with this powerful and easy-to-use tool. Validata - Bastarache helps you speed up the publishing process with a clear, user-friendly interface for building even complex <abbr>JSON</abbr> structures.
-                    </p>
-
-                    <p>
-                        <a class="btn btn-outline-secondary btn-lg"
-                           href="validata-bastarache.html"
-                           role="button"
-                           data-en="Use Validata - Bastarache"
-                           data-fr="Utiliser Validata - Bastarache">
-                            Use Validata - Bastarache
-                        </a>
-                    </p>
-                </div>
-
-                <!-- Monitora -->
-                <div class="col-lg-4 mb-4">
-                    <div class="d-flex align-items-center mb-2">
-                        <img src="img/tree.svg" class="me-2" alt="">
-                        <h3 class="mb-0">Monitora</h3>
-                    </div>
-
-                    <p data-en="This application edits and generates the &lt;abbr&gt;HTML&lt;/abbr&gt; for the system health page on the Infoweb."
-                       data-fr="Cette application modifie et génère le code &lt;abbr&gt;HTML&lt;/abbr&gt; pour la page de l'état des systèmes sur l'Infoweb.">
-                        This application edits and generates the <abbr>HTML</abbr> for the system health page on the Infoweb.
-                    </p>
-
-                    <p>
-                        <a class="btn btn-outline-secondary btn-lg"
-                           href="monitora.html"
-                           role="button"
-                           data-en="Use Monitora"
-                           data-fr="Utiliser Monitora">
-                            Use Monitora
-                        </a>
-                    </p>
-                </div>
-
-                <!-- Abbrevo -->
-                <div class="col-lg-4 mb-4">
-                    <div class="d-flex align-items-center mb-2">
-                        <img src="img/list.svg" class="me-2" alt="">
-                        <h3 class="mb-0">Abbrevo</h3>
-                    </div>
-
-                    <p data-en="This application creates, edits, and generates &lt;abbr&gt;HTML&lt;/abbr&gt; for the &lt;abbr&gt;RCMP&lt;/abbr&gt; abbreviation and acronym data list template."
-                       data-fr="Cette application modifie et génère le code &lt;abbr&gt;HTML&lt;/abbr&gt; pour le gabarit de la liste de données des abréviations et acronymes de la &lt;abbr&gt;GRC&lt;/abbr&gt;.">
-                        This application creates, edits, and generates <abbr>HTML</abbr> for the <abbr>RCMP</abbr> abbreviation and acronym data list template.
-                    </p>
-
-                    <p>
-                        <a class="btn btn-outline-secondary btn-lg"
-                           href="abbrevo.html"
-                           role="button"
-                           data-en="Use Abbrevo"
-                           data-fr="Utiliser Abbrevo">
-                            Use Abbrevo
-                        </a>
-                    </p>
-
-                <!-- Negotium -->
-                <div class="col-lg-4 mb-4">
-                    <div class="d-flex align-items-center mb-2">
-                        <img src="img/jobs.svg" class="me-2" alt="">
-                        <h3 class="mb-0">Negotium</h3>
-                    </div>
-
-                    <p data-en="A tool to paste content from Microsoft Word and convert it to clean &lt;abbr&gt;HTML&lt;/abbr&gt;. Negotium removes formatting bloat and generates web-ready code."
-                       data-fr="Un outil pour coller du contenu de Microsoft Word et le convertir en &lt;abbr&gt;HTML&lt;/abbr&gt; propre. Negotium supprime le formatage superflu et génère du code prêt pour le web.">
-                        A tool to paste content from Microsoft Word and convert it to clean <abbr>HTML</abbr>. Negotium removes formatting bloat and generates web-ready code.
-                    </p>
-
-                    <p>
-                        <a class="btn btn-outline-secondary btn-lg"
-                           href="negotium.html"
-                           role="button"
-                           data-en="Use Negotium"
-                           data-fr="Utiliser Negotium">
-                            Use Negotium
-                        </a>
-                    </p>
-                </div>
-
-                </div>
-
+        <div class="row">
+          <!-- OptiPix -->
+          <div class="col-lg-4 mb-4">
+            <div class="d-flex align-items-center mb-2">
+              <img src="img/photo-scan.svg" class="me-2" alt="" />
+              <h3 class="mb-0">OptiPix</h3>
             </div>
-        </section>
+
+            <p
+              data-en="Easily crop and optimize your images for the web. This simple tool helps you resize photos and save them in web-friendly formats with the right balance of quality and file size."
+              data-fr="Recadrez et optimisez vos images pour le web en toute simplicité. Cet outil facile à utiliser vous permet de redimensionner vos photos et de les enregistrer dans des formats adaptés au web, avec un bon équilibre entre la qualité et la taille du fichier."
+            >
+              Easily crop and optimize your images for the web. This simple tool helps you resize photos and save them in web-friendly formats with
+              the right balance of quality and file size.
+            </p>
+
+            <p>
+              <a class="btn btn-outline-secondary btn-lg" href="optipix.html" role="button" data-en="Use OptiPix" data-fr="Utiliser OptiPix">
+                Use OptiPix
+              </a>
+            </p>
+          </div>
+
+          <!-- Validata - MCC -->
+          <div class="col-lg-4 mb-4">
+            <div class="d-flex align-items-center mb-2">
+              <img src="img/horse.svg" class="me-2" alt="" />
+              <h3 class="mb-0" data-en="Validata - &lt;abbr&gt;MCC&lt;/abbr&gt;" data-fr="Validata - &lt;abbr&gt;CPM&lt;/abbr&gt;">
+                Validata - <abbr title="Mass Casualty Commission">MCC</abbr>
+              </h3>
+            </div>
+
+            <p
+              data-en="Create, edit, and check Mass Casualty Commission (&lt;abbr&gt;MCC&lt;/abbr&gt;) &lt;abbr&gt;JSON&lt;/abbr&gt; files with this powerful and easy-to-use tool. Validata helps you speed up the publishing process with a clear, user-friendly interface for building even complex &lt;abbr&gt;JSON&lt;/abbr&gt; structures."
+              data-fr="Créez, modifiez et validez des fichiers &lt;abbr&gt;JSON&lt;/abbr&gt; de la Commission des pertes massives (&lt;abbr&gt;CPM&lt;/abbr&gt;) grâce à cet outil puissant et facile à utiliser. Validata vous aide à accélérer le processus de publication avec une interface conviviale et claire, même pour créer des structures &lt;abbr&gt;JSON&lt;/abbr&gt; complexes."
+            >
+              Create, edit, and check Mass Casualty Commission (<abbr>MCC</abbr>) <abbr>JSON</abbr> files with this powerful and easy-to-use tool.
+              Validata helps you speed up the publishing process with a clear, user-friendly interface for building even complex
+              <abbr>JSON</abbr> structures.
+            </p>
+
+            <p>
+              <a
+                class="btn btn-outline-secondary btn-lg"
+                href="validata-mcc.html"
+                role="button"
+                data-en="Use Validata - &lt;abbr&gt;MCC&lt;/abbr&gt;"
+                data-fr="Utiliser Validata - &lt;abbr&gt;CPM&lt;/abbr&gt;"
+              >
+                Use Validata - <abbr title="Mass Casualty Commission">MCC</abbr>
+              </a>
+            </p>
+          </div>
+
+          <!-- Validata - Bastarache -->
+          <div class="col-lg-4 mb-4">
+            <div class="d-flex align-items-center mb-2">
+              <img src="img/feather.svg" class="me-2" alt="" />
+              <h3 class="mb-0">Validata - Bastarache</h3>
+            </div>
+
+            <p
+              data-en="Create, edit, and check Bastarache &lt;abbr&gt;JSON&lt;/abbr&gt; files with this powerful and easy-to-use tool. Validata - Bastarache helps you speed up the publishing process with a clear, user-friendly interface for building even complex &lt;abbr&gt;JSON&lt;/abbr&gt; structures."
+              data-fr="Créez, modifiez et validez des fichiers &lt;abbr&gt;JSON&lt;/abbr&gt; du rapport Bastarache grâce à cet outil puissant et facile à utiliser. Validata - Bastarache vous aide à accélérer le processus de publication avec une interface conviviale et claire, même pour créer des structures &lt;abbr&gt;JSON&lt;/abbr&gt; complexes."
+            >
+              Create, edit, and check Bastarache <abbr>JSON</abbr> files with this powerful and easy-to-use tool. Validata - Bastarache helps you
+              speed up the publishing process with a clear, user-friendly interface for building even complex <abbr>JSON</abbr> structures.
+            </p>
+
+            <p>
+              <a
+                class="btn btn-outline-secondary btn-lg"
+                href="validata-bastarache.html"
+                role="button"
+                data-en="Use Validata - Bastarache"
+                data-fr="Utiliser Validata - Bastarache"
+              >
+                Use Validata - Bastarache
+              </a>
+            </p>
+          </div>
+
+          <!-- Monitora -->
+          <div class="col-lg-4 mb-4">
+            <div class="d-flex align-items-center mb-2">
+              <img src="img/tree.svg" class="me-2" alt="" />
+              <h3 class="mb-0">Monitora</h3>
+            </div>
+
+            <p
+              data-en="This application edits and generates the &lt;abbr&gt;HTML&lt;/abbr&gt; for the system health page on the Infoweb."
+              data-fr="Cette application modifie et génère le code &lt;abbr&gt;HTML&lt;/abbr&gt; pour la page de l'état des systèmes sur l'Infoweb."
+            >
+              This application edits and generates the <abbr>HTML</abbr> for the system health page on the Infoweb.
+            </p>
+
+            <p>
+              <a class="btn btn-outline-secondary btn-lg" href="monitora.html" role="button" data-en="Use Monitora" data-fr="Utiliser Monitora">
+                Use Monitora
+              </a>
+            </p>
+          </div>
+
+          <!-- Abbrevo -->
+          <div class="col-lg-4 mb-4">
+            <div class="d-flex align-items-center mb-2">
+              <img src="img/list.svg" class="me-2" alt="" />
+              <h3 class="mb-0">Abbrevo</h3>
+            </div>
+
+            <p
+              data-en="This application creates, edits, and generates &lt;abbr&gt;HTML&lt;/abbr&gt; for the &lt;abbr&gt;RCMP&lt;/abbr&gt; abbreviation and acronym data list template."
+              data-fr="Cette application modifie et génère le code &lt;abbr&gt;HTML&lt;/abbr&gt; pour le gabarit de la liste de données des abréviations et acronymes de la &lt;abbr&gt;GRC&lt;/abbr&gt;."
+            >
+              This application creates, edits, and generates <abbr>HTML</abbr> for the <abbr>RCMP</abbr> abbreviation and acronym data list template.
+            </p>
+
+            <p>
+              <a class="btn btn-outline-secondary btn-lg" href="abbrevo.html" role="button" data-en="Use Abbrevo" data-fr="Utiliser Abbrevo">
+                Use Abbrevo
+              </a>
+            </p>
+
+            <!-- Negotium -->
+            <div class="col-lg-4 mb-4">
+              <div class="d-flex align-items-center mb-2">
+                <img src="img/jobs.svg" class="me-2" alt="" />
+                <h3 class="mb-0">Negotium</h3>
+              </div>
+
+              <p
+                data-en="A tool to paste content from Microsoft Word and convert it to clean &lt;abbr&gt;HTML&lt;/abbr&gt;. Negotium removes formatting bloat and generates web-ready code."
+                data-fr="Un outil pour coller du contenu de Microsoft Word et le convertir en &lt;abbr&gt;HTML&lt;/abbr&gt; propre. Negotium supprime le formatage superflu et génère du code prêt pour le web."
+              >
+                A tool to paste content from Microsoft Word and convert it to clean <abbr>HTML</abbr>. Negotium removes formatting bloat and generates
+                web-ready code.
+              </p>
+
+              <p>
+                <a class="btn btn-outline-secondary btn-lg" href="negotium.html" role="button" data-en="Use Negotium" data-fr="Utiliser Negotium">
+                  Use Negotium
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
 
     <footer class="mt-auto">
-        <div class="container">
-            <div class="text-center">
-                <p id="version-info" class="mb-0" data-en="" data-fr=""></p>
-            </div>
+      <div class="container">
+        <div class="text-center">
+          <p id="version-info" class="mb-0" data-en="" data-fr=""></p>
         </div>
+      </div>
     </footer>
 
-    <script src="js/bootstrap.bundle.min.js" integrity="sha384-qUI4vU25W2rujNkNzTyTM8eTuk2qCzIyYzK8i1O2DvwDbHZXmYNfj1AZ1Ds3NxBR" crossorigin="anonymous"></script>
-    <script src="js/creavia.js" integrity="sha384-ueuV1O9JVBwObD2diKWjHol7l6YvjDlEOB1vvey3gsPf1Nvt/5X5PdEDldQni/lZ" crossorigin="anonymous"></script>
-</body>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/creavia.js"></script>
+  </body>
 </html>
