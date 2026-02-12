@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
     <title data-en="Créavia" data-fr="Créavia">Créavia</title>
     <meta name="description"
         content="Explore a variety of easy-to-use web tools to help you find information, complete tasks, and access services online."
           data-en="Explore a variety of easy-to-use web tools to help you find information, complete tasks, and access services online."
           data-fr="Découvrez une variété d'outils Web simples pour vous aider à trouver de l'information, accomplir des tâches et accéder aux services en ligne.">
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/creavia.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css" integrity="sha384-Udxgg4VHR51mMdsD4PH6114beIhJohbGl/ddw27AEtnbzWn9Tah3ot3CA1pZZe8v" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/creavia.css" integrity="sha384-Nxq+k28JiScgIchbfDN0f//cQAIYVMUIEJS66/apLKE8dpGHr1NJSk8JUcBElL2w" crossorigin="anonymous">
 </head>
 
 <body>
@@ -21,7 +22,7 @@
     </a>
 
     <header>
-        <nav class="navbar navbar-expand-lg" aria-label="Main navigation">
+        <nav class="navbar navbar-expand-lg" aria-label="Main navigation" data-en="Main navigation" data-fr="Navigation principale">
             <div class="container">
 
                 <div class="navbar-brand d-flex align-items-center">
@@ -38,7 +39,7 @@
                         data-bs-target="#navbarNav"
                         aria-controls="navbarNav"
                         aria-expanded="false"
-                        aria-label="Toggle navigation menu">
+                        aria-label="Toggle navigation menu" data-en-label="Toggle navigation menu" data-fr-label="Basculer le menu de navigation">
                     <span class="navbar-toggler-icon" aria-hidden="true"></span>
                     <span class="visually-hidden"
                           data-en="Toggle navigation menu"
@@ -51,12 +52,12 @@
 
                     <div class="navbar-nav me-auto"></div>
 
-                    <div class="language-switcher" role="group" aria-label="Settings">
+                    <div class="language-switcher" role="group" aria-label="Settings" data-en="Settings" data-fr="Paramètres">
 
                         <button id="theme-toggle"
                                 type="button"
                                 class="theme-toggle"
-                                aria-label="Toggle dark/light theme"
+                                aria-label="Toggle dark/light theme" data-en-label="Toggle dark/light theme" data-fr-label="Basculer le thème clair/sombre"
                                 data-en-dark="Switch to light mode"
                                 data-en-light="Switch to dark mode"
                                 data-fr-dark="Passer au mode clair"
@@ -210,7 +211,7 @@
                         <h3 class="mb-0">Abbrevo</h3>
                     </div>
 
-                    <p data-en="This application edits, and generates &lt;abbr&gt;HTML&lt;/abbr&gt; for the &lt;abbr&gt;RCMP&lt;/abbr&gt; abbreviation and acronym data list template."
+                    <p data-en="This application creates, edits, and generates &lt;abbr&gt;HTML&lt;/abbr&gt; for the &lt;abbr&gt;RCMP&lt;/abbr&gt; abbreviation and acronym data list template."
                        data-fr="Cette application modifie et génère le code &lt;abbr&gt;HTML&lt;/abbr&gt; pour le gabarit de la liste de données des abréviations et acronymes de la &lt;abbr&gt;GRC&lt;/abbr&gt;.">
                         This application creates, edits, and generates <abbr>HTML</abbr> for the <abbr>RCMP</abbr> abbreviation and acronym data list template.
                     </p>
@@ -224,6 +225,30 @@
                             Use Abbrevo
                         </a>
                     </p>
+
+                <!-- Negotium -->
+                <div class="col-lg-4 mb-4">
+                    <div class="d-flex align-items-center mb-2">
+                        <img src="img/jobs.svg" class="me-2" alt="">
+                        <h3 class="mb-0">Negotium</h3>
+                    </div>
+
+                    <p data-en="A tool to paste content from Microsoft Word and convert it to clean &lt;abbr&gt;HTML&lt;/abbr&gt;. Negotium removes formatting bloat and generates web-ready code."
+                       data-fr="Un outil pour coller du contenu de Microsoft Word et le convertir en &lt;abbr&gt;HTML&lt;/abbr&gt; propre. Negotium supprime le formatage superflu et génère du code prêt pour le web.">
+                        A tool to paste content from Microsoft Word and convert it to clean <abbr>HTML</abbr>. Negotium removes formatting bloat and generates web-ready code.
+                    </p>
+
+                    <p>
+                        <a class="btn btn-outline-secondary btn-lg"
+                           href="negotium.html"
+                           role="button"
+                           data-en="Use Negotium"
+                           data-fr="Utiliser Negotium">
+                            Use Negotium
+                        </a>
+                    </p>
+                </div>
+
                 </div>
 
             </div>
@@ -238,7 +263,7 @@
         </div>
     </footer>
 
-    <script src="js/bootstrap.bundle.min.js"></script>
-    <script src="js/creavia.js"></script>
+    <script src="js/bootstrap.bundle.min.js" integrity="sha384-qUI4vU25W2rujNkNzTyTM8eTuk2qCzIyYzK8i1O2DvwDbHZXmYNfj1AZ1Ds3NxBR" crossorigin="anonymous"></script>
+    <script src="js/creavia.js" integrity="sha384-ueuV1O9JVBwObD2diKWjHol7l6YvjDlEOB1vvey3gsPf1Nvt/5X5PdEDldQni/lZ" crossorigin="anonymous"></script>
 </body>
 </html>
