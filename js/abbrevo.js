@@ -1,6 +1,71 @@
+/**
+ * ABBREVO.JS - Abbreviation and Acronym Management Tool
+ * Version 1.0.0
+ */
+
+// ===================================================================
+// CONSTANTS AND VERSION INFO
+// ===================================================================
+
+const ABBREVO_VERSION = "1.0.0";
+
+// Message constants for consistency and maintainability
+const MESSAGES = {
+  NO_ABBR_EN: "There are no abbreviations or acronyms for English.",
+  NO_ABBR_FR: "Il n'y a pas d'abréviations ou d'acronymes pour le français.",
+};
+
+// ===================================================================
+// UTILITY FUNCTIONS
+// ===================================================================
+
+/**
+ * Get current language from document
+ * @returns {string} Language code ('en' or 'fr')
+ */
+function getCurrentLanguage() {
+  return document.documentElement.lang?.split("-")[0] || "en";
+}
+
+// ===================================================================
+// DATA MANAGEMENT
+// ===================================================================
+
 // Store entries
 let entries = [];
 let entryCounter = 0;
+
+// Log version on load
+document.addEventListener("DOMContentLoaded", () => {
+  try {
+    console.log(`Abbrevo v${ABBREVO_VERSION} loaded`);
+
+    // Initialize any startup tasks here if needed
+  } catch (error) {
+    console.error("Abbrevo initialization error:", error);
+    showErrorMessage("An error occurred while loading Abbrevo. Please refresh the page.");
+  }
+});
+
+// ===================================================================
+// ERROR HANDLING
+// ===================================================================
+
+/**
+ * Display user-friendly error message
+ * @param {string} message - Error message to display
+ */
+function showErrorMessage(message) {
+  const currentLang = getCurrentLanguage();
+  const errorMsg =
+    currentLang === "fr" ? message || "Une erreur est survenue. Veuillez réessayer." : message || "An error occurred. Please try again.";
+
+  alert(errorMsg);
+}
+
+// ===================================================================
+// ENTRY MANAGEMENT FUNCTIONS
+// ===================================================================
 
 // Add new entry
 function addEntry() {
@@ -17,10 +82,10 @@ function addEntry() {
 
   // Validation - at least one abbreviation and both titles required
   if ((!abbrEn && !abbrFr) || !titleEn || !titleFr) {
-    const currentLang = document.documentElement.lang?.split("-")[0] || "en";
+    const currentLang = getCurrentLanguage();
     const message =
       currentLang === "fr"
-        ? "Veuillez remplir au moins une abréviation et les deux titres complets."
+        ? "Veuillez remplir au moins une abrÃ©viation et les deux titres complets."
         : "Please fill in at least one abbreviation and both full titles.";
     alert(message);
     return;
@@ -28,14 +93,14 @@ function addEntry() {
 
   // Auto-fill missing abbreviations with message
   if (abbrEn && !abbrFr) {
-    abbrFr = "Il n'y a pas d'abréviations ou d'acronymes pour le français.";
+    abbrFr = MESSAGES.NO_ABBR_FR;
   } else if (abbrFr && !abbrEn) {
-    abbrEn = "There are no abbreviations or acronyms for English.";
+    abbrEn = MESSAGES.NO_ABBR_EN;
   }
 
   // Check for duplicates (only check actual abbreviations, not auto-filled messages)
-  const checkAbbrEn = abbrEn !== "There are no abbreviations or acronyms for English." ? abbrEn : null;
-  const checkAbbrFr = abbrFr !== "Il n'y a pas d'abréviations ou d'acronymes pour le français." ? abbrFr : null;
+  const checkAbbrEn = abbrEn !== MESSAGES.NO_ABBR_EN ? abbrEn : null;
+  const checkAbbrFr = abbrFr !== MESSAGES.NO_ABBR_FR ? abbrFr : null;
 
   if (!checkDuplicates(checkAbbrEn, checkAbbrFr)) {
     return; // User chose to cancel
@@ -78,8 +143,8 @@ function clearForm() {
 
 // Delete entry
 function deleteEntry(id) {
-  const currentLang = document.documentElement.lang?.split("-")[0] || "en";
-  const message = currentLang === "fr" ? "Êtes-vous sûr de vouloir supprimer cette entrée?" : "Are you sure you want to delete this entry?";
+  const currentLang = getCurrentLanguage();
+  const message = currentLang === "fr" ? "ÃŠtes-vous sÃ»r de vouloir supprimer cette entrÃ©e?" : "Are you sure you want to delete this entry?";
 
   if (confirm(message)) {
     entries = entries.filter((e) => e.id !== id);
@@ -90,15 +155,15 @@ function deleteEntry(id) {
 // Render all entries
 function renderEntries() {
   const container = document.getElementById("entries-container");
-  const currentLang = document.documentElement.lang?.split("-")[0] || "en";
+  const currentLang = getCurrentLanguage();
 
   if (entries.length === 0) {
     const noEntriesText =
       currentLang === "fr"
-        ? "Aucune entrée pour le moment. Ajoutez votre première abréviation ou acronyme ci-dessus."
+        ? "Aucune entrÃ©e pour le moment. Ajoutez votre premiÃ¨re abrÃ©viation ou acronyme ci-dessus."
         : "No entries yet. Add your first abbreviation or acronym above.";
 
-    container.innerHTML = `<p class="text-muted" data-en="No entries yet. Add your first abbreviation or acronym above." data-fr="Aucune entrée pour le moment. Ajoutez votre première abréviation ou acronyme ci-dessus.">${noEntriesText}</p>`;
+    container.innerHTML = `<p class="text-muted" data-en="No entries yet. Add your first abbreviation or acronym above." data-fr="Aucune entrÃ©e pour le moment. Ajoutez votre premiÃ¨re abrÃ©viation ou acronyme ci-dessus.">${noEntriesText}</p>`;
     return;
   }
 
@@ -172,10 +237,10 @@ function renderEntries() {
                                 <td>${entry.titleEnIsFrench ? `<i lang="fr">${escapeHtml(entry.titleEn)}</i>` : escapeHtml(entry.titleEn)}</td>
                                 <td>${entry.titleEnIsFrench ? "✓" : ""}</td>
                                 <td>${entry.titleFrIsEnglish ? `<i lang="en">${escapeHtml(entry.titleFr)}</i>` : escapeHtml(entry.titleFr)}</td>
-                                <td>${entry.titleFrIsEnglish ? "✓" : ""}</td>
-                                <td>${entry.notesEn ? escapeHtml(entry.notesEn) : '<em class="text-muted">—</em>'}</td>
-                                <td>${entry.notesFr ? escapeHtml(entry.notesFr) : '<em class="text-muted">—</em>'}</td>
-                                <td>${entry.transparentNotes ? escapeHtml(entry.transparentNotes) : '<em class="text-muted">—</em>'}</td>
+                                <td>${entry.titleFrIsEnglish ? "âœ“" : ""}</td>
+                                <td>${entry.notesEn ? escapeHtml(entry.notesEn) : '<em class="text-muted">â€”</em>'}</td>
+                                <td>${entry.notesFr ? escapeHtml(entry.notesFr) : '<em class="text-muted">â€”</em>'}</td>
+                                <td>${entry.transparentNotes ? escapeHtml(entry.transparentNotes) : '<em class="text-muted">â€”</em>'}</td>
                                 <td class="text-nowrap">
                                     <button type="button" 
                                             class="btn btn-sm btn-primary me-1" 
@@ -224,19 +289,19 @@ function checkDuplicates(abbrEn, abbrFr, excludeId = null) {
   });
 
   if (duplicates.length > 0) {
-    const currentLang = document.documentElement.lang?.split("-")[0] || "en";
+    const currentLang = getCurrentLanguage();
     let message = "";
 
     if (currentLang === "fr") {
-      message = "Une entrée avec cette abréviation/acronyme existe déjà:\n\n";
+      message = "Une entrÃ©e avec cette abrÃ©viation/acronyme existe dÃ©jÃ :\n\n";
       duplicates.forEach((dup) => {
-        message += `• ${dup.abbrEn} / ${dup.abbrFr}\n  ${dup.titleEn} / ${dup.titleFr}\n\n`;
+        message += `â€¢ ${dup.abbrEn} / ${dup.abbrFr}\n  ${dup.titleEn} / ${dup.titleFr}\n\n`;
       });
-      message += "Voulez-vous continuer quand même?";
+      message += "Voulez-vous continuer quand mÃªme?";
     } else {
       message = "An entry with this abbreviation/acronym already exists:\n\n";
       duplicates.forEach((dup) => {
-        message += `• ${dup.abbrEn} / ${dup.abbrFr}\n  ${dup.titleEn} / ${dup.titleFr}\n\n`;
+        message += `â€¢ ${dup.abbrEn} / ${dup.abbrFr}\n  ${dup.titleEn} / ${dup.titleFr}\n\n`;
       });
       message += "Do you want to continue anyway?";
     }
@@ -266,11 +331,11 @@ function editEntry(id) {
 
   // Change Add button to Update button
   const addBtn = document.getElementById("add-entry-btn");
-  const currentLang = document.documentElement.lang?.split("-")[0] || "en";
-  const updateText = currentLang === "fr" ? "Mettre à jour" : "Update entry";
+  const currentLang = getCurrentLanguage();
+  const updateText = currentLang === "fr" ? "Mettre Ã  jour" : "Update entry";
   const cancelText = currentLang === "fr" ? "Annuler" : "Cancel";
 
-  addBtn.innerHTML = `<span data-en="Update entry" data-fr="Mettre à jour">${updateText}</span>`;
+  addBtn.innerHTML = `<span data-en="Update entry" data-fr="Mettre Ã  jour">${updateText}</span>`;
   addBtn.onclick = () => updateEntry(id);
 
   // Add cancel button if it doesn't exist
@@ -305,10 +370,10 @@ function updateEntry(id) {
 
   // Validation - at least one abbreviation and both titles required
   if ((!abbrEn && !abbrFr) || !titleEn || !titleFr) {
-    const currentLang = document.documentElement.lang?.split("-")[0] || "en";
+    const currentLang = getCurrentLanguage();
     const message =
       currentLang === "fr"
-        ? "Veuillez remplir au moins une abréviation et les deux titres complets."
+        ? "Veuillez remplir au moins une abrÃ©viation et les deux titres complets."
         : "Please fill in at least one abbreviation and both full titles.";
     alert(message);
     return;
@@ -316,14 +381,14 @@ function updateEntry(id) {
 
   // Auto-fill missing abbreviations with message
   if (abbrEn && !abbrFr) {
-    abbrFr = "Il n'y a pas d'abréviations ou d'acronymes pour le français.";
+    abbrFr = "Il n'y a pas d'abrÃ©viations ou d'acronymes pour le franÃ§ais.";
   } else if (abbrFr && !abbrEn) {
-    abbrEn = "There are no abbreviations or acronyms for English.";
+    abbrEn = MESSAGES.NO_ABBR_EN;
   }
 
   // Check for duplicates (only check actual abbreviations, not auto-filled messages)
-  const checkAbbrEn = abbrEn !== "There are no abbreviations or acronyms for English." ? abbrEn : null;
-  const checkAbbrFr = abbrFr !== "Il n'y a pas d'abréviations ou d'acronymes pour le français." ? abbrFr : null;
+  const checkAbbrEn = abbrEn !== MESSAGES.NO_ABBR_EN ? abbrEn : null;
+  const checkAbbrFr = abbrFr !== "Il n'y a pas d'abrÃ©viations ou d'acronymes pour le franÃ§ais." ? abbrFr : null;
 
   if (!checkDuplicates(checkAbbrEn, checkAbbrFr, id)) {
     return; // User chose to cancel
@@ -354,10 +419,10 @@ function updateEntry(id) {
 // Cancel edit mode
 function cancelEdit() {
   const addBtn = document.getElementById("add-entry-btn");
-  const currentLang = document.documentElement.lang?.split("-")[0] || "en";
-  const addText = currentLang === "fr" ? "Ajouter l'entrée" : "Add entry";
+  const currentLang = getCurrentLanguage();
+  const addText = currentLang === "fr" ? "Ajouter l'entrÃ©e" : "Add entry";
 
-  addBtn.innerHTML = `<span data-en="Add entry" data-fr="Ajouter l'entrée">${addText}</span>`;
+  addBtn.innerHTML = `<span data-en="Add entry" data-fr="Ajouter l'entrÃ©e">${addText}</span>`;
   addBtn.onclick = addEntry;
 
   // Remove cancel button
@@ -377,8 +442,8 @@ document.addEventListener("languageChanged", () => {
 // Save entries to JSON file
 function saveToJSON() {
   if (entries.length === 0) {
-    const currentLang = document.documentElement.lang?.split("-")[0] || "en";
-    const message = currentLang === "fr" ? "Aucune entrée à enregistrer." : "No entries to save.";
+    const currentLang = getCurrentLanguage();
+    const message = currentLang === "fr" ? "Aucune entrÃ©e Ã  enregistrer." : "No entries to save.";
     alert(message);
     return;
   }
@@ -414,8 +479,8 @@ function saveToJSON() {
 // Save entries to HTML file with bilingual tables
 function saveToHTML() {
   if (entries.length === 0) {
-    const currentLang = document.documentElement.lang?.split("-")[0] || "en";
-    const message = currentLang === "fr" ? "Aucune entrée à enregistrer." : "No entries to save.";
+    const currentLang = getCurrentLanguage();
+    const message = currentLang === "fr" ? "Aucune entrÃ©e Ã  enregistrer." : "No entries to save.";
     alert(message);
     return;
   }
@@ -424,10 +489,10 @@ function saveToHTML() {
   const publicEntries = entries.filter((entry) => !entry.internalOnly);
 
   if (publicEntries.length === 0) {
-    const currentLang = document.documentElement.lang?.split("-")[0] || "en";
+    const currentLang = getCurrentLanguage();
     const message =
       currentLang === "fr"
-        ? "Toutes les entrées sont marquées comme internes seulement. Aucune entrée publique à exporter."
+        ? "Toutes les entrÃ©es sont marquÃ©es comme internes seulement. Aucune entrÃ©e publique Ã  exporter."
         : "All entries are marked as internal only. No public entries to export.";
     alert(message);
     return;
@@ -450,7 +515,7 @@ function saveToHTML() {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RCMP Abbreviations and Acronyms / Abréviations et acronymes de la GRC</title>
+    <title>RCMP Abbreviations and Acronyms / AbrÃ©viations et acronymes de la GRC</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -521,7 +586,7 @@ function saveToHTML() {
     </div>
     
     <div class="language-section">
-        <h1>Version française</h1>
+        <h1>Version franÃ§aise</h1>
         ${frenchTable}
     </div>
 </body>
@@ -544,8 +609,8 @@ function generateEnglishTable(sortedEntries) {
   const rows = sortedEntries
     .map((entry) => {
       // Handle abbreviations
-      const abbrEn = entry.abbrEn === "There are no abbreviations or acronyms for English." ? "" : escapeHtml(entry.abbrEn);
-      const abbrFr = entry.abbrFr === "Il n'y a pas d'abréviations ou d'acronymes pour le français." ? "" : escapeHtml(entry.abbrFr);
+      const abbrEn = entry.abbrEn === MESSAGES.NO_ABBR_EN ? "" : escapeHtml(entry.abbrEn);
+      const abbrFr = entry.abbrFr === "Il n'y a pas d'abrÃ©viations ou d'acronymes pour le franÃ§ais." ? "" : escapeHtml(entry.abbrFr);
 
       // Handle titles with language tags
       const titleEn = entry.titleEnIsFrench ? `<span lang="fr">${escapeHtml(entry.titleEn)}</span>` : escapeHtml(entry.titleEn);
@@ -598,8 +663,8 @@ function generateFrenchTable(sortedEntries) {
   const rows = sortedEntries
     .map((entry) => {
       // Handle abbreviations
-      const abbrEn = entry.abbrEn === "There are no abbreviations or acronyms for English." ? "" : escapeHtml(entry.abbrEn);
-      const abbrFr = entry.abbrFr === "Il n'y a pas d'abréviations ou d'acronymes pour le français." ? "" : escapeHtml(entry.abbrFr);
+      const abbrEn = entry.abbrEn === MESSAGES.NO_ABBR_EN ? "" : escapeHtml(entry.abbrEn);
+      const abbrFr = entry.abbrFr === "Il n'y a pas d'abrÃ©viations ou d'acronymes pour le franÃ§ais." ? "" : escapeHtml(entry.abbrFr);
 
       // Handle titles with language tags
       const titleEn = entry.titleEnIsFrench ? `<span lang="fr">${escapeHtml(entry.titleEn)}</span>` : escapeHtml(entry.titleEn);
@@ -628,16 +693,16 @@ function generateFrenchTable(sortedEntries) {
   return `<div class="table-container">
 \t<table>
 \t\t<caption>
-\t\t\tAbréviations et acronymes bilingues
-\t\t\t<span class="sr-only">Ce tableau contient cinq colonnes: abréviation ou acronyme français, forme complète en français, abréviation ou acronyme anglais, forme complète en anglais, et abréviations et acronymes précédents</span>
+\t\t\tAbrÃ©viations et acronymes bilingues
+\t\t\t<span class="sr-only">Ce tableau contient cinq colonnes: abrÃ©viation ou acronyme franÃ§ais, forme complÃ¨te en franÃ§ais, abrÃ©viation ou acronyme anglais, forme complÃ¨te en anglais, et abrÃ©viations et acronymes prÃ©cÃ©dents</span>
 \t\t</caption>
 \t\t<thead>
 \t\t\t<tr>
-\t\t\t\t<th scope="col">Abréviation ou acronyme français</th>
-\t\t\t\t<th scope="col">Forme complète en français</th>
-\t\t\t\t<th scope="col">Abréviation ou acronyme anglais</th>
-\t\t\t\t<th scope="col">Forme complète en anglais</th>
-\t\t\t\t<th scope="col">Abréviations et acronymes précédents</th>
+\t\t\t\t<th scope="col">AbrÃ©viation ou acronyme franÃ§ais</th>
+\t\t\t\t<th scope="col">Forme complÃ¨te en franÃ§ais</th>
+\t\t\t\t<th scope="col">AbrÃ©viation ou acronyme anglais</th>
+\t\t\t\t<th scope="col">Forme complÃ¨te en anglais</th>
+\t\t\t\t<th scope="col">AbrÃ©viations et acronymes prÃ©cÃ©dents</th>
 \t\t\t</tr>
 \t\t</thead>
 \t\t<tbody>
@@ -672,14 +737,14 @@ function loadFromJSON(event) {
         throw new Error("Invalid entry structure");
       }
 
-      const currentLang = document.documentElement.lang?.split("-")[0] || "en";
+      const currentLang = getCurrentLanguage();
       let addedCount = 0;
       let skippedCount = 0;
 
       // Process each loaded entry
       for (const loadedEntry of loadedData) {
-        const checkAbbrEn = loadedEntry.abbrEn !== "There are no abbreviations or acronyms for English." ? loadedEntry.abbrEn : null;
-        const checkAbbrFr = loadedEntry.abbrFr !== "Il n'y a pas d'abréviations ou d'acronymes pour le français." ? loadedEntry.abbrFr : null;
+        const checkAbbrEn = loadedEntry.abbrEn !== MESSAGES.NO_ABBR_EN ? loadedEntry.abbrEn : null;
+        const checkAbbrFr = loadedEntry.abbrFr !== MESSAGES.NO_ABBR_FR ? loadedEntry.abbrFr : null;
 
         // Check for duplicates
         const duplicates = entries.filter((entry) => {
@@ -692,15 +757,15 @@ function loadFromJSON(event) {
           // Ask user if they want to add duplicate
           let message = "";
           if (currentLang === "fr") {
-            message = `Une entrée avec cette abréviation/acronyme existe déjà:\n\n`;
+            message = `Une entrÃ©e avec cette abrÃ©viation/acronyme existe dÃ©jÃ :\n\n`;
             duplicates.forEach((dup) => {
-              message += `• ${dup.abbrEn} / ${dup.abbrFr}\n  ${dup.titleEn} / ${dup.titleFr}\n\n`;
+              message += `â€¢ ${dup.abbrEn} / ${dup.abbrFr}\n  ${dup.titleEn} / ${dup.titleFr}\n\n`;
             });
-            message += `Voulez-vous ajouter quand même:\n${loadedEntry.abbrEn} / ${loadedEntry.abbrFr}\n${loadedEntry.titleEn} / ${loadedEntry.titleFr}?`;
+            message += `Voulez-vous ajouter quand mÃªme:\n${loadedEntry.abbrEn} / ${loadedEntry.abbrFr}\n${loadedEntry.titleEn} / ${loadedEntry.titleFr}?`;
           } else {
             message = `An entry with this abbreviation/acronym already exists:\n\n`;
             duplicates.forEach((dup) => {
-              message += `• ${dup.abbrEn} / ${dup.abbrFr}\n  ${dup.titleEn} / ${dup.titleFr}\n\n`;
+              message += `â€¢ ${dup.abbrEn} / ${dup.abbrFr}\n  ${dup.titleEn} / ${dup.titleFr}\n\n`;
             });
             message += `Do you want to add anyway:\n${loadedEntry.abbrEn} / ${loadedEntry.abbrFr}\n${loadedEntry.titleEn} / ${loadedEntry.titleFr}?`;
           }
@@ -730,9 +795,9 @@ function loadFromJSON(event) {
       // Show summary message
       let summaryMessage = "";
       if (currentLang === "fr") {
-        summaryMessage = `${addedCount} entrée(s) ajoutée(s)`;
+        summaryMessage = `${addedCount} entrÃ©e(s) ajoutÃ©e(s)`;
         if (skippedCount > 0) {
-          summaryMessage += `, ${skippedCount} ignorée(s)`;
+          summaryMessage += `, ${skippedCount} ignorÃ©e(s)`;
         }
         summaryMessage += ".";
       } else {
@@ -744,10 +809,10 @@ function loadFromJSON(event) {
       }
       alert(summaryMessage);
     } catch (error) {
-      const currentLang = document.documentElement.lang?.split("-")[0] || "en";
+      const currentLang = getCurrentLanguage();
       const message =
         currentLang === "fr"
-          ? "Erreur lors du chargement du fichier JSON. Veuillez vérifier le format."
+          ? "Erreur lors du chargement du fichier JSON. Veuillez vÃ©rifier le format."
           : "Error loading JSON file. Please check the format.";
       alert(message);
       console.error("JSON load error:", error);
