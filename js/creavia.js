@@ -38,7 +38,7 @@ class CookieManager {
   static setCookie(name, value, days = 365) {
     const expires = new Date();
     expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
-    document.cookie = `${name}=${value}; expires=${expires.toUTCString()}; path=/; SameSite=Strict; Secure`;
+    document.cookie = `${name}=${value}; expires=${expires.toUTCString()}; path=/; SameSite=Strict`;
   }
 
   /**
@@ -148,11 +148,11 @@ class ThemeManager {
       if (theme === "dark") {
         const lightModeText = currentLang === "fr" ? "Mode clair" : "Light mode";
         themeText.textContent = lightModeText;
-        themeToggle.setAttribute("aria-label", currentLang === "fr" ? "Passer au mode clair" : "Switch to light mode");
+        themeToggle.setAttribute("aria-label", "Switch to light mode");
       } else {
         const darkModeText = currentLang === "fr" ? "Mode sombre" : "Dark mode";
         themeText.textContent = darkModeText;
-        themeToggle.setAttribute("aria-label", currentLang === "fr" ? "Passer au mode sombre" : "Switch to dark mode");
+        themeToggle.setAttribute("aria-label", "Switch to dark mode");
       }
     }
   }
@@ -166,15 +166,7 @@ class ThemeManager {
     announcement.setAttribute("aria-atomic", "true");
     announcement.className = "sr-only";
 
-    const currentLang = document.documentElement.lang?.split("-")[0] || "en";
-    const message =
-      this.currentTheme === "dark"
-        ? currentLang === "fr"
-          ? "Thème sombre activé"
-          : "Dark theme activated"
-        : currentLang === "fr"
-          ? "Thème clair activé"
-          : "Light theme activated";
+    const message = this.currentTheme === "dark" ? "Dark theme activated" : "Light theme activated";
 
     announcement.textContent = message;
     document.body.appendChild(announcement);
