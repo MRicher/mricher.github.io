@@ -3,6 +3,27 @@
  * Converts Microsoft Word content to clean HTML
  */
 
+// ===================================================================
+// CONSTANTS AND VERSION INFO
+// ===================================================================
+
+const NEGOTIUM_VERSION = "1.0.0";
+const NEGOTIUM_VERSION_STRING = `Version ${NEGOTIUM_VERSION}`;
+
+/**
+ * Update version info dynamically on page load
+ */
+document.addEventListener("DOMContentLoaded", () => {
+  const versionElement = document.getElementById("version-info");
+  if (versionElement) {
+    versionElement.textContent = NEGOTIUM_VERSION_STRING;
+  }
+});
+
+// ===================================================================
+// QUILL EDITOR
+// ===================================================================
+
 // Initialize Quill editor
 let quill;
 

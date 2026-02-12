@@ -7,16 +7,21 @@
 // CONSTANTS AND VERSION INFO
 // ===================================================================
 
+// Default version for pages without specific app version
 const APP_VERSION = "1.0.3";
 const VERSION_STRING = `Version ${APP_VERSION}`;
 
 /**
  * Update version info dynamically on page load
+ * Only sets version if it hasn't been set by the specific app
  */
 document.addEventListener("DOMContentLoaded", () => {
   const versionElement = document.getElementById("version-info");
   if (versionElement) {
-    versionElement.textContent = VERSION_STRING;
+    // Only set version if it's empty (hasn't been set by app-specific JS)
+    if (!versionElement.textContent || versionElement.textContent.trim() === "") {
+      versionElement.textContent = VERSION_STRING;
+    }
   }
 });
 
@@ -74,40 +79,51 @@ class CookieManager {
  */
 class ThemeManager {
   constructor() {
-    this.currentTheme = this.getStoredTheme() || "light";
+    this.currentTheme = this.getPreferredTheme();
     this.init();
   }
 
   /**
-   * Get the stored theme preference
-   * Checks cookies first, then localStorage, then defaults to light
-   * @returns {string} Theme preference ('light' or 'dark')
+   * Get preferred theme from various sources
+   * @returns {string} Theme name ('light' or 'dark')
    */
-  getStoredTheme() {
-    return CookieManager.getCookie("preferred_theme") || localStorage.getItem("theme") || "light";
+  getPreferredTheme() {
+    const cookieTheme = CookieManager.getCookie("preferred_theme");
+    const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+    return cookieTheme || (systemPrefersDark ? "dark" : "light");
   }
 
   /**
-   * Save theme preference to both cookie and localStorage
-   * @param {string} theme - Theme to save ('light' or 'dark')
+   * Save theme preference to cookie
+   * @param {string} theme - Theme name to save
    */
   saveTheme(theme) {
     CookieManager.setCookie("preferred_theme", theme);
-    localStorage.setItem("theme", theme);
   }
 
   /**
-   * Initialize theme manager
+   * Initialize theme functionality
    */
   init() {
     this.applyTheme(this.currentTheme);
-    this.setupThemeToggle();
+    this.setupEventListeners();
   }
 
   /**
-   * Setup theme toggle button event listener
+   * Apply theme to document
+   * @param {string} theme - Theme name to apply
    */
-  setupThemeToggle() {
+  applyTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    this.currentTheme = theme;
+    this.updateThemeToggleUI();
+  }
+
+  /**
+   * Setup event listeners for theme toggle
+   */
+  setupEventListeners() {
     const themeToggle = document.getElementById("theme-toggle");
     if (themeToggle) {
       themeToggle.addEventListener("click", () => this.toggleTheme());
@@ -118,34 +134,23 @@ class ThemeManager {
    * Toggle between light and dark themes
    */
   toggleTheme() {
-    this.currentTheme = this.currentTheme === "light" ? "dark" : "light";
-    this.applyTheme(this.currentTheme);
-    this.saveTheme(this.currentTheme);
+    const newTheme = this.currentTheme === "light" ? "dark" : "light";
+    this.applyTheme(newTheme);
+    this.saveTheme(newTheme);
     this.announceThemeChange();
   }
 
   /**
-   * Apply theme to the document
-   * @param {string} theme - Theme to apply ('light' or 'dark')
+   * Update theme toggle button UI
    */
-  applyTheme(theme) {
-    document.documentElement.setAttribute("data-theme", theme);
-    document.documentElement.setAttribute("data-bs-theme", theme);
-    this.updateThemeButton(theme);
-  }
-
-  /**
-   * Update theme button text and aria-label
-   * @param {string} theme - Current theme ('light' or 'dark')
-   */
-  updateThemeButton(theme) {
+  updateThemeToggleUI() {
     const themeToggle = document.getElementById("theme-toggle");
     const themeText = document.getElementById("theme-text");
 
     if (themeToggle && themeText) {
       const currentLang = document.documentElement.lang?.split("-")[0] || "en";
 
-      if (theme === "dark") {
+      if (this.currentTheme === "dark") {
         const lightModeText = currentLang === "fr" ? "Mode clair" : "Light mode";
         themeText.textContent = lightModeText;
         themeToggle.setAttribute("aria-label", "Switch to light mode");
@@ -232,124 +237,122 @@ class LanguageSwitcher {
   }
 
   /**
-   * Update URL with language parameter
-   * @param {string} lang - Language code
-   */
-  updateUrl(lang) {
-    const url = new URL(window.location);
-    const shortLang = lang.split("-")[0];
-    url.searchParams.set("lang", shortLang);
-    window.history.replaceState({}, "", url);
-  }
-
-  /**
-   * Initialize language switcher
+   * Initialize language switching functionality
    */
   init() {
-    const langButtons = document.querySelectorAll("[data-lang]");
-    langButtons.forEach((button) => {
-      button.addEventListener("click", (e) => {
-        const targetLang = e.currentTarget.getAttribute("data-lang");
-        this.switchLanguage(targetLang);
-      });
-    });
-
-    this.switchLanguage(this.currentLang);
+    this.applyLanguage(this.currentLang);
+    this.setupEventListeners();
   }
 
   /**
-   * Switch to specified language
-   * @param {string} lang - Target language code
+   * Apply language to document
+   * @param {string} lang - Language code to apply
    */
-  switchLanguage(lang) {
-    this.currentLang = lang;
+  applyLanguage(lang) {
     document.documentElement.lang = lang;
+    this.currentLang = lang;
+    this.updateContent();
+    this.updateLanguageButtons();
+    this.dispatchLanguageChangeEvent();
+  }
 
-    this.saveLanguage(lang);
-    this.updateUrl(lang);
+  /**
+   * Dispatch custom event when language changes
+   */
+  dispatchLanguageChangeEvent() {
+    const event = new CustomEvent("languageChanged", {
+      detail: { language: this.currentLang },
+    });
+    document.dispatchEvent(event);
+  }
 
-    // Update all bilingual elements
-    const elements = document.querySelectorAll("[data-en][data-fr]");
+  /**
+   * Update all bilingual content on the page
+   */
+  updateContent() {
+    const lang = this.currentLang.split("-")[0];
+    const elements = document.querySelectorAll("[data-en], [data-fr]");
+
     elements.forEach((element) => {
-      const shortLang = lang.split("-")[0];
-      const text = element.getAttribute(`data-${shortLang}`);
-      if (text) {
-        this.updateElementContent(element, text);
+      const content = lang === "fr" ? element.getAttribute("data-fr") : element.getAttribute("data-en");
+      if (content !== null) {
+        // Handle HTML content vs text content
+        if (content.includes("<")) {
+          element.innerHTML = content;
+        } else {
+          element.textContent = content;
+        }
       }
     });
 
-    this.updateLanguageButtons();
-    this.announceLanguageChange(lang);
-
-    // Update theme button text in new language
-    if (window.themeManager) {
-      window.themeManager.updateThemeButton(window.themeManager.currentTheme);
-    }
-
-    // Notify other components about language change
-    if (window.editor && typeof window.editor.updateCalendarLanguage === "function") {
-      setTimeout(() => window.editor.updateCalendarLanguage(), 100);
-    }
-
-    // Dispatch custom event for language change
-    document.dispatchEvent(
-      new CustomEvent("languageChanged", {
-        detail: { language: lang },
-      }),
-    );
+    // Update labels
+    const labelElements = document.querySelectorAll("[data-en-label], [data-fr-label]");
+    labelElements.forEach((element) => {
+      const label = lang === "fr" ? element.getAttribute("data-fr-label") : element.getAttribute("data-en-label");
+      if (label !== null) {
+        element.setAttribute("aria-label", label);
+      }
+    });
   }
 
   /**
-   * Update element content based on element type
-   * @param {Element} element - DOM element to update
-   * @param {string} text - New text content
-   */
-  updateElementContent(element, text) {
-    if (element.tagName === "INPUT" || element.tagName === "TEXTAREA") {
-      element.placeholder = text;
-    } else if (element.tagName === "IMG") {
-      element.alt = text;
-    } else if (element.hasAttribute("content")) {
-      element.setAttribute("content", text);
-    } else if (element.hasAttribute("aria-label") && element.hasAttribute("title")) {
-      element.setAttribute("aria-label", text);
-      element.title = text;
-    } else if (element.hasAttribute("aria-label")) {
-      element.setAttribute("aria-label", text);
-    } else if (element.hasAttribute("title")) {
-      element.title = text;
-    } else {
-      element.innerHTML = text;
-    }
-  }
-
-  /**
-   * Update visibility of language toggle buttons
+   * Update language toggle buttons state
    */
   updateLanguageButtons() {
-    const frBtn = document.getElementById("lang-fr-btn");
     const enBtn = document.getElementById("lang-en-btn");
+    const frBtn = document.getElementById("lang-fr-btn");
 
-    if (this.currentLang === "en-CA") {
-      if (frBtn) frBtn.style.display = "block";
-      if (enBtn) enBtn.style.display = "none";
-    } else {
-      if (frBtn) frBtn.style.display = "none";
-      if (enBtn) enBtn.style.display = "block";
+    if (enBtn && frBtn) {
+      if (this.currentLang === "en-CA") {
+        enBtn.style.display = "none";
+        frBtn.style.display = "inline-block";
+        enBtn.setAttribute("aria-pressed", "true");
+        frBtn.setAttribute("aria-pressed", "false");
+      } else {
+        enBtn.style.display = "inline-block";
+        frBtn.style.display = "none";
+        enBtn.setAttribute("aria-pressed", "false");
+        frBtn.setAttribute("aria-pressed", "true");
+      }
     }
+  }
+
+  /**
+   * Setup event listeners for language toggle buttons
+   */
+  setupEventListeners() {
+    const enBtn = document.getElementById("lang-en-btn");
+    const frBtn = document.getElementById("lang-fr-btn");
+
+    if (enBtn) {
+      enBtn.addEventListener("click", () => this.switchLanguage("en-CA"));
+    }
+
+    if (frBtn) {
+      frBtn.addEventListener("click", () => this.switchLanguage("fr-CA"));
+    }
+  }
+
+  /**
+   * Switch to a specific language
+   * @param {string} lang - Language code to switch to
+   */
+  switchLanguage(lang) {
+    this.applyLanguage(lang);
+    this.saveLanguage(lang);
+    this.announceLanguageChange();
   }
 
   /**
    * Announce language change to screen readers
-   * @param {string} lang - New language code
    */
-  announceLanguageChange(lang) {
+  announceLanguageChange() {
     const announcement = document.createElement("div");
     announcement.setAttribute("aria-live", "polite");
     announcement.setAttribute("aria-atomic", "true");
     announcement.className = "sr-only";
 
-    const message = lang === "en-CA" ? "Language switched to English" : "Langue changée en français";
+    const message = this.currentLang === "fr-CA" ? "Langue changée au français" : "Language changed to English";
 
     announcement.textContent = message;
     document.body.appendChild(announcement);
@@ -368,193 +371,115 @@ class LanguageSwitcher {
 // ===================================================================
 
 /**
- * Back to Top Button functionality
- * Shows/hides button based on scroll position and handles smooth scrolling
+ * Back to top button functionality
+ * Shows/hides button based on scroll position
  */
 class BackToTopButton {
   constructor() {
-    this.button = document.getElementById("backToTop");
-    this.scrollThreshold = 300; // Show button after scrolling 300px
-    this.init();
-  }
-
-  /**
-   * Initialize back to top button functionality
-   */
-  init() {
-    if (!this.button) return;
-
-    // Add scroll event listener with throttling for better performance
-    let scrollTimeout;
-    window.addEventListener("scroll", () => {
-      if (scrollTimeout) {
-        clearTimeout(scrollTimeout);
-      }
-      scrollTimeout = setTimeout(() => this.handleScroll(), 10);
-    });
-
-    // Add click event listener
-    this.button.addEventListener("click", () => this.scrollToTop());
-
-    // Handle keyboard navigation
-    this.button.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        this.scrollToTop();
-      }
-    });
-
-    // Initial check in case page is already scrolled
-    this.handleScroll();
-  }
-
-  /**
-   * Handle scroll events to show/hide button
-   */
-  handleScroll() {
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-    // Toggle 'visible' class based on scroll position
-    if (scrollTop > this.scrollThreshold) {
-      this.button.classList.add("visible");
-    } else {
-      this.button.classList.remove("visible");
+    this.button = document.getElementById("back-to-top");
+    if (this.button) {
+      this.init();
     }
   }
 
   /**
-   * Scroll smoothly to top of page
+   * Initialize back to top functionality
+   */
+  init() {
+    window.addEventListener("scroll", () => this.toggleVisibility());
+    this.button.addEventListener("click", () => this.scrollToTop());
+  }
+
+  /**
+   * Toggle button visibility based on scroll position
+   */
+  toggleVisibility() {
+    if (window.scrollY > 300) {
+      this.button.classList.add("show");
+    } else {
+      this.button.classList.remove("show");
+    }
+  }
+
+  /**
+   * Scroll to top of page
    */
   scrollToTop() {
-    // Smooth scroll to top
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
-
-    // Focus management - focus on a logical element after scroll
-    setTimeout(() => {
-      const mainHeading = document.querySelector("h1, .main-heading, #main-content");
-      if (mainHeading && mainHeading.tabIndex === -1) {
-        mainHeading.tabIndex = -1;
-        mainHeading.focus();
-      }
-    }, 500);
   }
 }
 
 // ===================================================================
-// UI UTILITIES
+// FILE DOWNLOAD UTILITY
 // ===================================================================
 
 /**
- * General UI utility functions
- * Handles keyboard navigation and mobile menu interactions
- */
-class UIUtils {
-  /**
-   * Handle Escape key press to close mobile menu
-   */
-  static handleEscapeKey() {
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        const mobileMenu = document.querySelector(".navbar-collapse.show");
-        if (mobileMenu) {
-          const toggleButton = document.querySelector(".navbar-toggler");
-          if (toggleButton) {
-            toggleButton.click();
-            toggleButton.focus();
-          }
-        }
-      }
-    });
-  }
-
-  /**
-   * Setup focus management for mobile menu
-   */
-  static setupMobileMenuFocus() {
-    const navbarToggler = document.querySelector(".navbar-toggler");
-    if (navbarToggler) {
-      navbarToggler.addEventListener("click", () => {
-        setTimeout(() => {
-          const isExpanded = navbarToggler.getAttribute("aria-expanded") === "true";
-          if (isExpanded) {
-            const firstNavLink = document.querySelector(".navbar-nav .nav-link");
-            if (firstNavLink) {
-              firstNavLink.focus();
-            }
-          }
-        }, 100);
-      });
-    }
-  }
-}
-
-// ===================================================================
-// SHARED UTILITY FUNCTIONS
-// ===================================================================
-
-/**
- * File Download Utility
- * Creates a downloadable file from a Blob
+ * File download utility
+ * Handles creating and downloading files from content
  */
 class FileDownloader {
   /**
-   * Download a blob as a file
-   * @param {Blob} blob - The blob to download
-   * @param {string} filename - The filename for the download
+   * Download content as file
+   * @param {string} content - File content
+   * @param {string} filename - Desired filename
+   * @param {string} mimeType - MIME type of file
    */
-  static downloadFile(blob, filename) {
-    const url = window.URL.createObjectURL(blob);
+  static download(content, filename, mimeType = "text/plain") {
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
     link.download = filename;
-    link.style.display = "none";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
+    URL.revokeObjectURL(url);
   }
 
   /**
-   * Download text content as a file
-   * @param {string} content - The text content
-   * @param {string} filename - The filename for the download
-   * @param {string} mimeType - The MIME type (default: text/plain)
+   * Download JSON data
+   * @param {object} data - Data to download
+   * @param {string} filename - Desired filename
    */
-  static downloadText(content, filename, mimeType = "text/plain;charset=utf-8") {
-    const blob = new Blob([content], { type: mimeType });
-    this.downloadFile(blob, filename);
+  static downloadJSON(data, filename = "data.json") {
+    const content = JSON.stringify(data, null, 2);
+    this.download(content, filename, "application/json");
   }
 
   /**
-   * Download JSON data as a file
-   * @param {Object} data - The data to download as JSON
-   * @param {string} filename - The filename for the download
+   * Download HTML content
+   * @param {string} html - HTML content
+   * @param {string} filename - Desired filename
    */
-  static downloadJSON(data, filename) {
-    const jsonString = JSON.stringify(data, null, 2);
-    this.downloadText(jsonString, filename, "application/json;charset=utf-8");
+  static downloadHTML(html, filename = "document.html") {
+    this.download(html, filename, "text/html");
   }
 }
 
+// ===================================================================
+// ALERT MANAGEMENT
+// ===================================================================
+
 /**
- * Alert/Notification Utility
- * Displays bootstrap-compatible alerts
+ * Alert management utility
+ * Creates Bootstrap alerts programmatically
  */
 class AlertManager {
   /**
-   * Show an alert message
-   * @param {string} message - The message to display
-   * @param {string} type - Alert type: success, danger, warning, info (default: info)
+   * Show alert message
+   * @param {string} message - Alert message
+   * @param {string} type - Alert type (success, danger, warning, info)
    * @param {number} duration - Auto-dismiss duration in ms (0 = no auto-dismiss)
-   * @param {string} containerId - ID of container to append alert to (default: document.body)
+   * @param {string|null} containerId - Container element ID
    */
-  static showAlert(message, type = "info", duration = 5000, containerId = null) {
+  static showAlert(message, type = "info", duration = 0, containerId = null) {
     const alertDiv = document.createElement("div");
     alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
     alertDiv.setAttribute("role", "alert");
+
     alertDiv.innerHTML = `
       ${message}
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -655,6 +580,57 @@ class DateFormatter {
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
+  }
+}
+
+// ===================================================================
+// UI UTILITIES
+// ===================================================================
+
+/**
+ * General UI utility functions
+ */
+class UIUtils {
+  /**
+   * Setup keyboard navigation for mobile menu
+   */
+  static setupMobileMenuFocus() {
+    const navToggle = document.querySelector(".navbar-toggler");
+    const navMenu = document.querySelector(".navbar-collapse");
+
+    if (navToggle && navMenu) {
+      navToggle.addEventListener("click", () => {
+        setTimeout(() => {
+          if (navMenu.classList.contains("show")) {
+            const firstLink = navMenu.querySelector("a");
+            if (firstLink) firstLink.focus();
+          }
+        }, 300);
+      });
+    }
+  }
+
+  /**
+   * Handle escape key to close modals/dropdowns
+   */
+  static handleEscapeKey() {
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        // Close any open Bootstrap modals
+        const modals = document.querySelectorAll(".modal.show");
+        modals.forEach((modal) => {
+          const bsModal = bootstrap.Modal.getInstance(modal);
+          if (bsModal) bsModal.hide();
+        });
+
+        // Close mobile menu if open
+        const navMenu = document.querySelector(".navbar-collapse.show");
+        if (navMenu) {
+          const navToggle = document.querySelector(".navbar-toggler");
+          if (navToggle) navToggle.click();
+        }
+      }
+    });
   }
 }
 
