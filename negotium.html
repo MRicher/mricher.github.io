@@ -7,7 +7,7 @@
       http-equiv="Content-Security-Policy"
       content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
     />
-    <title data-en="Negotium - Word to HTML Converter" data-fr="Negotium - Convertisseur Word vers HTML">Negotium - Word to HTML Converter</title>
+    <title data-en="Negotium" data-fr="Negotium">Negotium</title>
     <meta
       name="description"
       content="A tool to paste content from Microsoft Word and convert it to clean HTML. Negotium removes formatting bloat and generates web-ready code."
@@ -27,8 +27,8 @@
       <nav class="navbar navbar-expand-lg" aria-label="Main navigation" data-en="Main navigation" data-fr="Navigation principale">
         <div class="container">
           <div class="navbar-brand d-flex align-items-center">
-            <img src="img/seedling.svg" alt="" class="me-2" style="height: 50px; width: auto" />
-            <span data-en="Créavia" data-fr="Créavia">Créavia</span>
+            <img src="img/jobs.svg" alt="" class="me-2" style="height: 50px; width: auto" />
+            <span data-en="Negotium" data-fr="Negotium">Negotium</span>
           </div>
 
           <button
@@ -97,22 +97,29 @@
 
     <main class="container" id="main-content">
       <section aria-labelledby="main-heading">
-        <h1 id="main-heading" class="mb-4" data-en="Negotium - Word to HTML Converter" data-fr="Negotium - Convertisseur Word vers HTML">
-          Negotium - Word to HTML Converter
-        </h1>
+        <h1 id="main-heading" class="mb-4" data-en="Negotium" data-fr="Negotium">Negotium</h1>
 
-        <p class="lead" data-en="Paste content from Microsoft Word and convert it to clean, web-ready HTML." data-fr="Collez du contenu de Microsoft Word et convertissez-le en HTML propre et prêt pour le web.">
+        <p
+          class="lead"
+          data-en="Paste content from Microsoft Word and convert it to clean, web-ready HTML."
+          data-fr="Collez du contenu de Microsoft Word et convertissez-le en HTML propre et prêt pour le web."
+        >
           Paste content from Microsoft Word and convert it to clean, web-ready HTML.
         </p>
 
         <!-- Input Section -->
         <div class="card mb-4">
           <div class="card-header">
-            <h2 class="h5 mb-0" data-en="Input - Paste Word Content" data-fr="Entrée - Coller le contenu Word">Input - Paste Word Content</h2>
+            <h2 class="h5 mb-0" data-en="Input - Paste Word content" data-fr="Entrée - Coller le contenu Word">Input - Paste Word content</h2>
           </div>
           <div class="card-body">
             <div class="mb-3">
-              <label for="editor" class="form-label" data-en="Paste your Word document content here:" data-fr="Collez le contenu de votre document Word ici :">
+              <label
+                for="editor"
+                class="form-label"
+                data-en="Paste your Word document content here:"
+                data-fr="Collez le contenu de votre document Word ici :"
+              >
                 Paste your Word document content here:
               </label>
               <div id="editor" aria-label="Rich text editor" data-en-label="Rich text editor" data-fr-label="Éditeur de texte enrichi"></div>
@@ -121,20 +128,16 @@
               <button type="button" class="btn btn-primary" id="convert-btn" data-en="Convert to HTML" data-fr="Convertir en HTML">
                 Convert to HTML
               </button>
-              <button type="button" class="btn btn-outline-secondary" id="clear-btn" data-en="Clear" data-fr="Effacer">
-                Clear
-              </button>
+              <button type="button" class="btn btn-outline-secondary" id="clear-btn" data-en="Clear" data-fr="Effacer">Clear</button>
             </div>
           </div>
         </div>
 
         <!-- Output Section -->
-        <div class="card mb-4" id="output-section" style="display: none;">
+        <div class="card mb-4" id="output-section" style="display: none">
           <div class="card-header d-flex justify-content-between align-items-center">
             <h2 class="h5 mb-0" data-en="Output - Clean HTML" data-fr="Sortie - HTML propre">Output - Clean HTML</h2>
-            <button type="button" class="btn btn-sm btn-outline-primary" id="copy-btn" data-en="Copy HTML" data-fr="Copier le HTML">
-              Copy HTML
-            </button>
+            <button type="button" class="btn btn-sm btn-outline-primary" id="copy-btn" data-en="Copy HTML" data-fr="Copier le HTML">Copy HTML</button>
           </div>
           <div class="card-body">
             <div class="mb-3">
@@ -151,48 +154,16 @@
                 data-fr-label="Sortie HTML"
               ></textarea>
             </div>
-            <div id="copy-feedback" class="alert alert-success" role="alert" style="display: none;" data-en="HTML copied to clipboard!" data-fr="HTML copié dans le presse-papiers !">
+            <div
+              id="copy-feedback"
+              class="alert alert-success"
+              role="alert"
+              style="display: none"
+              data-en="HTML copied to clipboard!"
+              data-fr="HTML copié dans le presse-papiers !"
+            >
               HTML copied to clipboard!
             </div>
-          </div>
-        </div>
-
-        <!-- Instructions -->
-        <div class="card">
-          <div class="card-header">
-            <h2 class="h5 mb-0" data-en="How to Use" data-fr="Comment utiliser">How to Use</h2>
-          </div>
-          <div class="card-body">
-            <ol>
-              <li data-en="Copy content from your Microsoft Word document" data-fr="Copiez le contenu de votre document Microsoft Word">
-                Copy content from your Microsoft Word document
-              </li>
-              <li data-en="Paste it into the editor above" data-fr="Collez-le dans l'éditeur ci-dessus">
-                Paste it into the editor above
-              </li>
-              <li data-en="Click 'Convert to HTML' to clean and format the code" data-fr="Cliquez sur 'Convertir en HTML' pour nettoyer et formater le code">
-                Click "Convert to HTML" to clean and format the code
-              </li>
-              <li data-en="Copy the cleaned HTML from the output field" data-fr="Copiez le HTML nettoyé depuis le champ de sortie">
-                Copy the cleaned HTML from the output field
-              </li>
-            </ol>
-
-            <h3 class="h6 mt-4" data-en="What Negotium Does:" data-fr="Ce que fait Negotium :">What Negotium Does:</h3>
-            <ul>
-              <li data-en="Removes unnecessary Word formatting and styles" data-fr="Supprime le formatage et les styles Word inutiles">
-                Removes unnecessary Word formatting and styles
-              </li>
-              <li data-en="Keeps only paragraph tags (&lt;p&gt;) and list tags (&lt;ul&gt;, &lt;ol&gt;, &lt;li&gt;)" data-fr="Conserve uniquement les balises de paragraphe (&lt;p&gt;) et de liste (&lt;ul&gt;, &lt;ol&gt;, &lt;li&gt;)">
-                Keeps only paragraph tags (&lt;p&gt;) and list tags (&lt;ul&gt;, &lt;ol&gt;, &lt;li&gt;)
-              </li>
-              <li data-en="Converts all H1 headings to H2" data-fr="Convertit tous les titres H1 en H2">
-                Converts all H1 headings to H2
-              </li>
-              <li data-en="Outputs everything in a single line for easy copying" data-fr="Produit tout sur une seule ligne pour faciliter la copie">
-                Outputs everything in a single line for easy copying
-              </li>
-            </ul>
           </div>
         </div>
       </section>

@@ -1,3 +1,8 @@
+/* =================================================================
+   MONITORA PAGE-SPECIFIC STYLES
+   ================================================================= */
+
+/* Custom Message Section */
 .custom-message-section {
   display: none;
   margin-top: 1rem;
@@ -12,53 +17,7 @@
   display: block;
 }
 
-.ql-container {
-  background-color: var(--card-bg);
-  color: var(--card-text);
-  border-color: var(--border-color) !important;
-}
-
-.ql-editor {
-  color: var(--card-text);
-  min-height: 150px;
-}
-
-.ql-editor.ql-blank::before {
-  color: var(--card-text);
-  opacity: 0.6;
-}
-
-.ql-toolbar {
-  background-color: var(--card-bg);
-  border-color: var(--border-color) !important;
-}
-
-fieldset {
-  border: none;
-  padding: 0;
-  margin: 0;
-}
-
-legend.bilingual-label {
-  font-size: 1rem;
-  font-weight: 500;
-  margin-bottom: 0.5rem;
-  padding: 0;
-}
-
-.form-check {
-  margin-bottom: 0.5rem;
-}
-
-.form-check-input {
-  margin-top: 0.25rem;
-}
-
-.form-check-label {
-  margin-left: 0.25rem;
-  cursor: pointer;
-}
-
+/* Status Entry */
 .status-entry {
   margin-bottom: 2rem;
   padding-bottom: 2rem;
@@ -69,10 +28,7 @@ legend.bilingual-label {
   border-bottom: none;
 }
 
-.form-group {
-  margin-bottom: 1.5rem;
-}
-
+/* Action Buttons */
 .action-buttons {
   margin-top: 2rem;
   display: flex;
@@ -84,6 +40,7 @@ legend.bilingual-label {
   margin-top: 1rem;
 }
 
+/* Alert Message Section */
 .alert-message-section {
   margin-top: 2rem;
   padding: 1.5rem;
@@ -105,13 +62,4 @@ legend.bilingual-label {
 .alert-message-section .ql-toolbar {
   border-top-left-radius: 0 !important;
   border-top-right-radius: 0 !important;
-}
-
-.ql-linebreak:after {
-  content: "↵";
-  font-weight: bold;
-}
-
-.ql-linebreak {
-  width: auto !important;
 }

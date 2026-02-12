@@ -1,7 +1,8 @@
-:root {
-  --required-text: #dc3545;
-}
+/* =================================================================
+   ABBREVO PAGE-SPECIFIC STYLES
+   ================================================================= */
 
+/* Entry Card */
 .entry-card {
   border-left: 4px solid var(--button-primary-bg);
   margin-bottom: 1rem;
@@ -18,14 +19,4 @@
 .entry-number {
   color: var(--button-primary-bg);
   font-weight: bold;
-}
-
-.form-label.required::after {
-  color: var(--required-text);
-  content: " (required)";
-}
-
-[lang="fr-CA"] .form-label.required::after,
-[lang^="fr"] .form-label.required::after {
-  content: " (obligatoire)";
 }
