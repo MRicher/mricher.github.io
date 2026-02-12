@@ -492,6 +492,173 @@ class UIUtils {
 }
 
 // ===================================================================
+// SHARED UTILITY FUNCTIONS
+// ===================================================================
+
+/**
+ * File Download Utility
+ * Creates a downloadable file from a Blob
+ */
+class FileDownloader {
+  /**
+   * Download a blob as a file
+   * @param {Blob} blob - The blob to download
+   * @param {string} filename - The filename for the download
+   */
+  static downloadFile(blob, filename) {
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    link.style.display = "none";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  }
+
+  /**
+   * Download text content as a file
+   * @param {string} content - The text content
+   * @param {string} filename - The filename for the download
+   * @param {string} mimeType - The MIME type (default: text/plain)
+   */
+  static downloadText(content, filename, mimeType = "text/plain;charset=utf-8") {
+    const blob = new Blob([content], { type: mimeType });
+    this.downloadFile(blob, filename);
+  }
+
+  /**
+   * Download JSON data as a file
+   * @param {Object} data - The data to download as JSON
+   * @param {string} filename - The filename for the download
+   */
+  static downloadJSON(data, filename) {
+    const jsonString = JSON.stringify(data, null, 2);
+    this.downloadText(jsonString, filename, "application/json;charset=utf-8");
+  }
+}
+
+/**
+ * Alert/Notification Utility
+ * Displays bootstrap-compatible alerts
+ */
+class AlertManager {
+  /**
+   * Show an alert message
+   * @param {string} message - The message to display
+   * @param {string} type - Alert type: success, danger, warning, info (default: info)
+   * @param {number} duration - Auto-dismiss duration in ms (0 = no auto-dismiss)
+   * @param {string} containerId - ID of container to append alert to (default: document.body)
+   */
+  static showAlert(message, type = "info", duration = 5000, containerId = null) {
+    const alertDiv = document.createElement("div");
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.setAttribute("role", "alert");
+    alertDiv.innerHTML = `
+      ${message}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+
+    const container = containerId ? document.getElementById(containerId) : document.body;
+    const firstChild = container.firstChild;
+
+    if (firstChild) {
+      container.insertBefore(alertDiv, firstChild);
+    } else {
+      container.appendChild(alertDiv);
+    }
+
+    // Auto-dismiss if duration is specified
+    if (duration > 0) {
+      setTimeout(() => {
+        alertDiv.classList.remove("show");
+        setTimeout(() => alertDiv.remove(), 150);
+      }, duration);
+    }
+  }
+
+  /**
+   * Show success alert
+   */
+  static showSuccess(message, duration = 5000, containerId = null) {
+    this.showAlert(message, "success", duration, containerId);
+  }
+
+  /**
+   * Show error alert
+   */
+  static showError(message, duration = 5000, containerId = null) {
+    this.showAlert(message, "danger", duration, containerId);
+  }
+
+  /**
+   * Show warning alert
+   */
+  static showWarning(message, duration = 5000, containerId = null) {
+    this.showAlert(message, "warning", duration, containerId);
+  }
+
+  /**
+   * Show info alert
+   */
+  static showInfo(message, duration = 5000, containerId = null) {
+    this.showAlert(message, "info", duration, containerId);
+  }
+}
+
+/**
+ * Date Formatting Utility
+ * Handles date input formatting
+ */
+class DateFormatter {
+  /**
+   * Format date input to YYYY-MM-DD
+   * @param {HTMLInputElement} input - The date input element
+   */
+  static formatDateInput(input) {
+    if (!input || input.type !== "date") return;
+
+    // Ensure the date is in YYYY-MM-DD format
+    const value = input.value;
+    if (value) {
+      const date = new Date(value);
+      if (!isNaN(date.getTime())) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        input.value = `${year}-${month}-${day}`;
+      }
+    }
+  }
+
+  /**
+   * Get current date in YYYY-MM-DD format
+   * @returns {string} Current date
+   */
+  static getCurrentDate() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+
+  /**
+   * Format date object to YYYY-MM-DD
+   * @param {Date} date - The date to format
+   * @returns {string} Formatted date string
+   */
+  static formatDate(date) {
+    if (!(date instanceof Date) || isNaN(date.getTime())) return "";
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+}
+
+// ===================================================================
 // INITIALIZATION
 // ===================================================================
 
@@ -503,6 +670,11 @@ document.addEventListener("DOMContentLoaded", () => {
   window.themeManager = new ThemeManager();
   window.languageSwitcher = new LanguageSwitcher();
   window.backToTopButton = new BackToTopButton();
+
+  // Make utilities globally accessible
+  window.FileDownloader = FileDownloader;
+  window.AlertManager = AlertManager;
+  window.DateFormatter = DateFormatter;
 
   // Setup UI utilities
   UIUtils.handleEscapeKey();
