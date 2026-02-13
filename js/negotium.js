@@ -190,8 +190,15 @@ function processElements(element) {
   // Iterate through child nodes
   for (let node of element.childNodes) {
     if (node.nodeType === Node.TEXT_NODE) {
-      // Keep text nodes (trim extra whitespace)
-      const text = node.textContent.trim();
+      // Preserve spacing but normalize multiple spaces to single space
+      let text = node.textContent.replace(/\s+/g, " ");
+      // Only trim if this is at the very start or end of the parent element
+      if (node === element.firstChild) {
+        text = text.replace(/^\s+/, "");
+      }
+      if (node === element.lastChild) {
+        text = text.replace(/\s+$/, "");
+      }
       if (text) {
         result += text;
       }
@@ -386,7 +393,15 @@ function processInlineContent(element) {
 
   for (let node of element.childNodes) {
     if (node.nodeType === Node.TEXT_NODE) {
-      const text = node.textContent.trim();
+      // Preserve spacing but normalize multiple spaces to single space
+      let text = node.textContent.replace(/\s+/g, " ");
+      // Only trim if this is at the very start or end of the parent element
+      if (node === element.firstChild) {
+        text = text.replace(/^\s+/, "");
+      }
+      if (node === element.lastChild) {
+        text = text.replace(/\s+$/, "");
+      }
       if (text) {
         result += text;
       }
