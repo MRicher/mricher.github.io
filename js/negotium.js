@@ -301,47 +301,80 @@ function processElements(element) {
  */
 function processListItems(listElement) {
   let result = "";
+  let listItems = Array.from(listElement.childNodes).filter((node) => node.nodeType === Node.ELEMENT_NODE && node.tagName.toLowerCase() === "li");
 
-  for (let node of listElement.childNodes) {
-    if (node.nodeType === Node.ELEMENT_NODE && node.tagName.toLowerCase() === "li") {
-      // Check for Quill's indent attribute
-      const indentClass = node.className.match(/ql-indent-(\d+)/);
-      const indentLevel = indentClass ? indentClass[1] : null;
+  let i = 0;
+  while (i < listItems.length) {
+    const node = listItems[i];
+    const currentIndent = getIndentLevel(node);
+    const dataList = node.getAttribute("data-list");
 
-      // Build li tag with indent class if present
-      const liTag = indentLevel ? `<li class="ql-indent-${indentLevel}">` : "<li>";
+    // Check if this li contains a nested list already
+    const hasNestedList = Array.from(node.children).some((child) => child.tagName === "UL" || child.tagName === "OL");
 
-      // Check if this li contains a nested list
-      const hasNestedList = Array.from(node.children).some((child) => child.tagName === "UL" || child.tagName === "OL");
-
-      if (hasNestedList) {
-        // Process li with nested list
-        let liContent = "";
-        for (let child of node.childNodes) {
-          if (child.nodeType === Node.TEXT_NODE) {
-            const text = child.textContent.trim();
-            if (text) liContent += text;
-          } else if (child.nodeType === Node.ELEMENT_NODE) {
-            const childTag = child.tagName.toLowerCase();
-            if (childTag === "ul" || childTag === "ol") {
-              // Add nested list
-              liContent += processElements(child);
-            } else {
-              // Process other inline content
-              liContent += processInlineContent(child);
-            }
+    if (hasNestedList) {
+      // Process li with nested list
+      let liContent = "";
+      for (let child of node.childNodes) {
+        if (child.nodeType === Node.TEXT_NODE) {
+          const text = child.textContent.trim();
+          if (text) liContent += text;
+        } else if (child.nodeType === Node.ELEMENT_NODE) {
+          const childTag = child.tagName.toLowerCase();
+          if (childTag === "ul" || childTag === "ol") {
+            liContent += processElements(child);
+          } else {
+            liContent += processInlineContent(child);
           }
         }
-        result += liTag + liContent + "</li>";
-      } else {
-        // Simple list item
-        const content = processInlineContent(node);
-        result += liTag + content + "</li>";
       }
+      result += "<li>" + liContent + "</li>";
+      i++;
+    } else if (currentIndent === 0) {
+      // No indent - regular list item
+      const content = processInlineContent(node);
+      result += "<li>" + content + "</li>";
+      i++;
+    } else {
+      // This item has indent - need to create nested list
+      // Look ahead to collect all items at this indent level or higher
+      let nestedItems = [];
+      let j = i;
+
+      while (j < listItems.length) {
+        const nextIndent = getIndentLevel(listItems[j]);
+        if (nextIndent < currentIndent) {
+          break; // Back to lower indent level
+        }
+        nestedItems.push(listItems[j]);
+        j++;
+      }
+
+      // Create nested list
+      const nestedListType = dataList === "bullet" ? "ul" : "ol";
+      result += "<li><" + nestedListType + ">";
+
+      // Process nested items
+      for (let nestedItem of nestedItems) {
+        const nestedContent = processInlineContent(nestedItem);
+        result += "<li>" + nestedContent + "</li>";
+      }
+
+      result += "</" + nestedListType + "></li>";
+      i = j;
     }
   }
 
   return result;
+}
+
+/**
+ * Get indent level from Quill's class name
+ */
+function getIndentLevel(element) {
+  const classList = element.className || "";
+  const match = classList.match(/ql-indent-(\d+)/);
+  return match ? parseInt(match[1]) : 0;
 }
 
 /**
