@@ -3,13 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title data-en="OptiPix" data-fr="OptiPix">OptiPix</title>
-    <script>
-      (function () {
-        const savedTheme = localStorage.getItem("theme") || "light";
-        document.documentElement.setAttribute("data-bs-theme", savedTheme);
-      })();
-    </script>
+    <title>OptiPix</title>
     <meta
       name="description"
       content="Easily crop, resize, and optimize images for web publishing. This tool supports PNG and JPG formats and uses smart compression to reduce file size while maintaining image quality."
@@ -23,13 +17,13 @@
   </head>
 
   <body>
-    <a class="skip-link" href="#main-content" data-en="Skip to main content" data-fr="Passer au contenu principal"> Skip to main content </a>
+    <a class="skip-link" href="#main-content" data-en="Skip to main content" data-fr="Passer au contenu principal">Skip to main content</a>
 
     <header>
       <nav class="navbar navbar-expand-lg" aria-label="Main navigation">
         <div class="container">
           <div class="navbar-brand d-flex align-items-center">
-            <img src="img/photo-scan.svg" alt="" class="me-2" style="height: 50px; width: auto" />
+            <img src="img/photo-scan.svg" alt="" aria-hidden="true" class="me-2" style="height: 50px; width: auto" />
             <span data-en="OptiPix" data-fr="OptiPix">OptiPix</span>
           </div>
 
@@ -47,9 +41,9 @@
           </button>
 
           <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0" role="menubar">
-              <li class="nav-item" role="none">
-                <a class="nav-link" href="/index.html" role="menuitem" data-en="Home" data-fr="Accueil"> Home </a>
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link" href="/index.html" data-en="Home" data-fr="Accueil">Home</a>
               </li>
             </ul>
 
@@ -73,7 +67,7 @@
                 class="btn btn-outline-primary btn-sm"
                 data-lang="fr-CA"
                 aria-label="Passer au français"
-                aria-pressed="false"
+                aria-pressed="true"
                 style="display: none"
               >
                 <span data-en="Français" data-fr="Français">Français</span>
@@ -85,7 +79,7 @@
                 class="btn btn-outline-primary btn-sm"
                 data-lang="en-CA"
                 aria-label="Switch to English"
-                aria-pressed="false"
+                aria-pressed="true"
               >
                 <span data-en="English" data-fr="English">English</span>
               </button>
@@ -112,11 +106,11 @@
       <section class="card mb-4">
         <div class="card-body">
           <h2 class="card-title" data-en="Upload image" data-fr="Télécharger une image">Upload image</h2>
-          <div class="upload-area" id="upload-area">
+          <div class="upload-area" id="upload-area" role="button" tabindex="0" aria-label="Upload image">
             <p data-en="Drop your image here or click to browse" data-fr="Déposez votre image ici ou cliquez pour parcourir">
               Drop your image here or click to browse
             </p>
-            <input accept="image/png,image/jpeg,image/jpg" id="image-input" style="display: none" type="file" />
+            <input accept="image/png,image/jpeg,image/jpg" id="image-input" class="visually-hidden" type="file" />
             <button class="btn btn-primary" type="button">
               <span data-en="Select image" data-fr="Sélectionner une image">Select image</span>
             </button>
@@ -299,7 +293,7 @@
           </section>
 
           <div class="cropper-container">
-            <img alt="Image to crop" id="cropper-image" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
+            <img alt="" id="cropper-image" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
           </div>
 
           <div class="text-center mt-3">

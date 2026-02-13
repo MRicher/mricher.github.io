@@ -1,302 +1,398 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en-CA">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-en="Monitora" data-fr="Monitora">Monitora</title>
-    <script>
-      (function() {
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        document.documentElement.setAttribute('data-bs-theme', savedTheme);
-      })();
-    </script>
-    <meta name="description"
-          content="This application edits and generates the HTML for the system health page on the Infoweb."
-          data-en="This application edits and generates the HTML for the system health page on the Infoweb."
-          data-fr="Cette application modifie et génère le code HTML pour la page de l'état des systèmes sur l'Infoweb.">
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/creavia.css">
-    <link rel="stylesheet" href="css/quill.snow.css">
-    <link rel="stylesheet" href="css/monitora.css">
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Monitora</title>
+    <meta
+      name="description"
+      content="This application edits and generates the HTML for the system health page on the Infoweb."
+      data-en="This application edits and generates the HTML for the system health page on the Infoweb."
+      data-fr="Cette application modifie et génère le code HTML pour la page de l'état des systèmes sur l'Infoweb."
+    />
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/creavia.css" />
+    <link rel="stylesheet" href="css/quill.snow.css" />
+    <link rel="stylesheet" href="css/monitora.css" />
+  </head>
 
-<body>
-    <a class="skip-link"
-       href="#main-content"
-       data-en="Skip to main content"
-       data-fr="Passer au contenu principal">
-        Skip to main content
-    </a>
+  <body>
+    <a class="skip-link" href="#main-content" data-en="Skip to main content" data-fr="Passer au contenu principal"> Skip to main content </a>
 
     <header>
-        <nav class="navbar navbar-expand-lg" aria-label="Main navigation">
-            <div class="container">
-                <div class="navbar-brand d-flex align-items-center">
-                    <img src="img/tree.svg"
-                         alt=""
-                         class="me-2"
-                         style="height: 50px; width: auto;">
-                    <span data-en="Monitora" data-fr="Monitora">Monitora</span>
-                </div>
+      <nav class="navbar navbar-expand-lg" aria-label="Main navigation">
+        <div class="container">
+          <div class="navbar-brand d-flex align-items-center">
+            <img src="img/tree.svg" alt="" aria-hidden="true" class="me-2" style="height: 50px; width: auto" />
+            <span data-en="Monitora" data-fr="Monitora">Monitora</span>
+          </div>
 
-                <button class="navbar-toggler"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#navbarNav"
-                        aria-controls="navbarNav"
-                        aria-expanded="false"
-                        aria-label="Toggle navigation menu">
-                    <span class="navbar-toggler-icon"></span>
-                    <span class="sr-only"
-                          data-en="Toggle navigation menu"
-                          data-fr="Basculer le menu de navigation">
-                        Toggle navigation menu
-                    </span>
-                </button>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation menu"
+          >
+            <span class="navbar-toggler-icon"></span>
+            <span class="sr-only" data-en="Toggle navigation menu" data-fr="Basculer le menu de navigation"> Toggle navigation menu </span>
+          </button>
 
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0" role="menubar">
-                        <li class="nav-item" role="none">
-                            <a class="nav-link"
-                               href="index.html"
-                               role="menuitem"
-                               data-en="Home"
-                               data-fr="Accueil">
-                                Home
-                            </a>
-                        </li>
-                    </ul>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link" href="index.html" data-en="Home" data-fr="Accueil"> Home </a>
+              </li>
+            </ul>
 
-                    <div class="language-switcher" role="group" aria-label="Settings">
-                        <button id="theme-toggle"
-                                type="button"
-                                class="theme-toggle"
-                                aria-label="Toggle dark/light theme"
-                                data-en-dark="Switch to light mode"
-                                data-en-light="Switch to dark mode"
-                                data-fr-dark="Passer au mode clair"
-                                data-fr-light="Passer au mode sombre">
-                            <span id="theme-text"
-                                  data-en="Dark mode"
-                                  data-fr="Mode sombre">
-                                Dark mode
-                            </span>
-                        </button>
+            <div class="language-switcher" role="group" aria-label="Settings">
+              <button
+                id="theme-toggle"
+                type="button"
+                class="theme-toggle"
+                aria-label="Toggle dark/light theme"
+                data-en-dark="Switch to light mode"
+                data-en-light="Switch to dark mode"
+                data-fr-dark="Passer au mode clair"
+                data-fr-light="Passer au mode sombre"
+              >
+                <span id="theme-text" data-en="Dark mode" data-fr="Mode sombre"> Dark mode </span>
+              </button>
 
-                        <button id="lang-fr-btn"
-                                type="button"
-                                class="btn btn-outline-primary btn-sm"
-                                data-lang="fr-CA"
-                                aria-label="Passer au français"
-                                aria-pressed="false"
-                                style="display: none;">
-                            <span data-en="Français" data-fr="Français">Français</span>
-                        </button>
+              <button
+                id="lang-fr-btn"
+                type="button"
+                class="btn btn-outline-primary btn-sm"
+                data-lang="fr-CA"
+                aria-label="Passer au français"
+                aria-pressed="true"
+                style="display: none"
+              >
+                <span data-en="Français" data-fr="Français">Français</span>
+              </button>
 
-                        <button id="lang-en-btn"
-                                type="button"
-                                class="btn btn-outline-primary btn-sm"
-                                data-lang="en-CA"
-                                aria-label="Switch to English"
-                                aria-pressed="false">
-                            <span data-en="English" data-fr="English">English</span>
-                        </button>
-                    </div>
-                </div>
+              <button
+                id="lang-en-btn"
+                type="button"
+                class="btn btn-outline-primary btn-sm"
+                data-lang="en-CA"
+                aria-label="Switch to English"
+                aria-pressed="true"
+              >
+                <span data-en="English" data-fr="English">English</span>
+              </button>
             </div>
-        </nav>
+          </div>
+        </div>
+      </nav>
     </header>
 
     <main class="container" id="main-content">
-        <section aria-labelledby="main-heading">
-            <h1 id="main-heading"
-                data-en="Application status update"
-                data-fr="Mise à jour du statut des applications">
-                Application status update
-            </h1>
-            
-            <p class="lead" 
-               data-en="Update operational status messages for applications and export to bilingual SHTM files." 
-               data-fr="Mettez à jour les messages d'état opérationnel des applications et exportez vers des fichiers SHTM bilingues.">
-                Update operational status messages for applications and export to bilingual SHTM files.
-            </p>
-        </section>
+      <section aria-labelledby="main-heading">
+        <h1 id="main-heading" data-en="Application status update" data-fr="Mise à jour du statut des applications">Application status update</h1>
 
-        <form id="statusForm" novalidate>
-            <div id="statusEntriesContainer">
-                <div class="status-entry" data-entry-id="1">
-                    <h2 class="h4">
-                        <span data-en="Status entry" data-fr="Entrée de statut">Status entry</span> #<span class="entry-number">1</span>
-                    </h2>
+        <p
+          class="lead"
+          data-en="Update operational status messages for applications and export to bilingual SHTM files."
+          data-fr="Mettez à jour les messages d'état opérationnel des applications et exportez vers des fichiers SHTM bilingues."
+        >
+          Update operational status messages for applications and export to bilingual SHTM files.
+        </p>
+      </section>
 
-                    <div class="form-group">
-                        <fieldset>
-                            <legend class="bilingual-label">
-                                <span data-en="Application" data-fr="Application">Application</span>
-                                <span class="text-danger">(<span data-en="required" data-fr="obligatoire">required</span>)</span>
-                                <small id="application-help-1" class="form-text text-muted d-block" data-en="Choose the application to update." data-fr="Choisissez l'application à mettre à jour.">Choose the application to update.</small>
-                            </legend>
-                            <div class="form-check">
-                                <input class="form-check-input application-radio" type="radio" name="application-1" id="application-outlook-1" value="outlook" required aria-describedby="application-help-1">
-                                <label class="form-check-label" for="application-outlook-1">
-                                    Microsoft Outlook
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input application-radio" type="radio" name="application-1" id="application-m365-1" value="m365" required aria-describedby="application-help-1">
-                                <label class="form-check-label" for="application-m365-1">
-                                    Microsoft 365 (M365)
-                                </label>
-                            </div>
-                        </fieldset>
-                    </div>
+      <form id="statusForm" novalidate>
+        <div id="statusEntriesContainer">
+          <div class="status-entry" data-entry-id="1">
+            <h2 class="h4">
+              <span data-en="Status entry" data-fr="Entrée de statut">Status entry</span>
+              #<span class="entry-number">1</span>
+            </h2>
 
-                    <div class="form-group">
-                        <fieldset>
-                            <legend class="bilingual-label">
-                                <span data-en="Current status" data-fr="Statut actuel">Current status</span>
-                                <span class="text-danger">(<span data-en="required" data-fr="obligatoire">required</span>)</span>
-                                <small id="status-help-1" class="form-text text-muted d-block" data-en="Select the current operational status." data-fr="Sélectionnez le statut opérationnel actuel.">Select the current operational status.</small>
-                            </legend>
-                            <div class="form-check">
-                                <input class="form-check-input status-radio" type="radio" name="status-1" id="status-no-issues-1" value="no-issues" required aria-describedby="status-help-1">
-                                <label class="form-check-label" for="status-no-issues-1">
-                                    <span data-en="No reported issues" data-fr="Aucun problème signalé">No reported issues</span>
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input status-radio" type="radio" name="status-1" id="status-incident-1" value="incident" required aria-describedby="status-help-1">
-                                <label class="form-check-label" for="status-incident-1">
-                                    <span data-en="Incident" data-fr="Incident">Incident</span>
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input status-radio" type="radio" name="status-1" id="status-outage-1" value="outage" required aria-describedby="status-help-1">
-                                <label class="form-check-label" for="status-outage-1">
-                                    <span data-en="Outage" data-fr="Panne">Outage</span>
-                                </label>
-                            </div>
-                        </fieldset>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="bilingual-label" for="message-1">
-                            <span data-en="Status message" data-fr="Message de statut">Status message</span>
-                            <span class="text-danger">(<span data-en="required" data-fr="obligatoire">required</span>)</span>
-                            <small id="message-help-1" class="form-text text-muted d-block" data-en="Choose a pre-defined message or select 'Other' to write your own." data-fr="Choisissez un message prédéfini ou sélectionnez « Autre » pour écrire le vôtre.">Choose a pre-defined message or select "Other" to write your own.</small>
-                        </label>
-                        <select class="form-control message-select" id="message-1" name="message-1" required aria-describedby="message-help-1">
-                            <option value="" data-en="Select a message" data-fr="Sélectionnez un message">Select a message</option>
-                            <option value="other" data-en="Other" data-fr="Autre">Other</option>
-                        </select>
-                    </div>
-
-                    <div class="custom-message-section" id="custom-message-1" role="region" aria-labelledby="custom-message-heading-1">
-                        <h3 class="h5" id="custom-message-heading-1" data-en="Custom message" data-fr="Message personnalisé">Custom message</h3>
-                        
-                        <div class="form-group">
-                            <div class="bilingual-label">
-                                <span data-en="English message" data-fr="Message en anglais">English message</span>
-                                <small id="custom-en-help-1" class="form-text text-muted d-block" data-en="Enter your custom message in English." data-fr="Entrez votre message personnalisé en anglais.">Enter your custom message in English.</small>
-                            </div>
-                            <div id="custom-en-editor-1" class="custom-message-en" style="min-height: 150px;"></div>
-                            <input type="hidden" id="custom-en-1" name="custom-en-1">
-                        </div>
-
-                        <div class="form-group">
-                            <div class="bilingual-label">
-                                <span data-en="French message" data-fr="Message en français">French message</span>
-                                <small id="custom-fr-help-1" class="form-text text-muted d-block" data-en="Enter your custom message in French." data-fr="Entrez votre message personnalisé en français.">Enter your custom message in French.</small>
-                            </div>
-                            <div id="custom-fr-editor-1" class="custom-message-fr" style="min-height: 150px;"></div>
-                            <input type="hidden" id="custom-fr-1" name="custom-fr-1">
-                        </div>
-                        </div>
-                    </div>
+            <div class="form-group">
+              <fieldset>
+                <legend class="bilingual-label">
+                  <span data-en="Application" data-fr="Application">Application</span>
+                  <span class="text-danger">(<span data-en="required" data-fr="obligatoire">required</span>)</span>
+                  <small
+                    id="application-help-1"
+                    class="form-text text-muted d-block"
+                    data-en="Choose the application to update."
+                    data-fr="Choisissez l'application à mettre à jour."
+                    >Choose the application to update.</small
+                  >
+                </legend>
+                <div class="form-check">
+                  <input
+                    class="form-check-input application-radio"
+                    type="radio"
+                    name="application-1"
+                    id="application-outlook-1"
+                    value="outlook"
+                    required
+                    aria-describedby="application-help-1"
+                  />
+                  <label class="form-check-label" for="application-outlook-1"> Microsoft Outlook </label>
                 </div>
+                <div class="form-check">
+                  <input
+                    class="form-check-input application-radio"
+                    type="radio"
+                    name="application-1"
+                    id="application-m365-1"
+                    value="m365"
+                    required
+                    aria-describedby="application-help-1"
+                  />
+                  <label class="form-check-label" for="application-m365-1"> Microsoft 365 (M365) </label>
+                </div>
+              </fieldset>
             </div>
 
-            <div class="action-buttons" role="group" aria-label="Form actions">
-                <button type="button" class="btn btn-secondary" id="addEntryBtn" data-en="Add another status entry" data-fr="Ajouter une autre entrée de statut">Add another status entry</button>
-                
-                <button type="submit" class="btn btn-success" data-en="Generate SHTM file" data-fr="Générer le fichier SHTM">Generate SHTM file</button>
-                
-                <button type="reset" class="btn btn-outline-secondary" data-en="Reset form" data-fr="Réinitialiser le formulaire">Reset form</button>
+            <div class="form-group">
+              <fieldset>
+                <legend class="bilingual-label">
+                  <span data-en="Current status" data-fr="Statut actuel">Current status</span>
+                  <span class="text-danger">(<span data-en="required" data-fr="obligatoire">required</span>)</span>
+                  <small
+                    id="status-help-1"
+                    class="form-text text-muted d-block"
+                    data-en="Select the current operational status."
+                    data-fr="Sélectionnez le statut opérationnel actuel."
+                    >Select the current operational status.</small
+                  >
+                </legend>
+                <div class="form-check">
+                  <input
+                    class="form-check-input status-radio"
+                    type="radio"
+                    name="status-1"
+                    id="status-no-issues-1"
+                    value="no-issues"
+                    required
+                    aria-describedby="status-help-1"
+                  />
+                  <label class="form-check-label" for="status-no-issues-1">
+                    <span data-en="No reported issues" data-fr="Aucun problème signalé">No reported issues</span>
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input
+                    class="form-check-input status-radio"
+                    type="radio"
+                    name="status-1"
+                    id="status-incident-1"
+                    value="incident"
+                    required
+                    aria-describedby="status-help-1"
+                  />
+                  <label class="form-check-label" for="status-incident-1">
+                    <span data-en="Incident" data-fr="Incident">Incident</span>
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input
+                    class="form-check-input status-radio"
+                    type="radio"
+                    name="status-1"
+                    id="status-outage-1"
+                    value="outage"
+                    required
+                    aria-describedby="status-help-1"
+                  />
+                  <label class="form-check-label" for="status-outage-1">
+                    <span data-en="Outage" data-fr="Panne">Outage</span>
+                  </label>
+                </div>
+              </fieldset>
             </div>
+
+            <div class="form-group">
+              <label class="bilingual-label" for="message-1">
+                <span data-en="Status message" data-fr="Message de statut">Status message</span>
+                <span class="text-danger">(<span data-en="required" data-fr="obligatoire">required</span>)</span>
+                <small
+                  id="message-help-1"
+                  class="form-text text-muted d-block"
+                  data-en="Choose a pre-defined message or select 'Other' to write your own."
+                  data-fr="Choisissez un message prédéfini ou sélectionnez « Autre » pour écrire le vôtre."
+                  >Choose a pre-defined message or select "Other" to write your own.</small
+                >
+              </label>
+              <select class="form-control message-select" id="message-1" name="message-1" required aria-describedby="message-help-1">
+                <option value="" data-en="Select a message" data-fr="Sélectionnez un message">Select a message</option>
+                <option value="other" data-en="Other" data-fr="Autre">Other</option>
+              </select>
+            </div>
+
+            <div class="custom-message-section" id="custom-message-1" role="region" aria-labelledby="custom-message-heading-1">
+              <h3 class="h5" id="custom-message-heading-1" data-en="Custom message" data-fr="Message personnalisé">Custom message</h3>
+
+              <div class="form-group">
+                <div class="bilingual-label">
+                  <span data-en="English message" data-fr="Message en anglais">English message</span>
+                  <small
+                    id="custom-en-help-1"
+                    class="form-text text-muted d-block"
+                    data-en="Enter your custom message in English."
+                    data-fr="Entrez votre message personnalisé en anglais."
+                    >Enter your custom message in English.</small
+                  >
+                </div>
+                <div id="custom-en-editor-1" class="custom-message-en" style="min-height: 150px"></div>
+                <input type="hidden" id="custom-en-1" name="custom-en-1" />
+              </div>
+
+              <div class="form-group">
+                <div class="bilingual-label">
+                  <span data-en="French message" data-fr="Message en français">French message</span>
+                  <small
+                    id="custom-fr-help-1"
+                    class="form-text text-muted d-block"
+                    data-en="Enter your custom message in French."
+                    data-fr="Entrez votre message personnalisé en français."
+                    >Enter your custom message in French.</small
+                  >
+                </div>
+                <div id="custom-fr-editor-1" class="custom-message-fr" style="min-height: 150px"></div>
+                <input type="hidden" id="custom-fr-1" name="custom-fr-1" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="action-buttons" role="group" aria-label="Form actions">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            id="addEntryBtn"
+            data-en="Add another status entry"
+            data-fr="Ajouter une autre entrée de statut"
+          >
+            Add another status entry
+          </button>
+
+          <button type="submit" class="btn btn-success" data-en="Generate SHTM file" data-fr="Générer le fichier SHTM">Generate SHTM file</button>
+
+          <button type="reset" class="btn btn-outline-secondary" data-en="Reset form" data-fr="Réinitialiser le formulaire">Reset form</button>
+        </div>
+      </form>
+
+      <section class="alert-message-section" aria-labelledby="alert-message-heading">
+        <h2 id="alert-message-heading" data-en="Alert message (optional)" data-fr="Message d'alerte (optionnel)">Alert message (optional)</h2>
+
+        <p
+          class="lead"
+          data-en="Create a site-wide alert banner to notify users of important information."
+          data-fr="Créez une bannière d'alerte à l'échelle du site pour informer les utilisateurs d'informations importantes."
+        >
+          Create a site-wide alert banner to notify users of important information.
+        </p>
+
+        <form id="alertForm" novalidate>
+          <div class="form-group">
+            <label class="bilingual-label" for="alert-type">
+              <span data-en="Alert type" data-fr="Type d'alerte">Alert type</span>
+              <small
+                id="alert-type-help"
+                class="form-text text-muted d-block"
+                data-en="Select the severity level of the alert."
+                data-fr="Sélectionnez le niveau de gravité de l'alerte."
+                >Select the severity level of the alert.</small
+              >
+            </label>
+            <select class="form-control" id="alert-type" name="alert-type" aria-describedby="alert-type-help">
+              <option value="" data-en="Select alert type" data-fr="Sélectionnez le type d'alerte">Select alert type</option>
+              <option value="danger" data-en="Level 1 (Red)" data-fr="Niveau 1 (Rouge)">Level 1 (Red)</option>
+              <option value="warning" data-en="Level 2 (Yellow)" data-fr="Niveau 2 (Jaune)">Level 2 (Yellow)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <div class="bilingual-label">
+              <span data-en="English alert message" data-fr="Message d'alerte en anglais">English alert message</span>
+              <small
+                id="alert-en-help"
+                class="form-text text-muted d-block"
+                data-en="Enter the alert message in English. The header 'Note' will be automatically added."
+                data-fr="Entrez le message d'alerte en anglais. L'en-tête « Note » sera automatiquement ajouté."
+                >Enter the alert message in English. The header "Note" will be automatically added.</small
+              >
+            </div>
+            <div
+              style="
+                padding: 0.5rem;
+                background-color: var(--card-bg);
+                border: 1px solid var(--border-color);
+                border-bottom: none;
+                border-radius: 0.375rem 0.375rem 0 0;
+              "
+            >
+              <h3 style="margin: 0; font-size: 1.25rem; color: var(--card-text)">Note</h3>
+            </div>
+            <div id="alert-en-editor" style="min-height: 150px; border-radius: 0 0 0.375rem 0.375rem"></div>
+            <input type="hidden" id="alert-en" name="alert-en" />
+          </div>
+
+          <div class="form-group">
+            <div class="bilingual-label">
+              <span data-en="French alert message" data-fr="Message d'alerte en français">French alert message</span>
+              <small
+                id="alert-fr-help"
+                class="form-text text-muted d-block"
+                data-en="Enter the alert message in French. The header 'Remarque' will be automatically added."
+                data-fr="Entrez le message d'alerte en français. L'en-tête « Remarque » sera automatiquement ajouté."
+                >Enter the alert message in French. The header "Remarque" will be automatically added.</small
+              >
+            </div>
+            <div
+              style="
+                padding: 0.5rem;
+                background-color: var(--card-bg);
+                border: 1px solid var(--border-color);
+                border-bottom: none;
+                border-radius: 0.375rem 0.375rem 0 0;
+              "
+            >
+              <h3 style="margin: 0; font-size: 1.25rem; color: var(--card-text)">Remarque</h3>
+            </div>
+            <div id="alert-fr-editor" style="min-height: 150px; border-radius: 0 0 0.375rem 0.375rem"></div>
+            <input type="hidden" id="alert-fr" name="alert-fr" />
+          </div>
+
+          <div id="alert-preview-container" style="display: none">
+            <h3 class="h5" data-en="Preview" data-fr="Aperçu">Preview</h3>
+            <div id="alert-preview-en" class="alert alert-preview" role="alert"></div>
+            <div id="alert-preview-fr" class="alert alert-preview" role="alert"></div>
+          </div>
+
+          <div class="action-buttons" role="group" aria-label="Alert form actions">
+            <button type="submit" class="btn btn-success" data-en="Generate alert SHTM file" data-fr="Générer le fichier SHTM d'alerte">
+              Generate alert SHTM file
+            </button>
+            <button type="button" class="btn btn-danger" id="removeAlertBtn" data-en="Remove alert message" data-fr="Supprimer le message d'alerte">
+              Remove alert message
+            </button>
+            <button type="reset" class="btn btn-outline-secondary" data-en="Clear alert" data-fr="Effacer l'alerte">Clear alert</button>
+          </div>
         </form>
+      </section>
 
-		<section class="alert-message-section" aria-labelledby="alert-message-heading">
-			<h2 id="alert-message-heading" data-en="Alert message (optional)" data-fr="Message d'alerte (optionnel)">Alert message (optional)</h2>
-			
-			<p class="lead" data-en="Create a site-wide alert banner to notify users of important information." data-fr="Créez une bannière d'alerte à l'échelle du site pour informer les utilisateurs d'informations importantes.">
-				Create a site-wide alert banner to notify users of important information.
-			</p>
-
-			<form id="alertForm" novalidate>
-				<div class="form-group">
-					<label class="bilingual-label" for="alert-type">
-						<span data-en="Alert type" data-fr="Type d'alerte">Alert type</span>
-						<small id="alert-type-help" class="form-text text-muted d-block" data-en="Select the severity level of the alert." data-fr="Sélectionnez le niveau de gravité de l'alerte.">Select the severity level of the alert.</small>
-					</label>
-					<select class="form-control" id="alert-type" name="alert-type" aria-describedby="alert-type-help">
-                        <option value="" data-en="Select alert type" data-fr="Sélectionnez le type d'alerte">Select alert type</option>
-                        <option value="danger" data-en="Level 1 (Red)" data-fr="Niveau 1 (Rouge)">Level 1 (Red)</option>
-                        <option value="warning" data-en="Level 2 (Yellow)" data-fr="Niveau 2 (Jaune)">Level 2 (Yellow)</option>
-                    </select>
-				</div>
-
-                <div class="form-group">
-                    <div class="bilingual-label">
-                        <span data-en="English alert message" data-fr="Message d'alerte en anglais">English alert message</span>
-                        <small id="alert-en-help" class="form-text text-muted d-block" data-en="Enter the alert message in English. The header 'Note' will be automatically added." data-fr="Entrez le message d'alerte en anglais. L'en-tête « Note » sera automatiquement ajouté.">Enter the alert message in English. The header "Note" will be automatically added.</small>
-                    </div>
-                    <div style="padding: 0.5rem; background-color: var(--card-bg); border: 1px solid var(--border-color); border-bottom: none; border-radius: 0.375rem 0.375rem 0 0;">
-                        <h3 style="margin: 0; font-size: 1.25rem; color: var(--card-text);">Note</h3>
-                    </div>
-                    <div id="alert-en-editor" style="min-height: 150px; border-radius: 0 0 0.375rem 0.375rem;"></div>
-                    <input type="hidden" id="alert-en" name="alert-en">
-                </div>
-
-                <div class="form-group">
-                    <div class="bilingual-label">
-                        <span data-en="French alert message" data-fr="Message d'alerte en français">French alert message</span>
-                        <small id="alert-fr-help" class="form-text text-muted d-block" data-en="Enter the alert message in French. The header 'Remarque' will be automatically added." data-fr="Entrez le message d'alerte en français. L'en-tête « Remarque » sera automatiquement ajouté.">Enter the alert message in French. The header "Remarque" will be automatically added.</small>
-                    </div>
-                    <div style="padding: 0.5rem; background-color: var(--card-bg); border: 1px solid var(--border-color); border-bottom: none; border-radius: 0.375rem 0.375rem 0 0;">
-                        <h3 style="margin: 0; font-size: 1.25rem; color: var(--card-text);">Remarque</h3>
-                    </div>
-                    <div id="alert-fr-editor" style="min-height: 150px; border-radius: 0 0 0.375rem 0.375rem;"></div>
-                    <input type="hidden" id="alert-fr" name="alert-fr">
-                </div>
-
-				<div id="alert-preview-container" style="display: none;">
-					<h3 class="h5" data-en="Preview" data-fr="Aperçu">Preview</h3>
-					<div id="alert-preview-en" class="alert alert-preview" role="alert"></div>
-					<div id="alert-preview-fr" class="alert alert-preview" role="alert"></div>
-				</div>
-
-                <div class="action-buttons" role="group" aria-label="Alert form actions">
-                    <button type="submit" class="btn btn-success" data-en="Generate alert SHTM file" data-fr="Générer le fichier SHTM d'alerte">Generate alert SHTM file</button>
-                    <button type="button" class="btn btn-danger" id="removeAlertBtn" data-en="Remove alert message" data-fr="Supprimer le message d'alerte">Remove alert message</button>
-                    <button type="reset" class="btn btn-outline-secondary" data-en="Clear alert" data-fr="Effacer l'alerte">Clear alert</button>
-                </div>
-			</form>
-		</section>
-
-        <div id="alertContainer" class="mt-3" role="alert" aria-live="polite" aria-atomic="true"></div>
+      <div id="alertContainer" class="mt-3" role="alert" aria-live="polite" aria-atomic="true"></div>
     </main>
 
     <footer class="mt-auto">
-        <div class="container">
-            <div class="text-center">
-                <p id="version-info" class="mb-0" data-en="" data-fr=""></p>
-            </div>
+      <div class="container">
+        <div class="text-center">
+          <p id="version-info" class="mb-0" data-en="" data-fr=""></p>
         </div>
+      </div>
     </footer>
 
     <script src="js/bootstrap.bundle.min.js"></script>
     <script src="js/creavia.js"></script>
     <script src="js/quill.js"></script>
     <script src="js/monitora.js"></script>
-</body>
+  </body>
 </html>

@@ -3,15 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title data-en="Create and edit Bastarache JSON files" data-fr="Créer et modifier des fichiers JSON Bastarache">
-      Create and edit Bastarache JSON files
-    </title>
-    <script>
-      (function () {
-        const savedTheme = localStorage.getItem("theme") || "light";
-        document.documentElement.setAttribute("data-bs-theme", savedTheme);
-      })();
-    </script>
+    <title>Validata</title>
     <meta
       content="Use this simple tool to create, edit, and check Bastarache JSON files. validata helps you build complex files faster with a clear and easy-to-use interface."
       data-en="Use this simple tool to create, edit, and check Bastarache JSON files. validata helps you build complex files faster with a clear and easy-to-use interface."
@@ -29,7 +21,7 @@
       <nav aria-label="Main navigation" class="navbar navbar-expand-lg">
         <div class="container">
           <div class="navbar-brand d-flex align-items-center">
-            <img alt="" class="me-2" src="img/horse.svg" style="height: 50px; width: auto" />
+            <img src="img/horse.svg" alt="" aria-hidden="true" class="me-2" style="height: 50px; width: auto" />
             <span data-en="Validata - Bastarache" data-fr="Validata - Bastarache">Validata - Bastarache</span>
           </div>
           <button
@@ -45,9 +37,9 @@
             <span class="sr-only" data-en="Toggle navigation menu" data-fr="Basculer le menu de navigation">Toggle navigation menu</span>
           </button>
           <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0" role="menubar">
-              <li class="nav-item" role="none">
-                <a class="nav-link active" data-en="Home" data-fr="Accueil" href="index.html" role="menuitem">Home</a>
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" data-en="Home" data-fr="Accueil" href="index.html">Home</a>
               </li>
             </ul>
             <div aria-label="Settings" class="language-switcher" role="group">
@@ -65,7 +57,7 @@
               </button>
               <button
                 aria-label="Passer au français"
-                aria-pressed="false"
+                aria-pressed="true"
                 class="btn btn-outline-primary btn-sm"
                 data-lang="fr-CA"
                 id="lang-fr-btn"
@@ -76,7 +68,7 @@
               </button>
               <button
                 aria-label="Switch to English"
-                aria-pressed="false"
+                aria-pressed="true"
                 class="btn btn-outline-primary btn-sm"
                 data-lang="en-CA"
                 id="lang-en-btn"

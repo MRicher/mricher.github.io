@@ -3,17 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
-    />
-    <title data-en="Negotium" data-fr="Negotium">Negotium</title>
-    <script>
-      (function () {
-        const savedTheme = localStorage.getItem("theme") || "light";
-        document.documentElement.setAttribute("data-bs-theme", savedTheme);
-      })();
-    </script>
+    <title>Negotium</title>
     <meta
       name="description"
       content="A tool to paste content from Microsoft Word and convert it to clean HTML. Negotium removes formatting bloat and generates web-ready code."
@@ -27,12 +17,12 @@
   </head>
 
   <body>
-    <a class="skip-link" href="#main-content" data-en="Skip to main content" data-fr="Passer au contenu principal"> Skip to main content </a>
+    <a class="skip-link" href="#main-content" data-en="Skip to main content" data-fr="Passer au contenu principal">Skip to main content</a>
 
     <nav class="navbar navbar-expand-lg" aria-label="Main navigation">
       <div class="container">
         <div class="navbar-brand d-flex align-items-center">
-          <img src="img/jobs.svg" alt="" class="me-2" style="height: 50px; width: auto" />
+          <img src="img/jobs.svg" alt="" aria-hidden="true" class="me-2" style="height: 50px; width: auto" />
           <span data-en="Negotium" data-fr="Negotium">Negotium</span>
         </div>
 
@@ -50,9 +40,9 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0" role="menubar">
-            <li class="nav-item" role="none">
-              <a class="nav-link" href="index.html" role="menuitem" data-en="Home" data-fr="Accueil"> Home </a>
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" href="index.html" data-en="Home" data-fr="Accueil">Home</a>
             </li>
           </ul>
 
@@ -76,7 +66,7 @@
               class="btn btn-outline-primary btn-sm"
               data-lang="fr-CA"
               aria-label="Passer au français"
-              aria-pressed="false"
+              aria-pressed="true"
               style="display: none"
             >
               <span data-en="Français" data-fr="Français">Français</span>
@@ -88,7 +78,7 @@
               class="btn btn-outline-primary btn-sm"
               data-lang="en-CA"
               aria-label="Switch to English"
-              aria-pressed="false"
+              aria-pressed="true"
             >
               <span data-en="English" data-fr="English">English</span>
             </button>
@@ -112,7 +102,7 @@
         <!-- Input Section -->
         <div class="card mb-4">
           <div class="card-header">
-            <h2 class="h5 mb-0" data-en="Input - Paste Word content" data-fr="Entrée - Coller le contenu Word">Input - Paste Word content</h2>
+            <h2 class="h5 mb-0" data-en="Input – Paste Word content" data-fr="Entrée – Coller le contenu Word">Input – Paste Word content</h2>
           </div>
           <div class="card-body">
             <div class="mb-3">
@@ -124,7 +114,15 @@
               >
                 Paste your Word document content here:
               </label>
-              <div id="editor" aria-label="Rich text editor" data-en-label="Rich text editor" data-fr-label="Ã‰diteur de texte enrichi"></div>
+              <div
+                id="editor"
+                role="textbox"
+                aria-multiline="true"
+                tabindex="0"
+                aria-label="Rich text editor"
+                data-en-label="Rich text editor"
+                data-fr-label="Éditeur de texte enrichi"
+              ></div>
             </div>
             <div class="d-flex gap-2">
               <button type="button" class="btn btn-primary" id="convert-btn" data-en="Convert to HTML" data-fr="Convertir en HTML">
@@ -138,7 +136,7 @@
         <!-- Output Section -->
         <div class="card mb-4" id="output-section" style="display: none">
           <div class="card-header d-flex justify-content-between align-items-center">
-            <h2 class="h5 mb-0" data-en="Output - Clean HTML" data-fr="Sortie - HTML propre">Output - Clean HTML</h2>
+            <h2 class="h5 mb-0" data-en="Output – Clean HTML" data-fr="Sortie – HTML propre">Output – Clean HTML</h2>
             <button type="button" class="btn btn-sm btn-outline-primary" id="copy-btn" data-en="Copy HTML" data-fr="Copier le HTML">Copy HTML</button>
           </div>
           <div class="card-body">
@@ -161,6 +159,7 @@
               class="alert alert-success"
               role="alert"
               style="display: none"
+              aria-live="polite"
               data-en="HTML copied to clipboard!"
               data-fr="HTML copié dans le presse-papiers !"
             >

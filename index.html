@@ -3,13 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title data-en="Créavia" data-fr="Créavia">Créavia</title>
-    <script>
-      (function () {
-        const savedTheme = localStorage.getItem("theme") || "light";
-        document.documentElement.setAttribute("data-bs-theme", savedTheme);
-      })();
-    </script>
+    <title>Créavia</title>
     <meta
       name="description"
       content="Explore a variety of easy-to-use web tools to help you find information, complete tasks, and access services online."
@@ -21,12 +15,12 @@
   </head>
 
   <body>
-    <a class="skip-link" href="#main-content" data-en="Skip to main content" data-fr="Passer au contenu principal"> Skip to main content </a>
+    <a class="skip-link" href="#main-content" data-en="Skip to main content" data-fr="Passer au contenu principal">Skip to main content</a>
 
     <nav class="navbar navbar-expand-lg" aria-label="Main navigation">
       <div class="container">
         <div class="navbar-brand d-flex align-items-center">
-          <img src="img/seedling.svg" alt="" class="me-2" style="height: 50px; width: auto" />
+          <img src="img/seedling.svg" alt="" aria-hidden="true" class="me-2" style="height: 50px; width: auto" />
           <span data-en="Créavia" data-fr="Créavia">Créavia</span>
         </div>
 
@@ -44,7 +38,7 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0" role="menubar"></ul>
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0"></ul>
 
           <div class="language-switcher" role="group" aria-label="Settings">
             <button
@@ -66,7 +60,7 @@
               class="btn btn-outline-primary btn-sm"
               data-lang="fr-CA"
               aria-label="Passer au français"
-              aria-pressed="false"
+              aria-pressed="true"
               style="display: none"
             >
               <span data-en="Français" data-fr="Français">Français</span>
@@ -78,7 +72,7 @@
               class="btn btn-outline-primary btn-sm"
               data-lang="en-CA"
               aria-label="Switch to English"
-              aria-pressed="false"
+              aria-pressed="true"
             >
               <span data-en="English" data-fr="English">English</span>
             </button>
@@ -108,9 +102,7 @@
             </p>
 
             <p>
-              <a class="btn btn-outline-secondary btn-lg" href="optipix.html" role="button" data-en="Use OptiPix" data-fr="Utiliser OptiPix">
-                Use OptiPix
-              </a>
+              <a class="btn btn-outline-secondary btn-lg" href="optipix.html" data-en="Use OptiPix" data-fr="Utiliser OptiPix"> Use OptiPix </a>
             </p>
           </div>
 
@@ -188,9 +180,7 @@
             </p>
 
             <p>
-              <a class="btn btn-outline-secondary btn-lg" href="monitora.html" role="button" data-en="Use Monitora" data-fr="Utiliser Monitora">
-                Use Monitora
-              </a>
+              <a class="btn btn-outline-secondary btn-lg" href="monitora.html" data-en="Use Monitora" data-fr="Utiliser Monitora"> Use Monitora </a>
             </p>
           </div>
 
@@ -205,13 +195,12 @@
               data-en="This application creates, edits, and generates &lt;abbr&gt;HTML&lt;/abbr&gt; for the &lt;abbr&gt;RCMP&lt;/abbr&gt; abbreviation and acronym data list template."
               data-fr="Cette application modifie et génère le code &lt;abbr&gt;HTML&lt;/abbr&gt; pour le gabarit de la liste de données des abréviations et acronymes de la &lt;abbr&gt;GRC&lt;/abbr&gt;."
             >
-              This application creates, edits, and generates <abbr>HTML</abbr> for the <abbr>RCMP</abbr> abbreviation and acronym data list template.
+              This application creates, edits, and generates
+              <abbr>HTML</abbr> for the <abbr>RCMP</abbr> abbreviation and acronym data list template.
             </p>
 
             <p>
-              <a class="btn btn-outline-secondary btn-lg" href="abbrevo.html" role="button" data-en="Use Abbrevo" data-fr="Utiliser Abbrevo">
-                Use Abbrevo
-              </a>
+              <a class="btn btn-outline-secondary btn-lg" href="abbrevo.html" data-en="Use Abbrevo" data-fr="Utiliser Abbrevo"> Use Abbrevo </a>
             </p>
           </div>
 
@@ -231,9 +220,7 @@
             </p>
 
             <p>
-              <a class="btn btn-outline-secondary btn-lg" href="negotium.html" role="button" data-en="Use Negotium" data-fr="Utiliser Negotium">
-                Use Negotium
-              </a>
+              <a class="btn btn-outline-secondary btn-lg" href="negotium.html" data-en="Use Negotium" data-fr="Utiliser Negotium"> Use Negotium </a>
             </p>
           </div>
         </div>

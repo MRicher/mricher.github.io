@@ -3,13 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title data-en="Abbrevo" data-fr="Abbrevo">Abbrevo</title>
-    <script>
-      (function () {
-        const savedTheme = localStorage.getItem("theme") || "light";
-        document.documentElement.setAttribute("data-bs-theme", savedTheme);
-      })();
-    </script>
+    <title>Abbrevo</title>
     <meta
       name="description"
       content="This application edits, and generates HTML for the RCMP abbreviation and acronym data list template."
@@ -22,13 +16,13 @@
   </head>
 
   <body>
-    <a class="skip-link" href="#main-content" data-en="Skip to main content" data-fr="Passer au contenu principal"> Skip to main content </a>
+    <a class="skip-link" href="#main-content" data-en="Skip to main content" data-fr="Passer au contenu principal">Skip to main content</a>
 
     <header>
       <nav class="navbar navbar-expand-lg" aria-label="Main navigation">
         <div class="container">
           <div class="navbar-brand d-flex align-items-center">
-            <img src="img/list.svg" alt="" class="me-2" style="height: 50px; width: auto" />
+            <img src="img/list.svg" alt="" aria-hidden="true" class="me-2" style="height: 50px; width: auto" />
             <span data-en="Abbrevo" data-fr="Abbrevo">Abbrevo</span>
           </div>
 
@@ -46,9 +40,9 @@
           </button>
 
           <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0" role="menubar">
-              <li class="nav-item" role="none">
-                <a class="nav-link" href="/index.html" role="menuitem" data-en="Home" data-fr="Accueil"> Home </a>
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link" href="/index.html" data-en="Home" data-fr="Accueil">Home</a>
               </li>
             </ul>
 
@@ -72,7 +66,7 @@
                 class="btn btn-outline-primary btn-sm"
                 data-lang="fr-CA"
                 aria-label="Passer au français"
-                aria-pressed="false"
+                aria-pressed="true"
                 style="display: none"
               >
                 <span data-en="Français" data-fr="Français">Français</span>
@@ -84,7 +78,7 @@
                 class="btn btn-outline-primary btn-sm"
                 data-lang="en-CA"
                 aria-label="Switch to English"
-                aria-pressed="false"
+                aria-pressed="true"
               >
                 <span data-en="English" data-fr="English">English</span>
               </button>
