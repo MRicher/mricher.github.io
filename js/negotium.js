@@ -304,8 +304,12 @@ function processListItems(listElement) {
 
   for (let node of listElement.childNodes) {
     if (node.nodeType === Node.ELEMENT_NODE && node.tagName.toLowerCase() === "li") {
-      // Check for Quill's data-list attribute to determine type
-      const dataList = node.getAttribute("data-list");
+      // Check for Quill's indent attribute
+      const indentClass = node.className.match(/ql-indent-(\d+)/);
+      const indentLevel = indentClass ? indentClass[1] : null;
+
+      // Build li tag with indent class if present
+      const liTag = indentLevel ? `<li class="ql-indent-${indentLevel}">` : "<li>";
 
       // Check if this li contains a nested list
       const hasNestedList = Array.from(node.children).some((child) => child.tagName === "UL" || child.tagName === "OL");
@@ -328,11 +332,11 @@ function processListItems(listElement) {
             }
           }
         }
-        result += "<li>" + liContent + "</li>";
+        result += liTag + liContent + "</li>";
       } else {
         // Simple list item
         const content = processInlineContent(node);
-        result += "<li>" + content + "</li>";
+        result += liTag + content + "</li>";
       }
     }
   }
