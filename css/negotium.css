@@ -2,12 +2,16 @@
    NEGOTIUM PAGE-SPECIFIC STYLES
    ================================================================= */
 
-/* Quill Editor Specific */
+/* =================================================================
+   QUILL EDITOR SPECIFIC
+   ================================================================= */
+
 #editor {
   background-color: var(--editor-bg);
   border: 1px solid var(--editor-border);
   border-radius: 0.375rem;
   min-height: 300px;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 #editor .ql-container {
@@ -18,33 +22,23 @@
   min-height: 250px;
 }
 
+/* =================================================================
+   OUTPUT SECTION
+   ================================================================= */
+
 /* Output Textarea */
 #output {
   background-color: var(--output-bg);
+  color: var(--card-text);
   font-family: 'Courier New', monospace;
   font-size: 0.875rem;
   line-height: 1.5;
   white-space: pre-wrap;
   word-wrap: break-word;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-[data-theme="dark"] #output {
-  background-color: var(--output-bg);
-  border-color: var(--editor-border);
-  color: var(--card-text);
-}
-
-/* Card Styling */
-.card {
-  margin-bottom: 1.5rem;
-}
-
-/* Button Spacing */
-.d-flex.gap-2 {
-  gap: 0.5rem;
-}
-
-/* Copy Feedback */
+/* Copy Feedback Message */
 #copy-feedback {
   animation: fadeIn 0.3s ease-in;
   margin-top: 1rem;
@@ -61,13 +55,99 @@
   }
 }
 
-/* Responsive Adjustments */
+/* =================================================================
+   CARD COMPONENTS
+   ================================================================= */
+
+.card {
+  margin-bottom: 1.5rem;
+}
+
+/* =================================================================
+   BUTTON SPACING
+   ================================================================= */
+
+.d-flex.gap-2 {
+  gap: 0.5rem;
+}
+
+/* =================================================================
+   DARK MODE ADJUSTMENTS
+   ================================================================= */
+
+[data-theme="dark"] #editor {
+  background-color: var(--editor-bg);
+  border-color: var(--editor-border);
+}
+
+[data-theme="dark"] #output {
+  background-color: var(--output-bg);
+  border-color: var(--editor-border);
+  color: var(--card-text);
+}
+
+/* =================================================================
+   RESPONSIVE - MOBILE
+   ================================================================= */
+
 @media (max-width: 768px) {
+  #editor {
+    min-height: 250px;
+  }
+
+  #editor .ql-container,
   #editor .ql-editor {
     min-height: 200px;
   }
 
   #output {
     font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 576px) {
+  #editor {
+    min-height: 200px;
+  }
+
+  #editor .ql-container,
+  #editor .ql-editor {
+    min-height: 150px;
+  }
+
+  #output {
+    font-size: 0.7rem;
+  }
+
+  .d-flex.gap-2 {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .d-flex.gap-2 .btn {
+    width: 100%;
+  }
+}
+
+/* =================================================================
+   ACCESSIBILITY ENHANCEMENTS
+   ================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  #editor,
+  #output {
+    transition: none;
+  }
+
+  #copy-feedback {
+    animation: none;
+  }
+
+  @keyframes fadeIn {
+    from,
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }

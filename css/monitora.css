@@ -2,59 +2,74 @@
    MONITORA PAGE-SPECIFIC STYLES
    ================================================================= */
 
-/* Custom Message Section */
+/* =================================================================
+   CUSTOM MESSAGE SECTION
+   ================================================================= */
+
 .custom-message-section {
-  display: none;
-  margin-top: 1rem;
-  padding: 1rem;
   background-color: var(--hero-bg);
   border: 1px solid var(--border-color);
   border-radius: 0.375rem;
-  transition: all 0.3s ease;
+  display: none;
+  margin-top: 1rem;
+  padding: 1rem;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .custom-message-section.show {
   display: block;
 }
 
-/* Status Entry */
+/* =================================================================
+   STATUS ENTRY COMPONENTS
+   ================================================================= */
+
 .status-entry {
+  border-bottom: 2px solid var(--border-color);
   margin-bottom: 2rem;
   padding-bottom: 2rem;
-  border-bottom: 2px solid var(--border-color);
+  transition: border-color 0.3s ease;
 }
 
 .status-entry:last-child {
   border-bottom: none;
 }
 
-/* Action Buttons */
+/* =================================================================
+   ACTION BUTTONS
+   ================================================================= */
+
 .action-buttons {
-  margin-top: 2rem;
   display: flex;
-  gap: 1rem;
   flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2rem;
 }
 
 .remove-entry-btn {
   margin-top: 1rem;
 }
 
-/* Alert Message Section */
+/* =================================================================
+   ALERT MESSAGE SECTION
+   ================================================================= */
+
 .alert-message-section {
-  margin-top: 2rem;
-  padding: 1.5rem;
   background-color: var(--hero-bg);
   border: 2px solid var(--border-color);
   border-radius: 0.375rem;
+  margin-top: 2rem;
+  padding: 1.5rem;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .alert-preview {
+  border-radius: 0.375rem;
   margin-top: 1rem;
   padding: 1rem;
-  border-radius: 0.375rem;
 }
 
+/* Quill Editor Adjustments for Alert Section */
 .alert-message-section .ql-container {
   border-top: none !important;
 }
@@ -62,4 +77,55 @@
 .alert-message-section .ql-toolbar {
   border-top-left-radius: 0 !important;
   border-top-right-radius: 0 !important;
+}
+
+/* =================================================================
+   DARK MODE ADJUSTMENTS
+   ================================================================= */
+
+[data-theme="dark"] .custom-message-section,
+[data-theme="dark"] .alert-message-section {
+  background-color: var(--hero-bg);
+}
+
+/* =================================================================
+   RESPONSIVE - MOBILE
+   ================================================================= */
+
+@media (max-width: 768px) {
+  .action-buttons {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .action-buttons .btn {
+    width: 100%;
+  }
+
+  .alert-message-section {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .status-entry {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .custom-message-section {
+    padding: 0.75rem;
+  }
+}
+
+/* =================================================================
+   ACCESSIBILITY ENHANCEMENTS
+   ================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .custom-message-section,
+  .status-entry,
+  .alert-message-section {
+    transition: none;
+  }
 }

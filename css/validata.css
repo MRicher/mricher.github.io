@@ -2,129 +2,278 @@
    VALIDATA PAGE-SPECIFIC STYLES
    ================================================================= */
 
-/* Record Cards */
-.record-body {
-  color: var(--body-color);
-  padding: 20px;
-}
+/* =================================================================
+   RECORD CARD COMPONENTS
+   ================================================================= */
 
+/* Record Card Container */
 .record-card {
-  background: var(--card-bg);
+  background-color: var(--card-bg);
   border: 1px solid var(--card-border);
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px var(--shadow-soft);
   contain: layout style;
-  margin-bottom: 20px;
+  margin-bottom: 1.25rem;
   opacity: 1;
-  transition: opacity 0.2s ease-in-out;
+  transition: all 0.3s ease;
 }
 
 .record-card.updating {
   opacity: 0.7;
 }
 
+/* Record Header */
 .record-header {
   align-items: center;
-  background: var(--hero-bg);
+  background-color: var(--hero-bg);
   border-bottom: 1px solid var(--card-border);
-  border-radius: 8px 8px 0 0;
+  border-radius: 0.5rem 0.5rem 0 0;
   color: var(--body-color);
   display: flex;
   justify-content: space-between;
-  padding: 15px 20px;
+  padding: 0.9375rem 1.25rem;
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
 
 .record-header h2 {
   color: var(--body-color);
+  margin: 0;
+  transition: color 0.3s ease;
 }
 
-/* File Upload Component */
-.file-upload {
-  background: var(--hero-bg);
-  border-radius: 8px;
+/* Record Body */
+.record-body {
   color: var(--body-color);
-  margin-bottom: 20px;
-  padding: 20px;
+  padding: 1.25rem;
+  transition: color 0.3s ease;
+}
+
+/* =================================================================
+   FILE UPLOAD COMPONENT
+   ================================================================= */
+
+.file-upload {
+  background-color: var(--hero-bg);
+  border-radius: 0.5rem;
+  color: var(--body-color);
+  margin-bottom: 1.25rem;
+  padding: 1.25rem;
   text-align: center;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .file-upload h3 {
   color: var(--body-color);
+  margin: 0 0 1rem 0;
+  transition: color 0.3s ease;
 }
 
 #file-upload {
   display: none;
 }
 
-/* Form Row */
+/* =================================================================
+   FORM COMPONENTS
+   ================================================================= */
+
 .form-row {
   display: grid;
-  gap: 20px;
+  gap: 1.25rem;
   grid-template-columns: 1fr 1fr;
 }
 
-/* Layout */
+/* =================================================================
+   LAYOUT COMPONENTS
+   ================================================================= */
+
+/* Divider */
 .divider {
   color: #6c757d;
   font-weight: 500;
 }
 
+/* Load Options */
 .load-options {
   align-items: center;
   display: flex;
-  gap: 20px;
+  gap: 1.25rem;
   justify-content: center;
-  margin: 15px 0;
+  margin: 0.9375rem 0;
 }
 
+/* Records Container */
 #records-container {
   min-height: 200px;
 }
 
-/* No Records Message */
+/* =================================================================
+   NO RECORDS MESSAGE
+   ================================================================= */
+
 .no-records {
   color: var(--body-color);
-  padding: 40px;
+  padding: 2.5rem;
   text-align: center;
+  transition: color 0.3s ease;
 }
 
 .no-records h3 {
   color: var(--body-color);
+  margin: 0;
+  transition: color 0.3s ease;
 }
 
-/* Updates Section */
-.update-item {
-  background: var(--hero-bg);
-  border-left: 4px solid var(--link-color);
-  border-radius: 4px;
-  color: var(--body-color);
-  margin-bottom: 15px;
-  padding: 15px;
-}
-
-.update-item h4 {
-  color: var(--body-color);
-}
+/* =================================================================
+   UPDATES SECTION
+   ================================================================= */
 
 .update-section {
-  border-top: 1px solid #dee2e6;
-  margin-top: 30px;
-  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+  margin-top: 1.875rem;
+  padding-top: 1.25rem;
+  transition: border-color 0.3s ease;
 }
 
 .update-section h3 {
   color: var(--body-color);
+  transition: color 0.3s ease;
 }
 
-/* Responsive */
+.update-item {
+  background-color: var(--hero-bg);
+  border-left: 4px solid var(--link-color);
+  border-radius: 0.25rem;
+  color: var(--body-color);
+  margin-bottom: 0.9375rem;
+  padding: 0.9375rem;
+  transition: all 0.3s ease;
+}
+
+.update-item h4 {
+  color: var(--body-color);
+  margin: 0 0 0.5rem 0;
+  transition: color 0.3s ease;
+}
+
+/* =================================================================
+   DARK MODE ADJUSTMENTS
+   ================================================================= */
+
+[data-theme="dark"] .record-card {
+  background-color: var(--card-bg);
+  box-shadow: 0 2px 4px var(--shadow-medium);
+}
+
+[data-theme="dark"] .record-header,
+[data-theme="dark"] .file-upload,
+[data-theme="dark"] .update-item {
+  background-color: var(--hero-bg);
+}
+
+/* =================================================================
+   RESPONSIVE - TABLET
+   ================================================================= */
+
+@media (max-width: 991px) {
+  .load-options {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+}
+
+/* =================================================================
+   RESPONSIVE - MOBILE
+   ================================================================= */
+
 @media (max-width: 768px) {
   .form-row {
     grid-template-columns: 1fr;
+    gap: 1rem;
   }
 
   .record-header {
     align-items: flex-start;
     flex-direction: column;
-    gap: 10px;
+    gap: 0.625rem;
+  }
+
+  .record-body {
+    padding: 1rem;
+  }
+
+  .file-upload {
+    padding: 1rem;
+  }
+
+  .load-options {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .load-options .btn {
+    width: 100%;
+  }
+
+  .no-records {
+    padding: 2rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .record-card {
+    margin-bottom: 1rem;
+  }
+
+  .record-header {
+    padding: 0.75rem 1rem;
+  }
+
+  .record-body {
+    padding: 0.75rem;
+  }
+
+  .file-upload {
+    padding: 0.75rem;
+  }
+
+  .update-item {
+    padding: 0.75rem;
+  }
+
+  .no-records {
+    padding: 1.5rem;
+  }
+}
+
+/* =================================================================
+   ACCESSIBILITY ENHANCEMENTS
+   ================================================================= */
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .record-card,
+  .record-header,
+  .record-body,
+  .file-upload,
+  .update-section,
+  .update-item,
+  .no-records,
+  .record-header h2,
+  .file-upload h3,
+  .update-section h3,
+  .update-item h4,
+  .no-records h3 {
+    transition: none;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .record-card {
+    border-width: 2px;
+  }
+
+  .update-item {
+    border-left-width: 5px;
   }
 }
