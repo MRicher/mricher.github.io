@@ -50,6 +50,7 @@ function initializeQuillEditor() {
     [{ list: "ordered" }, { list: "bullet" }],
     [{ indent: "-1" }, { indent: "+1" }], // Add indent/outdent buttons
     [{ header: [2, 3, false] }],
+    ["link"], // Add link button
     ["clean"],
   ];
 
@@ -72,12 +73,13 @@ function initializeQuillEditor() {
         // For text insertions, only keep allowed attributes
         const cleanAttributes = {};
         if (op.attributes) {
-          // Only allow: bold, italic, list, indent, header
+          // Only allow: bold, italic, list, indent, header, link
           if (op.attributes.bold) cleanAttributes.bold = op.attributes.bold;
           if (op.attributes.italic) cleanAttributes.italic = op.attributes.italic;
           if (op.attributes.list) cleanAttributes.list = op.attributes.list;
           if (op.attributes.indent) cleanAttributes.indent = op.attributes.indent;
           if (op.attributes.header) cleanAttributes.header = op.attributes.header;
+          if (op.attributes.link) cleanAttributes.link = op.attributes.link;
         }
         return { insert: op.insert, attributes: Object.keys(cleanAttributes).length > 0 ? cleanAttributes : undefined };
       }
@@ -135,7 +137,10 @@ function convertToHTML() {
 
   // Check if editor is empty
   if (!rawHTML || rawHTML.trim() === "<p><br></p>" || rawHTML.trim() === "") {
-    const message = currentLang === "fr" ? "Veuillez coller du contenu dans l'éditeur avant de convertir." : "Please paste content into the editor before converting.";
+    const message =
+      currentLang === "fr"
+        ? "Veuillez coller du contenu dans l'éditeur avant de convertir."
+        : "Please paste content into the editor before converting.";
     alert(message);
     return;
   }
@@ -150,11 +155,12 @@ function convertToHTML() {
 /**
  * Clean HTML content
  * - Remove unnecessary attributes and styles
- * - Keep only <strong>, <em>, <p>, <ul>, <ol>, <li> tags with proper nesting
+ * - Keep only <strong>, <em>, <p>, <ul>, <ol>, <li>, <a> tags with proper nesting
  * - Convert bold to <strong>, italic to <em>
  * - Convert H1 to H2
  * - Remove <br> and empty <p> tags
  * - Maintain proper list structure (ul for bullets, ol for ordered)
+ * - Convert Quill lists to proper HTML lists (checking data-list attribute)
  * - Output as single line
  */
 function cleanHTML(html) {
@@ -210,16 +216,30 @@ function processElements(element) {
           result += "<em>" + content + "</em>";
         }
       }
-      // Handle lists - preserve the list type
-      else if (tagName === "ul") {
-        const content = processListItems(node);
-        if (content.trim()) {
-          result += "<ul>" + content + "</ul>";
+      // Handle links
+      else if (tagName === "a") {
+        const href = node.getAttribute("href");
+        const content = processElements(node);
+        if (content.trim() && href) {
+          result += '<a href="' + href + '">' + content + "</a>";
+        } else if (content.trim()) {
+          // If no href, just keep the content
+          result += content;
         }
-      } else if (tagName === "ol") {
+      }
+      // Handle lists - check data-list attribute to determine type
+      else if (tagName === "ul" || tagName === "ol") {
+        // Check first child li to determine actual list type
+        const firstLi = node.querySelector("li");
+        const dataList = firstLi ? firstLi.getAttribute("data-list") : null;
+
+        // Determine if this should be ul or ol based on data-list attribute
+        const shouldBeUnordered = dataList === "bullet";
+        const listTag = shouldBeUnordered ? "ul" : "ol";
+
         const content = processListItems(node);
         if (content.trim()) {
-          result += "<ol>" + content + "</ol>";
+          result += "<" + listTag + ">" + content + "</" + listTag + ">";
         }
       } else if (tagName === "li") {
         // Check if this li contains a nested list
@@ -322,7 +342,7 @@ function processListItems(listElement) {
 
 /**
  * Process inline content (for list items and paragraphs)
- * This preserves <strong> and <em> tags
+ * This preserves <strong>, <em>, and <a> tags
  */
 function processInlineContent(element) {
   let result = "";
@@ -345,6 +365,15 @@ function processInlineContent(element) {
         const content = processInlineContent(node);
         if (content.trim()) {
           result += "<em>" + content + "</em>";
+        }
+      } else if (tagName === "a") {
+        const href = node.getAttribute("href");
+        const content = processInlineContent(node);
+        if (content.trim() && href) {
+          result += '<a href="' + href + '">' + content + "</a>";
+        } else if (content.trim()) {
+          // If no href, just keep the content
+          result += content;
         }
       } else if (tagName === "br") {
         // Skip br tags
@@ -438,12 +467,18 @@ function copyToClipboard() {
           }
         },
         (fallbackErr) => {
-          const errorMessage = currentLang === "fr" ? "Impossible de copier. Veuillez sélectionner et copier manuellement." : "Failed to copy. Please select and copy manually.";
+          const errorMessage =
+            currentLang === "fr"
+              ? "Impossible de copier. Veuillez sélectionner et copier manuellement."
+              : "Failed to copy. Please select and copy manually.";
           alert(errorMessage);
-        }
+        },
       );
     } catch (err) {
-      const errorMessage = currentLang === "fr" ? "Impossible de copier. Veuillez sélectionner et copier manuellement." : "Failed to copy. Please select and copy manually.";
+      const errorMessage =
+        currentLang === "fr"
+          ? "Impossible de copier. Veuillez sélectionner et copier manuellement."
+          : "Failed to copy. Please select and copy manually.";
       alert(errorMessage);
     }
   }
