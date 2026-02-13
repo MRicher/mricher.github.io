@@ -191,6 +191,8 @@ function processElements(element) {
       if (node === element.lastChild) {
         text = text.replace(/\s+$/, "");
       }
+      // Convert non-breaking spaces to &#160;
+      text = text.replace(/\u00A0/g, "&#160;");
       if (text) {
         result += text;
       }
@@ -441,6 +443,8 @@ function processInlineContent(element) {
       if (node === element.lastChild) {
         text = text.replace(/\s+$/, "");
       }
+      // Convert non-breaking spaces to &#160;
+      text = text.replace(/\u00A0/g, "&#160;");
       if (text) {
         result += text;
       }
