@@ -390,12 +390,8 @@ function getIndentLevel(element) {
  */
 function processInlineContent(element) {
   let result = "";
-  const childNodes = Array.from(element.childNodes);
 
-  for (let i = 0; i < childNodes.length; i++) {
-    const node = childNodes[i];
-    const nextNode = childNodes[i + 1];
-
+  for (let node of element.childNodes) {
     if (node.nodeType === Node.TEXT_NODE) {
       // Preserve spacing but normalize multiple spaces to single space
       let text = node.textContent.replace(/\s+/g, " ");
@@ -416,29 +412,17 @@ function processInlineContent(element) {
         const content = processInlineContent(node);
         if (content.trim()) {
           result += "<strong>" + content + "</strong>";
-          // Remove leading space from next text node if it exists
-          if (nextNode && nextNode.nodeType === Node.TEXT_NODE) {
-            nextNode.textContent = nextNode.textContent.replace(/^\s+/, "");
-          }
         }
       } else if (tagName === "i" || tagName === "em") {
         const content = processInlineContent(node);
         if (content.trim()) {
           result += "<em>" + content + "</em>";
-          // Remove leading space from next text node if it exists
-          if (nextNode && nextNode.nodeType === Node.TEXT_NODE) {
-            nextNode.textContent = nextNode.textContent.replace(/^\s+/, "");
-          }
         }
       } else if (tagName === "a") {
         const href = node.getAttribute("href");
         const content = processInlineContent(node);
         if (content.trim() && href) {
           result += '<a href="' + href + '">' + content + "</a>";
-          // Remove leading space from next text node if it exists
-          if (nextNode && nextNode.nodeType === Node.TEXT_NODE) {
-            nextNode.textContent = nextNode.textContent.replace(/^\s+/, "");
-          }
         } else if (content.trim()) {
           // If no href, just keep the content
           result += content;
