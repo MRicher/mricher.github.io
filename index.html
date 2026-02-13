@@ -8,6 +8,12 @@
       content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
     />
     <title data-en="Créavia" data-fr="Créavia">Créavia</title>
+    <script>
+      (function () {
+        const savedTheme = localStorage.getItem("theme") || "light";
+        document.documentElement.setAttribute("data-bs-theme", savedTheme);
+      })();
+    </script>
     <meta
       name="description"
       content="Explore a variety of easy-to-use web tools to help you find information, complete tasks, and access services online."

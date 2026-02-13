@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title data-en="Monitora" data-fr="Monitora">Monitora</title>
+    <script>
+      (function() {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-bs-theme', savedTheme);
+      })();
+    </script>
     <meta name="description"
           content="This application edits and generates the HTML for the system health page on the Infoweb."
           data-en="This application edits and generates the HTML for the system health page on the Infoweb."

@@ -1,364 +1,365 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en-CA">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title data-en="OptiPix" data-fr="OptiPix">OptiPix</title>
-    <meta name="description"
-          content="Easily crop, resize, and optimize images for web publishing. This tool supports PNG and JPG formats and uses smart compression to reduce file size while maintaining image quality."
-          data-en="Easily crop, resize, and optimize images for web publishing. This tool supports PNG and JPG formats and uses smart compression to reduce file size while maintaining image quality."
-          data-fr="Recadrez, redimensionnez et optimisez facilement vos images pour la publication web. Cet outil prend en charge les formats PNG et JPG et applique une compression intelligente pour réduire la taille des fichiers tout en conservant la qualité des images.">
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/creavia.css">
-    <link rel="stylesheet" href="css/cropper.min.css">
-    <link rel="stylesheet" href="css/optipix.css">
-</head>
+    <script>
+      (function () {
+        const savedTheme = localStorage.getItem("theme") || "light";
+        document.documentElement.setAttribute("data-bs-theme", savedTheme);
+      })();
+    </script>
+    <meta
+      name="description"
+      content="Easily crop, resize, and optimize images for web publishing. This tool supports PNG and JPG formats and uses smart compression to reduce file size while maintaining image quality."
+      data-en="Easily crop, resize, and optimize images for web publishing. This tool supports PNG and JPG formats and uses smart compression to reduce file size while maintaining image quality."
+      data-fr="Recadrez, redimensionnez et optimisez facilement vos images pour la publication web. Cet outil prend en charge les formats PNG et JPG et applique une compression intelligente pour réduire la taille des fichiers tout en conservant la qualité des images."
+    />
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/creavia.css" />
+    <link rel="stylesheet" href="css/cropper.min.css" />
+    <link rel="stylesheet" href="css/optipix.css" />
+  </head>
 
-<body>
-    <a class="skip-link"
-       href="#main-content"
-       data-en="Skip to main content"
-       data-fr="Passer au contenu principal">
-        Skip to main content
-    </a>
+  <body>
+    <a class="skip-link" href="#main-content" data-en="Skip to main content" data-fr="Passer au contenu principal"> Skip to main content </a>
 
     <header>
-        <nav class="navbar navbar-expand-lg" aria-label="Main navigation">
-            <div class="container">
-                <div class="navbar-brand d-flex align-items-center">
-                    <img src="img/photo-scan.svg"
-                         alt=""
-                         class="me-2"
-                         style="height: 50px; width: auto;">
-                    <span data-en="OptiPix" data-fr="OptiPix">OptiPix</span>
-                </div>
+      <nav class="navbar navbar-expand-lg" aria-label="Main navigation">
+        <div class="container">
+          <div class="navbar-brand d-flex align-items-center">
+            <img src="img/photo-scan.svg" alt="" class="me-2" style="height: 50px; width: auto" />
+            <span data-en="OptiPix" data-fr="OptiPix">OptiPix</span>
+          </div>
 
-                <button class="navbar-toggler"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#navbarNav"
-                        aria-controls="navbarNav"
-                        aria-expanded="false"
-                        aria-label="Toggle navigation menu">
-                    <span class="navbar-toggler-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden"
-                          data-en="Toggle navigation menu"
-                          data-fr="Basculer le menu de navigation">
-                        Toggle navigation menu
-                    </span>
-                </button>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation menu"
+          >
+            <span class="navbar-toggler-icon" aria-hidden="true"></span>
+            <span class="visually-hidden" data-en="Toggle navigation menu" data-fr="Basculer le menu de navigation"> Toggle navigation menu </span>
+          </button>
 
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0" role="menubar">
-                        <li class="nav-item" role="none">
-                            <a class="nav-link"
-                               href="/index.html"
-                               role="menuitem"
-                               data-en="Home"
-                               data-fr="Accueil">
-                                Home
-                            </a>
-                        </li>
-                    </ul>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0" role="menubar">
+              <li class="nav-item" role="none">
+                <a class="nav-link" href="/index.html" role="menuitem" data-en="Home" data-fr="Accueil"> Home </a>
+              </li>
+            </ul>
 
-                    <div class="language-switcher" role="group" aria-label="Settings">
-                        <button id="theme-toggle"
-                                type="button"
-                                class="theme-toggle"
-                                aria-label="Toggle dark/light theme"
-                                data-en-dark="Switch to light mode"
-                                data-en-light="Switch to dark mode"
-                                data-fr-dark="Passer au mode clair"
-                                data-fr-light="Passer au mode sombre">
-                            <span id="theme-text"
-                                  data-en="Dark mode"
-                                  data-fr="Mode sombre">
-                                Dark mode
-                            </span>
-                        </button>
+            <div class="language-switcher" role="group" aria-label="Settings">
+              <button
+                id="theme-toggle"
+                type="button"
+                class="theme-toggle"
+                aria-label="Toggle dark/light theme"
+                data-en-dark="Switch to light mode"
+                data-en-light="Switch to dark mode"
+                data-fr-dark="Passer au mode clair"
+                data-fr-light="Passer au mode sombre"
+              >
+                <span id="theme-text" data-en="Dark mode" data-fr="Mode sombre"> Dark mode </span>
+              </button>
 
-                        <button id="lang-fr-btn"
-                                type="button"
-                                class="btn btn-outline-primary btn-sm"
-                                data-lang="fr-CA"
-                                aria-label="Passer au français"
-                                aria-pressed="false"
-                                style="display: none;">
-                            <span data-en="Français" data-fr="Français">Français</span>
-                        </button>
+              <button
+                id="lang-fr-btn"
+                type="button"
+                class="btn btn-outline-primary btn-sm"
+                data-lang="fr-CA"
+                aria-label="Passer au français"
+                aria-pressed="false"
+                style="display: none"
+              >
+                <span data-en="Français" data-fr="Français">Français</span>
+              </button>
 
-                        <button id="lang-en-btn"
-                                type="button"
-                                class="btn btn-outline-primary btn-sm"
-                                data-lang="en-CA"
-                                aria-label="Switch to English"
-                                aria-pressed="false">
-                            <span data-en="English" data-fr="English">English</span>
-                        </button>
-                    </div>
-                </div>
+              <button
+                id="lang-en-btn"
+                type="button"
+                class="btn btn-outline-primary btn-sm"
+                data-lang="en-CA"
+                aria-label="Switch to English"
+                aria-pressed="false"
+              >
+                <span data-en="English" data-fr="English">English</span>
+              </button>
             </div>
-        </nav>
+          </div>
+        </div>
+      </nav>
     </header>
 
     <main class="container" id="main-content">
-        <section aria-labelledby="main-heading">
-            <h1 id="main-heading"
-                class="mb-4"
-                data-en="OptiPix"
-                data-fr="OptiPix">
-                OptiPix
-            </h1>
+      <section aria-labelledby="main-heading">
+        <h1 id="main-heading" class="mb-4" data-en="OptiPix" data-fr="OptiPix">OptiPix</h1>
 
-            <p class="lead"
-               data-en="Upload, crop, and resize your images with precision. This tool supports &lt;abbr&gt;PNG&lt;/abbr&gt; and &lt;abbr&gt;JPG&lt;/abbr&gt; formats and applies smart compression to keep quality high and file size low."
-               data-fr="Téléversez, recadrez et redimensionnez vos images avec précision. Cet outil prend en charge les formats &lt;abbr&gt;PNG&lt;/abbr&gt; et &lt;abbr&gt;JPG&lt;/abbr&gt; et applique une compression optimisée pour conserver une bonne qualité tout en réduisant la taille des fichiers.">
-                Upload, crop, and resize your images with precision. This tool supports <abbr>PNG</abbr> and <abbr>JPG</abbr> formats and applies smart compression to keep quality high and file size low.
-            </p>
-        </section>
-
-        <section class="card mb-4">
-            <div class="card-body">
-                <h2 class="card-title" data-en="Upload image" data-fr="Télécharger une image">Upload image</h2>
-                <div class="upload-area" id="upload-area">
-                    <p data-en="Drop your image here or click to browse" data-fr="Déposez votre image ici ou cliquez pour parcourir">
-                        Drop your image here or click to browse
-                    </p>
-                    <input accept="image/png,image/jpeg,image/jpg" id="image-input" style="display: none;" type="file">
-                    <button class="btn btn-primary" type="button">
-                        <span data-en="Select image" data-fr="Sélectionner une image">Select image</span>
-                    </button>
-                </div>
-            </div>
-        </section>
-
- <!-- Step 2: Select Category -->
-<section class="card mb-4" id="category-section" style="display: none;">
-    <div class="card-body">
-        <h2 class="card-title" data-en="Select category" data-fr="Sélectionner une catégorie">Select category</h2>
-        <p data-en="Choose the type of crop you want to perform:" data-fr="Choisissez le type de recadrage que vous souhaitez effectuer :">
-            Choose the type of crop you want to perform:
+        <p
+          class="lead"
+          data-en="Upload, crop, and resize your images with precision. This tool supports &lt;abbr&gt;PNG&lt;/abbr&gt; and &lt;abbr&gt;JPG&lt;/abbr&gt; formats and applies smart compression to keep quality high and file size low."
+          data-fr="Téléversez, recadrez et redimensionnez vos images avec précision. Cet outil prend en charge les formats &lt;abbr&gt;PNG&lt;/abbr&gt; et &lt;abbr&gt;JPG&lt;/abbr&gt; et applique une compression optimisée pour conserver une bonne qualité tout en réduisant la taille des fichiers."
+        >
+          Upload, crop, and resize your images with precision. This tool supports <abbr>PNG</abbr> and <abbr>JPG</abbr> formats and applies smart
+          compression to keep quality high and file size low.
         </p>
-        <div class="category-buttons">
+      </section>
+
+      <section class="card mb-4">
+        <div class="card-body">
+          <h2 class="card-title" data-en="Upload image" data-fr="Télécharger une image">Upload image</h2>
+          <div class="upload-area" id="upload-area">
+            <p data-en="Drop your image here or click to browse" data-fr="Déposez votre image ici ou cliquez pour parcourir">
+              Drop your image here or click to browse
+            </p>
+            <input accept="image/png,image/jpeg,image/jpg" id="image-input" style="display: none" type="file" />
+            <button class="btn btn-primary" type="button">
+              <span data-en="Select image" data-fr="Sélectionner une image">Select image</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 2: Select Category -->
+      <section class="card mb-4" id="category-section" style="display: none">
+        <div class="card-body">
+          <h2 class="card-title" data-en="Select category" data-fr="Sélectionner une catégorie">Select category</h2>
+          <p data-en="Choose the type of crop you want to perform:" data-fr="Choisissez le type de recadrage que vous souhaitez effectuer :">
+            Choose the type of crop you want to perform:
+          </p>
+          <div class="category-buttons">
             <button class="btn btn-outline-primary btn-lg" onclick="selectCategory('rcmp')" type="button">
-                <span data-en="RCMP.ca" data-fr="GRC.ca">RCMP.ca</span>
+              <span data-en="RCMP.ca" data-fr="GRC.ca">RCMP.ca</span>
             </button>
             <button class="btn btn-outline-primary btn-lg" onclick="selectCategory('infoweb')" type="button">
-                <span data-en="Infoweb" data-fr="Infoweb">Infoweb</span>
+              <span data-en="Infoweb" data-fr="Infoweb">Infoweb</span>
             </button>
             <button class="btn btn-outline-primary btn-lg" onclick="selectCategory('free')" type="button">
-                <span data-en="Free crop" data-fr="Recadrage libre">Free crop</span>
+              <span data-en="Free crop" data-fr="Recadrage libre">Free crop</span>
             </button>
+          </div>
         </div>
-    </div>
-</section>
+      </section>
 
-<!-- Step 3: Select Preset (for RCMP or Infoweb) -->
-<section class="card mb-4" id="preset-section" style="display: none;">
-    <div class="card-body">
-        <h2 class="card-title" id="preset-section-title"></h2>
-        <p data-en="Select a preset size:" data-fr="Sélectionnez un format prédéfini :">
-            Select a preset size:
-        </p>
-        
-        <!-- RCMP Presets -->
-        <div id="rcmp-presets" style="display: none;">
+      <!-- Step 3: Select Preset (for RCMP or Infoweb) -->
+      <section class="card mb-4" id="preset-section" style="display: none">
+        <div class="card-body">
+          <h2 class="card-title" id="preset-section-title"></h2>
+          <p data-en="Select a preset size:" data-fr="Sélectionnez un format prédéfini :">Select a preset size:</p>
+
+          <!-- RCMP Presets -->
+          <div id="rcmp-presets" style="display: none">
             <div class="preset-buttons">
-                <button class="btn btn-outline-primary" onclick="setPresetAndContinue(825, 200, 'Landing', this)" type="button">
-                    <span data-en="Landing (825×200)" data-fr="Accueil (825×200)">Landing (825×200)</span>
-                </button>
-                <button class="btn btn-outline-primary" onclick="setPresetAndContinue(480, 480, 'Square', this)" type="button">
-                    <span data-en="Square (480×480)" data-fr="Carré (480×480)">Square (480×480)</span>
-                </button>
-                <button class="btn btn-outline-primary" onclick="setPresetAndContinue(480, 600, 'Portrait', this)" type="button">
-                    <span data-en="Portrait (480×600)" data-fr="Portrait (480×600)">Portrait (480×600)</span>
-                </button>
-                <button class="btn btn-outline-primary" onclick="setPresetAndContinue(480, 300, 'Landscape', this)" type="button">
-                    <span data-en="Landscape (480×300)" data-fr="Paysage (480×300)">Landscape (480×300)</span>
-                </button>
-                <button class="btn btn-outline-primary" onclick="setPresetAndContinue(360, 203, 'Feature', this)" type="button">
-                    <span data-en="Feature (360×203)" data-fr="Fonctionnalité (360×203)">Feature (360×203)</span>
-                </button>
-                <button class="btn btn-outline-primary" onclick="setPresetAndContinue(716, 475, 'Gazette', this)" type="button">
-                    <span data-en="Gazette article (716×475)" data-fr="Article de la Gazette (716×475)">Gazette article (716×475)</span>
-                </button>
+              <button class="btn btn-outline-primary" onclick="setPresetAndContinue(825, 200, 'Landing', this)" type="button">
+                <span data-en="Landing (825×200)" data-fr="Accueil (825×200)">Landing (825×200)</span>
+              </button>
+              <button class="btn btn-outline-primary" onclick="setPresetAndContinue(480, 480, 'Square', this)" type="button">
+                <span data-en="Square (480×480)" data-fr="Carré (480×480)">Square (480×480)</span>
+              </button>
+              <button class="btn btn-outline-primary" onclick="setPresetAndContinue(480, 600, 'Portrait', this)" type="button">
+                <span data-en="Portrait (480×600)" data-fr="Portrait (480×600)">Portrait (480×600)</span>
+              </button>
+              <button class="btn btn-outline-primary" onclick="setPresetAndContinue(480, 300, 'Landscape', this)" type="button">
+                <span data-en="Landscape (480×300)" data-fr="Paysage (480×300)">Landscape (480×300)</span>
+              </button>
+              <button class="btn btn-outline-primary" onclick="setPresetAndContinue(360, 203, 'Feature', this)" type="button">
+                <span data-en="Feature (360×203)" data-fr="Fonctionnalité (360×203)">Feature (360×203)</span>
+              </button>
+              <button class="btn btn-outline-primary" onclick="setPresetAndContinue(716, 475, 'Gazette', this)" type="button">
+                <span data-en="Gazette article (716×475)" data-fr="Article de la Gazette (716×475)">Gazette article (716×475)</span>
+              </button>
             </div>
-        </div>
-        
-        <!-- Infoweb Presets -->
-        <div id="infoweb-presets" style="display: none;">
+          </div>
+
+          <!-- Infoweb Presets -->
+          <div id="infoweb-presets" style="display: none">
             <div class="preset-buttons">
-                <button class="btn btn-outline-primary" onclick="setPresetAndContinue(745, 319, 'Rotator', this)" type="button">
-                    <span data-en="Rotator (745×319)" data-fr="Carrousel (745×319)">Rotator (745×319)</span>
-                </button>
+              <button class="btn btn-outline-primary" onclick="setPresetAndContinue(745, 319, 'Rotator', this)" type="button">
+                <span data-en="Rotator (745×319)" data-fr="Carrousel (745×319)">Rotator (745×319)</span>
+              </button>
             </div>
-        </div>
-        
-        <div class="text-center mt-3">
+          </div>
+
+          <div class="text-center mt-3">
             <button class="btn btn-secondary" onclick="backToCategory()" type="button">
-                <span data-en="Back" data-fr="Retour">Back</span>
+              <span data-en="Back" data-fr="Retour">Back</span>
             </button>
+          </div>
         </div>
-    </div>
-</section>
+      </section>
 
-<!-- Step 3b: Free Crop Dimensions -->
-<section class="card mb-4" id="free-crop-section" style="display: none;">
-    <div class="card-body">
-        <h2 class="card-title" data-en="Free crop dimensions" data-fr="Dimensions de recadrage libre">Free crop dimensions</h2>
-        <p data-en="Enter your desired dimensions in pixels:" data-fr="Entrez vos dimensions souhaitées en pixels :">
+      <!-- Step 3b: Free Crop Dimensions -->
+      <section class="card mb-4" id="free-crop-section" style="display: none">
+        <div class="card-body">
+          <h2 class="card-title" data-en="Free crop dimensions" data-fr="Dimensions de recadrage libre">Free crop dimensions</h2>
+          <p data-en="Enter your desired dimensions in pixels:" data-fr="Entrez vos dimensions souhaitées en pixels :">
             Enter your desired dimensions in pixels:
-        </p>
-        
-        <div class="row g-3 mb-3">
+          </p>
+
+          <div class="row g-3 mb-3">
             <div class="col-md-6">
-                <label for="free-width" class="form-label" data-en="Width (pixels)" data-fr="Largeur (pixels)">Width (pixels)</label>
-                <input type="number" class="form-control" id="free-width" min="1" max="5000" placeholder="800">
+              <label for="free-width" class="form-label" data-en="Width (pixels)" data-fr="Largeur (pixels)">Width (pixels)</label>
+              <input type="number" class="form-control" id="free-width" min="1" max="5000" placeholder="800" />
             </div>
             <div class="col-md-6">
-                <label for="free-height" class="form-label" data-en="Height (pixels)" data-fr="Hauteur (pixels)">Height (pixels)</label>
-                <input type="number" class="form-control" id="free-height" min="1" max="5000" placeholder="600">
+              <label for="free-height" class="form-label" data-en="Height (pixels)" data-fr="Hauteur (pixels)">Height (pixels)</label>
+              <input type="number" class="form-control" id="free-height" min="1" max="5000" placeholder="600" />
             </div>
-        </div>
-        
-        <div class="text-center">
+          </div>
+
+          <div class="text-center">
             <button class="btn btn-primary" onclick="applyFreeCropDimensions()" type="button">
-                <span data-en="Continue" data-fr="Continuer">Continue</span>
+              <span data-en="Continue" data-fr="Continuer">Continue</span>
             </button>
             <button class="btn btn-secondary" onclick="backToCategory()" type="button">
-                <span data-en="Back" data-fr="Retour">Back</span>
+              <span data-en="Back" data-fr="Retour">Back</span>
             </button>
+          </div>
         </div>
-    </div>
-</section>
+      </section>
 
-<section class="card mb-4" id="cropper-section" style="display: none;">
-    <div class="card-body">
-        <h2 class="card-title" data-en="Crop and resize" data-fr="Recadrer et redimensionner">Crop and resize</h2>
-        
-        <div class="alert alert-info" id="current-preset-info">
+      <section class="card mb-4" id="cropper-section" style="display: none">
+        <div class="card-body">
+          <h2 class="card-title" data-en="Crop and resize" data-fr="Recadrer et redimensionner">Crop and resize</h2>
+
+          <div class="alert alert-info" id="current-preset-info">
             <strong data-en="Selected preset:" data-fr="Format sélectionné :">Selected preset:</strong>
             <span id="current-preset-text"></span>
-        </div>
+          </div>
 
-        <section>
+          <section>
             <div class="row">
-                <div class="col-md-3">
-                    <h3 class="card-title" data-en="General function" data-fr="Fonction générale">General function</h3>
-                    <div class="preset-buttons">
-                        <button class="btn btn-secondary btn-sm mb-1" onclick="flipHorizontal()" type="button">
-                            <span data-en="Flip horizontal" data-fr="Retourner horizontalement">Flip horizontal</span>
-                        </button>
-                        <button class="btn btn-secondary btn-sm mb-1" onclick="flipVertical()" type="button">
-                            <span data-en="Flip vertical" data-fr="Retourner verticalement">Flip vertical</span>
-                        </button>
-                    </div>
+              <div class="col-md-3">
+                <h3 class="card-title" data-en="General function" data-fr="Fonction générale">General function</h3>
+                <div class="preset-buttons">
+                  <button class="btn btn-secondary btn-sm mb-1" onclick="flipHorizontal()" type="button">
+                    <span data-en="Flip horizontal" data-fr="Retourner horizontalement">Flip horizontal</span>
+                  </button>
+                  <button class="btn btn-secondary btn-sm mb-1" onclick="flipVertical()" type="button">
+                    <span data-en="Flip vertical" data-fr="Retourner verticalement">Flip vertical</span>
+                  </button>
                 </div>
+              </div>
 
-                <div class="col-md-3">
-                    <h3 class="card-title" data-en="Zoom controls" data-fr="Contrôles de zoom">Zoom controls</h3>
-                    <div class="preset-buttons">
-                        <button class="btn btn-secondary btn-sm mb-1" onclick="zoomIn()" type="button">
-                            <span data-en="Zoom in" data-fr="Zoom avant">Zoom in</span>
-                        </button>
-                        <button class="btn btn-secondary btn-sm mb-1" onclick="zoomOut()" type="button">
-                            <span data-en="Zoom out" data-fr="Zoom arrière">Zoom out</span>
-                        </button>
-                        <button class="btn btn-secondary btn-sm mb-1" onclick="resetZoom()" type="button">
-                            <span data-en="Reset zoom" data-fr="Réinitialiser le zoom">Reset zoom</span>
-                        </button>
-                    </div>
+              <div class="col-md-3">
+                <h3 class="card-title" data-en="Zoom controls" data-fr="Contrôles de zoom">Zoom controls</h3>
+                <div class="preset-buttons">
+                  <button class="btn btn-secondary btn-sm mb-1" onclick="zoomIn()" type="button">
+                    <span data-en="Zoom in" data-fr="Zoom avant">Zoom in</span>
+                  </button>
+                  <button class="btn btn-secondary btn-sm mb-1" onclick="zoomOut()" type="button">
+                    <span data-en="Zoom out" data-fr="Zoom arrière">Zoom out</span>
+                  </button>
+                  <button class="btn btn-secondary btn-sm mb-1" onclick="resetZoom()" type="button">
+                    <span data-en="Reset zoom" data-fr="Réinitialiser le zoom">Reset zoom</span>
+                  </button>
                 </div>
+              </div>
 
-                <div class="col-md-3">
-                    <h3 class="card-title" data-en="Move image" data-fr="Déplacer l'image">Move image</h3>
-                    <div class="preset-buttons">
-                        <button class="btn btn-secondary btn-sm mb-1" onclick="moveImage('up')" type="button">
-                            <span data-en="Up" data-fr="Haut">Up</span>
-                        </button>
-                        <button class="btn btn-secondary btn-sm mb-1" onclick="moveImage('down')" type="button">
-                            <span data-en="Down" data-fr="Bas">Down</span>
-                        </button>
-                        <button class="btn btn-secondary btn-sm mb-1" onclick="moveImage('left')" type="button">
-                            <span data-en="Left" data-fr="Gauche">Left</span>
-                        </button>
-                        <button class="btn btn-secondary btn-sm mb-1" onclick="moveImage('right')" type="button">
-                            <span data-en="Right" data-fr="Droite">Right</span>
-                        </button>
-                    </div>
+              <div class="col-md-3">
+                <h3 class="card-title" data-en="Move image" data-fr="Déplacer l'image">Move image</h3>
+                <div class="preset-buttons">
+                  <button class="btn btn-secondary btn-sm mb-1" onclick="moveImage('up')" type="button">
+                    <span data-en="Up" data-fr="Haut">Up</span>
+                  </button>
+                  <button class="btn btn-secondary btn-sm mb-1" onclick="moveImage('down')" type="button">
+                    <span data-en="Down" data-fr="Bas">Down</span>
+                  </button>
+                  <button class="btn btn-secondary btn-sm mb-1" onclick="moveImage('left')" type="button">
+                    <span data-en="Left" data-fr="Gauche">Left</span>
+                  </button>
+                  <button class="btn btn-secondary btn-sm mb-1" onclick="moveImage('right')" type="button">
+                    <span data-en="Right" data-fr="Droite">Right</span>
+                  </button>
                 </div>
+              </div>
 
-                <div class="col-md-3">
-                    <h3 class="card-title" data-en="Move crop area" data-fr="Déplacer la zone de recadrage">Move crop area</h3>
-                    <div class="preset-buttons">
-                        <button class="btn btn-secondary btn-sm mb-1" onclick="moveCropBox('up')" type="button">
-                            <span data-en="Up" data-fr="Haut">Up</span>
-                        </button>
-                        <button class="btn btn-secondary btn-sm mb-1" onclick="moveCropBox('down')" type="button">
-                            <span data-en="Down" data-fr="Bas">Down</span>
-                        </button>
-                        <button class="btn btn-secondary btn-sm mb-1" onclick="moveCropBox('left')" type="button">
-                            <span data-en="Left" data-fr="Gauche">Left</span>
-                        </button>
-                        <button class="btn btn-secondary btn-sm mb-1" onclick="moveCropBox('right')" type="button">
-                            <span data-en="Right" data-fr="Droite">Right</span>
-                        </button>
-                    </div>
+              <div class="col-md-3">
+                <h3 class="card-title" data-en="Move crop area" data-fr="Déplacer la zone de recadrage">Move crop area</h3>
+                <div class="preset-buttons">
+                  <button class="btn btn-secondary btn-sm mb-1" onclick="moveCropBox('up')" type="button">
+                    <span data-en="Up" data-fr="Haut">Up</span>
+                  </button>
+                  <button class="btn btn-secondary btn-sm mb-1" onclick="moveCropBox('down')" type="button">
+                    <span data-en="Down" data-fr="Bas">Down</span>
+                  </button>
+                  <button class="btn btn-secondary btn-sm mb-1" onclick="moveCropBox('left')" type="button">
+                    <span data-en="Left" data-fr="Gauche">Left</span>
+                  </button>
+                  <button class="btn btn-secondary btn-sm mb-1" onclick="moveCropBox('right')" type="button">
+                    <span data-en="Right" data-fr="Droite">Right</span>
+                  </button>
                 </div>
+              </div>
             </div>
-        </section>
+          </section>
 
-        <div class="cropper-container">
-            <img alt="Image to crop" id="cropper-image" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
-        </div>
+          <div class="cropper-container">
+            <img alt="Image to crop" id="cropper-image" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
+          </div>
 
-        <div class="text-center mt-3">
+          <div class="text-center mt-3">
             <button class="btn btn-success" onclick="cropImage()" type="button">
-                <span data-en="Apply crop" data-fr="Appliquer le recadrage">Apply crop</span>
+              <span data-en="Apply crop" data-fr="Appliquer le recadrage">Apply crop</span>
             </button>
             <button class="btn btn-secondary" onclick="backToPresetOrCategory()" type="button">
-                <span data-en="Back" data-fr="Retour">Back</span>
+              <span data-en="Back" data-fr="Retour">Back</span>
             </button>
+          </div>
         </div>
-    </div>
-</section>
+      </section>
 
-        <section class="card mb-4" id="preview-section" style="display: none;">
-            <div class="card-body">
-                <h2 class="card-title" data-en="Preview and download" data-fr="Aperçu et téléchargement">Preview and download</h2>
-                <div class="preview-container">
-                    <img alt="Cropped image preview" class="preview-image" id="preview-image" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
-                    <div class="compression-info">
-                        <p data-en="Compression: 75% (optimized for web)" data-fr="Compression : 75 % (optimisée pour le Web)" id="compression-details">Compression: 75% (optimized for web)</p>
-                        <p id="image-dimensions"></p>
-                    </div>
-                </div>
-                <div class="download-buttons">
-                    <button class="btn btn-primary" onclick="downloadImage('png')" type="button">
-                        <span data-en="Download &lt;abbr&gt;PNG&lt;/abbr&gt;" data-fr="Télécharger &lt;abbr&gt;PNG&lt;/abbr&gt;">Download <abbr>PNG</abbr></span>
-                    </button>
-                    <button class="btn btn-primary" onclick="downloadImage('jpg')" type="button">
-                        <span data-en="Download &lt;abbr&gt;JPG&lt;/abbr&gt;" data-fr="Télécharger &lt;abbr&gt;JPG&lt;/abbr&gt;">Download <abbr>JPG</abbr></span>
-                    </button>
-                    <button class="btn btn-outline-secondary" onclick="startOver()" type="button">
-                        <span data-en="Start over" data-fr="Recommencer">Start over</span>
-                    </button>
-                </div>
+      <section class="card mb-4" id="preview-section" style="display: none">
+        <div class="card-body">
+          <h2 class="card-title" data-en="Preview and download" data-fr="Aperçu et téléchargement">Preview and download</h2>
+          <div class="preview-container">
+            <img
+              alt="Cropped image preview"
+              class="preview-image"
+              id="preview-image"
+              src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+            />
+            <div class="compression-info">
+              <p data-en="Compression: 75% (optimized for web)" data-fr="Compression : 75 % (optimisée pour le Web)" id="compression-details">
+                Compression: 75% (optimized for web)
+              </p>
+              <p id="image-dimensions"></p>
             </div>
-        </section>
+          </div>
+          <div class="download-buttons">
+            <button class="btn btn-primary" onclick="downloadImage('png')" type="button">
+              <span data-en="Download &lt;abbr&gt;PNG&lt;/abbr&gt;" data-fr="Télécharger &lt;abbr&gt;PNG&lt;/abbr&gt;"
+                >Download <abbr>PNG</abbr></span
+              >
+            </button>
+            <button class="btn btn-primary" onclick="downloadImage('jpg')" type="button">
+              <span data-en="Download &lt;abbr&gt;JPG&lt;/abbr&gt;" data-fr="Télécharger &lt;abbr&gt;JPG&lt;/abbr&gt;"
+                >Download <abbr>JPG</abbr></span
+              >
+            </button>
+            <button class="btn btn-outline-secondary" onclick="startOver()" type="button">
+              <span data-en="Start over" data-fr="Recommencer">Start over</span>
+            </button>
+          </div>
+        </div>
+      </section>
     </main>
 
     <footer class="mt-auto">
-        <div class="container">
-            <div class="text-center">
-                <p id="version-info" class="mb-0" data-en="" data-fr=""></p>
-            </div>
+      <div class="container">
+        <div class="text-center">
+          <p id="version-info" class="mb-0" data-en="" data-fr=""></p>
         </div>
+      </div>
     </footer>
 
     <script src="js/bootstrap.bundle.min.js"></script>
     <script src="js/creavia.js"></script>
     <script src="js/cropper.min.js"></script>
     <script src="js/optipix.js"></script>
-</body>
+  </body>
 </html>
