@@ -115,7 +115,9 @@
 body {
   background-color: var(--body-bg);
   color: var(--body-color);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 /* Base Elements */
@@ -137,7 +139,7 @@ ul {
 
 ol li,
 ul li {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0rem;
 }
 
 /* =================================================================
@@ -209,7 +211,9 @@ ul li {
 .card {
   background-color: var(--card-bg);
   border-color: var(--card-border);
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
 }
 
 .card-body,
@@ -421,7 +425,9 @@ footer {
   padding: 2rem 0;
   margin-top: 3rem;
   border-top: 1px solid var(--border-color);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 /* =================================================================
