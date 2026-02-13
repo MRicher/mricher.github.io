@@ -153,7 +153,7 @@ function convertToHTML() {
 }
 
 /**
- * Format HTML with proper indentation
+ * Clean HTML content and output as single line
  */
 function cleanHTML(html) {
   // Create a temporary div to parse HTML
@@ -163,73 +163,13 @@ function cleanHTML(html) {
   // Process all elements
   const processedHTML = processElements(tempDiv);
 
-  // Format with proper indentation
-  const formattedHTML = formatHTML(processedHTML);
+  // Convert to single line (remove extra whitespace and newlines)
+  const singleLine = processedHTML
+    .replace(/>\s+</g, "><") // Remove whitespace between tags
+    .replace(/\s+/g, " ") // Replace multiple spaces with single space
+    .trim();
 
-  return formattedHTML;
-}
-
-/**
- * Format HTML with proper indentation and line breaks
- */
-function formatHTML(html) {
-  let formatted = "";
-  let indent = 0;
-  const tab = "  "; // 2 spaces for indentation
-
-  // Split by tags
-  const parts = html.match(/<[^>]+>|[^<]+/g) || [];
-
-  for (let i = 0; i < parts.length; i++) {
-    const part = parts[i].trim();
-    if (!part) continue;
-
-    // Check if it's a tag
-    if (part.startsWith("<")) {
-      // Closing tag
-      if (part.startsWith("</")) {
-        indent--;
-        // Check if previous part was opening tag (empty element)
-        const prevPart = i > 0 ? parts[i - 1].trim() : "";
-        if (prevPart.startsWith("<") && !prevPart.startsWith("</")) {
-          // Put closing tag on same line as opening tag for empty elements
-          formatted += part;
-        } else {
-          formatted += "\n" + tab.repeat(Math.max(0, indent)) + part;
-        }
-      }
-      // Self-closing or opening tag
-      else {
-        formatted += "\n" + tab.repeat(indent) + part;
-        // Check if it's not a self-closing tag and not an inline tag
-        const tagName = part.match(/<(\w+)/)?.[1];
-        const inlineTags = ["strong", "em", "a"];
-        const isSelfClosing = part.endsWith("/>");
-
-        if (!isSelfClosing && !inlineTags.includes(tagName)) {
-          indent++;
-        }
-      }
-    }
-    // Text content
-    else {
-      // Check context - if between inline tags, keep on same line
-      const prevPart = i > 0 ? parts[i - 1].trim() : "";
-      const nextPart = i < parts.length - 1 ? parts[i + 1].trim() : "";
-
-      const prevTag = prevPart.match(/<\/?(\w+)/)?.[1];
-      const nextTag = nextPart.match(/<\/?(\w+)/)?.[1];
-      const inlineTags = ["strong", "em", "a"];
-
-      if (inlineTags.includes(prevTag) || inlineTags.includes(nextTag)) {
-        formatted += part;
-      } else {
-        formatted += part;
-      }
-    }
-  }
-
-  return formatted.trim();
+  return singleLine;
 }
 
 /**
@@ -392,36 +332,83 @@ function processListItems(listElement) {
     } else if (currentIndent === 0) {
       // No indent - regular list item
       const content = processInlineContent(node);
-      result += "<li>" + content + "</li>";
-      i++;
-    } else {
-      // This item has indent - need to create nested list
-      // Look ahead to collect all items at this indent level or higher
-      let nestedItems = [];
-      let j = i;
+
+      // Look ahead to see if next items are indented (should be nested under this item)
+      let j = i + 1;
+      let hasIndentedChildren = false;
+      let nestedHTML = "";
 
       while (j < listItems.length) {
         const nextIndent = getIndentLevel(listItems[j]);
-        if (nextIndent < currentIndent) {
-          break; // Back to lower indent level
+        if (nextIndent === 0) {
+          break; // Next item is at same level, stop looking
         }
-        nestedItems.push(listItems[j]);
+        if (nextIndent > 0) {
+          hasIndentedChildren = true;
+          // Collect all indented items
+          let indentedItems = [];
+          while (j < listItems.length && getIndentLevel(listItems[j]) > 0) {
+            indentedItems.push(listItems[j]);
+            j++;
+          }
+
+          // Create nested list with these items
+          const nestedListType = listItems[i + 1].getAttribute("data-list") === "bullet" ? "ul" : "ol";
+          nestedHTML += "<" + nestedListType + ">";
+
+          // Process nested items recursively
+          nestedHTML += processNestedIndentedItems(indentedItems);
+
+          nestedHTML += "</" + nestedListType + ">";
+          break;
+        }
+      }
+
+      result += "<li>" + content + nestedHTML + "</li>";
+      i = hasIndentedChildren ? j : i + 1;
+    } else {
+      // Skip - this will be handled as part of parent's nested list
+      i++;
+    }
+  }
+
+  return result;
+}
+
+/**
+ * Process nested indented items recursively
+ */
+function processNestedIndentedItems(items) {
+  let result = "";
+  let i = 0;
+
+  while (i < items.length) {
+    const node = items[i];
+    const currentIndent = getIndentLevel(node);
+    const content = processInlineContent(node);
+
+    // Look ahead for further nested items
+    let j = i + 1;
+    let nestedHTML = "";
+
+    while (j < items.length && getIndentLevel(items[j]) > currentIndent) {
+      let nestedItems = [];
+      const nestedIndent = getIndentLevel(items[j]);
+
+      while (j < items.length && getIndentLevel(items[j]) >= nestedIndent) {
+        nestedItems.push(items[j]);
         j++;
       }
 
-      // Create nested list
-      const nestedListType = dataList === "bullet" ? "ul" : "ol";
-      result += "<li><" + nestedListType + ">";
-
-      // Process nested items
-      for (let nestedItem of nestedItems) {
-        const nestedContent = processInlineContent(nestedItem);
-        result += "<li>" + nestedContent + "</li>";
-      }
-
-      result += "</" + nestedListType + "></li>";
-      i = j;
+      const nestedListType = items[i + 1].getAttribute("data-list") === "bullet" ? "ul" : "ol";
+      nestedHTML += "<" + nestedListType + ">";
+      nestedHTML += processNestedIndentedItems(nestedItems);
+      nestedHTML += "</" + nestedListType + ">";
+      break;
     }
+
+    result += "<li>" + content + nestedHTML + "</li>";
+    i = j > i + 1 ? j : i + 1;
   }
 
   return result;
