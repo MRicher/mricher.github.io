@@ -153,15 +153,7 @@ function convertToHTML() {
 }
 
 /**
- * Clean HTML content
- * - Remove unnecessary attributes and styles
- * - Keep only <strong>, <em>, <p>, <ul>, <ol>, <li>, <a> tags with proper nesting
- * - Convert bold to <strong>, italic to <em>
- * - Convert H1 to H2
- * - Remove <br> and empty <p> tags
- * - Maintain proper list structure (ul for bullets, ol for ordered)
- * - Convert Quill lists to proper HTML lists (checking data-list attribute)
- * - Output as single line
+ * Format HTML with proper indentation
  */
 function cleanHTML(html) {
   // Create a temporary div to parse HTML
@@ -171,13 +163,73 @@ function cleanHTML(html) {
   // Process all elements
   const processedHTML = processElements(tempDiv);
 
-  // Convert to single line (remove extra whitespace and newlines)
-  const singleLine = processedHTML
-    .replace(/>\s+</g, "><") // Remove whitespace between tags
-    .replace(/\s+/g, " ") // Replace multiple spaces with single space
-    .trim();
+  // Format with proper indentation
+  const formattedHTML = formatHTML(processedHTML);
 
-  return singleLine;
+  return formattedHTML;
+}
+
+/**
+ * Format HTML with proper indentation and line breaks
+ */
+function formatHTML(html) {
+  let formatted = "";
+  let indent = 0;
+  const tab = "  "; // 2 spaces for indentation
+
+  // Split by tags
+  const parts = html.match(/<[^>]+>|[^<]+/g) || [];
+
+  for (let i = 0; i < parts.length; i++) {
+    const part = parts[i].trim();
+    if (!part) continue;
+
+    // Check if it's a tag
+    if (part.startsWith("<")) {
+      // Closing tag
+      if (part.startsWith("</")) {
+        indent--;
+        // Check if previous part was opening tag (empty element)
+        const prevPart = i > 0 ? parts[i - 1].trim() : "";
+        if (prevPart.startsWith("<") && !prevPart.startsWith("</")) {
+          // Put closing tag on same line as opening tag for empty elements
+          formatted += part;
+        } else {
+          formatted += "\n" + tab.repeat(Math.max(0, indent)) + part;
+        }
+      }
+      // Self-closing or opening tag
+      else {
+        formatted += "\n" + tab.repeat(indent) + part;
+        // Check if it's not a self-closing tag and not an inline tag
+        const tagName = part.match(/<(\w+)/)?.[1];
+        const inlineTags = ["strong", "em", "a"];
+        const isSelfClosing = part.endsWith("/>");
+
+        if (!isSelfClosing && !inlineTags.includes(tagName)) {
+          indent++;
+        }
+      }
+    }
+    // Text content
+    else {
+      // Check context - if between inline tags, keep on same line
+      const prevPart = i > 0 ? parts[i - 1].trim() : "";
+      const nextPart = i < parts.length - 1 ? parts[i + 1].trim() : "";
+
+      const prevTag = prevPart.match(/<\/?(\w+)/)?.[1];
+      const nextTag = nextPart.match(/<\/?(\w+)/)?.[1];
+      const inlineTags = ["strong", "em", "a"];
+
+      if (inlineTags.includes(prevTag) || inlineTags.includes(nextTag)) {
+        formatted += part;
+      } else {
+        formatted += part;
+      }
+    }
+  }
+
+  return formatted.trim();
 }
 
 /**
