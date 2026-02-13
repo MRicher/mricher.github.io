@@ -23,75 +23,69 @@
   <body>
     <a class="skip-link" href="#main-content" data-en="Skip to main content" data-fr="Passer au contenu principal"> Skip to main content </a>
 
-    <header>
-      <nav class="navbar navbar-expand-lg" aria-label="Main navigation" data-en="Main navigation" data-fr="Navigation principale">
-        <div class="container">
-          <div class="navbar-brand d-flex align-items-center">
-            <img src="img/seedling.svg" alt="" class="me-2" style="height: 50px; width: auto" />
-            <span data-en="Créavia" data-fr="Créavia">Créavia</span>
-          </div>
+    <nav class="navbar navbar-expand-lg" aria-label="Main navigation">
+      <div class="container">
+        <div class="navbar-brand d-flex align-items-center">
+          <img src="img/seedling.svg" alt="" class="me-2" style="height: 50px; width: auto" />
+          <span data-en="Créavia" data-fr="Créavia">Créavia</span>
+        </div>
 
-          <button
-            class="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarNav"
-            aria-controls="navbarNav"
-            aria-expanded="false"
-            aria-label="Toggle navigation menu"
-            data-en-label="Toggle navigation menu"
-            data-fr-label="Basculer le menu de navigation"
-          >
-            <span class="navbar-toggler-icon" aria-hidden="true"></span>
-            <span class="visually-hidden" data-en="Toggle navigation menu" data-fr="Basculer le menu de navigation"> Toggle navigation menu </span>
-          </button>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation menu"
+        >
+          <span class="navbar-toggler-icon" aria-hidden="true"></span>
+          <span class="visually-hidden" data-en="Toggle navigation menu" data-fr="Basculer le menu de navigation"> Toggle navigation menu </span>
+        </button>
 
-          <div class="collapse navbar-collapse" id="navbarNav">
-            <div class="navbar-nav me-auto"></div>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0" role="menubar"></ul>
 
-            <div class="language-switcher" role="group" aria-label="Settings" data-en="Settings" data-fr="Paramètres">
-              <button
-                id="theme-toggle"
-                type="button"
-                class="theme-toggle"
-                aria-label="Toggle dark/light theme"
-                data-en-label="Toggle dark/light theme"
-                data-fr-label="Basculer le thème clair/sombre"
-                data-en-dark="Switch to light mode"
-                data-en-light="Switch to dark mode"
-                data-fr-dark="Passer au mode clair"
-                data-fr-light="Passer au mode sombre"
-              >
-                <span id="theme-text" data-en="Dark mode" data-fr="Mode sombre"> Dark mode </span>
-              </button>
+          <div class="language-switcher" role="group" aria-label="Settings">
+            <button
+              id="theme-toggle"
+              type="button"
+              class="theme-toggle"
+              aria-label="Toggle dark/light theme"
+              data-en-dark="Switch to light mode"
+              data-en-light="Switch to dark mode"
+              data-fr-dark="Passer au mode clair"
+              data-fr-light="Passer au mode sombre"
+            >
+              <span id="theme-text" data-en="Dark mode" data-fr="Mode sombre"> Dark mode </span>
+            </button>
 
-              <button
-                id="lang-fr-btn"
-                type="button"
-                class="btn btn-outline-primary btn-sm"
-                data-lang="fr-CA"
-                aria-label="Passer au français"
-                aria-pressed="false"
-                style="display: none"
-              >
-                <span data-en="Français" data-fr="Français">Français</span>
-              </button>
+            <button
+              id="lang-fr-btn"
+              type="button"
+              class="btn btn-outline-primary btn-sm"
+              data-lang="fr-CA"
+              aria-label="Passer au français"
+              aria-pressed="false"
+              style="display: none"
+            >
+              <span data-en="Français" data-fr="Français">Français</span>
+            </button>
 
-              <button
-                id="lang-en-btn"
-                type="button"
-                class="btn btn-outline-primary btn-sm"
-                data-lang="en-CA"
-                aria-label="Switch to English"
-                aria-pressed="false"
-              >
-                <span data-en="English" data-fr="English">English</span>
-              </button>
-            </div>
+            <button
+              id="lang-en-btn"
+              type="button"
+              class="btn btn-outline-primary btn-sm"
+              data-lang="en-CA"
+              aria-label="Switch to English"
+              aria-pressed="false"
+            >
+              <span data-en="English" data-fr="English">English</span>
+            </button>
           </div>
         </div>
-      </nav>
-    </header>
+      </div>
+    </nav>
 
     <main class="container" id="main-content">
       <section aria-labelledby="main-heading">
