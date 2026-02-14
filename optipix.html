@@ -103,7 +103,7 @@
         </p>
       </section>
 
-      <section class="card mb-4">
+      <section class="card mb-4" id="upload-section">
         <div class="card-body">
           <h2 class="card-title" data-en="Upload image" data-fr="Télécharger une image">Upload image</h2>
           <div class="upload-area" id="upload-area" role="button" tabindex="0" aria-label="Upload image">
@@ -118,7 +118,6 @@
         </div>
       </section>
 
-      <!-- Step 2: Select Category -->
       <section class="card mb-4" id="category-section" style="display: none">
         <div class="card-body">
           <h2 class="card-title" data-en="Select category" data-fr="Sélectionner une catégorie">Select category</h2>
@@ -139,13 +138,11 @@
         </div>
       </section>
 
-      <!-- Step 3: Select Preset (for RCMP or Infoweb) -->
       <section class="card mb-4" id="preset-section" style="display: none">
         <div class="card-body">
           <h2 class="card-title" id="preset-section-title"></h2>
           <p data-en="Select a preset size:" data-fr="Sélectionnez un format prédéfini :">Select a preset size:</p>
 
-          <!-- RCMP Presets -->
           <div id="rcmp-presets" style="display: none">
             <div class="preset-buttons">
               <button class="btn btn-outline-primary" onclick="setPresetAndContinue(825, 200, 'Landing', this)" type="button">
@@ -169,7 +166,6 @@
             </div>
           </div>
 
-          <!-- Infoweb Presets -->
           <div id="infoweb-presets" style="display: none">
             <div class="preset-buttons">
               <button class="btn btn-outline-primary" onclick="setPresetAndContinue(745, 319, 'Rotator', this)" type="button">
@@ -186,7 +182,6 @@
         </div>
       </section>
 
-      <!-- Step 3b: Free Crop Dimensions -->
       <section class="card mb-4" id="free-crop-section" style="display: none">
         <div class="card-body">
           <h2 class="card-title" data-en="Free crop dimensions" data-fr="Dimensions de recadrage libre">Free crop dimensions</h2>
