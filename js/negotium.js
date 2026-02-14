@@ -111,9 +111,9 @@ function initializeQuillEditor() {
       }
       return op;
     });
-
     return new Quill.imports.delta(cleanDelta);
   });
+}
 
 /**
  * Update placeholder text based on current language
