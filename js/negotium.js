@@ -74,11 +74,10 @@ function initializeQuillEditor() {
   const toolbarOptions = [
     ["bold", "italic"],
     [{ list: "ordered" }, { list: "bullet" }],
-    [{ indent: "-1" }, { indent: "+1" }], // Add indent/outdent buttons
+    [{ indent: "-1" }, { indent: "+1" }],
     [{ header: [2, 3, false] }],
-    ["link"], // Add link button
+    ["link"],
     ["clean"],
-    ["view-html"], // Add view HTML button
   ];
 
   quill = new Quill("#editor", {
@@ -115,53 +114,6 @@ function initializeQuillEditor() {
 
     return new Quill.imports.delta(cleanDelta);
   });
-
-  // Add custom handler for view-html button
-  const viewHtmlButton = document.querySelector(".ql-view-html");
-  if (viewHtmlButton) {
-    viewHtmlButton.innerHTML = "&lt;/&gt;"; // HTML icon
-    viewHtmlButton.title = "View HTML";
-    // Add click handler directly to the button
-    viewHtmlButton.addEventListener("click", function (e) {
-      e.preventDefault();
-      toggleHTMLView();
-    });
-  }
-}
-
-/**
- * Toggle between rich text editor and HTML source view
- */
-function toggleHTMLView() {
-  const editorContainer = document.querySelector(".ql-container");
-  const editor = document.querySelector(".ql-editor");
-  const viewHtmlButton = document.querySelector(".ql-view-html");
-
-  if (!editorContainer || !editor) return;
-
-  // Check if we're currently in HTML view
-  const isHTMLView = editorContainer.classList.contains("html-view");
-
-  if (isHTMLView) {
-    // Switch back to rich text view
-    const htmlContent = editor.textContent;
-    quill.root.innerHTML = htmlContent;
-    editorContainer.classList.remove("html-view");
-    editor.contentEditable = "true";
-    if (viewHtmlButton) {
-      viewHtmlButton.classList.remove("ql-active");
-    }
-  } else {
-    // Switch to HTML view
-    const htmlContent = quill.root.innerHTML;
-    editor.textContent = htmlContent;
-    editorContainer.classList.add("html-view");
-    editor.contentEditable = "true";
-    if (viewHtmlButton) {
-      viewHtmlButton.classList.add("ql-active");
-    }
-  }
-}
 
 /**
  * Update placeholder text based on current language
