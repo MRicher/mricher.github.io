@@ -21,6 +21,32 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ===================================================================
+// UTILITY FUNCTIONS
+// ===================================================================
+
+/**
+ * Escape HTML special characters
+ */
+function escapeHTML(text) {
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+/**
+ * Validate and sanitize href attribute
+ */
+function sanitizeHref(href) {
+  if (!href) return null;
+  // Remove javascript: and data: URLs for security
+  const lowerHref = href.toLowerCase().trim();
+  if (lowerHref.startsWith("javascript:") || lowerHref.startsWith("data:")) {
+    return null;
+  }
+  return href;
+}
+
+// ===================================================================
 // QUILL EDITOR
 // ===================================================================
 
@@ -225,98 +251,73 @@ function cleanHTML(html) {
  * Keep only allowed tags and clean attributes
  */
 function processElements(element) {
-  let result = "";
+  const parts = [];
 
   // Iterate through child nodes
   for (let node of element.childNodes) {
     if (node.nodeType === Node.TEXT_NODE) {
-      // Preserve spacing but normalize multiple spaces to single space
+      // Normalize whitespace
       let text = node.textContent.replace(/\s+/g, " ");
-      // Only trim if this is at the very start or end of the parent element
+
+      // Trim leading space if first child
       if (node === element.firstChild) {
         text = text.replace(/^\s+/, "");
       }
+      // Trim trailing space if last child
       if (node === element.lastChild) {
         text = text.replace(/\s+$/, "");
       }
-      // Convert non-breaking spaces to &#160;
-      text = text.replace(/\u00A0/g, "&#160;");
+
+      // Convert non-breaking spaces to proper entity
+      text = text.replace(/\u00A0/g, "&nbsp;");
+
       if (text) {
-        result += text;
+        parts.push(escapeHTML(text));
       }
     } else if (node.nodeType === Node.ELEMENT_NODE) {
       const tagName = node.tagName.toLowerCase();
 
       // Convert H1 to H2
       if (tagName === "h1") {
-        result += "<h2>" + processElements(node) + "</h2>";
+        const content = processElements(node);
+        if (content.trim()) {
+          parts.push(`<h2>${content}</h2>`);
+        }
       }
       // Convert bold (b) to strong
       else if (tagName === "b" || tagName === "strong") {
         const content = processElements(node);
         if (content.trim()) {
-          result += "<strong>" + content + "</strong>";
+          parts.push(`<strong>${content}</strong>`);
         }
       }
       // Convert italic (i) to em
       else if (tagName === "i" || tagName === "em") {
         const content = processElements(node);
         if (content.trim()) {
-          result += "<em>" + content + "</em>";
+          parts.push(`<em>${content}</em>`);
         }
       }
       // Handle links
       else if (tagName === "a") {
-        const href = node.getAttribute("href");
+        const href = sanitizeHref(node.getAttribute("href"));
         const content = processElements(node);
         if (content.trim() && href) {
-          result += '<a href="' + href + '">' + content + "</a>";
+          parts.push(`<a href="${escapeHTML(href)}">${content}</a>`);
         } else if (content.trim()) {
-          // If no href, just keep the content
-          result += content;
+          // If no valid href, just keep the content
+          parts.push(content);
         }
       }
       // Handle lists - check data-list attribute to determine type
       else if (tagName === "ul" || tagName === "ol") {
-        // Check first child li to determine actual list type
-        const firstLi = node.querySelector("li");
-        const dataList = firstLi ? firstLi.getAttribute("data-list") : null;
-
-        // Determine if this should be ul or ol based on data-list attribute
-        const shouldBeUnordered = dataList === "bullet";
-        const listTag = shouldBeUnordered ? "ul" : "ol";
-
         const content = processListItems(node);
         if (content.trim()) {
-          result += "<" + listTag + ">" + content + "</" + listTag + ">";
-        }
-      } else if (tagName === "li") {
-        // Check if this li contains a nested list
-        const hasNestedList = Array.from(node.children).some((child) => child.tagName === "UL" || child.tagName === "OL");
-
-        if (hasNestedList) {
-          // Process li with nested list
-          let liContent = "";
-          for (let child of node.childNodes) {
-            if (child.nodeType === Node.TEXT_NODE) {
-              const text = child.textContent.trim();
-              if (text) liContent += text;
-            } else if (child.nodeType === Node.ELEMENT_NODE) {
-              const childTag = child.tagName.toLowerCase();
-              if (childTag === "ul" || childTag === "ol") {
-                // Add nested list
-                liContent += processElements(child);
-              } else {
-                // Process other inline content
-                liContent += processInlineContent(child);
-              }
-            }
-          }
-          result += "<li>" + liContent + "</li>";
-        } else {
-          // Simple list item
-          const content = processInlineContent(node);
-          result += "<li>" + content + "</li>";
+          // Determine list type from first li's data-list attribute
+          const firstLi = node.querySelector("li");
+          const dataList = firstLi ? firstLi.getAttribute("data-list") : null;
+          const listTag = dataList === "bullet" ? "ul" : "ol";
+          parts.push(`<${listTag}>${content}</${listTag}>`);
         }
       }
       // Keep allowed block-level tags (p, h2, h3)
@@ -324,112 +325,112 @@ function processElements(element) {
         const content = processElements(node);
         // Don't include empty paragraphs
         if (content.trim()) {
-          result += "<" + tagName + ">" + content + "</" + tagName + ">";
+          parts.push(`<${tagName}>${content}</${tagName}>`);
         }
       }
-      // Skip br tags (don't convert to space, just remove)
+      // Skip br tags completely
       else if (tagName === "br") {
-        // Do nothing - remove br tags completely
+        // Do nothing - remove br tags
       }
       // For underline, span, div and other formatting tags, just keep the content
       else if (["u", "span", "div"].includes(tagName)) {
-        result += processElements(node);
+        parts.push(processElements(node));
       }
       // Skip all other tags but keep their content
       else {
-        result += processElements(node);
+        parts.push(processElements(node));
       }
     }
   }
 
-  return result;
+  return parts.join("");
 }
 
 /**
  * Process list items, maintaining proper structure
  */
 function processListItems(listElement) {
-  let result = "";
-  let listItems = Array.from(listElement.childNodes).filter((node) => node.nodeType === Node.ELEMENT_NODE && node.tagName.toLowerCase() === "li");
+  const parts = [];
+  const listItems = Array.from(listElement.childNodes).filter((node) => node.nodeType === Node.ELEMENT_NODE && node.tagName.toLowerCase() === "li");
 
   let i = 0;
   while (i < listItems.length) {
     const node = listItems[i];
     const currentIndent = getIndentLevel(node);
-    const dataList = node.getAttribute("data-list");
 
-    // Check if this li contains a nested list already
+    // Check if this li already contains a nested list
     const hasNestedList = Array.from(node.children).some((child) => child.tagName === "UL" || child.tagName === "OL");
 
     if (hasNestedList) {
-      // Process li with nested list
-      let liContent = "";
-      for (let child of node.childNodes) {
-        if (child.nodeType === Node.TEXT_NODE) {
-          const text = child.textContent.trim();
-          if (text) liContent += text;
-        } else if (child.nodeType === Node.ELEMENT_NODE) {
-          const childTag = child.tagName.toLowerCase();
-          if (childTag === "ul" || childTag === "ol") {
-            liContent += processElements(child);
-          } else {
-            liContent += processInlineContent(child);
-          }
-        }
-      }
-      result += "<li>" + liContent + "</li>";
+      // Process li with existing nested list
+      const liContent = processListItemWithNestedList(node);
+      parts.push(`<li>${liContent}</li>`);
       i++;
     } else if (currentIndent === 0) {
       // No indent - regular list item
       const content = processInlineContent(node);
 
-      // Look ahead to see if next items are indented (should be nested under this item)
+      // Look ahead for indented children
       let j = i + 1;
-      let hasIndentedChildren = false;
       let nestedHTML = "";
 
-      while (j < listItems.length) {
-        const nextIndent = getIndentLevel(listItems[j]);
-        if (nextIndent === 0) {
-          break; // Next item is at same level, stop looking
+      if (j < listItems.length && getIndentLevel(listItems[j]) > 0) {
+        // Collect indented items
+        const indentedItems = [];
+        while (j < listItems.length && getIndentLevel(listItems[j]) > 0) {
+          indentedItems.push(listItems[j]);
+          j++;
         }
-        if (nextIndent > 0) {
-          hasIndentedChildren = true;
-          // Collect all indented items
-          let indentedItems = [];
-          while (j < listItems.length && getIndentLevel(listItems[j]) > 0) {
-            indentedItems.push(listItems[j]);
-            j++;
-          }
 
-          // Create nested list with these items
-          const nestedListType = listItems[i + 1].getAttribute("data-list") === "bullet" ? "ul" : "ol";
-          nestedHTML += "<" + nestedListType + ">";
-
-          // Process nested items recursively
-          nestedHTML += processNestedIndentedItems(indentedItems);
-
-          nestedHTML += "</" + nestedListType + ">";
-          break;
-        }
+        // Create nested list
+        const nestedListType = indentedItems[0].getAttribute("data-list") === "bullet" ? "ul" : "ol";
+        const nestedContent = processNestedIndentedItems(indentedItems);
+        nestedHTML = `<${nestedListType}>${nestedContent}</${nestedListType}>`;
       }
 
-      result += "<li>" + content + nestedHTML + "</li>";
-      i = hasIndentedChildren ? j : i + 1;
+      parts.push(`<li>${content}${nestedHTML}</li>`);
+      i = j;
     } else {
-      // Skip - this will be handled as part of parent's nested list
+      // Skip - handled as part of parent's nested list
       i++;
     }
   }
 
-  return result;
+  return parts.join("");
+}
+
+/**
+ * Process list item that contains a nested list
+ */
+function processListItemWithNestedList(node) {
+  const parts = [];
+
+  for (let child of node.childNodes) {
+    if (child.nodeType === Node.TEXT_NODE) {
+      const text = child.textContent.trim();
+      if (text) {
+        parts.push(escapeHTML(text));
+      }
+    } else if (child.nodeType === Node.ELEMENT_NODE) {
+      const childTag = child.tagName.toLowerCase();
+      if (childTag === "ul" || childTag === "ol") {
+        // Add nested list
+        parts.push(processElements(child));
+      } else {
+        // Process other inline content
+        parts.push(processInlineContent(child));
+      }
+    }
+  }
+
+  return parts.join("");
 }
 
 /**
  * Process nested indented items recursively
  */
 function processNestedIndentedItems(items) {
-  let result = "";
+  const parts = [];
   let i = 0;
 
   while (i < items.length) {
@@ -441,8 +442,9 @@ function processNestedIndentedItems(items) {
     let j = i + 1;
     let nestedHTML = "";
 
-    while (j < items.length && getIndentLevel(items[j]) > currentIndent) {
-      let nestedItems = [];
+    if (j < items.length && getIndentLevel(items[j]) > currentIndent) {
+      // Collect nested items
+      const nestedItems = [];
       const nestedIndent = getIndentLevel(items[j]);
 
       while (j < items.length && getIndentLevel(items[j]) >= nestedIndent) {
@@ -450,18 +452,17 @@ function processNestedIndentedItems(items) {
         j++;
       }
 
-      const nestedListType = items[i + 1].getAttribute("data-list") === "bullet" ? "ul" : "ol";
-      nestedHTML += "<" + nestedListType + ">";
-      nestedHTML += processNestedIndentedItems(nestedItems);
-      nestedHTML += "</" + nestedListType + ">";
-      break;
+      // Create nested list
+      const nestedListType = nestedItems[0].getAttribute("data-list") === "bullet" ? "ul" : "ol";
+      const nestedContent = processNestedIndentedItems(nestedItems);
+      nestedHTML = `<${nestedListType}>${nestedContent}</${nestedListType}>`;
     }
 
-    result += "<li>" + content + nestedHTML + "</li>";
+    parts.push(`<li>${content}${nestedHTML}</li>`);
     i = j > i + 1 ? j : i + 1;
   }
 
-  return result;
+  return parts.join("");
 }
 
 /**
@@ -478,23 +479,27 @@ function getIndentLevel(element) {
  * This preserves <strong>, <em>, and <a> tags
  */
 function processInlineContent(element) {
-  let result = "";
+  const parts = [];
 
   for (let node of element.childNodes) {
     if (node.nodeType === Node.TEXT_NODE) {
-      // Preserve spacing but normalize multiple spaces to single space
+      // Normalize whitespace
       let text = node.textContent.replace(/\s+/g, " ");
-      // Only trim if this is at the very start or end of the parent element
+
+      // Trim leading space if first child
       if (node === element.firstChild) {
         text = text.replace(/^\s+/, "");
       }
+      // Trim trailing space if last child
       if (node === element.lastChild) {
         text = text.replace(/\s+$/, "");
       }
-      // Convert non-breaking spaces to &#160;
-      text = text.replace(/\u00A0/g, "&#160;");
+
+      // Convert non-breaking spaces
+      text = text.replace(/\u00A0/g, "&nbsp;");
+
       if (text) {
-        result += text;
+        parts.push(escapeHTML(text));
       }
     } else if (node.nodeType === Node.ELEMENT_NODE) {
       const tagName = node.tagName.toLowerCase();
@@ -502,32 +507,32 @@ function processInlineContent(element) {
       if (tagName === "b" || tagName === "strong") {
         const content = processInlineContent(node);
         if (content.trim()) {
-          result += "<strong>" + content + "</strong>";
+          parts.push(`<strong>${content}</strong>`);
         }
       } else if (tagName === "i" || tagName === "em") {
         const content = processInlineContent(node);
         if (content.trim()) {
-          result += "<em>" + content + "</em>";
+          parts.push(`<em>${content}</em>`);
         }
       } else if (tagName === "a") {
-        const href = node.getAttribute("href");
+        const href = sanitizeHref(node.getAttribute("href"));
         const content = processInlineContent(node);
         if (content.trim() && href) {
-          result += '<a href="' + href + '">' + content + "</a>";
+          parts.push(`<a href="${escapeHTML(href)}">${content}</a>`);
         } else if (content.trim()) {
-          // If no href, just keep the content
-          result += content;
+          // If no valid href, just keep the content
+          parts.push(content);
         }
       } else if (tagName === "br") {
         // Skip br tags
       } else {
         // For other tags, just get the content
-        result += processInlineContent(node);
+        parts.push(processInlineContent(node));
       }
     }
   }
 
-  return result;
+  return parts.join("");
 }
 
 /**
