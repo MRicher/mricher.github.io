@@ -117,18 +117,28 @@ function initializeQuillEditor() {
   });
 
   // Add custom handler for view-html button
-  const toolbar = quill.getModule("toolbar");
-  toolbar.addHandler("view-html", function () {
-    toggleHTMLView();
-  });
+  const viewHtmlButton = document.querySelector(".ql-view-html");
+  if (viewHtmlButton) {
+    viewHtmlButton.innerHTML = "&lt;/&gt;"; // HTML icon
+    viewHtmlButton.title = "View HTML";
+    // Add click handler directly to the button
+    viewHtmlButton.addEventListener("click", function(e) {
+      e.preventDefault();
+      toggleHTMLView();
+    });
+  }
 
   // Style the custom button
   const viewHtmlButton = document.querySelector(".ql-view-html");
   if (viewHtmlButton) {
     viewHtmlButton.innerHTML = "&lt;/&gt;"; // HTML icon
     viewHtmlButton.title = "View HTML";
+    // Add click handler directly to the button
+    viewHtmlButton.addEventListener("click", function(e) {
+      e.preventDefault();
+      toggleHTMLView();
+    });
   }
-}
 
 /**
  * Toggle between rich text editor and HTML source view
