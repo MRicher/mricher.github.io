@@ -106,10 +106,16 @@
             <h2 class="card-title" data-en="Add new entry" data-fr="Ajouter une nouvelle entrée">Add new entry</h2>
 
             <div class="row mb-3">
-              <div class="col-md-12">
+              <div class="col-md-6">
                 <div class="form-check form-switch">
                   <input class="form-check-input" type="checkbox" id="internal-only" role="switch" />
                   <label class="form-check-label" for="internal-only" data-en="Internal only" data-fr="Interne seulement"> Internal only </label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="previously" role="switch" />
+                  <label class="form-check-label" for="previously" data-en="Previously" data-fr="Précédemment"> Previously </label>
                 </div>
               </div>
             </div>
@@ -185,31 +191,18 @@
             </div>
 
             <div class="row mb-3">
-              <div class="col-md-6">
-                <label for="notes-en" class="form-label" data-en="English notes (optional)" data-fr="Notes en anglais (optionnel)">
-                  English Notes (Optional)
-                </label>
-                <textarea
-                  class="form-control"
-                  id="notes-en"
-                  rows="3"
-                  data-en="Enter English notes"
-                  data-fr="Entrez les notes en anglais"
-                  placeholder="Enter English notes"
-                ></textarea>
-              </div>
-              <div class="col-md-6">
-                <label for="notes-fr" class="form-label" data-en="French notes (optional)" data-fr="Notes en français (optionnel)">
-                  French Notes (Optional)
-                </label>
-                <textarea
-                  class="form-control"
-                  id="notes-fr"
-                  rows="3"
-                  data-en="Enter French notes"
-                  data-fr="Entrez les notes en français"
-                  placeholder="Enter French notes"
-                ></textarea>
+              <div class="col-md-12">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <span class="fw-bold" data-en="Additional Abbreviations/Acronyms" data-fr="Abréviations/Acronymes supplémentaires">
+                    Additional Abbreviations/Acronyms
+                  </span>
+                  <button type="button" class="btn btn-sm btn-success" id="add-abbr-row-btn" onclick="addAbbrRow()">
+                    <span data-en="+ Add row" data-fr="+ Ajouter ligne">+ Add row</span>
+                  </button>
+                </div>
+                <div id="additional-abbr-container">
+                  <!-- Additional abbreviation rows will be added here -->
+                </div>
               </div>
             </div>
 
