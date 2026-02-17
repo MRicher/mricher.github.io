@@ -1,19 +1,17 @@
-/**
- * ABBREVO.JS - Abbreviation and Acronym Management Tool
- * Version 1.0.0
- */
-
 // ===================================================================
 // CONSTANTS AND VERSION INFO
 // ===================================================================
 
-const ABBREVO_VERSION = "1.0.0";
+const ABBREVO_VERSION = "1.2.0";
 
 // Message constants for consistency and maintainability
 const MESSAGES = {
   NO_ABBR_EN: "There are no abbreviations or acronyms for English.",
   NO_ABBR_FR: "Il n'y a pas d'abréviations ou d'acronymes pour le français.",
 };
+
+// Counter for additional abbreviation rows
+let abbrRowCounter = 0;
 
 // ===================================================================
 // UTILITY FUNCTIONS
@@ -25,6 +23,156 @@ const MESSAGES = {
  */
 function getCurrentLanguage() {
   return document.documentElement.lang?.split("-")[0] || "en";
+}
+
+/**
+ * Show toast notification
+ * @param {string} message - Message to display
+ * @param {string} type - Type of notification (success, error, info)
+ */
+function showNotification(message, type = 'info') {
+  // Create notification element if it doesn't exist
+  let notification = document.getElementById('toast-notification');
+  if (!notification) {
+    notification = document.createElement('div');
+    notification.id = 'toast-notification';
+    notification.className = 'toast-notification';
+    notification.setAttribute('role', 'status');
+    notification.setAttribute('aria-live', 'polite');
+    document.body.appendChild(notification);
+  }
+
+  // Set content and type
+  notification.textContent = message;
+  notification.className = `toast-notification toast-${type} show`;
+
+  // Auto-hide after 3 seconds
+  setTimeout(() => {
+    notification.classList.remove('show');
+  }, 3000);
+}
+
+/**
+ * Normalize string for comparison (trim and lowercase)
+ * @param {string} str - String to normalize
+ * @returns {string} Normalized string
+ */
+function normalizeString(str) {
+  return str ? str.trim().toLowerCase() : '';
+}
+
+// ===================================================================
+// ADDITIONAL ABBREVIATION ROWS MANAGEMENT
+// ===================================================================
+
+/**
+ * Add a new abbreviation row
+ */
+function addAbbrRow() {
+  const container = document.getElementById('additional-abbr-container');
+  const rowId = `abbr-row-${abbrRowCounter++}`;
+  const currentLang = getCurrentLanguage();
+  
+  const deleteLabel = currentLang === 'fr' ? 'Supprimer' : 'Delete';
+  const enPlaceholder = currentLang === 'fr' ? 'Abréviation anglaise' : 'English abbreviation';
+  const frPlaceholder = currentLang === 'fr' ? 'Abréviation française' : 'French abbreviation';
+  
+  const rowHTML = `
+    <div class="additional-abbr-row mb-2" id="${rowId}">
+      <div class="row g-2">
+        <div class="col-md-5">
+          <input type="text" class="form-control form-control-sm additional-abbr-en" 
+                 placeholder="${enPlaceholder}" 
+                 data-en="English abbreviation" 
+                 data-fr="Abréviation anglaise">
+        </div>
+        <div class="col-md-5">
+          <input type="text" class="form-control form-control-sm additional-abbr-fr" 
+                 placeholder="${frPlaceholder}"
+                 data-en="French abbreviation" 
+                 data-fr="Abréviation française">
+        </div>
+        <div class="col-md-2">
+          <button type="button" class="btn btn-sm btn-danger w-100" onclick="deleteAbbrRow('${rowId}')">
+            <span data-en="Delete" data-fr="Supprimer">${deleteLabel}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  container.insertAdjacentHTML('beforeend', rowHTML);
+  
+  // Focus on the new English abbreviation input
+  const newRow = document.getElementById(rowId);
+  const firstInput = newRow.querySelector('.additional-abbr-en');
+  if (firstInput) firstInput.focus();
+}
+
+/**
+ * Delete an abbreviation row
+ * @param {string} rowId - ID of the row to delete
+ */
+function deleteAbbrRow(rowId) {
+  const row = document.getElementById(rowId);
+  if (row) {
+    row.remove();
+    const currentLang = getCurrentLanguage();
+    const message = currentLang === 'fr' ? 'Ligne supprimée' : 'Row deleted';
+    showNotification(message, 'info');
+  }
+}
+
+/**
+ * Get all additional abbreviations from form
+ * @returns {Array} Array of {abbrEn, abbrFr} objects
+ */
+function getAdditionalAbbreviations() {
+  const container = document.getElementById('additional-abbr-container');
+  const rows = container.querySelectorAll('.additional-abbr-row');
+  const additionalAbbrs = [];
+  
+  rows.forEach(row => {
+    const abbrEn = row.querySelector('.additional-abbr-en').value.trim();
+    const abbrFr = row.querySelector('.additional-abbr-fr').value.trim();
+    
+    // Only add if at least one field has content
+    if (abbrEn || abbrFr) {
+      additionalAbbrs.push({
+        abbrEn: abbrEn || '',
+        abbrFr: abbrFr || ''
+      });
+    }
+  });
+  
+  return additionalAbbrs;
+}
+
+/**
+ * Clear all additional abbreviation rows
+ */
+function clearAdditionalAbbrRows() {
+  const container = document.getElementById('additional-abbr-container');
+  container.innerHTML = '';
+}
+
+/**
+ * Set additional abbreviation rows from data
+ * @param {Array} additionalAbbrs - Array of additional abbreviations
+ */
+function setAdditionalAbbrRows(additionalAbbrs) {
+  clearAdditionalAbbrRows();
+  
+  if (additionalAbbrs && additionalAbbrs.length > 0) {
+    additionalAbbrs.forEach(abbr => {
+      addAbbrRow();
+      const lastRow = document.querySelector('.additional-abbr-row:last-child');
+      if (lastRow) {
+        lastRow.querySelector('.additional-abbr-en').value = abbr.abbrEn || '';
+        lastRow.querySelector('.additional-abbr-fr').value = abbr.abbrFr || '';
+      }
+    });
+  }
 }
 
 // ===================================================================
@@ -39,8 +187,15 @@ let entryCounter = 0;
 document.addEventListener("DOMContentLoaded", () => {
   try {
     console.log(`Abbrevo v${ABBREVO_VERSION} loaded`);
+    
+    // Add ARIA live region for announcements
+    const liveRegion = document.createElement('div');
+    liveRegion.id = 'aria-live-region';
+    liveRegion.className = 'sr-only';
+    liveRegion.setAttribute('aria-live', 'polite');
+    liveRegion.setAttribute('aria-atomic', 'true');
+    document.body.appendChild(liveRegion);
 
-    // Initialize any startup tasks here if needed
   } catch (error) {
     console.error("Abbrevo initialization error:", error);
     showErrorMessage("An error occurred while loading Abbrevo. Please refresh the page.");
@@ -63,6 +218,17 @@ function showErrorMessage(message) {
   alert(errorMsg);
 }
 
+/**
+ * Announce to screen readers
+ * @param {string} message - Message to announce
+ */
+function announceToScreenReader(message) {
+  const liveRegion = document.getElementById('aria-live-region');
+  if (liveRegion) {
+    liveRegion.textContent = message;
+  }
+}
+
 // ===================================================================
 // ENTRY MANAGEMENT FUNCTIONS
 // ===================================================================
@@ -70,19 +236,19 @@ function showErrorMessage(message) {
 // Add new entry
 function addEntry() {
   const internalOnly = document.getElementById("internal-only").checked;
+  const previously = document.getElementById("previously").checked;
   let abbrEn = document.getElementById("abbr-en").value.trim();
   let abbrFr = document.getElementById("abbr-fr").value.trim();
   const titleEn = document.getElementById("title-en").value.trim();
   const titleFr = document.getElementById("title-fr").value.trim();
   const titleEnIsFrench = document.getElementById("title-en-is-french").checked;
   const titleFrIsEnglish = document.getElementById("title-fr-is-english").checked;
-  const notesEn = document.getElementById("notes-en").value.trim();
-  const notesFr = document.getElementById("notes-fr").value.trim();
   const transparentNotes = document.getElementById("transparent-notes").value.trim();
+  const additionalAbbrs = getAdditionalAbbreviations();
 
   // Validation - at least one abbreviation and both titles required
   if ((!abbrEn && !abbrFr) || !titleEn || !titleFr) {
-    const currentLang = document.documentElement.lang?.split("-")[0] || "en";
+    const currentLang = getCurrentLanguage();
     const message =
       currentLang === "fr"
         ? "Veuillez remplir au moins une abréviation et les deux titres complets."
@@ -93,14 +259,14 @@ function addEntry() {
 
   // Auto-fill missing abbreviations with message
   if (abbrEn && !abbrFr) {
-    abbrFr = "Il n'y a pas d'abréviations ou d'acronymes pour le français.";
+    abbrFr = MESSAGES.NO_ABBR_FR;
   } else if (abbrFr && !abbrEn) {
-    abbrEn = "There are no abbreviations or acronyms for English.";
+    abbrEn = MESSAGES.NO_ABBR_EN;
   }
 
   // Check for duplicates (only check actual abbreviations, not auto-filled messages)
-  const checkAbbrEn = abbrEn !== "There are no abbreviations or acronyms for English." ? abbrEn : null;
-  const checkAbbrFr = abbrFr !== "Il n'y a pas d'abréviations ou d'acronymes pour le français." ? abbrFr : null;
+  const checkAbbrEn = abbrEn !== MESSAGES.NO_ABBR_EN ? abbrEn : null;
+  const checkAbbrFr = abbrFr !== MESSAGES.NO_ABBR_FR ? abbrFr : null;
 
   if (!checkDuplicates(checkAbbrEn, checkAbbrFr)) {
     return; // User chose to cancel
@@ -110,52 +276,62 @@ function addEntry() {
   const entry = {
     id: entryCounter++,
     internalOnly,
+    previously,
     abbrEn,
     abbrFr,
     titleEn,
     titleFr,
     titleEnIsFrench,
     titleFrIsEnglish,
-    notesEn,
-    notesFr,
     transparentNotes,
+    additionalAbbrs
   };
 
   entries.push(entry);
   renderEntries();
   clearForm();
+  
+  // Success notification
+  const currentLang = getCurrentLanguage();
+  const successMsg = currentLang === "fr" ? "Entrée ajoutée avec succès" : "Entry added successfully";
+  showNotification(successMsg, 'success');
+  announceToScreenReader(successMsg);
 }
 
 // Clear form
 function clearForm() {
   document.getElementById("internal-only").checked = false;
+  document.getElementById("previously").checked = false;
   document.getElementById("abbr-en").value = "";
   document.getElementById("abbr-fr").value = "";
   document.getElementById("title-en").value = "";
   document.getElementById("title-fr").value = "";
   document.getElementById("title-en-is-french").checked = false;
   document.getElementById("title-fr-is-english").checked = false;
-  document.getElementById("notes-en").value = "";
-  document.getElementById("notes-fr").value = "";
   document.getElementById("transparent-notes").value = "";
+  clearAdditionalAbbrRows();
   document.getElementById("abbr-en").focus();
 }
 
 // Delete entry
 function deleteEntry(id) {
-  const currentLang = document.documentElement.lang?.split("-")[0] || "en";
+  const currentLang = getCurrentLanguage();
   const message = currentLang === "fr" ? "Êtes-vous sûr de vouloir supprimer cette entrée?" : "Are you sure you want to delete this entry?";
 
   if (confirm(message)) {
     entries = entries.filter((e) => e.id !== id);
     renderEntries();
+    
+    const successMsg = currentLang === "fr" ? "Entrée supprimée" : "Entry deleted";
+    showNotification(successMsg, 'success');
+    announceToScreenReader(successMsg);
   }
 }
 
 // Render all entries
 function renderEntries() {
   const container = document.getElementById("entries-container");
-  const currentLang = document.documentElement.lang?.split("-")[0] || "en";
+  const currentLang = getCurrentLanguage();
 
   if (entries.length === 0) {
     const noEntriesText =
@@ -172,14 +348,14 @@ function renderEntries() {
       ? {
           num: "#",
           internal: "Interne",
+          previously: "Précédemment",
           abbrEn: "Abrév. EN",
           abbrFr: "Abrév. FR",
           titleEn: "Titre EN",
           titleFr: "Titre FR",
           titleEnLang: "EN est FR",
           titleFrLang: "FR est EN",
-          notesEn: "Notes EN",
-          notesFr: "Notes FR",
+          additionalAbbrs: "Abbr. supplémentaires",
           transparentNotes: "Notes transp.",
           actions: "Actions",
           edit: "Modifier",
@@ -188,14 +364,14 @@ function renderEntries() {
       : {
           num: "#",
           internal: "Internal",
+          previously: "Previously",
           abbrEn: "Abbr. EN",
           abbrFr: "Abbr. FR",
           titleEn: "Title EN",
           titleFr: "Title FR",
           titleEnLang: "EN is FR",
           titleFrLang: "FR is EN",
-          notesEn: "Notes EN",
-          notesFr: "Notes FR",
+          additionalAbbrs: "Additional Abbrs.",
           transparentNotes: "Transp. Notes",
           actions: "Actions",
           edit: "Edit",
@@ -204,7 +380,7 @@ function renderEntries() {
 
   // Sort entries alphabetically by English abbreviation
   const sortedEntries = [...entries].sort((a, b) => {
-    return a.abbrEn.toLowerCase().localeCompare(b.abbrEn.toLowerCase());
+    return normalizeString(a.abbrEn).localeCompare(normalizeString(b.abbrEn));
   });
 
   const tableHTML = `
@@ -213,14 +389,14 @@ function renderEntries() {
                         <tr>
                             <th scope="col">${labels.num}</th>
                             <th scope="col">${labels.internal}</th>
+                            <th scope="col">${labels.previously}</th>
                             <th scope="col">${labels.abbrEn}</th>
                             <th scope="col">${labels.abbrFr}</th>
                             <th scope="col">${labels.titleEn}</th>
                             <th scope="col">${labels.titleEnLang}</th>
                             <th scope="col">${labels.titleFr}</th>
                             <th scope="col">${labels.titleFrLang}</th>
-                            <th scope="col">${labels.notesEn}</th>
-                            <th scope="col">${labels.notesFr}</th>
+                            <th scope="col">${labels.additionalAbbrs}</th>
                             <th scope="col">${labels.transparentNotes}</th>
                             <th scope="col">${labels.actions}</th>
                         </tr>
@@ -228,19 +404,31 @@ function renderEntries() {
                     <tbody>
                         ${sortedEntries
                           .map(
-                            (entry, index) => `
+                            (entry, index) => {
+                              // Format additional abbreviations
+                              let additionalAbbrText = '';
+                              if (entry.additionalAbbrs && entry.additionalAbbrs.length > 0) {
+                                additionalAbbrText = entry.additionalAbbrs.map(abbr => {
+                                  const parts = [];
+                                  if (abbr.abbrEn) parts.push(`EN: ${escapeHtml(abbr.abbrEn)}`);
+                                  if (abbr.abbrFr) parts.push(`FR: ${escapeHtml(abbr.abbrFr)}`);
+                                  return parts.join(' / ');
+                                }).join('<br>');
+                              }
+                              
+                              return `
                             <tr>
                                 <th scope="row">${index + 1}</th>
-                                <td>${entry.internalOnly ? "âœ“" : ""}</td>
+                                <td>${entry.internalOnly ? "✓" : ""}</td>
+                                <td>${entry.previously ? "✓" : ""}</td>
                                 <td>${escapeHtml(entry.abbrEn)}</td>
                                 <td>${escapeHtml(entry.abbrFr)}</td>
                                 <td>${entry.titleEnIsFrench ? `<i lang="fr">${escapeHtml(entry.titleEn)}</i>` : escapeHtml(entry.titleEn)}</td>
-                                <td>${entry.titleEnIsFrench ? "âœ“" : ""}</td>
+                                <td>${entry.titleEnIsFrench ? "✓" : ""}</td>
                                 <td>${entry.titleFrIsEnglish ? `<i lang="en">${escapeHtml(entry.titleFr)}</i>` : escapeHtml(entry.titleFr)}</td>
-                                <td>${entry.titleFrIsEnglish ? "âœ“" : ""}</td>
-                                <td>${entry.notesEn ? escapeHtml(entry.notesEn) : '<em class="text-muted">â€”</em>'}</td>
-                                <td>${entry.notesFr ? escapeHtml(entry.notesFr) : '<em class="text-muted">â€”</em>'}</td>
-                                <td>${entry.transparentNotes ? escapeHtml(entry.transparentNotes) : '<em class="text-muted">â€”</em>'}</td>
+                                <td>${entry.titleFrIsEnglish ? "✓" : ""}</td>
+                                <td>${additionalAbbrText || '<em class="text-muted">—</em>'}</td>
+                                <td>${entry.transparentNotes ? escapeHtml(entry.transparentNotes) : '<em class="text-muted">—</em>'}</td>
                                 <td class="text-nowrap">
                                     <button type="button" 
                                             class="btn btn-sm btn-primary me-1" 
@@ -256,7 +444,8 @@ function renderEntries() {
                                     </button>
                                 </td>
                             </tr>
-                        `,
+                        `;
+                            }
                           )
                           .join("")}
                     </tbody>
@@ -264,6 +453,12 @@ function renderEntries() {
             `;
 
   container.innerHTML = tableHTML;
+  
+  // Announce update to screen readers
+  const announcement = currentLang === "fr" 
+    ? `Table mise à jour avec ${entries.length} entrée${entries.length > 1 ? 's' : ''}`
+    : `Table updated with ${entries.length} entr${entries.length === 1 ? 'y' : 'ies'}`;
+  announceToScreenReader(announcement);
 }
 
 // Escape HTML to prevent XSS
@@ -273,35 +468,38 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
-// Check for duplicate abbreviations
+// Check for duplicate abbreviations with improved normalization
 function checkDuplicates(abbrEn, abbrFr, excludeId = null) {
+  const normalizedEn = normalizeString(abbrEn);
+  const normalizedFr = normalizeString(abbrFr);
+  
   const duplicates = entries.filter((entry) => {
     // Skip the entry being edited
     if (excludeId !== null && entry.id === excludeId) {
       return false;
     }
 
-    // Check if either abbreviation matches
-    const enMatch = abbrEn && entry.abbrEn && abbrEn.toLowerCase() === entry.abbrEn.toLowerCase();
-    const frMatch = abbrFr && entry.abbrFr && abbrFr.toLowerCase() === entry.abbrFr.toLowerCase();
+    // Check if either abbreviation matches (using normalized comparison)
+    const enMatch = normalizedEn && normalizeString(entry.abbrEn) === normalizedEn;
+    const frMatch = normalizedFr && normalizeString(entry.abbrFr) === normalizedFr;
 
     return enMatch || frMatch;
   });
 
   if (duplicates.length > 0) {
-    const currentLang = document.documentElement.lang?.split("-")[0] || "en";
+    const currentLang = getCurrentLanguage();
     let message = "";
 
     if (currentLang === "fr") {
       message = "Une entrée avec cette abréviation/acronyme existe déjà:\n\n";
       duplicates.forEach((dup) => {
-        message += `â€¢ ${dup.abbrEn} / ${dup.abbrFr}\n  ${dup.titleEn} / ${dup.titleFr}\n\n`;
+        message += `• ${dup.abbrEn} / ${dup.abbrFr}\n  ${dup.titleEn} / ${dup.titleFr}\n\n`;
       });
       message += "Voulez-vous continuer quand même?";
     } else {
       message = "An entry with this abbreviation/acronym already exists:\n\n";
       duplicates.forEach((dup) => {
-        message += `â€¢ ${dup.abbrEn} / ${dup.abbrFr}\n  ${dup.titleEn} / ${dup.titleFr}\n\n`;
+        message += `• ${dup.abbrEn} / ${dup.abbrFr}\n  ${dup.titleEn} / ${dup.titleFr}\n\n`;
       });
       message += "Do you want to continue anyway?";
     }
@@ -319,19 +517,21 @@ function editEntry(id) {
 
   // Populate form with entry data
   document.getElementById("internal-only").checked = entry.internalOnly || false;
+  document.getElementById("previously").checked = entry.previously || false;
   document.getElementById("abbr-en").value = entry.abbrEn;
   document.getElementById("abbr-fr").value = entry.abbrFr;
   document.getElementById("title-en").value = entry.titleEn;
   document.getElementById("title-fr").value = entry.titleFr;
   document.getElementById("title-en-is-french").checked = entry.titleEnIsFrench || false;
   document.getElementById("title-fr-is-english").checked = entry.titleFrIsEnglish || false;
-  document.getElementById("notes-en").value = entry.notesEn || "";
-  document.getElementById("notes-fr").value = entry.notesFr || "";
   document.getElementById("transparent-notes").value = entry.transparentNotes || "";
+  
+  // Set additional abbreviation rows
+  setAdditionalAbbrRows(entry.additionalAbbrs || []);
 
   // Change Add button to Update button
   const addBtn = document.getElementById("add-entry-btn");
-  const currentLang = document.documentElement.lang?.split("-")[0] || "en";
+  const currentLang = getCurrentLanguage();
   const updateText = currentLang === "fr" ? "Mettre à jour" : "Update entry";
   const cancelText = currentLang === "fr" ? "Annuler" : "Cancel";
 
@@ -353,24 +553,28 @@ function editEntry(id) {
   // Scroll to form
   document.getElementById("abbr-en").scrollIntoView({ behavior: "smooth", block: "center" });
   document.getElementById("abbr-en").focus();
+  
+  // Announce to screen readers
+  const announcement = currentLang === "fr" ? "Mode édition activé" : "Edit mode activated";
+  announceToScreenReader(announcement);
 }
 
 // Update entry
 function updateEntry(id) {
   const internalOnly = document.getElementById("internal-only").checked;
+  const previously = document.getElementById("previously").checked;
   let abbrEn = document.getElementById("abbr-en").value.trim();
   let abbrFr = document.getElementById("abbr-fr").value.trim();
   const titleEn = document.getElementById("title-en").value.trim();
   const titleFr = document.getElementById("title-fr").value.trim();
   const titleEnIsFrench = document.getElementById("title-en-is-french").checked;
   const titleFrIsEnglish = document.getElementById("title-fr-is-english").checked;
-  const notesEn = document.getElementById("notes-en").value.trim();
-  const notesFr = document.getElementById("notes-fr").value.trim();
   const transparentNotes = document.getElementById("transparent-notes").value.trim();
+  const additionalAbbrs = getAdditionalAbbreviations();
 
   // Validation - at least one abbreviation and both titles required
   if ((!abbrEn && !abbrFr) || !titleEn || !titleFr) {
-    const currentLang = document.documentElement.lang?.split("-")[0] || "en";
+    const currentLang = getCurrentLanguage();
     const message =
       currentLang === "fr"
         ? "Veuillez remplir au moins une abréviation et les deux titres complets."
@@ -381,14 +585,14 @@ function updateEntry(id) {
 
   // Auto-fill missing abbreviations with message
   if (abbrEn && !abbrFr) {
-    abbrFr = "Il n'y a pas d'abréviations ou d'acronymes pour le français.";
+    abbrFr = MESSAGES.NO_ABBR_FR;
   } else if (abbrFr && !abbrEn) {
-    abbrEn = "There are no abbreviations or acronyms for English.";
+    abbrEn = MESSAGES.NO_ABBR_EN;
   }
 
   // Check for duplicates (only check actual abbreviations, not auto-filled messages)
-  const checkAbbrEn = abbrEn !== "There are no abbreviations or acronyms for English." ? abbrEn : null;
-  const checkAbbrFr = abbrFr !== "Il n'y a pas d'abréviations ou d'acronymes pour le français." ? abbrFr : null;
+  const checkAbbrEn = abbrEn !== MESSAGES.NO_ABBR_EN ? abbrEn : null;
+  const checkAbbrFr = abbrFr !== MESSAGES.NO_ABBR_FR ? abbrFr : null;
 
   if (!checkDuplicates(checkAbbrEn, checkAbbrFr, id)) {
     return; // User chose to cancel
@@ -400,26 +604,31 @@ function updateEntry(id) {
     entries[entryIndex] = {
       id,
       internalOnly,
+      previously,
       abbrEn,
       abbrFr,
       titleEn,
       titleFr,
       titleEnIsFrench,
       titleFrIsEnglish,
-      notesEn,
-      notesFr,
       transparentNotes,
+      additionalAbbrs
     };
   }
 
   renderEntries();
   cancelEdit();
+  
+  const currentLang = getCurrentLanguage();
+  const successMsg = currentLang === "fr" ? "Entrée mise à jour" : "Entry updated";
+  showNotification(successMsg, 'success');
+  announceToScreenReader(successMsg);
 }
 
 // Cancel edit mode
 function cancelEdit() {
   const addBtn = document.getElementById("add-entry-btn");
-  const currentLang = document.documentElement.lang?.split("-")[0] || "en";
+  const currentLang = getCurrentLanguage();
   const addText = currentLang === "fr" ? "Ajouter l'entrée" : "Add entry";
 
   addBtn.innerHTML = `<span data-en="Add entry" data-fr="Ajouter l'entrée">${addText}</span>`;
@@ -442,7 +651,7 @@ document.addEventListener("languageChanged", () => {
 // Save entries to JSON file
 function saveToJSON() {
   if (entries.length === 0) {
-    const currentLang = document.documentElement.lang?.split("-")[0] || "en";
+    const currentLang = getCurrentLanguage();
     const message = currentLang === "fr" ? "Aucune entrée à enregistrer." : "No entries to save.";
     alert(message);
     return;
@@ -452,15 +661,15 @@ function saveToJSON() {
   const normalizedEntries = entries.map((entry) => ({
     id: entry.id,
     internalOnly: entry.internalOnly || false,
+    previously: entry.previously || false,
     abbrEn: entry.abbrEn || "",
     abbrFr: entry.abbrFr || "",
     titleEn: entry.titleEn || "",
     titleFr: entry.titleFr || "",
     titleEnIsFrench: entry.titleEnIsFrench || false,
     titleFrIsEnglish: entry.titleFrIsEnglish || false,
-    notesEn: entry.notesEn || "",
-    notesFr: entry.notesFr || "",
     transparentNotes: entry.transparentNotes || "",
+    additionalAbbrs: entry.additionalAbbrs || []
   }));
 
   const dataStr = JSON.stringify(normalizedEntries, null, 2);
@@ -474,40 +683,49 @@ function saveToJSON() {
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
+  
+  const currentLang = getCurrentLanguage();
+  const successMsg = currentLang === "fr" ? "JSON enregistré avec succès" : "JSON saved successfully";
+  showNotification(successMsg, 'success');
 }
 
 // Save entries to HTML file with bilingual tables
 function saveToHTML() {
   if (entries.length === 0) {
-    const currentLang = document.documentElement.lang?.split("-")[0] || "en";
+    const currentLang = getCurrentLanguage();
     const message = currentLang === "fr" ? "Aucune entrée à enregistrer." : "No entries to save.";
     alert(message);
     return;
   }
 
-  // Filter entries - exclude internal-only items
-  const publicEntries = entries.filter((entry) => !entry.internalOnly);
+  // Filter entries - exclude internal-only items, only include "previously" items
+  const publicEntries = entries.filter((entry) => !entry.internalOnly && entry.previously);
 
   if (publicEntries.length === 0) {
-    const currentLang = document.documentElement.lang?.split("-")[0] || "en";
+    const currentLang = getCurrentLanguage();
     const message =
       currentLang === "fr"
-        ? "Toutes les entrées sont marquées comme internes seulement. Aucune entrée publique à exporter."
-        : "All entries are marked as internal only. No public entries to export.";
+        ? "Aucune entrée marquée comme 'Précédemment' à exporter."
+        : "No entries marked as 'Previously' to export.";
     alert(message);
     return;
   }
 
   // Sort entries alphabetically by English abbreviation
-  const sortedEntries = [...publicEntries].sort((a, b) => {
-    return a.abbrEn.toLowerCase().localeCompare(b.abbrEn.toLowerCase());
+  const sortedEntriesEn = [...publicEntries].sort((a, b) => {
+    return normalizeString(a.abbrEn).localeCompare(normalizeString(b.abbrEn));
   });
 
   // Generate English table
-  const englishTable = generateEnglishTable(sortedEntries);
+  const englishTable = generateEnglishTable(sortedEntriesEn);
+
+  // Sort entries alphabetically by French abbreviation for French table
+  const sortedEntriesFr = [...publicEntries].sort((a, b) => {
+    return normalizeString(a.abbrFr).localeCompare(normalizeString(b.abbrFr));
+  });
 
   // Generate French table
-  const frenchTable = generateFrenchTable(sortedEntries);
+  const frenchTable = generateFrenchTable(sortedEntriesFr);
 
   // Combine both tables in one HTML file
   const htmlContent = `<!DOCTYPE html>
@@ -577,6 +795,14 @@ function saveToHTML() {
                 page-break-after: always;
             }
         }
+        @media (max-width: 768px) {
+            table {
+                font-size: 0.9em;
+            }
+            th, td {
+                padding: 8px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -602,6 +828,10 @@ function saveToHTML() {
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
+  
+  const currentLang = getCurrentLanguage();
+  const successMsg = currentLang === "fr" ? "HTML enregistré avec succès" : "HTML saved successfully";
+  showNotification(successMsg, 'success');
 }
 
 // Generate English table
@@ -609,22 +839,33 @@ function generateEnglishTable(sortedEntries) {
   const rows = sortedEntries
     .map((entry) => {
       // Handle abbreviations
-      const abbrEn = entry.abbrEn === "There are no abbreviations or acronyms for English." ? "" : escapeHtml(entry.abbrEn);
-      const abbrFr = entry.abbrFr === "Il n'y a pas d'abréviations ou d'acronymes pour le français." ? "" : escapeHtml(entry.abbrFr);
+      const abbrEn = entry.abbrEn === MESSAGES.NO_ABBR_EN ? "" : escapeHtml(entry.abbrEn);
+      const abbrFr = entry.abbrFr === MESSAGES.NO_ABBR_FR ? "" : escapeHtml(entry.abbrFr);
 
       // Handle titles with language tags
       const titleEn = entry.titleEnIsFrench ? `<span lang="fr">${escapeHtml(entry.titleEn)}</span>` : escapeHtml(entry.titleEn);
       const titleFr = entry.titleFrIsEnglish ? `<span lang="en">${escapeHtml(entry.titleFr)}</span>` : escapeHtml(entry.titleFr);
 
-      // Combine notes
+      // Combine notes with additional abbreviations
       let previousNotes = "";
-      if (entry.notesEn || entry.notesFr || entry.transparentNotes) {
-        const noteParts = [];
-        if (entry.notesEn) noteParts.push(escapeHtml(entry.notesEn));
-        if (entry.notesFr) noteParts.push(`<span lang="fr">${escapeHtml(entry.notesFr)}</span>`);
-        if (entry.transparentNotes) noteParts.push(escapeHtml(entry.transparentNotes));
-        previousNotes = noteParts.join(" / ");
+      const noteParts = [];
+      
+      // Add additional abbreviations if present
+      if (entry.additionalAbbrs && entry.additionalAbbrs.length > 0) {
+        entry.additionalAbbrs.forEach(abbr => {
+          const parts = [];
+          if (abbr.abbrEn) parts.push(escapeHtml(abbr.abbrEn));
+          if (abbr.abbrFr) parts.push(`<span lang="fr">${escapeHtml(abbr.abbrFr)}</span>`);
+          if (parts.length > 0) noteParts.push(parts.join(' / '));
+        });
       }
+      
+      // Add transparent notes if present
+      if (entry.transparentNotes) {
+        noteParts.push(escapeHtml(entry.transparentNotes));
+      }
+      
+      previousNotes = noteParts.join(' / ');
 
       return `\t\t\t<tr>
 \t\t\t\t<td>${abbrEn}</td>
@@ -663,22 +904,33 @@ function generateFrenchTable(sortedEntries) {
   const rows = sortedEntries
     .map((entry) => {
       // Handle abbreviations
-      const abbrEn = entry.abbrEn === "There are no abbreviations or acronyms for English." ? "" : escapeHtml(entry.abbrEn);
-      const abbrFr = entry.abbrFr === "Il n'y a pas d'abréviations ou d'acronymes pour le français." ? "" : escapeHtml(entry.abbrFr);
+      const abbrEn = entry.abbrEn === MESSAGES.NO_ABBR_EN ? "" : escapeHtml(entry.abbrEn);
+      const abbrFr = entry.abbrFr === MESSAGES.NO_ABBR_FR ? "" : escapeHtml(entry.abbrFr);
 
       // Handle titles with language tags
       const titleEn = entry.titleEnIsFrench ? `<span lang="fr">${escapeHtml(entry.titleEn)}</span>` : escapeHtml(entry.titleEn);
       const titleFr = entry.titleFrIsEnglish ? `<span lang="en">${escapeHtml(entry.titleFr)}</span>` : escapeHtml(entry.titleFr);
 
-      // Combine notes
+      // Combine notes with additional abbreviations
       let previousNotes = "";
-      if (entry.notesEn || entry.notesFr || entry.transparentNotes) {
-        const noteParts = [];
-        if (entry.notesFr) noteParts.push(escapeHtml(entry.notesFr));
-        if (entry.notesEn) noteParts.push(`<span lang="en">${escapeHtml(entry.notesEn)}</span>`);
-        if (entry.transparentNotes) noteParts.push(escapeHtml(entry.transparentNotes));
-        previousNotes = noteParts.join(" / ");
+      const noteParts = [];
+      
+      // Add additional abbreviations if present (French first for French table)
+      if (entry.additionalAbbrs && entry.additionalAbbrs.length > 0) {
+        entry.additionalAbbrs.forEach(abbr => {
+          const parts = [];
+          if (abbr.abbrFr) parts.push(escapeHtml(abbr.abbrFr));
+          if (abbr.abbrEn) parts.push(`<span lang="en">${escapeHtml(abbr.abbrEn)}</span>`);
+          if (parts.length > 0) noteParts.push(parts.join(' / '));
+        });
       }
+      
+      // Add transparent notes if present
+      if (entry.transparentNotes) {
+        noteParts.push(escapeHtml(entry.transparentNotes));
+      }
+      
+      previousNotes = noteParts.join(' / ');
 
       return `\t\t\t<tr>
 \t\t\t\t<td>${abbrFr}</td>
@@ -737,19 +989,19 @@ function loadFromJSON(event) {
         throw new Error("Invalid entry structure");
       }
 
-      const currentLang = document.documentElement.lang?.split("-")[0] || "en";
+      const currentLang = getCurrentLanguage();
       let addedCount = 0;
       let skippedCount = 0;
 
       // Process each loaded entry
       for (const loadedEntry of loadedData) {
-        const checkAbbrEn = loadedEntry.abbrEn !== "There are no abbreviations or acronyms for English." ? loadedEntry.abbrEn : null;
-        const checkAbbrFr = loadedEntry.abbrFr !== "Il n'y a pas d'abréviations ou d'acronymes pour le français." ? loadedEntry.abbrFr : null;
+        const checkAbbrEn = loadedEntry.abbrEn !== MESSAGES.NO_ABBR_EN ? loadedEntry.abbrEn : null;
+        const checkAbbrFr = loadedEntry.abbrFr !== MESSAGES.NO_ABBR_FR ? loadedEntry.abbrFr : null;
 
         // Check for duplicates
         const duplicates = entries.filter((entry) => {
-          const enMatch = checkAbbrEn && entry.abbrEn && checkAbbrEn.toLowerCase() === entry.abbrEn.toLowerCase();
-          const frMatch = checkAbbrFr && entry.abbrFr && checkAbbrFr.toLowerCase() === entry.abbrFr.toLowerCase();
+          const enMatch = checkAbbrEn && normalizeString(entry.abbrEn) === normalizeString(checkAbbrEn);
+          const frMatch = checkAbbrFr && normalizeString(entry.abbrFr) === normalizeString(checkAbbrFr);
           return enMatch || frMatch;
         });
 
@@ -759,13 +1011,13 @@ function loadFromJSON(event) {
           if (currentLang === "fr") {
             message = `Une entrée avec cette abréviation/acronyme existe déjà:\n\n`;
             duplicates.forEach((dup) => {
-              message += `â€¢ ${dup.abbrEn} / ${dup.abbrFr}\n  ${dup.titleEn} / ${dup.titleFr}\n\n`;
+              message += `• ${dup.abbrEn} / ${dup.abbrFr}\n  ${dup.titleEn} / ${dup.titleFr}\n\n`;
             });
             message += `Voulez-vous ajouter quand même:\n${loadedEntry.abbrEn} / ${loadedEntry.abbrFr}\n${loadedEntry.titleEn} / ${loadedEntry.titleFr}?`;
           } else {
             message = `An entry with this abbreviation/acronym already exists:\n\n`;
             duplicates.forEach((dup) => {
-              message += `â€¢ ${dup.abbrEn} / ${dup.abbrFr}\n  ${dup.titleEn} / ${dup.titleFr}\n\n`;
+              message += `• ${dup.abbrEn} / ${dup.abbrFr}\n  ${dup.titleEn} / ${dup.titleFr}\n\n`;
             });
             message += `Do you want to add anyway:\n${loadedEntry.abbrEn} / ${loadedEntry.abbrFr}\n${loadedEntry.titleEn} / ${loadedEntry.titleFr}?`;
           }
@@ -808,13 +1060,15 @@ function loadFromJSON(event) {
         summaryMessage += ".";
       }
       alert(summaryMessage);
+      showNotification(summaryMessage, 'success');
     } catch (error) {
-      const currentLang = document.documentElement.lang?.split("-")[0] || "en";
+      const currentLang = getCurrentLanguage();
       const message =
         currentLang === "fr"
           ? "Erreur lors du chargement du fichier JSON. Veuillez vérifier le format."
           : "Error loading JSON file. Please check the format.";
       alert(message);
+      showNotification(message, 'error');
       console.error("JSON load error:", error);
     }
   };
