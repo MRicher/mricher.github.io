@@ -2,7 +2,7 @@
 // CONSTANTS AND VERSION INFO
 // ===================================================================
 
-const ABBREVO_VERSION = "1.2.0";
+const ABBREVO_VERSION = "1.0.0";
 
 // Message constants for consistency and maintainability
 const MESSAGES = {
@@ -10,7 +10,7 @@ const MESSAGES = {
   NO_ABBR_FR: "Il n'y a pas d'abréviations ou d'acronymes pour le français.",
 };
 
-// Counter for additional abbreviation rows
+// Counter for previous abbreviation rows
 let abbrRowCounter = 0;
 
 // ===================================================================
@@ -62,11 +62,11 @@ function normalizeString(str) {
 }
 
 // ===================================================================
-// ADDITIONAL ABBREVIATION ROWS MANAGEMENT
+// PREVIOUS ABBREVIATION ROWS MANAGEMENT
 // ===================================================================
 
 /**
- * Add a new abbreviation row
+ * Add a new previous abbreviation row
  */
 function addAbbrRow() {
   const container = document.getElementById('additional-abbr-container');
@@ -74,26 +74,44 @@ function addAbbrRow() {
   const currentLang = getCurrentLanguage();
   
   const deleteLabel = currentLang === 'fr' ? 'Supprimer' : 'Delete';
-  const enPlaceholder = currentLang === 'fr' ? 'Abréviation anglaise' : 'English abbreviation';
-  const frPlaceholder = currentLang === 'fr' ? 'Abréviation française' : 'French abbreviation';
+  const enAbbrLabel = currentLang === 'fr' ? 'Abréviation anglaise' : 'English abbreviation';
+  const enTitleLabel = currentLang === 'fr' ? 'Titre complet anglais' : 'English full title';
+  const frAbbrLabel = currentLang === 'fr' ? 'Abréviation française' : 'French abbreviation';
+  const frTitleLabel = currentLang === 'fr' ? 'Titre complet français' : 'French full title';
   
   const rowHTML = `
-    <div class="additional-abbr-row mb-2" id="${rowId}">
-      <div class="row g-2">
-        <div class="col-md-5">
-          <input type="text" class="form-control form-control-sm additional-abbr-en" 
-                 placeholder="${enPlaceholder}" 
+    <div class="previous-abbr-row mb-3 p-3 border rounded" id="${rowId}">
+      <div class="row g-2 mb-2">
+        <div class="col-md-6">
+          <label class="form-label form-label-sm" data-en="English abbreviation" data-fr="Abréviation anglaise">${enAbbrLabel}</label>
+          <input type="text" class="form-control form-control-sm previous-abbr-en" 
                  data-en="English abbreviation" 
                  data-fr="Abréviation anglaise">
         </div>
-        <div class="col-md-5">
-          <input type="text" class="form-control form-control-sm additional-abbr-fr" 
-                 placeholder="${frPlaceholder}"
+        <div class="col-md-6">
+          <label class="form-label form-label-sm" data-en="French abbreviation" data-fr="Abréviation française">${frAbbrLabel}</label>
+          <input type="text" class="form-control form-control-sm previous-abbr-fr"
                  data-en="French abbreviation" 
                  data-fr="Abréviation française">
         </div>
-        <div class="col-md-2">
-          <button type="button" class="btn btn-sm btn-danger w-100" onclick="deleteAbbrRow('${rowId}')">
+      </div>
+      <div class="row g-2 mb-2">
+        <div class="col-md-6">
+          <label class="form-label form-label-sm" data-en="English full title" data-fr="Titre complet anglais">${enTitleLabel}</label>
+          <input type="text" class="form-control form-control-sm previous-title-en" 
+                 data-en="English full title" 
+                 data-fr="Titre complet anglais">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label form-label-sm" data-en="French full title" data-fr="Titre complet français">${frTitleLabel}</label>
+          <input type="text" class="form-control form-control-sm previous-title-fr"
+                 data-en="French full title" 
+                 data-fr="Titre complet français">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <button type="button" class="btn btn-sm btn-danger" onclick="deleteAbbrRow('${rowId}')">
             <span data-en="Delete" data-fr="Supprimer">${deleteLabel}</span>
           </button>
         </div>
@@ -105,12 +123,12 @@ function addAbbrRow() {
   
   // Focus on the new English abbreviation input
   const newRow = document.getElementById(rowId);
-  const firstInput = newRow.querySelector('.additional-abbr-en');
+  const firstInput = newRow.querySelector('.previous-abbr-en');
   if (firstInput) firstInput.focus();
 }
 
 /**
- * Delete an abbreviation row
+ * Delete a previous abbreviation row
  * @param {string} rowId - ID of the row to delete
  */
 function deleteAbbrRow(rowId) {
@@ -124,52 +142,58 @@ function deleteAbbrRow(rowId) {
 }
 
 /**
- * Get all additional abbreviations from form
- * @returns {Array} Array of {abbrEn, abbrFr} objects
+ * Get all previous abbreviations from form
+ * @returns {Array} Array of {abbrEn, abbrFr, titleEn, titleFr} objects
  */
-function getAdditionalAbbreviations() {
+function getPreviousAbbreviations() {
   const container = document.getElementById('additional-abbr-container');
-  const rows = container.querySelectorAll('.additional-abbr-row');
-  const additionalAbbrs = [];
+  const rows = container.querySelectorAll('.previous-abbr-row');
+  const previousAbbrs = [];
   
   rows.forEach(row => {
-    const abbrEn = row.querySelector('.additional-abbr-en').value.trim();
-    const abbrFr = row.querySelector('.additional-abbr-fr').value.trim();
+    const abbrEn = row.querySelector('.previous-abbr-en').value.trim();
+    const abbrFr = row.querySelector('.previous-abbr-fr').value.trim();
+    const titleEn = row.querySelector('.previous-title-en').value.trim();
+    const titleFr = row.querySelector('.previous-title-fr').value.trim();
     
     // Only add if at least one field has content
-    if (abbrEn || abbrFr) {
-      additionalAbbrs.push({
+    if (abbrEn || abbrFr || titleEn || titleFr) {
+      previousAbbrs.push({
         abbrEn: abbrEn || '',
-        abbrFr: abbrFr || ''
+        abbrFr: abbrFr || '',
+        titleEn: titleEn || '',
+        titleFr: titleFr || ''
       });
     }
   });
   
-  return additionalAbbrs;
+  return previousAbbrs;
 }
 
 /**
- * Clear all additional abbreviation rows
+ * Clear all previous abbreviation rows
  */
-function clearAdditionalAbbrRows() {
+function clearPreviousAbbrRows() {
   const container = document.getElementById('additional-abbr-container');
   container.innerHTML = '';
 }
 
 /**
- * Set additional abbreviation rows from data
- * @param {Array} additionalAbbrs - Array of additional abbreviations
+ * Set previous abbreviation rows from data
+ * @param {Array} previousAbbrs - Array of previous abbreviations
  */
-function setAdditionalAbbrRows(additionalAbbrs) {
-  clearAdditionalAbbrRows();
+function setPreviousAbbrRows(previousAbbrs) {
+  clearPreviousAbbrRows();
   
-  if (additionalAbbrs && additionalAbbrs.length > 0) {
-    additionalAbbrs.forEach(abbr => {
+  if (previousAbbrs && previousAbbrs.length > 0) {
+    previousAbbrs.forEach(abbr => {
       addAbbrRow();
-      const lastRow = document.querySelector('.additional-abbr-row:last-child');
+      const lastRow = document.querySelector('.previous-abbr-row:last-child');
       if (lastRow) {
-        lastRow.querySelector('.additional-abbr-en').value = abbr.abbrEn || '';
-        lastRow.querySelector('.additional-abbr-fr').value = abbr.abbrFr || '';
+        lastRow.querySelector('.previous-abbr-en').value = abbr.abbrEn || '';
+        lastRow.querySelector('.previous-abbr-fr').value = abbr.abbrFr || '';
+        lastRow.querySelector('.previous-title-en').value = abbr.titleEn || '';
+        lastRow.querySelector('.previous-title-fr').value = abbr.titleFr || '';
       }
     });
   }
@@ -236,7 +260,6 @@ function announceToScreenReader(message) {
 // Add new entry
 function addEntry() {
   const internalOnly = document.getElementById("internal-only").checked;
-  const previously = document.getElementById("previously").checked;
   let abbrEn = document.getElementById("abbr-en").value.trim();
   let abbrFr = document.getElementById("abbr-fr").value.trim();
   const titleEn = document.getElementById("title-en").value.trim();
@@ -244,7 +267,7 @@ function addEntry() {
   const titleEnIsFrench = document.getElementById("title-en-is-french").checked;
   const titleFrIsEnglish = document.getElementById("title-fr-is-english").checked;
   const transparentNotes = document.getElementById("transparent-notes").value.trim();
-  const additionalAbbrs = getAdditionalAbbreviations();
+  const previousAbbrs = getPreviousAbbreviations();
 
   // Validation - at least one abbreviation and both titles required
   if ((!abbrEn && !abbrFr) || !titleEn || !titleFr) {
@@ -276,7 +299,6 @@ function addEntry() {
   const entry = {
     id: entryCounter++,
     internalOnly,
-    previously,
     abbrEn,
     abbrFr,
     titleEn,
@@ -284,7 +306,7 @@ function addEntry() {
     titleEnIsFrench,
     titleFrIsEnglish,
     transparentNotes,
-    additionalAbbrs
+    previousAbbrs
   };
 
   entries.push(entry);
@@ -301,7 +323,6 @@ function addEntry() {
 // Clear form
 function clearForm() {
   document.getElementById("internal-only").checked = false;
-  document.getElementById("previously").checked = false;
   document.getElementById("abbr-en").value = "";
   document.getElementById("abbr-fr").value = "";
   document.getElementById("title-en").value = "";
@@ -309,7 +330,7 @@ function clearForm() {
   document.getElementById("title-en-is-french").checked = false;
   document.getElementById("title-fr-is-english").checked = false;
   document.getElementById("transparent-notes").value = "";
-  clearAdditionalAbbrRows();
+  clearPreviousAbbrRows();
   document.getElementById("abbr-en").focus();
 }
 
@@ -348,14 +369,13 @@ function renderEntries() {
       ? {
           num: "#",
           internal: "Interne",
-          previously: "Précédemment",
           abbrEn: "Abrév. EN",
           abbrFr: "Abrév. FR",
           titleEn: "Titre EN",
           titleFr: "Titre FR",
           titleEnLang: "EN est FR",
           titleFrLang: "FR est EN",
-          additionalAbbrs: "Abbr. supplémentaires",
+          previousAbbrs: "Abbr. précédentes",
           transparentNotes: "Notes transp.",
           actions: "Actions",
           edit: "Modifier",
@@ -364,14 +384,13 @@ function renderEntries() {
       : {
           num: "#",
           internal: "Internal",
-          previously: "Previously",
           abbrEn: "Abbr. EN",
           abbrFr: "Abbr. FR",
           titleEn: "Title EN",
           titleFr: "Title FR",
           titleEnLang: "EN is FR",
           titleFrLang: "FR is EN",
-          additionalAbbrs: "Additional Abbrs.",
+          previousAbbrs: "Previous Abbrs.",
           transparentNotes: "Transp. Notes",
           actions: "Actions",
           edit: "Edit",
@@ -389,14 +408,13 @@ function renderEntries() {
                         <tr>
                             <th scope="col">${labels.num}</th>
                             <th scope="col">${labels.internal}</th>
-                            <th scope="col">${labels.previously}</th>
                             <th scope="col">${labels.abbrEn}</th>
                             <th scope="col">${labels.abbrFr}</th>
                             <th scope="col">${labels.titleEn}</th>
                             <th scope="col">${labels.titleEnLang}</th>
                             <th scope="col">${labels.titleFr}</th>
                             <th scope="col">${labels.titleFrLang}</th>
-                            <th scope="col">${labels.additionalAbbrs}</th>
+                            <th scope="col">${labels.previousAbbrs}</th>
                             <th scope="col">${labels.transparentNotes}</th>
                             <th scope="col">${labels.actions}</th>
                         </tr>
@@ -405,14 +423,16 @@ function renderEntries() {
                         ${sortedEntries
                           .map(
                             (entry, index) => {
-                              // Format additional abbreviations
-                              let additionalAbbrText = '';
-                              if (entry.additionalAbbrs && entry.additionalAbbrs.length > 0) {
-                                additionalAbbrText = entry.additionalAbbrs.map(abbr => {
+                              // Format previous abbreviations
+                              let previousAbbrText = '';
+                              if (entry.previousAbbrs && entry.previousAbbrs.length > 0) {
+                                previousAbbrText = entry.previousAbbrs.map(abbr => {
                                   const parts = [];
                                   if (abbr.abbrEn) parts.push(`EN: ${escapeHtml(abbr.abbrEn)}`);
+                                  if (abbr.titleEn) parts.push(`(${escapeHtml(abbr.titleEn)})`);
                                   if (abbr.abbrFr) parts.push(`FR: ${escapeHtml(abbr.abbrFr)}`);
-                                  return parts.join(' / ');
+                                  if (abbr.titleFr) parts.push(`(${escapeHtml(abbr.titleFr)})`);
+                                  return parts.join(' ');
                                 }).join('<br>');
                               }
                               
@@ -420,14 +440,13 @@ function renderEntries() {
                             <tr>
                                 <th scope="row">${index + 1}</th>
                                 <td>${entry.internalOnly ? "✓" : ""}</td>
-                                <td>${entry.previously ? "✓" : ""}</td>
                                 <td>${escapeHtml(entry.abbrEn)}</td>
                                 <td>${escapeHtml(entry.abbrFr)}</td>
                                 <td>${entry.titleEnIsFrench ? `<i lang="fr">${escapeHtml(entry.titleEn)}</i>` : escapeHtml(entry.titleEn)}</td>
                                 <td>${entry.titleEnIsFrench ? "✓" : ""}</td>
                                 <td>${entry.titleFrIsEnglish ? `<i lang="en">${escapeHtml(entry.titleFr)}</i>` : escapeHtml(entry.titleFr)}</td>
                                 <td>${entry.titleFrIsEnglish ? "✓" : ""}</td>
-                                <td>${additionalAbbrText || '<em class="text-muted">—</em>'}</td>
+                                <td>${previousAbbrText || '<em class="text-muted">—</em>'}</td>
                                 <td>${entry.transparentNotes ? escapeHtml(entry.transparentNotes) : '<em class="text-muted">—</em>'}</td>
                                 <td class="text-nowrap">
                                     <button type="button" 
@@ -517,7 +536,6 @@ function editEntry(id) {
 
   // Populate form with entry data
   document.getElementById("internal-only").checked = entry.internalOnly || false;
-  document.getElementById("previously").checked = entry.previously || false;
   document.getElementById("abbr-en").value = entry.abbrEn;
   document.getElementById("abbr-fr").value = entry.abbrFr;
   document.getElementById("title-en").value = entry.titleEn;
@@ -526,8 +544,8 @@ function editEntry(id) {
   document.getElementById("title-fr-is-english").checked = entry.titleFrIsEnglish || false;
   document.getElementById("transparent-notes").value = entry.transparentNotes || "";
   
-  // Set additional abbreviation rows
-  setAdditionalAbbrRows(entry.additionalAbbrs || []);
+  // Set previous abbreviation rows
+  setPreviousAbbrRows(entry.previousAbbrs || []);
 
   // Change Add button to Update button
   const addBtn = document.getElementById("add-entry-btn");
@@ -562,7 +580,6 @@ function editEntry(id) {
 // Update entry
 function updateEntry(id) {
   const internalOnly = document.getElementById("internal-only").checked;
-  const previously = document.getElementById("previously").checked;
   let abbrEn = document.getElementById("abbr-en").value.trim();
   let abbrFr = document.getElementById("abbr-fr").value.trim();
   const titleEn = document.getElementById("title-en").value.trim();
@@ -570,7 +587,7 @@ function updateEntry(id) {
   const titleEnIsFrench = document.getElementById("title-en-is-french").checked;
   const titleFrIsEnglish = document.getElementById("title-fr-is-english").checked;
   const transparentNotes = document.getElementById("transparent-notes").value.trim();
-  const additionalAbbrs = getAdditionalAbbreviations();
+  const previousAbbrs = getPreviousAbbreviations();
 
   // Validation - at least one abbreviation and both titles required
   if ((!abbrEn && !abbrFr) || !titleEn || !titleFr) {
@@ -604,7 +621,6 @@ function updateEntry(id) {
     entries[entryIndex] = {
       id,
       internalOnly,
-      previously,
       abbrEn,
       abbrFr,
       titleEn,
@@ -612,7 +628,7 @@ function updateEntry(id) {
       titleEnIsFrench,
       titleFrIsEnglish,
       transparentNotes,
-      additionalAbbrs
+      previousAbbrs
     };
   }
 
@@ -661,7 +677,6 @@ function saveToJSON() {
   const normalizedEntries = entries.map((entry) => ({
     id: entry.id,
     internalOnly: entry.internalOnly || false,
-    previously: entry.previously || false,
     abbrEn: entry.abbrEn || "",
     abbrFr: entry.abbrFr || "",
     titleEn: entry.titleEn || "",
@@ -669,7 +684,7 @@ function saveToJSON() {
     titleEnIsFrench: entry.titleEnIsFrench || false,
     titleFrIsEnglish: entry.titleFrIsEnglish || false,
     transparentNotes: entry.transparentNotes || "",
-    additionalAbbrs: entry.additionalAbbrs || []
+    previousAbbrs: entry.previousAbbrs || []
   }));
 
   const dataStr = JSON.stringify(normalizedEntries, null, 2);
@@ -698,15 +713,15 @@ function saveToHTML() {
     return;
   }
 
-  // Filter entries - exclude internal-only items, only include "previously" items
-  const publicEntries = entries.filter((entry) => !entry.internalOnly && entry.previously);
+  // Filter entries - exclude internal-only items
+  const publicEntries = entries.filter((entry) => !entry.internalOnly);
 
   if (publicEntries.length === 0) {
     const currentLang = getCurrentLanguage();
     const message =
       currentLang === "fr"
-        ? "Aucune entrée marquée comme 'Précédemment' à exporter."
-        : "No entries marked as 'Previously' to export.";
+        ? "Toutes les entrées sont marquées comme internes seulement. Aucune entrée publique à exporter."
+        : "All entries are marked as internal only. No public entries to export.";
     alert(message);
     return;
   }
@@ -846,17 +861,23 @@ function generateEnglishTable(sortedEntries) {
       const titleEn = entry.titleEnIsFrench ? `<span lang="fr">${escapeHtml(entry.titleEn)}</span>` : escapeHtml(entry.titleEn);
       const titleFr = entry.titleFrIsEnglish ? `<span lang="en">${escapeHtml(entry.titleFr)}</span>` : escapeHtml(entry.titleFr);
 
-      // Combine notes with additional abbreviations
+      // Combine notes with previous abbreviations
       let previousNotes = "";
       const noteParts = [];
       
-      // Add additional abbreviations if present
-      if (entry.additionalAbbrs && entry.additionalAbbrs.length > 0) {
-        entry.additionalAbbrs.forEach(abbr => {
+      // Add previous abbreviations if present
+      if (entry.previousAbbrs && entry.previousAbbrs.length > 0) {
+        entry.previousAbbrs.forEach(abbr => {
           const parts = [];
-          if (abbr.abbrEn) parts.push(escapeHtml(abbr.abbrEn));
-          if (abbr.abbrFr) parts.push(`<span lang="fr">${escapeHtml(abbr.abbrFr)}</span>`);
-          if (parts.length > 0) noteParts.push(parts.join(' / '));
+          if (abbr.abbrEn) {
+            parts.push(escapeHtml(abbr.abbrEn));
+            if (abbr.titleEn) parts.push(`(${escapeHtml(abbr.titleEn)})`);
+          }
+          if (abbr.abbrFr) {
+            parts.push(`<span lang="fr">${escapeHtml(abbr.abbrFr)}</span>`);
+            if (abbr.titleFr) parts.push(`(<span lang="fr">${escapeHtml(abbr.titleFr)}</span>)`);
+          }
+          if (parts.length > 0) noteParts.push(parts.join(' '));
         });
       }
       
@@ -911,17 +932,23 @@ function generateFrenchTable(sortedEntries) {
       const titleEn = entry.titleEnIsFrench ? `<span lang="fr">${escapeHtml(entry.titleEn)}</span>` : escapeHtml(entry.titleEn);
       const titleFr = entry.titleFrIsEnglish ? `<span lang="en">${escapeHtml(entry.titleFr)}</span>` : escapeHtml(entry.titleFr);
 
-      // Combine notes with additional abbreviations
+      // Combine notes with previous abbreviations (French first for French table)
       let previousNotes = "";
       const noteParts = [];
       
-      // Add additional abbreviations if present (French first for French table)
-      if (entry.additionalAbbrs && entry.additionalAbbrs.length > 0) {
-        entry.additionalAbbrs.forEach(abbr => {
+      // Add previous abbreviations if present (French first)
+      if (entry.previousAbbrs && entry.previousAbbrs.length > 0) {
+        entry.previousAbbrs.forEach(abbr => {
           const parts = [];
-          if (abbr.abbrFr) parts.push(escapeHtml(abbr.abbrFr));
-          if (abbr.abbrEn) parts.push(`<span lang="en">${escapeHtml(abbr.abbrEn)}</span>`);
-          if (parts.length > 0) noteParts.push(parts.join(' / '));
+          if (abbr.abbrFr) {
+            parts.push(escapeHtml(abbr.abbrFr));
+            if (abbr.titleFr) parts.push(`(${escapeHtml(abbr.titleFr)})`);
+          }
+          if (abbr.abbrEn) {
+            parts.push(`<span lang="en">${escapeHtml(abbr.abbrEn)}</span>`);
+            if (abbr.titleEn) parts.push(`(<span lang="en">${escapeHtml(abbr.titleEn)}</span>)`);
+          }
+          if (parts.length > 0) noteParts.push(parts.join(' '));
         });
       }
       
