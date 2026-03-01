@@ -10,10 +10,10 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
   <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-  <!-- Google Fonts -->
+  <!-- Google Fonts — Canada.ca typography spec: Lato (headings) + Noto Sans (body) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400;1,700&family=Noto+Sans:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 
   <style>
     /* ============================================================
@@ -27,9 +27,12 @@
       --meridian-light:   #f8f9fa;
       --meridian-border:  #dee2e6;
       --meridian-muted:   #6c757d;
-      --font-display: 'Playfair Display', Georgia, serif;
-      --font-body:    'Source Serif 4', Georgia, serif;
-      --font-ui:      'DM Sans', system-ui, sans-serif;
+      /* Canada.ca typography spec */
+      --font-heading: 'Lato', 'Helvetica Neue', Arial, sans-serif;
+      --font-body:    'Noto Sans', 'Arial Unicode MS', Arial, sans-serif;
+      /* Aliases kept for components that referenced --font-display / --font-ui */
+      --font-display: var(--font-heading);
+      --font-ui:      var(--font-body);
       --transition: 0.2s ease;
     }
 
@@ -41,29 +44,96 @@
 
     *, *::before, *::after { box-sizing: border-box; }
 
+    /* ============================================================
+       CANADA.CA BODY TYPOGRAPHY
+       Desktop/tablet: 20px  |  Mobile (<768px): 18px
+    ============================================================ */
     body {
       font-family: var(--font-body);
-      font-size: 1rem;
-      line-height: 1.75;
+      font-size: 20px;          /* Canada.ca desktop body */
+      line-height: 1.65;
       background-color: var(--bs-body-bg);
       color: var(--bs-body-color);
       transition: background-color var(--transition), color var(--transition);
     }
 
-    h1, h2, h3, h4, h5, h6 {
-      font-family: var(--font-display);
-      font-weight: 700;
-      line-height: 1.2;
-      letter-spacing: -0.01em;
+    @media (max-width: 767.98px) {
+      body { font-size: 18px; } /* Canada.ca mobile body */
     }
 
-    a { color: inherit; text-decoration: none; transition: color var(--transition); }
+    /* ============================================================
+       CANADA.CA HEADING TYPOGRAPHY — DESKTOP/TABLET
+       H1 41px · H2 39px · H3 29px · H4 27px · H5 24px · H6 22px
+    ============================================================ */
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    h1 { font-size: 41px; }
+    h2 { font-size: 39px; }
+    h3 { font-size: 29px; }
+    h4 { font-size: 27px; }
+    h5 { font-size: 24px; }
+    h6 { font-size: 22px; }
+
+    /* ============================================================
+       CANADA.CA HEADING TYPOGRAPHY — SMALL DEVICES
+       H1 37px · H2 35px · H3 26px · H4 22px · H5 20px · H6 18px
+    ============================================================ */
+    @media (max-width: 767.98px) {
+      h1 { font-size: 37px; }
+      h2 { font-size: 35px; }
+      h3 { font-size: 26px; }
+      h4 { font-size: 22px; }
+      h5 { font-size: 20px; }
+      h6 { font-size: 18px; }
+    }
+
+    /* ============================================================
+       CANADA.CA H1 RED BAR
+       Colour #A62A1E · 72px wide · 6px thick · .2em below H1
+    ============================================================ */
+    h1::after {
+      content: '';
+      display: block;
+      width: 72px;
+      height: 6px;
+      background: #A62A1E;
+      margin-top: 0.2em;
+    }
+
+    /* ============================================================
+       CANADA.CA LINE LENGTH — max 65ch for prose text
+    ============================================================ */
+    p, li, blockquote, .card-excerpt, .hero-excerpt {
+      max-width: 65ch;
+    }
+
+    /* ============================================================
+       CANADA.CA LINKS — underline that skips descenders
+    ============================================================ */
+    a {
+      color: inherit;
+      text-decoration: underline;
+      text-decoration-skip-ink: auto;
+      transition: color var(--transition);
+    }
+    /* Navigation / UI links (cards, nav, footer) suppress underline */
+    nav a, .brand-logo, .card-headline a, .article-card-list a,
+    .btn-meridian, .footer-links a, nav.footer-social a,
+    .footer-bottom nav a, .top-bar a { text-decoration: none; }
     a:hover { color: var(--meridian-primary); }
 
     img { max-width: 100%; height: auto; display: block; object-fit: cover; }
 
     /* WCAG AA focus */
     :focus-visible { outline: 3px solid var(--meridian-primary); outline-offset: 3px; border-radius: 2px; }
+
+    /* Indigenous language support per Canada.ca spec */
+    :lang(iu) { font-family: 'Noto Sans Canadian Aboriginal', var(--font-body); }
+    :lang(iu) :is(h1, h2, h3, h4, h5, h6) { font-weight: bold; }
 
     /* ============================================================
        SKIP LINK
@@ -161,14 +231,16 @@
     .hero-content { padding: 1.5rem 0; }
 
     .hero-headline {
-      font-size: clamp(1.9rem, 4vw, 3.2rem); font-weight: 900;
-      line-height: 1.1; margin-bottom: 1rem; letter-spacing: -0.025em;
+      /* Slightly larger than H1 spec for hero impact, still Lato bold */
+      font-size: clamp(37px, 5vw, 52px); font-weight: 700;
+      line-height: 1.1; margin-bottom: 1rem;
     }
 
     .hero-excerpt {
-      font-family: var(--font-body); font-size: 1.1rem; font-weight: 300;
+      font-family: var(--font-body); font-size: 20px; font-weight: 400;
       line-height: 1.7; color: var(--meridian-muted); margin-bottom: 1.25rem;
     }
+    @media (max-width: 767.98px) { .hero-excerpt { font-size: 18px; } }
 
     .btn-meridian {
       font-family: var(--font-ui); font-size: 0.8rem; font-weight: 600;
@@ -192,13 +264,13 @@
     .article-card .card-img-wrapper { overflow: hidden; margin-bottom: 0.85rem; }
     .article-card .card-img-wrapper img { width: 100%; height: 220px; object-fit: cover; transition: transform 0.5s ease; }
     .article-card:hover .card-img-wrapper img { transform: scale(1.04); }
-    .article-card .card-headline { font-family: var(--font-display); font-size: 1.15rem; font-weight: 700; line-height: 1.25; margin-bottom: 0.4rem; }
+    .article-card .card-headline { font-family: var(--font-heading); font-size: 22px; font-weight: 700; line-height: 1.25; margin-bottom: 0.4rem; }
     .article-card .card-headline a:hover { color: var(--meridian-primary); }
     .article-card .card-excerpt { font-size: 0.9rem; color: var(--meridian-muted); line-height: 1.6; margin-bottom: 0.5rem; }
     .article-card .card-meta { font-family: var(--font-ui); font-size: 0.72rem; color: var(--meridian-muted); letter-spacing: 0.03em; }
 
     .article-card-feature .card-img-wrapper img { height: 300px; }
-    .article-card-feature .card-headline { font-size: 1.5rem; }
+    .article-card-feature .card-headline { font-size: 27px; } /* H4 per Canada.ca scale */
 
     .article-card-list { display: flex; gap: 1rem; align-items: flex-start; padding: 0.85rem 0; border-top: 1px solid var(--meridian-border); }
     .article-card-list:first-child { border-top: none; }
@@ -249,7 +321,7 @@
     footer { background: var(--meridian-black); color: #ccc; margin-top: 3rem; }
     [data-bs-theme="dark"] footer { background: #0d0f11; border-top: 1px solid #2a2d30; }
 
-    .footer-brand { font-family: var(--font-display); font-size: 2rem; font-weight: 900; color: #fff; letter-spacing: -0.03em; }
+    .footer-brand { font-family: var(--font-heading); font-size: 2rem; font-weight: 700; color: #fff; letter-spacing: 0; }
     .footer-brand span { color: var(--meridian-accent); }
     .footer-tagline { font-family: var(--font-body); font-size: 0.85rem; font-style: italic; color: #888; margin-top: 0.25rem; }
 
@@ -294,7 +366,7 @@
     ============================================================ */
     .help-modal .modal-header { border-bottom: 2px solid var(--meridian-black); }
     [data-bs-theme="dark"] .help-modal .modal-header { border-bottom-color: var(--bs-border-color); }
-    .help-modal .modal-title { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; }
+    .help-modal .modal-title { font-family: var(--font-heading); font-size: 29px; font-weight: 700; } /* H3 */
     .help-modal .form-label { font-family: var(--font-ui); font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--meridian-muted); }
     .help-modal .form-control, .help-modal .form-select { border-radius: 0; font-family: var(--font-ui); font-size: 0.9rem; }
     .help-modal .form-control:focus { border-color: var(--meridian-primary); box-shadow: 0 0 0 3px rgba(13,110,253,0.25); }
@@ -304,7 +376,7 @@
     /* ============================================================
        PULL QUOTE
     ============================================================ */
-    .pull-quote { border-left: 4px solid var(--meridian-accent); padding: 0.75rem 1.25rem; margin: 1.5rem 0; font-family: var(--font-display); font-size: 1.25rem; font-style: italic; line-height: 1.5; color: var(--bs-body-color); }
+    .pull-quote { border-left: 4px solid var(--meridian-accent); padding: 0.75rem 1.25rem; margin: 1.5rem 0; font-family: var(--font-heading); font-size: 24px; font-style: italic; font-weight: 700; line-height: 1.5; color: var(--bs-body-color); max-width: 65ch; }
 
     /* ============================================================
        SEARCH OVERLAY
@@ -327,10 +399,6 @@
       .nav-links { display: none; }
       .hero-image-wrapper img { height: 240px; }
     }
-
-    /* ============================================================
-       ANIMATIONS
-    ============================================================ */
     @media (prefers-reduced-motion: no-preference) {
       .fade-in { animation: fadeInUp 0.5s ease both; }
       @keyframes fadeInUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
@@ -643,7 +711,7 @@
                     (aria-label is valid on aside as a landmark) -->
           <aside class="sidebar-widget" aria-label="Subscription promotion">
             <div style="background:var(--meridian-black);color:#fff;padding:1.5rem;text-align:center;">
-              <p style="font-family:var(--font-display);font-size:1.1rem;font-style:italic;margin-bottom:0.5rem;" data-i18n="promo_heading">"Ideas worth sitting with."</p>
+              <p style="font-family:var(--font-heading);font-size:22px;font-style:italic;font-weight:700;margin-bottom:0.5rem;" data-i18n="promo_heading">"Ideas worth sitting with."</p>
               <p style="font-family:var(--font-ui);font-size:0.78rem;color:#aaa;margin-bottom:1rem;" data-i18n="promo_subtext">Unlimited access to Infoweb — from $4.99/month.</p>
               <a href="#" class="btn-meridian" style="background:#fff;color:#000;border-color:#fff;" data-i18n="promo_cta">Start Reading</a>
             </div>
