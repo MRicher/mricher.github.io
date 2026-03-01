@@ -201,9 +201,9 @@
 
     .theme-toggle, .search-btn {
       background: none; border: 1px solid var(--meridian-border);
-      border-radius: 4px; width: 36px; height: 30px;
+      border-radius: 4px; padding: 0.25rem 0.6rem;
       display: flex; align-items: center; justify-content: center;
-      cursor: pointer; color: var(--bs-body-color); font-size: 20px;
+      cursor: pointer; color: var(--bs-body-color); font-size: 18px;
       transition: background var(--transition);
     }
     .theme-toggle:hover, .search-btn:hover { background: var(--bs-secondary-bg); }
@@ -392,8 +392,6 @@
     /* ============================================================
        PULL QUOTE
     ============================================================ */
-    .pull-quote { border-left: 4px solid var(--meridian-accent); padding: 0.75rem 1.25rem; margin: 1.5rem 0; font-family: var(--font-heading); font-size: 24px; font-style: italic; font-weight: 700; line-height: 1.5; color: var(--bs-body-color); max-width: 65ch; }
-
     /* ============================================================
        SEARCH OVERLAY
     ============================================================ */
@@ -451,7 +449,7 @@
   ============================================================ -->
   <section class="top-bar" aria-label="Site information">
     <div class="container d-flex justify-content-between align-items-center">
-      <span data-i18n="top_date">Saturday, 28 February 2026 · Canada's Digital News Hub</span>
+      <span data-i18n="top_date">Saturday, 28 February 2026</span>
       <nav aria-label="Government links">
         <a href="https://www.rcmp-grc.gc.ca/" target="_blank" rel="noopener noreferrer" data-i18n="rcmp_link">RCMP.ca</a>
         &nbsp;·&nbsp;
@@ -523,10 +521,10 @@
               Across the boreal fringe, scientists and Indigenous communities are documenting a transformation centuries in the making — and warning that the reckoning is arriving faster than anyone predicted.
             </p>
             <p class="hero-byline">
-              <span data-i18n="hero_by">By</span>
+              <small><span data-i18n="hero_by">By</span>
               <strong>Marguerite Tremblay</strong>
               &nbsp;·&nbsp;
-              <time datetime="2026-02-28" data-i18n="hero_date">February 28, 2026</time>
+              <time datetime="2026-02-28" data-i18n="hero_date">February 28, 2026</time></small>
             </p>
             <a href="#" class="btn-meridian mt-3" data-i18n="hero_cta">Read More</a>
           </div>
@@ -559,7 +557,7 @@
                   <a href="#" data-i18n="art1_headline">Parliament's Invisible War: The Procedural Crisis No One Is Talking About</a>
                 </h2>
                 <p class="card-excerpt" data-i18n="art1_excerpt">Filibustering has become an art form on Parliament Hill, but at what cost to democratic function and public trust?</p>
-                <div class="card-meta"><strong>Élise Fontaine</strong> &nbsp;·&nbsp; <span data-i18n="art1_date">Feb 26, 2026</span> &nbsp;·&nbsp; <span data-i18n="read_min">8 min read</span></div>
+                <div class="card-meta"><small><strong>Élise Fontaine</strong> &nbsp;·&nbsp; <span data-i18n="art1_date">Feb 26, 2026</span> &nbsp;·&nbsp; <span data-i18n="read_min">8 min read</span></small></div>
               </article>
             </div>
 
@@ -577,15 +575,11 @@
                   <a href="#" data-i18n="art2_headline">The New Artisans: How Gen Z Is Redefining Craft in a Hyperdigital Age</a>
                 </h2>
                 <p class="card-excerpt" data-i18n="art2_excerpt">From ceramics to letterpress, young Canadians are returning to tangible making — not as nostalgia, but as resistance.</p>
-                <div class="card-meta"><strong>James Adeyemi</strong> &nbsp;·&nbsp; <span data-i18n="art2_date">Feb 25, 2026</span> &nbsp;·&nbsp; <span data-i18n="read_min">6 min read</span></div>
+                <div class="card-meta"><small><strong>James Adeyemi</strong> &nbsp;·&nbsp; <span data-i18n="art2_date">Feb 25, 2026</span> &nbsp;·&nbsp; <span data-i18n="read_min">6 min read</span></small></div>
               </article>
             </div>
 
           </div>
-
-          <blockquote class="pull-quote" data-i18n="pull_quote">
-            "The question is not whether Canada will change — it's whether we will choose how."
-          </blockquote>
 
           <div class="row g-4">
 
@@ -602,7 +596,7 @@
                 <h2 class="card-headline" id="art3-headline" style="font-size:22px;">
                   <a href="#" data-i18n="art3_headline">AI in the Clinic: Promise, Peril, and the Patients Caught Between</a>
                 </h2>
-                <div class="card-meta"><strong>Dr. Priya Nair</strong> &nbsp;·&nbsp; <span data-i18n="art3_date">Feb 24, 2026</span></div>
+                <div class="card-meta"><small><strong>Dr. Priya Nair</strong> &nbsp;·&nbsp; <span data-i18n="art3_date">Feb 24, 2026</span></small></div>
               </article>
             </div>
 
@@ -619,7 +613,7 @@
                 <h2 class="card-headline" id="art4-headline" style="font-size:22px;">
                   <a href="#" data-i18n="art4_headline">The Housing Paradox: Why Building More Isn't Fixing Affordability</a>
                 </h2>
-                <div class="card-meta"><strong>Lena Kowalski</strong> &nbsp;·&nbsp; <span data-i18n="art4_date">Feb 23, 2026</span></div>
+                <div class="card-meta"><small><strong>Lena Kowalski</strong> &nbsp;·&nbsp; <span data-i18n="art4_date">Feb 23, 2026</span></small></div>
               </article>
             </div>
 
@@ -636,7 +630,7 @@
                 <h2 class="card-headline" id="art5-headline" style="font-size:22px;">
                   <a href="#" data-i18n="art5_headline">The Language We Lost: Revitalization, Technology, and the Limits of Apps</a>
                 </h2>
-                <div class="card-meta"><strong>Rebecca Crow Feather</strong> &nbsp;·&nbsp; <span data-i18n="art5_date">Feb 22, 2026</span></div>
+                <div class="card-meta"><small><strong>Rebecca Crow Feather</strong> &nbsp;·&nbsp; <span data-i18n="art5_date">Feb 22, 2026</span></small></div>
               </article>
             </div>
 
@@ -650,31 +644,57 @@
         ====================================================== -->
         <aside class="col-lg-4 col-divider" aria-label="Sidebar">
 
-          <!-- Newsletter — FIX: <div aria-labelledby> → <section aria-labelledby> -->
-          <section class="sidebar-widget" aria-labelledby="newsletter-heading">
-            <h2 class="sidebar-widget-title" id="newsletter-heading" data-i18n="sidebar_newsletter_title">The Daily Briefing</h2>
-            <p style="font-size:18px; color:var(--meridian-muted); margin-bottom:1rem;" data-i18n="sidebar_newsletter_desc">
-              Curated analysis and essential reading, delivered each weekday morning.
-            </p>
-            <form class="newsletter-form" id="newsletterForm" novalidate aria-label="Newsletter signup">
-              <div class="mb-2">
-                <label for="newsletter-name" class="form-label visually-hidden" data-i18n="form_name_label">Your name</label>
-                <!-- FIX: removed redundant aria-required (native required is sufficient) -->
-                <input type="text" id="newsletter-name" name="newsletter-name"
-                  class="form-control form-control-sm"
-                  data-i18n-placeholder="form_name_placeholder"
-                  placeholder="Your name" autocomplete="given-name" required>
-              </div>
-              <div class="mb-1">
-                <label for="newsletter-email" class="form-label visually-hidden" data-i18n="form_email_label">Email address</label>
-                <input type="email" id="newsletter-email" name="newsletter-email"
-                  class="form-control form-control-sm"
-                  data-i18n-placeholder="form_email_placeholder"
-                  placeholder="Email address" autocomplete="email" required>
-              </div>
-              <button type="submit" class="btn-subscribe" data-i18n="form_subscribe_btn">Subscribe — Free</button>
-              <p class="newsletter-disclaimer" data-i18n="form_disclaimer">No spam. Unsubscribe anytime. We respect your privacy.</p>
-            </form>
+          <!-- Commissioner's Corner -->
+          <section class="sidebar-widget" aria-labelledby="commissioner-heading">
+            <h2 class="sidebar-widget-title" id="commissioner-heading" data-i18n="sidebar_commissioner_title">Commissioner's Corner</h2>
+            <nav aria-label="Commissioner's Corner links">
+
+              <article class="article-card-list" aria-labelledby="comm1">
+                <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=160&auto=format&fit=crop&q=60"
+                  alt="Commissioner at podium addressing personnel" width="80" height="80" loading="lazy">
+                <div class="list-content">
+                  <h3 class="card-headline" id="comm1"><a href="#" data-i18n="comm1_headline">Message from the Commissioner: Priorities for 2026</a></h3>
+                  <div class="card-meta"><small><span data-i18n="comm1_date">Feb 28, 2026</span></small></div>
+                </div>
+              </article>
+
+              <article class="article-card-list" aria-labelledby="comm2">
+                <img src="https://images.unsplash.com/photo-1577962917302-cd874c4e31d2?w=160&auto=format&fit=crop&q=60"
+                  alt="RCMP officers in formal uniform at ceremony" width="80" height="80" loading="lazy">
+                <div class="list-content">
+                  <h3 class="card-headline" id="comm2"><a href="#" data-i18n="comm2_headline">Promotions & Honours — Winter 2026</a></h3>
+                  <div class="card-meta"><small><span data-i18n="comm2_date">Feb 20, 2026</span></small></div>
+                </div>
+              </article>
+
+              <article class="article-card-list" aria-labelledby="comm3">
+                <img src="https://images.unsplash.com/photo-1569389397653-c04fe624e663?w=160&auto=format&fit=crop&q=60"
+                  alt="Officers participating in community engagement event" width="80" height="80" loading="lazy">
+                <div class="list-content">
+                  <h3 class="card-headline" id="comm3"><a href="#" data-i18n="comm3_headline">National Indigenous Policing Strategy Update</a></h3>
+                  <div class="card-meta"><small><span data-i18n="comm3_date">Feb 14, 2026</span></small></div>
+                </div>
+              </article>
+
+              <article class="article-card-list" aria-labelledby="comm4">
+                <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=160&auto=format&fit=crop&q=60"
+                  alt="Handshake between officials at partnership signing" width="80" height="80" loading="lazy">
+                <div class="list-content">
+                  <h3 class="card-headline" id="comm4"><a href="#" data-i18n="comm4_headline">New Federal-Provincial Policing Agreements Signed</a></h3>
+                  <div class="card-meta"><small><span data-i18n="comm4_date">Feb 7, 2026</span></small></div>
+                </div>
+              </article>
+
+              <article class="article-card-list" aria-labelledby="comm5">
+                <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=160&auto=format&fit=crop&q=60"
+                  alt="Personnel reviewing policy documents at a table" width="80" height="80" loading="lazy">
+                <div class="list-content">
+                  <h3 class="card-headline" id="comm5"><a href="#" data-i18n="comm5_headline">Wellness & Mental Health Resources for Members</a></h3>
+                  <div class="card-meta"><small><span data-i18n="comm5_date">Jan 31, 2026</span></small></div>
+                </div>
+              </article>
+
+            </nav>
           </section>
 
           <!-- Trending — FIX: <div aria-labelledby> → <section aria-labelledby> -->
@@ -687,7 +707,7 @@
                   alt="Night skyline of a Canadian city" width="80" height="80" loading="lazy">
                 <div class="list-content">
                   <h3 class="card-headline" id="trend1"><a href="#" data-i18n="trend1_headline">What the New Budget Really Means for Middle Canada</a></h3>
-                  <div class="card-meta"><span data-i18n="trend1_date">Feb 27, 2026</span></div>
+                  <div class="card-meta"><small><span data-i18n="trend1_date">Feb 27, 2026</span></small></div>
                 </div>
               </article>
 
@@ -696,7 +716,7 @@
                   alt="Scientific laboratory glassware lit with colourful reagents" width="80" height="80" loading="lazy">
                 <div class="list-content">
                   <h3 class="card-headline" id="trend2"><a href="#" data-i18n="trend2_headline">Canada's Quiet Quantum Leap: Inside the Labs Changing Everything</a></h3>
-                  <div class="card-meta"><span data-i18n="trend2_date">Feb 26, 2026</span></div>
+                  <div class="card-meta"><small><span data-i18n="trend2_date">Feb 26, 2026</span></small></div>
                 </div>
               </article>
 
@@ -705,7 +725,7 @@
                   alt="Diverse group of young adults collaborating around a table" width="80" height="80" loading="lazy">
                 <div class="list-content">
                   <h3 class="card-headline" id="trend3"><a href="#" data-i18n="trend3_headline">The New Workforce: Why Young Canadians Are Renegotiating Work Entirely</a></h3>
-                  <div class="card-meta"><span data-i18n="trend3_date">Feb 25, 2026</span></div>
+                  <div class="card-meta"><small><span data-i18n="trend3_date">Feb 25, 2026</span></small></div>
                 </div>
               </article>
 
@@ -714,23 +734,12 @@
                   alt="Aurora borealis over a northern Canadian landscape" width="80" height="80" loading="lazy">
                 <div class="list-content">
                   <h3 class="card-headline" id="trend4"><a href="#" data-i18n="trend4_headline">Northern Sovereignty: Why the Arctic Is Canada's Defining Test</a></h3>
-                  <div class="card-meta"><span data-i18n="trend4_date">Feb 24, 2026</span></div>
+                  <div class="card-meta"><small><span data-i18n="trend4_date">Feb 24, 2026</span></small></div>
                 </div>
               </article>
 
             </nav>
           </section>
-
-          <!-- Promo
-               FIX: <div aria-label="Subscription promotion"> → plain <aside>
-                    (aria-label is valid on aside as a landmark) -->
-          <aside class="sidebar-widget" aria-label="Subscription promotion">
-            <div style="background:var(--meridian-black);color:#fff;padding:1.5rem;text-align:center;">
-              <p style="font-family:var(--font-heading);font-size:22px;font-style:italic;font-weight:700;margin-bottom:0.5rem;" data-i18n="promo_heading">"Ideas worth sitting with."</p>
-              <p style="font-family:var(--font-ui);font-size:18px;color:#aaa;margin-bottom:1rem;" data-i18n="promo_subtext">Unlimited access to Infoweb — from $4.99/month.</p>
-              <a href="#" class="btn-meridian" style="background:#fff;color:#000;border-color:#fff;" data-i18n="promo_cta">Start Reading</a>
-            </div>
-          </aside>
 
         </aside>
 
@@ -921,7 +930,7 @@
     const translations = {
       'en-CA': {
         skip: 'Skip to main content',
-        top_date: "Saturday, 28 February 2026 · Canada's Digital News Hub",
+        top_date: "Saturday, 28 February 2026",
         rcmp_link: 'RCMP.ca',
         canada_link: 'Canada.ca',
         nav_regions: 'Regions', nav_divisions: 'Divisions',
@@ -950,21 +959,17 @@
         art5_headline: 'The Language We Lost: Revitalization, Technology, and the Limits of Apps',
         art5_date: 'Feb 22, 2026',
         read_min: 'min read',
-        pull_quote: '"The question is not whether Canada will change — it\'s whether we will choose how."',
-        sidebar_newsletter_title: 'The Daily Briefing',
-        sidebar_newsletter_desc: 'Curated analysis and essential reading, delivered each weekday morning.',
+        sidebar_commissioner_title: "Commissioner's Corner",
+        comm1_headline: "Message from the Commissioner: Priorities for 2026", comm1_date: 'Feb 28, 2026',
+        comm2_headline: 'Promotions & Honours — Winter 2026', comm2_date: 'Feb 20, 2026',
+        comm3_headline: 'National Indigenous Policing Strategy Update', comm3_date: 'Feb 14, 2026',
+        comm4_headline: 'New Federal-Provincial Policing Agreements Signed', comm4_date: 'Feb 7, 2026',
+        comm5_headline: 'Wellness & Mental Health Resources for Members', comm5_date: 'Jan 31, 2026',
         sidebar_trending_title: 'Trending Now',
         trend1_headline: 'What the New Budget Really Means for Middle Canada', trend1_date: 'Feb 27, 2026',
         trend2_headline: "Canada's Quiet Quantum Leap: Inside the Labs Changing Everything", trend2_date: 'Feb 26, 2026',
         trend3_headline: 'The New Workforce: Why Young Canadians Are Renegotiating Work Entirely', trend3_date: 'Feb 25, 2026',
         trend4_headline: "Northern Sovereignty: Why the Arctic Is Canada's Defining Test", trend4_date: 'Feb 24, 2026',
-        promo_heading: '"Ideas worth sitting with."',
-        promo_subtext: 'Unlimited access to Infoweb — from $4.99/month.',
-        promo_cta: 'Start Reading',
-        form_name_label: 'Your name', form_name_placeholder: 'Your name',
-        form_email_label: 'Email address', form_email_placeholder: 'Email address',
-        form_subscribe_btn: 'Subscribe — Free',
-        form_disclaimer: 'No spam. Unsubscribe anytime. We respect your privacy.',
         footer_tagline: '',
         footer_sections: 'Regions', footer_company: 'Divisions',
         footer_reader: 'Organisation', footer_language: 'Resources', footer_lang_label: 'Select language',
@@ -1001,7 +1006,7 @@
       },
       'fr-CA': {
         skip: 'Aller au contenu principal',
-        top_date: "Samedi, 28 février 2026 · Le portail numérique du Canada",
+        top_date: "Samedi, 28 février 2026",
         rcmp_link: 'GRC.ca',
         canada_link: 'Canada.ca',
         nav_regions: 'Régions', nav_divisions: 'Divisions',
@@ -1030,21 +1035,17 @@
         art5_headline: "La langue perdue : revitalisation, technologie et les limites des applications",
         art5_date: '22 févr. 2026',
         read_min: 'min de lecture',
-        pull_quote: "« La question n'est pas de savoir si le Canada changera — mais si nous choisirons comment. »",
-        sidebar_newsletter_title: "L'Infolettre du matin",
-        sidebar_newsletter_desc: 'Analyses choisies et lecture essentielle, livrées chaque matin de semaine.',
+        sidebar_commissioner_title: "Coin du commissaire",
+        comm1_headline: "Message du commissaire : priorités pour 2026", comm1_date: '28 févr. 2026',
+        comm2_headline: 'Promotions et distinctions — Hiver 2026', comm2_date: '20 févr. 2026',
+        comm3_headline: 'Mise à jour de la stratégie nationale de services de police autochtones', comm3_date: '14 févr. 2026',
+        comm4_headline: 'Signature de nouveaux accords fédéraux-provinciaux de services de police', comm4_date: '7 févr. 2026',
+        comm5_headline: 'Ressources sur le mieux-être et la santé mentale pour les membres', comm5_date: '31 janv. 2026',
         sidebar_trending_title: 'Tendances',
         trend1_headline: 'Ce que le nouveau budget signifie vraiment pour la classe moyenne canadienne', trend1_date: '27 févr. 2026',
         trend2_headline: "Le bond quantique discret du Canada : à l'intérieur des laboratoires qui changent tout", trend2_date: '26 févr. 2026',
         trend3_headline: "La nouvelle main-d'œuvre : pourquoi les jeunes Canadiens renégocient entièrement le travail", trend3_date: '25 févr. 2026',
         trend4_headline: "La souveraineté du Nord : pourquoi l'Arctique est l'épreuve décisive du Canada", trend4_date: '24 févr. 2026',
-        promo_heading: '« Des idées qui méritent réflexion. »',
-        promo_subtext: 'Accès illimité à Infoweb — dès 4,99 $/mois.',
-        promo_cta: 'Commencer à lire',
-        form_name_label: 'Votre nom', form_name_placeholder: 'Votre nom',
-        form_email_label: 'Adresse courriel', form_email_placeholder: 'Adresse courriel',
-        form_subscribe_btn: "S'abonner — Gratuit",
-        form_disclaimer: 'Aucun pourriel. Désabonnement en tout temps. Nous respectons votre vie privée.',
         footer_tagline: '',
         footer_sections: 'Régions', footer_company: 'Divisions',
         footer_reader: 'Organisation', footer_language: 'Ressources', footer_lang_label: 'Choisir la langue',
@@ -1190,7 +1191,6 @@
       });
 
       setupFormValidation('helpForm');
-      setupFormValidation('newsletterForm');
     });
   </script>
 
