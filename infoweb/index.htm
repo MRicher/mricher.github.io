@@ -122,8 +122,8 @@
     }
     /* Navigation / UI links (cards, nav, footer) suppress underline */
     nav a, .brand-logo, .card-headline a, .article-card-list a,
-    .btn-meridian, .footer-links a, nav.footer-social a,
-    .top-bar a { text-decoration: none; }
+    .btn-meridian, .footer-links a,
+    .footer-bottom nav a, .top-bar a { text-decoration: none; }
     a:hover { color: var(--meridian-primary); }
 
     img { max-width: 100%; height: auto; display: block; object-fit: cover; }
@@ -321,25 +321,14 @@
 
     .footer-brand { font-family: var(--font-heading); font-size: 2rem; font-weight: 700; color: #fff; letter-spacing: 0; }
     .footer-brand span { color: var(--meridian-accent); }
-    .footer-tagline { font-family: var(--font-body); font-size: 18px; font-style: italic; color: #888; margin-top: 0.25rem; }
-
-    .footer-nav-heading { font-family: var(--font-ui); font-size: 18px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #fff; margin-bottom: 1rem; }
+.footer-nav-heading { font-family: var(--font-ui); font-size: 18px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #fff; margin-bottom: 1rem; }
 
     .footer-links { list-style: none; padding: 0; margin: 0; }
     .footer-links li { margin-bottom: 0.45rem; }
     .footer-links a { font-family: var(--font-ui); font-size: 18px; color: #888; transition: color var(--transition); }
     .footer-links a:hover { color: #fff; }
 
-    /* FIX: social links use <nav> not <div>, so no aria-label conflict.
-       Style stays the same — just applied to nav's child anchors. */
-    nav.footer-social { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1rem; }
-    nav.footer-social a {
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 36px; height: 36px; border: 1px solid #444; border-radius: 50%;
-      color: #888; font-size: 20px;
-      transition: color var(--transition), border-color var(--transition), background var(--transition);
-    }
-    nav.footer-social a:hover { color: #fff; border-color: #fff; background: rgba(255,255,255,0.08); }
+
 
     .footer-bottom {
       border-top: 1px solid #2a2d30; padding: 1.25rem 0;
@@ -349,15 +338,20 @@
       display: flex; flex-wrap: wrap;
       align-items: center; justify-content: space-between; gap: 1rem;
     }
-    .footer-bottom-links { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem; }
+    .footer-bottom-links { display: flex; flex-wrap: wrap; align-items: center; gap: 0; }
     .footer-bottom-links a {
       font-family: var(--font-ui); font-size: 18px; color: #aaa;
       text-decoration: underline; text-decoration-skip-ink: auto;
       transition: color var(--transition); padding: 0 0.75rem;
-      border-right: 1px solid #555;
+      position: relative;
+    }
+    .footer-bottom-links a::after {
+      content: '•';
+      position: absolute; right: -0.2rem; top: 50%; transform: translateY(-50%);
+      color: #555; pointer-events: none; font-style: normal;
     }
     .footer-bottom-links a:first-child { padding-left: 0; }
-    .footer-bottom-links a:last-child { border-right: none; }
+    .footer-bottom-links a:last-child::after { display: none; }
     .footer-bottom-links a:hover { color: #fff; }
     /* Wordmark: SVG is black — invert to white on the dark footer */
     .footer-wordmark img {
@@ -756,20 +750,10 @@
 
         <div class="col-lg-4 col-md-6">
           <div class="footer-brand">Info<span>web</span></div>
-          <p class="footer-tagline" data-i18n="footer_tagline">Canada's digital news hub since 2010.</p>
-          <!-- FIX: <div aria-label> → <nav aria-label> -->
-          <nav class="footer-social" aria-label="Social media links">
-            <a href="#" aria-label="Infoweb on X (Twitter)"><i class="bi bi-twitter-x" aria-hidden="true"></i></a>
-            <a href="#" aria-label="Infoweb on Facebook"><i class="bi bi-facebook" aria-hidden="true"></i></a>
-            <a href="#" aria-label="Infoweb on Instagram"><i class="bi bi-instagram" aria-hidden="true"></i></a>
-            <a href="#" aria-label="Infoweb on LinkedIn"><i class="bi bi-linkedin" aria-hidden="true"></i></a>
-            <a href="#" aria-label="Infoweb RSS Feed"><i class="bi bi-rss-fill" aria-hidden="true"></i></a>
-          </nav>
         </div>
 
         <div class="col-lg-2 col-md-3 col-6">
-          <h3 class="footer-nav-heading" data-i18n="footer_sections">Sections</h3>
-          <!-- FIX: role="list" removed -->
+          <h3 class="footer-nav-heading" data-i18n="footer_sections">Regions</h3>
           <ul class="footer-links">
             <li><a href="#" data-i18n-nav="nav_politics">Politics</a></li>
             <li><a href="#" data-i18n-nav="nav_culture">Culture</a></li>
@@ -781,7 +765,7 @@
         </div>
 
         <div class="col-lg-2 col-md-3 col-6">
-          <h3 class="footer-nav-heading" data-i18n="footer_company">Company</h3>
+          <h3 class="footer-nav-heading" data-i18n="footer_company">Divisions</h3>
           <ul class="footer-links">
             <li><a href="#" data-i18n="footer_about">About Us</a></li>
             <li><a href="#" data-i18n="footer_masthead">Masthead</a></li>
@@ -792,7 +776,7 @@
         </div>
 
         <div class="col-lg-2 col-md-3 col-6">
-          <h3 class="footer-nav-heading" data-i18n="footer_reader">Readers</h3>
+          <h3 class="footer-nav-heading" data-i18n="footer_reader">Organisation</h3>
           <ul class="footer-links">
             <li><a href="#" data-i18n="footer_subscribe">Subscribe</a></li>
             <li><a href="#" data-i18n="footer_newsletter">Newsletter</a></li>
@@ -803,7 +787,7 @@
         </div>
 
         <div class="col-lg-2 col-md-3 col-6">
-          <h3 class="footer-nav-heading" data-i18n="footer_language">Language</h3>
+          <h3 class="footer-nav-heading" data-i18n="footer_language">Resources</h3>
           <label for="footerLangSelect" class="visually-hidden" data-i18n="footer_lang_label">Select language</label>
           <select id="footerLangSelect" class="footer-lang-select" aria-label="Select language">
             <option value="en-CA">English (Canada)</option>
@@ -960,9 +944,9 @@
         form_email_label: 'Email address', form_email_placeholder: 'Email address',
         form_subscribe_btn: 'Subscribe — Free',
         form_disclaimer: 'No spam. Unsubscribe anytime. We respect your privacy.',
-        footer_tagline: "Canada's digital news hub since 2010.",
-        footer_sections: 'Sections', footer_company: 'Company',
-        footer_reader: 'Readers', footer_language: 'Language', footer_lang_label: 'Select language',
+        footer_tagline: '',
+        footer_sections: 'Regions', footer_company: 'Divisions',
+        footer_reader: 'Organisation', footer_language: 'Resources', footer_lang_label: 'Select language',
         footer_about: 'About Us', footer_masthead: 'Masthead', footer_careers: 'Careers',
         footer_advertise: 'Advertise', footer_contact: 'Contact',
         footer_subscribe: 'Subscribe', footer_newsletter: 'Newsletter',
@@ -1023,9 +1007,9 @@
         form_email_label: 'Adresse courriel', form_email_placeholder: 'Adresse courriel',
         form_subscribe_btn: "S'abonner — Gratuit",
         form_disclaimer: 'Aucun pourriel. Désabonnement en tout temps. Nous respectons votre vie privée.',
-        footer_tagline: "Le portail numérique du Canada depuis 2010.",
-        footer_sections: 'Rubriques', footer_company: 'Entreprise',
-        footer_reader: 'Lecteurs', footer_language: 'Langue', footer_lang_label: 'Choisir la langue',
+        footer_tagline: '',
+        footer_sections: 'Régions', footer_company: 'Divisions',
+        footer_reader: 'Organisation', footer_language: 'Ressources', footer_lang_label: 'Choisir la langue',
         footer_about: 'À propos', footer_masthead: 'Équipe éditoriale', footer_careers: 'Carrières',
         footer_advertise: 'Publicité', footer_contact: 'Contact',
         footer_subscribe: "S'abonner", footer_newsletter: 'Infolettre',
