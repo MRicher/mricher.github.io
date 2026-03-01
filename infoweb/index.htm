@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html lang="en-CA" data-bs-theme="light">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="The Meridian — Canadian editorial news magazine" />
-  <title>The Meridian</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Infoweb — Canadian editorial news magazine">
+  <title>Infoweb</title>
 
   <!-- Bootstrap 5.3 -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
   <!-- Bootstrap Icons -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
 
   <style>
     /* ============================================================
@@ -21,29 +21,24 @@
     ============================================================ */
     :root {
       --meridian-primary: #0d6efd;
-      --meridian-accent: #c0392b;
-      --meridian-dark: #343a40;
-      --meridian-black: #000000;
-      --meridian-light: #f8f9fa;
-      --meridian-border: #dee2e6;
-      --meridian-muted: #6c757d;
+      --meridian-accent:  #c0392b;
+      --meridian-dark:    #343a40;
+      --meridian-black:   #000000;
+      --meridian-light:   #f8f9fa;
+      --meridian-border:  #dee2e6;
+      --meridian-muted:   #6c757d;
       --font-display: 'Playfair Display', Georgia, serif;
-      --font-body: 'Source Serif 4', Georgia, serif;
-      --font-ui: 'DM Sans', system-ui, sans-serif;
-      --nav-height: 60px;
+      --font-body:    'Source Serif 4', Georgia, serif;
+      --font-ui:      'DM Sans', system-ui, sans-serif;
       --transition: 0.2s ease;
     }
 
-    /* Dark mode overrides */
     [data-bs-theme="dark"] {
       --meridian-border: #495057;
-      --meridian-light: #1a1d20;
-      --meridian-muted: #adb5bd;
+      --meridian-light:  #1a1d20;
+      --meridian-muted:  #adb5bd;
     }
 
-    /* ============================================================
-       GLOBAL BASE
-    ============================================================ */
     *, *::before, *::after { box-sizing: border-box; }
 
     body {
@@ -62,650 +57,267 @@
       letter-spacing: -0.01em;
     }
 
-    a {
-      color: inherit;
-      text-decoration: none;
-      transition: color var(--transition);
-    }
+    a { color: inherit; text-decoration: none; transition: color var(--transition); }
     a:hover { color: var(--meridian-primary); }
 
-    img {
-      max-width: 100%;
-      height: auto;
-      display: block;
-      object-fit: cover;
-    }
+    img { max-width: 100%; height: auto; display: block; object-fit: cover; }
 
-    /* Focus visible — WCAG AA */
-    :focus-visible {
-      outline: 3px solid var(--meridian-primary);
-      outline-offset: 3px;
-      border-radius: 2px;
-    }
+    /* WCAG AA focus */
+    :focus-visible { outline: 3px solid var(--meridian-primary); outline-offset: 3px; border-radius: 2px; }
 
     /* ============================================================
-       SKIP TO CONTENT
+       SKIP LINK
     ============================================================ */
     .skip-link {
-      position: absolute;
-      top: -100%;
-      left: 0;
-      z-index: 9999;
+      position: absolute; top: -100%; left: 0; z-index: 9999;
       padding: 0.75rem 1.5rem;
-      background: var(--meridian-primary);
-      color: #fff;
-      font-family: var(--font-ui);
-      font-weight: 500;
-      font-size: 0.95rem;
-      border-bottom-right-radius: 6px;
-      transition: top 0.2s;
+      background: var(--meridian-primary); color: #fff;
+      font-family: var(--font-ui); font-weight: 500; font-size: 0.95rem;
+      border-bottom-right-radius: 6px; transition: top 0.2s;
     }
-    .skip-link:focus {
-      top: 0;
-      outline: 3px solid #fff;
-      outline-offset: 2px;
-    }
+    .skip-link:focus { top: 0; outline: 3px solid #fff; outline-offset: 2px; }
 
     /* ============================================================
-       TOP BAR (date / ISSN strip)
+       TOP BAR
     ============================================================ */
     .top-bar {
-      font-family: var(--font-ui);
-      font-size: 0.75rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
+      font-family: var(--font-ui); font-size: 0.75rem;
+      letter-spacing: 0.06em; text-transform: uppercase;
       border-bottom: 1px solid var(--meridian-border);
-      padding: 0.35rem 0;
-      color: var(--meridian-muted);
+      padding: 0.35rem 0; color: var(--meridian-muted);
     }
-    .top-bar a {
-      color: var(--meridian-muted);
-      font-weight: 500;
-    }
+    .top-bar a { color: var(--meridian-muted); font-weight: 500; }
     .top-bar a:hover { color: var(--meridian-primary); }
 
     /* ============================================================
-       MAIN NAVIGATION
+       MAIN NAV
     ============================================================ */
     .main-nav {
       border-bottom: 3px solid var(--meridian-black);
-      position: sticky;
-      top: 0;
-      z-index: 1030;
+      position: sticky; top: 0; z-index: 1030;
       background-color: var(--bs-body-bg);
       transition: background-color var(--transition);
     }
-
-    [data-bs-theme="dark"] .main-nav {
-      border-bottom-color: var(--bs-border-color);
-    }
+    [data-bs-theme="dark"] .main-nav { border-bottom-color: var(--bs-border-color); }
 
     .brand-logo {
-      font-family: var(--font-display);
-      font-size: 1.85rem;
-      font-weight: 900;
-      letter-spacing: -0.03em;
-      color: var(--bs-body-color);
-      line-height: 1;
+      font-family: var(--font-display); font-size: 1.85rem;
+      font-weight: 900; letter-spacing: -0.03em;
+      color: var(--bs-body-color); line-height: 1;
     }
-    .brand-logo span {
-      color: var(--meridian-accent);
-    }
+    .brand-logo span { color: var(--meridian-accent); }
     .brand-logo:hover { color: var(--bs-body-color); }
 
-    .nav-links {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      gap: 0;
-    }
-
+    .nav-links { list-style: none; margin: 0; padding: 0; display: flex; gap: 0; }
     .nav-links li a {
-      font-family: var(--font-ui);
-      font-size: 0.8rem;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 0.5rem 0.75rem;
-      display: block;
-      color: var(--bs-body-color);
-      border-bottom: 2px solid transparent;
+      font-family: var(--font-ui); font-size: 0.8rem; font-weight: 500;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 0.5rem 0.75rem; display: block;
+      color: var(--bs-body-color); border-bottom: 2px solid transparent;
       transition: color var(--transition), border-color var(--transition);
     }
     .nav-links li a:hover,
-    .nav-links li a[aria-current="page"] {
-      color: var(--meridian-primary);
-      border-bottom-color: var(--meridian-primary);
-    }
+    .nav-links li a[aria-current="page"] { color: var(--meridian-primary); border-bottom-color: var(--meridian-primary); }
 
-    .nav-controls {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
+    .nav-controls { display: flex; align-items: center; gap: 0.5rem; }
 
-    /* Language toggle */
     .lang-toggle {
-      font-family: var(--font-ui);
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      background: none;
-      border: 1px solid var(--meridian-border);
-      border-radius: 4px;
-      padding: 0.25rem 0.5rem;
-      cursor: pointer;
-      color: var(--bs-body-color);
+      font-family: var(--font-ui); font-size: 0.75rem; font-weight: 600;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      background: none; border: 1px solid var(--meridian-border);
+      border-radius: 4px; padding: 0.25rem 0.5rem;
+      cursor: pointer; color: var(--bs-body-color);
       transition: background var(--transition), color var(--transition);
     }
-    .lang-toggle:hover,
-    .lang-toggle:focus {
-      background: var(--meridian-primary);
-      color: #fff;
-      border-color: var(--meridian-primary);
-    }
+    .lang-toggle:hover, .lang-toggle:focus { background: var(--meridian-primary); color: #fff; border-color: var(--meridian-primary); }
 
-    /* Dark mode toggle */
-    .theme-toggle {
-      background: none;
-      border: 1px solid var(--meridian-border);
-      border-radius: 4px;
-      width: 36px;
-      height: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      color: var(--bs-body-color);
-      font-size: 1rem;
+    .theme-toggle, .search-btn {
+      background: none; border: 1px solid var(--meridian-border);
+      border-radius: 4px; width: 36px; height: 30px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--bs-body-color); font-size: 1rem;
       transition: background var(--transition);
     }
-    .theme-toggle:hover { background: var(--bs-secondary-bg); }
-
-    /* Search button */
-    .search-btn {
-      background: none;
-      border: 1px solid var(--meridian-border);
-      border-radius: 4px;
-      width: 36px;
-      height: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      color: var(--bs-body-color);
-      font-size: 1rem;
-      transition: background var(--transition);
-    }
-    .search-btn:hover { background: var(--bs-secondary-bg); }
+    .theme-toggle:hover, .search-btn:hover { background: var(--bs-secondary-bg); }
 
     /* ============================================================
        CATEGORY LABEL
     ============================================================ */
     .category-label {
-      font-family: var(--font-ui);
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--meridian-accent);
-      display: inline-block;
-      margin-bottom: 0.4rem;
+      font-family: var(--font-ui); font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--meridian-accent); display: inline-block; margin-bottom: 0.4rem;
     }
 
     /* ============================================================
-       HERO SECTION
+       HERO
     ============================================================ */
-    .hero-section {
-      border-bottom: 1px solid var(--meridian-border);
-      padding-bottom: 2rem;
-      margin-bottom: 2rem;
-    }
+    .hero-section { border-bottom: 1px solid var(--meridian-border); padding-bottom: 2rem; margin-bottom: 2rem; }
 
-    .hero-image-wrapper {
-      position: relative;
-      overflow: hidden;
-    }
+    .hero-image-wrapper { position: relative; overflow: hidden; }
+    .hero-image-wrapper img { width: 100%; height: 520px; object-fit: cover; transition: transform 0.6s ease; }
+    .hero-image-wrapper:hover img { transform: scale(1.02); }
 
-    .hero-image-wrapper img {
-      width: 100%;
-      height: 520px;
-      object-fit: cover;
-      transition: transform 0.6s ease;
-    }
-    .hero-image-wrapper:hover img {
-      transform: scale(1.02);
-    }
-
-    .hero-content {
-      padding: 1.5rem 0;
-    }
+    .hero-content { padding: 1.5rem 0; }
 
     .hero-headline {
-      font-size: clamp(1.9rem, 4vw, 3.2rem);
-      font-weight: 900;
-      line-height: 1.1;
-      margin-bottom: 1rem;
-      letter-spacing: -0.025em;
+      font-size: clamp(1.9rem, 4vw, 3.2rem); font-weight: 900;
+      line-height: 1.1; margin-bottom: 1rem; letter-spacing: -0.025em;
     }
 
     .hero-excerpt {
-      font-family: var(--font-body);
-      font-size: 1.1rem;
-      font-weight: 300;
-      line-height: 1.7;
-      color: var(--meridian-muted);
-      margin-bottom: 1.25rem;
+      font-family: var(--font-body); font-size: 1.1rem; font-weight: 300;
+      line-height: 1.7; color: var(--meridian-muted); margin-bottom: 1.25rem;
     }
 
     .btn-meridian {
-      font-family: var(--font-ui);
-      font-size: 0.8rem;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      background: var(--meridian-black);
-      color: #fff;
-      border: 2px solid var(--meridian-black);
-      border-radius: 0;
-      padding: 0.6rem 1.5rem;
+      font-family: var(--font-ui); font-size: 0.8rem; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      background: var(--meridian-black); color: #fff;
+      border: 2px solid var(--meridian-black); border-radius: 0;
+      padding: 0.6rem 1.5rem; display: inline-block;
       transition: background var(--transition), color var(--transition);
     }
-    .btn-meridian:hover, .btn-meridian:focus {
-      background: transparent;
-      color: var(--bs-body-color);
-    }
+    .btn-meridian:hover, .btn-meridian:focus { background: transparent; color: var(--bs-body-color); }
+    [data-bs-theme="dark"] .btn-meridian { background: #fff; color: #000; border-color: #fff; }
+    [data-bs-theme="dark"] .btn-meridian:hover { background: transparent; color: #fff; }
 
-    [data-bs-theme="dark"] .btn-meridian {
-      background: #fff;
-      color: #000;
-      border-color: #fff;
-    }
-    [data-bs-theme="dark"] .btn-meridian:hover {
-      background: transparent;
-      color: #fff;
-    }
-
-    /* Hero byline */
-    .hero-byline {
-      font-family: var(--font-ui);
-      font-size: 0.78rem;
-      font-weight: 400;
-      color: var(--meridian-muted);
-      letter-spacing: 0.03em;
-    }
-    .hero-byline strong {
-      color: var(--bs-body-color);
-      font-weight: 600;
-    }
+    .hero-byline { font-family: var(--font-ui); font-size: 0.78rem; color: var(--meridian-muted); letter-spacing: 0.03em; }
+    .hero-byline strong { color: var(--bs-body-color); font-weight: 600; }
 
     /* ============================================================
        ARTICLE CARDS
     ============================================================ */
-    .article-card {
-      border: none;
-      border-radius: 0;
-      background: transparent;
-      transition: none;
-    }
+    .article-card { border: none; border-radius: 0; background: transparent; }
+    .article-card .card-img-wrapper { overflow: hidden; margin-bottom: 0.85rem; }
+    .article-card .card-img-wrapper img { width: 100%; height: 220px; object-fit: cover; transition: transform 0.5s ease; }
+    .article-card:hover .card-img-wrapper img { transform: scale(1.04); }
+    .article-card .card-headline { font-family: var(--font-display); font-size: 1.15rem; font-weight: 700; line-height: 1.25; margin-bottom: 0.4rem; }
+    .article-card .card-headline a:hover { color: var(--meridian-primary); }
+    .article-card .card-excerpt { font-size: 0.9rem; color: var(--meridian-muted); line-height: 1.6; margin-bottom: 0.5rem; }
+    .article-card .card-meta { font-family: var(--font-ui); font-size: 0.72rem; color: var(--meridian-muted); letter-spacing: 0.03em; }
 
-    .article-card .card-img-wrapper {
-      overflow: hidden;
-      margin-bottom: 0.85rem;
-    }
+    .article-card-feature .card-img-wrapper img { height: 300px; }
+    .article-card-feature .card-headline { font-size: 1.5rem; }
 
-    .article-card .card-img-wrapper img {
-      width: 100%;
-      height: 220px;
-      object-fit: cover;
-      transition: transform 0.5s ease;
-    }
-    .article-card:hover .card-img-wrapper img {
-      transform: scale(1.04);
-    }
-
-    .article-card .card-headline {
-      font-family: var(--font-display);
-      font-size: 1.15rem;
-      font-weight: 700;
-      line-height: 1.25;
-      margin-bottom: 0.4rem;
-    }
-    .article-card .card-headline a:hover {
-      color: var(--meridian-primary);
-    }
-
-    .article-card .card-excerpt {
-      font-size: 0.9rem;
-      color: var(--meridian-muted);
-      line-height: 1.6;
-      margin-bottom: 0.5rem;
-    }
-
-    .article-card .card-meta {
-      font-family: var(--font-ui);
-      font-size: 0.72rem;
-      color: var(--meridian-muted);
-      letter-spacing: 0.03em;
-    }
-
-    /* Feature card (larger) */
-    .article-card-feature .card-img-wrapper img {
-      height: 300px;
-    }
-    .article-card-feature .card-headline {
-      font-size: 1.5rem;
-    }
-
-    /* Horizontal list card */
-    .article-card-list {
-      display: flex;
-      gap: 1rem;
-      align-items: flex-start;
-      padding: 0.85rem 0;
-      border-top: 1px solid var(--meridian-border);
-    }
+    .article-card-list { display: flex; gap: 1rem; align-items: flex-start; padding: 0.85rem 0; border-top: 1px solid var(--meridian-border); }
     .article-card-list:first-child { border-top: none; }
-    .article-card-list img {
-      width: 80px;
-      height: 80px;
-      object-fit: cover;
-      flex-shrink: 0;
-    }
-    .article-card-list .list-content .card-headline {
-      font-size: 0.9rem;
-      margin-bottom: 0.2rem;
-    }
-    .article-card-list .list-content .card-meta {
-      font-size: 0.7rem;
-    }
+    .article-card-list img { width: 80px; height: 80px; object-fit: cover; flex-shrink: 0; }
+    .article-card-list .list-content .card-headline { font-size: 0.9rem; margin-bottom: 0.2rem; }
+    .article-card-list .list-content .card-meta { font-size: 0.7rem; }
 
     /* ============================================================
-       SECTION DIVIDERS
+       SECTION HEADING
     ============================================================ */
     .section-heading {
-      font-family: var(--font-ui);
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
+      font-family: var(--font-ui); font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
       color: var(--meridian-muted);
       border-bottom: 1px solid var(--meridian-border);
-      padding-bottom: 0.5rem;
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+      padding-bottom: 0.5rem; margin-bottom: 1.5rem;
+      display: flex; align-items: center; gap: 0.5rem;
     }
-    .section-heading::before {
-      content: '';
-      display: inline-block;
-      width: 28px;
-      height: 2px;
-      background: var(--meridian-accent);
-    }
+    .section-heading::before { content: ''; display: inline-block; width: 28px; height: 2px; background: var(--meridian-accent); }
 
-    /* Column separator */
-    .col-divider {
-      border-left: 1px solid var(--meridian-border);
-    }
+    .col-divider { border-left: 1px solid var(--meridian-border); }
 
     /* ============================================================
        SIDEBAR
     ============================================================ */
-    .sidebar-widget {
-      border-top: 2px solid var(--meridian-black);
-      padding-top: 1rem;
-      margin-bottom: 2.5rem;
-    }
+    .sidebar-widget { border-top: 2px solid var(--meridian-black); padding-top: 1rem; margin-bottom: 2.5rem; }
+    [data-bs-theme="dark"] .sidebar-widget { border-top-color: var(--bs-border-color); }
 
-    [data-bs-theme="dark"] .sidebar-widget {
-      border-top-color: var(--bs-border-color);
-    }
+    .sidebar-widget-title { font-family: var(--font-ui); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1.25rem; color: var(--bs-body-color); }
 
-    .sidebar-widget-title {
-      font-family: var(--font-ui);
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      margin-bottom: 1.25rem;
-      color: var(--bs-body-color);
-    }
-
-    /* Newsletter form */
-    .newsletter-form .form-control {
-      border-radius: 0;
-      font-family: var(--font-ui);
-      font-size: 0.85rem;
-      border: 1px solid var(--meridian-border);
-      background: var(--bs-body-bg);
-      color: var(--bs-body-color);
-    }
-    .newsletter-form .form-control:focus {
-      border-color: var(--meridian-primary);
-      box-shadow: 0 0 0 3px rgba(13,110,253,0.25);
-    }
+    .newsletter-form .form-control { border-radius: 0; font-family: var(--font-ui); font-size: 0.85rem; border: 1px solid var(--meridian-border); background: var(--bs-body-bg); color: var(--bs-body-color); }
+    .newsletter-form .form-control:focus { border-color: var(--meridian-primary); box-shadow: 0 0 0 3px rgba(13,110,253,0.25); }
 
     .newsletter-form .btn-subscribe {
-      font-family: var(--font-ui);
-      font-size: 0.78rem;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      border-radius: 0;
-      background: var(--meridian-primary);
-      color: #fff;
+      font-family: var(--font-ui); font-size: 0.78rem; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      border-radius: 0; background: var(--meridian-primary); color: #fff;
       border: 2px solid var(--meridian-primary);
-      padding: 0.5rem 1rem;
-      width: 100%;
-      margin-top: 0.5rem;
+      padding: 0.5rem 1rem; width: 100%; margin-top: 0.5rem;
       transition: background var(--transition);
     }
-    .newsletter-form .btn-subscribe:hover {
-      background: #0b5ed7;
-      border-color: #0b5ed7;
-    }
-
-    .newsletter-disclaimer {
-      font-family: var(--font-ui);
-      font-size: 0.7rem;
-      color: var(--meridian-muted);
-      margin-top: 0.5rem;
-    }
+    .newsletter-form .btn-subscribe:hover { background: #0b5ed7; border-color: #0b5ed7; }
+    .newsletter-disclaimer { font-family: var(--font-ui); font-size: 0.7rem; color: var(--meridian-muted); margin-top: 0.5rem; }
 
     /* ============================================================
        FOOTER
     ============================================================ */
-    footer {
-      background: var(--meridian-black);
-      color: #ccc;
-      margin-top: 3rem;
-    }
+    footer { background: var(--meridian-black); color: #ccc; margin-top: 3rem; }
+    [data-bs-theme="dark"] footer { background: #0d0f11; border-top: 1px solid #2a2d30; }
 
-    [data-bs-theme="dark"] footer {
-      background: #0d0f11;
-      border-top: 1px solid #2a2d30;
-    }
-
-    .footer-brand {
-      font-family: var(--font-display);
-      font-size: 2rem;
-      font-weight: 900;
-      color: #fff;
-      letter-spacing: -0.03em;
-    }
+    .footer-brand { font-family: var(--font-display); font-size: 2rem; font-weight: 900; color: #fff; letter-spacing: -0.03em; }
     .footer-brand span { color: var(--meridian-accent); }
+    .footer-tagline { font-family: var(--font-body); font-size: 0.85rem; font-style: italic; color: #888; margin-top: 0.25rem; }
 
-    .footer-tagline {
-      font-family: var(--font-body);
-      font-size: 0.85rem;
-      font-style: italic;
-      color: #888;
-      margin-top: 0.25rem;
-    }
+    .footer-nav-heading { font-family: var(--font-ui); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #fff; margin-bottom: 1rem; }
 
-    .footer-nav-heading {
-      font-family: var(--font-ui);
-      font-size: 0.68rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: #fff;
-      margin-bottom: 1rem;
-    }
-
-    .footer-links {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
+    .footer-links { list-style: none; padding: 0; margin: 0; }
     .footer-links li { margin-bottom: 0.45rem; }
-    .footer-links a {
-      font-family: var(--font-ui);
-      font-size: 0.82rem;
-      color: #888;
-      transition: color var(--transition);
-    }
+    .footer-links a { font-family: var(--font-ui); font-size: 0.82rem; color: #888; transition: color var(--transition); }
     .footer-links a:hover { color: #fff; }
 
-    .footer-social a {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 36px;
-      height: 36px;
-      border: 1px solid #444;
-      border-radius: 50%;
-      color: #888;
-      font-size: 0.95rem;
-      margin-right: 0.4rem;
+    /* FIX: social links use <nav> not <div>, so no aria-label conflict.
+       Style stays the same — just applied to nav's child anchors. */
+    nav.footer-social { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1rem; }
+    nav.footer-social a {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 36px; height: 36px; border: 1px solid #444; border-radius: 50%;
+      color: #888; font-size: 0.95rem;
       transition: color var(--transition), border-color var(--transition), background var(--transition);
     }
-    .footer-social a:hover {
-      color: #fff;
-      border-color: #fff;
-      background: rgba(255,255,255,0.08);
-    }
+    nav.footer-social a:hover { color: #fff; border-color: #fff; background: rgba(255,255,255,0.08); }
 
-    .footer-bottom {
-      border-top: 1px solid #2a2d30;
-      padding: 1rem 0;
-      font-family: var(--font-ui);
-      font-size: 0.72rem;
-      color: #666;
-    }
+    .footer-bottom { border-top: 1px solid #2a2d30; padding: 1rem 0; font-family: var(--font-ui); font-size: 0.72rem; color: #666; }
 
-    .footer-lang-select {
-      background: transparent;
-      border: 1px solid #444;
-      color: #888;
-      border-radius: 4px;
-      padding: 0.2rem 0.5rem;
-      font-family: var(--font-ui);
-      font-size: 0.72rem;
-      cursor: pointer;
-    }
-    .footer-lang-select option {
-      background: #111;
-    }
+    .footer-lang-select { background: transparent; border: 1px solid #444; color: #888; border-radius: 4px; padding: 0.2rem 0.5rem; font-family: var(--font-ui); font-size: 0.72rem; cursor: pointer; }
 
     /* ============================================================
-       FLOATING HELP BUTTON
+       FLOATING HELP
     ============================================================ */
     .floating-help {
-      position: fixed;
-      bottom: 1.75rem;
-      right: 1.75rem;
-      z-index: 1050;
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      background: var(--meridian-primary);
-      color: #fff;
-      border: none;
-      font-size: 1.3rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 20px rgba(13,110,253,0.45);
-      cursor: pointer;
+      position: fixed; bottom: 1.75rem; right: 1.75rem; z-index: 1050;
+      width: 52px; height: 52px; border-radius: 50%;
+      background: var(--meridian-primary); color: #fff; border: none; font-size: 1.3rem;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 20px rgba(13,110,253,0.45); cursor: pointer;
       transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
     }
-    .floating-help:hover {
-      background: #0b5ed7;
-      transform: scale(1.07);
-      box-shadow: 0 6px 24px rgba(13,110,253,0.55);
-    }
-    .floating-help:focus-visible {
-      outline: 3px solid var(--meridian-primary);
-      outline-offset: 4px;
-    }
+    .floating-help:hover { background: #0b5ed7; transform: scale(1.07); box-shadow: 0 6px 24px rgba(13,110,253,0.55); }
+    .floating-help:focus-visible { outline: 3px solid var(--meridian-primary); outline-offset: 4px; }
 
     /* ============================================================
-       MODAL (help)
+       MODAL
     ============================================================ */
-    .help-modal .modal-header {
-      border-bottom: 2px solid var(--meridian-black);
-    }
-    [data-bs-theme="dark"] .help-modal .modal-header {
-      border-bottom-color: var(--bs-border-color);
-    }
-    .help-modal .modal-title {
-      font-family: var(--font-display);
-      font-size: 1.5rem;
-      font-weight: 700;
-    }
-    .help-modal .form-label {
-      font-family: var(--font-ui);
-      font-size: 0.8rem;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: var(--meridian-muted);
-    }
-    .help-modal .form-control,
-    .help-modal .form-select {
-      border-radius: 0;
-      font-family: var(--font-ui);
-      font-size: 0.9rem;
-    }
-    .help-modal .form-control:focus {
-      border-color: var(--meridian-primary);
-      box-shadow: 0 0 0 3px rgba(13,110,253,0.25);
-    }
-    .help-modal .btn-send {
-      font-family: var(--font-ui);
-      font-size: 0.82rem;
-      font-weight: 600;
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-      border-radius: 0;
-      background: var(--meridian-primary);
-      color: #fff;
-      border: none;
-      padding: 0.65rem 2rem;
-    }
+    .help-modal .modal-header { border-bottom: 2px solid var(--meridian-black); }
+    [data-bs-theme="dark"] .help-modal .modal-header { border-bottom-color: var(--bs-border-color); }
+    .help-modal .modal-title { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; }
+    .help-modal .form-label { font-family: var(--font-ui); font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--meridian-muted); }
+    .help-modal .form-control, .help-modal .form-select { border-radius: 0; font-family: var(--font-ui); font-size: 0.9rem; }
+    .help-modal .form-control:focus { border-color: var(--meridian-primary); box-shadow: 0 0 0 3px rgba(13,110,253,0.25); }
+    .help-modal .btn-send { font-family: var(--font-ui); font-size: 0.82rem; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; border-radius: 0; background: var(--meridian-primary); color: #fff; border: none; padding: 0.65rem 2rem; }
     .help-modal .btn-send:hover { background: #0b5ed7; }
 
     /* ============================================================
-       QUOTE PULL / DECORATIVE
+       PULL QUOTE
     ============================================================ */
-    .pull-quote {
-      border-left: 4px solid var(--meridian-accent);
-      padding: 0.75rem 1.25rem;
-      margin: 1.5rem 0;
-      font-family: var(--font-display);
-      font-size: 1.25rem;
-      font-style: italic;
-      line-height: 1.5;
-      color: var(--bs-body-color);
-    }
+    .pull-quote { border-left: 4px solid var(--meridian-accent); padding: 0.75rem 1.25rem; margin: 1.5rem 0; font-family: var(--font-display); font-size: 1.25rem; font-style: italic; line-height: 1.5; color: var(--bs-body-color); }
 
     /* ============================================================
-       RESPONSIVE UTILITIES
+       SEARCH OVERLAY
+    ============================================================ */
+    .search-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 2000; align-items: center; justify-content: center; }
+    .search-overlay.active { display: flex; }
+    .search-overlay-inner { width: 90%; max-width: 680px; }
+    .search-overlay input { width: 100%; background: transparent; border: none; border-bottom: 2px solid #fff; color: #fff; font-family: var(--font-display); font-size: 2rem; font-weight: 700; padding: 0.5rem 0; outline: none; caret-color: var(--meridian-accent); }
+    .search-overlay input::placeholder { color: rgba(255,255,255,0.4); }
+    .search-close { background: none; border: none; color: #fff; font-size: 2rem; position: absolute; top: 1.5rem; right: 1.5rem; cursor: pointer; line-height: 1; }
+
+    /* ============================================================
+       RESPONSIVE
     ============================================================ */
     @media (max-width: 991.98px) {
       .col-divider { border-left: none; border-top: 1px solid var(--meridian-border); margin-top: 2rem; padding-top: 2rem; }
@@ -717,114 +329,63 @@
     }
 
     /* ============================================================
-       SEARCH OVERLAY
-    ============================================================ */
-    .search-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.85);
-      z-index: 2000;
-      align-items: center;
-      justify-content: center;
-    }
-    .search-overlay.active { display: flex; }
-    .search-overlay-inner {
-      width: 90%;
-      max-width: 680px;
-    }
-    .search-overlay input {
-      width: 100%;
-      background: transparent;
-      border: none;
-      border-bottom: 2px solid #fff;
-      color: #fff;
-      font-family: var(--font-display);
-      font-size: 2rem;
-      font-weight: 700;
-      padding: 0.5rem 0;
-      outline: none;
-      caret-color: var(--meridian-accent);
-    }
-    .search-overlay input::placeholder { color: rgba(255,255,255,0.4); }
-    .search-close {
-      background: none;
-      border: none;
-      color: #fff;
-      font-size: 2rem;
-      position: absolute;
-      top: 1.5rem;
-      right: 1.5rem;
-      cursor: pointer;
-      line-height: 1;
-    }
-
-    /* ============================================================
        ANIMATIONS
     ============================================================ */
     @media (prefers-reduced-motion: no-preference) {
       .fade-in { animation: fadeInUp 0.5s ease both; }
-      @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(16px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
+      @keyframes fadeInUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
       .fade-in:nth-child(1) { animation-delay: 0.05s; }
       .fade-in:nth-child(2) { animation-delay: 0.12s; }
       .fade-in:nth-child(3) { animation-delay: 0.19s; }
       .fade-in:nth-child(4) { animation-delay: 0.26s; }
       .fade-in:nth-child(5) { animation-delay: 0.33s; }
-      .fade-in:nth-child(6) { animation-delay: 0.4s; }
+      .fade-in:nth-child(6) { animation-delay: 0.40s; }
     }
   </style>
 </head>
 <body>
 
-  <!-- ============================================================
-       SKIP TO CONTENT (WCAG)
-  ============================================================ -->
+  <!-- SKIP LINK -->
   <a class="skip-link" href="#main-content" data-i18n="skip">Skip to main content</a>
 
-  <!-- ============================================================
-       SEARCH OVERLAY
-  ============================================================ -->
+  <!-- SEARCH OVERLAY -->
   <div class="search-overlay" id="searchOverlay" role="dialog" aria-modal="true" aria-label="Search">
     <button class="search-close" id="searchClose" aria-label="Close search">
       <i class="bi bi-x" aria-hidden="true"></i>
     </button>
     <div class="search-overlay-inner">
-      <label for="searchInput" class="visually-hidden" data-i18n="search_label">Search The Meridian</label>
-      <input type="search" id="searchInput" data-i18n-placeholder="search_placeholder" placeholder="Search articles…" autocomplete="off" />
+      <label for="searchInput" class="visually-hidden" data-i18n="search_label">Search Infoweb</label>
+      <!-- FIX: void element — no self-closing slash -->
+      <input type="search" id="searchInput" data-i18n-placeholder="search_placeholder" placeholder="Search articles…" autocomplete="off">
     </div>
   </div>
 
   <!-- ============================================================
        TOP BAR
+       FIX: <div aria-label> → <section aria-label> (landmark OK on section)
+            Subscribe/Newsletter → RCMP.ca / Canada.ca
   ============================================================ -->
-  <div class="top-bar" aria-label="Site information">
+  <section class="top-bar" aria-label="Site information">
     <div class="container d-flex justify-content-between align-items-center">
-      <span data-i18n="top_date">Saturday, 28 February 2026 · Canada's Literary Journal of Ideas</span>
-      <nav aria-label="Quick links">
-        <a href="#" data-i18n="subscribe_link">Subscribe</a>
+      <span data-i18n="top_date">Saturday, 28 February 2026 · Canada's Digital News Hub</span>
+      <nav aria-label="Government links">
+        <a href="https://www.rcmp-grc.gc.ca/" target="_blank" rel="noopener noreferrer" data-i18n="rcmp_link">RCMP.ca</a>
         &nbsp;·&nbsp;
-        <a href="#" data-i18n="newsletter_link">Newsletter</a>
+        <a href="https://www.canada.ca/" target="_blank" rel="noopener noreferrer" data-i18n="canada_link">Canada.ca</a>
       </nav>
     </div>
-  </div>
+  </section>
 
-  <!-- ============================================================
-       HEADER & MAIN NAV
-  ============================================================ -->
+  <!-- HEADER / MAIN NAV -->
   <header>
     <nav class="main-nav" aria-label="Main navigation">
       <div class="container d-flex align-items-center justify-content-between py-2">
 
-        <!-- Logo -->
-        <a href="#" class="brand-logo" aria-label="The Meridian — Home">
-          The<span>·</span>Meridian
-        </a>
+        <!-- FIX: brand renamed to "Infoweb" -->
+        <a href="#" class="brand-logo" aria-label="Infoweb — Home">Info<span>web</span></a>
 
-        <!-- Primary nav links (desktop) -->
-        <ul class="nav-links" role="list" aria-label="Primary navigation">
+        <!-- FIX: removed redundant role="list" from ul -->
+        <ul class="nav-links" aria-label="Primary navigation">
           <li><a href="#" aria-current="page" data-i18n-nav="nav_politics">Politics</a></li>
           <li><a href="#" data-i18n-nav="nav_culture">Culture</a></li>
           <li><a href="#" data-i18n-nav="nav_science">Science</a></li>
@@ -833,20 +394,14 @@
           <li><a href="#" data-i18n-nav="nav_ideas">Ideas</a></li>
         </ul>
 
-        <!-- Controls -->
         <div class="nav-controls">
-          <!-- Search -->
           <button class="search-btn" id="searchOpen" aria-label="Open search" aria-expanded="false" aria-controls="searchOverlay">
             <i class="bi bi-search" aria-hidden="true"></i>
           </button>
-
-          <!-- Language toggle -->
           <button class="lang-toggle" id="langToggle" aria-label="Switch language — Changer de langue" aria-pressed="false">
             <span id="langLabel">FR</span>
           </button>
-
-          <!-- Dark/light toggle -->
-          <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" aria-pressed="false">
+          <button class="theme-toggle" id="themeToggle" aria-label="Switch to dark mode" aria-pressed="false">
             <i class="bi bi-moon-stars-fill" id="themeIcon" aria-hidden="true"></i>
           </button>
         </div>
@@ -855,35 +410,27 @@
     </nav>
   </header>
 
-  <!-- ============================================================
-       MAIN CONTENT
-  ============================================================ -->
+  <!-- MAIN -->
   <main id="main-content" tabindex="-1">
     <div class="container py-4">
 
-      <!-- ========================================================
-           HERO SECTION
-      ======================================================== -->
+      <!-- HERO -->
       <section class="hero-section" aria-labelledby="hero-headline">
         <div class="row g-4 align-items-center">
 
-          <!-- Hero image -->
           <div class="col-lg-7">
             <div class="hero-image-wrapper">
               <a href="#" aria-label="Read featured article: The Silence Between Storms" tabindex="-1">
+                <!-- FIX: no trailing slash on void img -->
                 <img
                   src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=900&auto=format&fit=crop&q=80"
                   alt="Aerial view of a vast boreal forest stretching to the horizon at dusk, shades of deep blue and amber"
-                  width="900"
-                  height="520"
-                  loading="eager"
-                  fetchpriority="high"
-                />
+                  width="900" height="520"
+                  loading="eager" fetchpriority="high">
               </a>
             </div>
           </div>
 
-          <!-- Hero text -->
           <div class="col-lg-5 hero-content">
             <span class="category-label" data-i18n="hero_category">Environment</span>
             <h1 class="hero-headline" id="hero-headline">
@@ -898,39 +445,30 @@
               &nbsp;·&nbsp;
               <time datetime="2026-02-28" data-i18n="hero_date">February 28, 2026</time>
             </p>
-            <a href="#" class="btn btn-meridian mt-3 d-inline-block" data-i18n="hero_cta">Read More</a>
+            <a href="#" class="btn-meridian mt-3" data-i18n="hero_cta">Read More</a>
           </div>
 
         </div>
       </section>
 
-      <!-- ========================================================
-           MAIN GRID + SIDEBAR
-      ======================================================== -->
+      <!-- GRID + SIDEBAR -->
       <div class="row g-5">
 
-        <!-- ======================================================
-             ARTICLE GRID
-        ====================================================== -->
+        <!-- ARTICLE GRID -->
         <div class="col-lg-8">
 
-          <!-- Section heading -->
-          <div class="section-heading" aria-hidden="true" data-i18n="section_latest">Latest Stories</div>
+          <!-- FIX: was <div class="section-heading"> — changed to <p> (presentational, no landmark conflict) -->
+          <p class="section-heading" aria-hidden="true" data-i18n="section_latest">Latest Stories</p>
 
-          <!-- Top row: 2 feature cards -->
           <div class="row g-4 mb-4">
 
-            <!-- Feature card 1 -->
             <div class="col-md-6 fade-in">
               <article class="article-card article-card-feature" aria-labelledby="art1-headline">
                 <div class="card-img-wrapper">
-                  <a href="#" tabindex="-1" aria-label="Read article: Parliament's Invisible War">
-                    <img
-                      src="https://images.unsplash.com/photo-1501854140801-50d01698950b?w=600&auto=format&fit=crop&q=75"
+                  <a href="#" tabindex="-1" aria-label="Read: Parliament's Invisible War">
+                    <img src="https://images.unsplash.com/photo-1501854140801-50d01698950b?w=600&auto=format&fit=crop&q=75"
                       alt="Inside a legislative chamber, empty benches lit dramatically from above"
-                      width="600" height="300"
-                      loading="lazy"
-                    />
+                      width="600" height="300" loading="lazy">
                   </a>
                 </div>
                 <span class="category-label" data-i18n="cat_politics">Politics</span>
@@ -938,23 +476,17 @@
                   <a href="#" data-i18n="art1_headline">Parliament's Invisible War: The Procedural Crisis No One Is Talking About</a>
                 </h2>
                 <p class="card-excerpt" data-i18n="art1_excerpt">Filibustering has become an art form on Parliament Hill, but at what cost to democratic function and public trust?</p>
-                <div class="card-meta">
-                  <strong>Élise Fontaine</strong> &nbsp;·&nbsp; <span data-i18n="art1_date">Feb 26, 2026</span> &nbsp;·&nbsp; <span data-i18n="read_min">8 min read</span>
-                </div>
+                <div class="card-meta"><strong>Élise Fontaine</strong> &nbsp;·&nbsp; <span data-i18n="art1_date">Feb 26, 2026</span> &nbsp;·&nbsp; <span data-i18n="read_min">8 min read</span></div>
               </article>
             </div>
 
-            <!-- Feature card 2 -->
             <div class="col-md-6 fade-in">
               <article class="article-card article-card-feature" aria-labelledby="art2-headline">
                 <div class="card-img-wrapper">
-                  <a href="#" tabindex="-1" aria-label="Read article: The New Artisans">
-                    <img
-                      src="https://images.unsplash.com/photo-1530099486328-e021101a494a?w=600&auto=format&fit=crop&q=75"
+                  <a href="#" tabindex="-1" aria-label="Read: The New Artisans">
+                    <img src="https://images.unsplash.com/photo-1530099486328-e021101a494a?w=600&auto=format&fit=crop&q=75"
                       alt="A craftsperson's hands shaping clay on a pottery wheel in a sunlit studio"
-                      width="600" height="300"
-                      loading="lazy"
-                    />
+                      width="600" height="300" loading="lazy">
                   </a>
                 </div>
                 <span class="category-label" data-i18n="cat_culture">Culture</span>
@@ -962,102 +494,81 @@
                   <a href="#" data-i18n="art2_headline">The New Artisans: How Gen Z Is Redefining Craft in a Hyperdigital Age</a>
                 </h2>
                 <p class="card-excerpt" data-i18n="art2_excerpt">From ceramics to letterpress, young Canadians are returning to tangible making — not as nostalgia, but as resistance.</p>
-                <div class="card-meta">
-                  <strong>James Adeyemi</strong> &nbsp;·&nbsp; <span data-i18n="art2_date">Feb 25, 2026</span> &nbsp;·&nbsp; <span data-i18n="read_min">6 min read</span>
-                </div>
+                <div class="card-meta"><strong>James Adeyemi</strong> &nbsp;·&nbsp; <span data-i18n="art2_date">Feb 25, 2026</span> &nbsp;·&nbsp; <span data-i18n="read_min">6 min read</span></div>
               </article>
             </div>
 
           </div>
 
-          <!-- Pull quote decorative -->
           <blockquote class="pull-quote" data-i18n="pull_quote">
             "The question is not whether Canada will change — it's whether we will choose how."
           </blockquote>
 
-          <!-- Bottom row: 3 smaller cards -->
           <div class="row g-4">
 
-            <!-- Card 3 -->
             <div class="col-md-4 fade-in">
               <article class="article-card" aria-labelledby="art3-headline">
                 <div class="card-img-wrapper">
-                  <a href="#" tabindex="-1" aria-label="Read article: AI in the Clinic">
-                    <img
-                      src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=400&auto=format&fit=crop&q=70"
+                  <a href="#" tabindex="-1" aria-label="Read: AI in the Clinic">
+                    <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=400&auto=format&fit=crop&q=70"
                       alt="Close-up of a medical professional examining data on a screen in blue light"
-                      width="400" height="220"
-                      loading="lazy"
-                    />
+                      width="400" height="220" loading="lazy">
                   </a>
                 </div>
                 <span class="category-label" data-i18n="cat_science">Science</span>
                 <h2 class="card-headline" id="art3-headline" style="font-size:1rem;">
                   <a href="#" data-i18n="art3_headline">AI in the Clinic: Promise, Peril, and the Patients Caught Between</a>
                 </h2>
-                <div class="card-meta">
-                  <strong>Dr. Priya Nair</strong> &nbsp;·&nbsp; <span data-i18n="art3_date">Feb 24, 2026</span>
-                </div>
+                <div class="card-meta"><strong>Dr. Priya Nair</strong> &nbsp;·&nbsp; <span data-i18n="art3_date">Feb 24, 2026</span></div>
               </article>
             </div>
 
-            <!-- Card 4 -->
             <div class="col-md-4 fade-in">
               <article class="article-card" aria-labelledby="art4-headline">
                 <div class="card-img-wrapper">
-                  <a href="#" tabindex="-1" aria-label="Read article: The Housing Paradox">
-                    <img
-                      src="https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=400&auto=format&fit=crop&q=70"
+                  <a href="#" tabindex="-1" aria-label="Read: The Housing Paradox">
+                    <img src="https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=400&auto=format&fit=crop&q=70"
                       alt="Row of Victorian houses in a Canadian city neighbourhood, late afternoon light"
-                      width="400" height="220"
-                      loading="lazy"
-                    />
+                      width="400" height="220" loading="lazy">
                   </a>
                 </div>
                 <span class="category-label" data-i18n="cat_economy">Economy</span>
                 <h2 class="card-headline" id="art4-headline" style="font-size:1rem;">
                   <a href="#" data-i18n="art4_headline">The Housing Paradox: Why Building More Isn't Fixing Affordability</a>
                 </h2>
-                <div class="card-meta">
-                  <strong>Lena Kowalski</strong> &nbsp;·&nbsp; <span data-i18n="art4_date">Feb 23, 2026</span>
-                </div>
+                <div class="card-meta"><strong>Lena Kowalski</strong> &nbsp;·&nbsp; <span data-i18n="art4_date">Feb 23, 2026</span></div>
               </article>
             </div>
 
-            <!-- Card 5 -->
             <div class="col-md-4 fade-in">
               <article class="article-card" aria-labelledby="art5-headline">
                 <div class="card-img-wrapper">
-                  <a href="#" tabindex="-1" aria-label="Read article: The Language We Lost">
-                    <img
-                      src="https://images.unsplash.com/photo-1505682634904-d7c8d95cdc50?w=400&auto=format&fit=crop&q=70"
+                  <a href="#" tabindex="-1" aria-label="Read: The Language We Lost">
+                    <img src="https://images.unsplash.com/photo-1505682634904-d7c8d95cdc50?w=400&auto=format&fit=crop&q=70"
                       alt="An open handwritten journal beside traditional Indigenous artwork and dried plants"
-                      width="400" height="220"
-                      loading="lazy"
-                    />
+                      width="400" height="220" loading="lazy">
                   </a>
                 </div>
                 <span class="category-label" data-i18n="cat_ideas">Ideas</span>
                 <h2 class="card-headline" id="art5-headline" style="font-size:1rem;">
                   <a href="#" data-i18n="art5_headline">The Language We Lost: Revitalization, Technology, and the Limits of Apps</a>
                 </h2>
-                <div class="card-meta">
-                  <strong>Rebecca Crow Feather</strong> &nbsp;·&nbsp; <span data-i18n="art5_date">Feb 22, 2026</span>
-                </div>
+                <div class="card-meta"><strong>Rebecca Crow Feather</strong> &nbsp;·&nbsp; <span data-i18n="art5_date">Feb 22, 2026</span></div>
               </article>
             </div>
 
           </div>
-
         </div>
 
         <!-- ======================================================
              SIDEBAR
+             FIX: aria-labelledby/<aria-label on bare <div> → moved
+                  to <section> elements which are valid landmark targets
         ====================================================== -->
         <aside class="col-lg-4 col-divider" aria-label="Sidebar">
 
-          <!-- Newsletter Widget -->
-          <div class="sidebar-widget" aria-labelledby="newsletter-heading">
+          <!-- Newsletter — FIX: <div aria-labelledby> → <section aria-labelledby> -->
+          <section class="sidebar-widget" aria-labelledby="newsletter-heading">
             <h2 class="sidebar-widget-title" id="newsletter-heading" data-i18n="sidebar_newsletter_title">The Daily Briefing</h2>
             <p style="font-size:0.85rem; color:var(--meridian-muted); margin-bottom:1rem;" data-i18n="sidebar_newsletter_desc">
               Curated analysis and essential reading, delivered each weekday morning.
@@ -1065,147 +576,111 @@
             <form class="newsletter-form" id="newsletterForm" novalidate aria-label="Newsletter signup">
               <div class="mb-2">
                 <label for="newsletter-name" class="form-label visually-hidden" data-i18n="form_name_label">Your name</label>
-                <input
-                  type="text"
-                  id="newsletter-name"
-                  name="newsletter-name"
+                <!-- FIX: removed redundant aria-required (native required is sufficient) -->
+                <input type="text" id="newsletter-name" name="newsletter-name"
                   class="form-control form-control-sm"
                   data-i18n-placeholder="form_name_placeholder"
-                  placeholder="Your name"
-                  autocomplete="given-name"
-                  required
-                  aria-required="true"
-                />
+                  placeholder="Your name" autocomplete="given-name" required>
               </div>
               <div class="mb-1">
                 <label for="newsletter-email" class="form-label visually-hidden" data-i18n="form_email_label">Email address</label>
-                <input
-                  type="email"
-                  id="newsletter-email"
-                  name="newsletter-email"
+                <input type="email" id="newsletter-email" name="newsletter-email"
                   class="form-control form-control-sm"
                   data-i18n-placeholder="form_email_placeholder"
-                  placeholder="Email address"
-                  autocomplete="email"
-                  required
-                  aria-required="true"
-                />
+                  placeholder="Email address" autocomplete="email" required>
               </div>
               <button type="submit" class="btn-subscribe" data-i18n="form_subscribe_btn">Subscribe — Free</button>
               <p class="newsletter-disclaimer" data-i18n="form_disclaimer">No spam. Unsubscribe anytime. We respect your privacy.</p>
             </form>
-          </div>
+          </section>
 
-          <!-- Trending Widget -->
-          <div class="sidebar-widget" aria-labelledby="trending-heading">
+          <!-- Trending — FIX: <div aria-labelledby> → <section aria-labelledby> -->
+          <section class="sidebar-widget" aria-labelledby="trending-heading">
             <h2 class="sidebar-widget-title" id="trending-heading" data-i18n="sidebar_trending_title">Trending Now</h2>
-
             <nav aria-label="Trending articles">
-              <!-- List items -->
+
               <article class="article-card-list" aria-labelledby="trend1">
-                <img
-                  src="https://images.unsplash.com/photo-1559028012-481c04fa702d?w=160&auto=format&fit=crop&q=60"
-                  alt="Night skyline of a Canadian city"
-                  width="80" height="80"
-                  loading="lazy"
-                />
+                <img src="https://images.unsplash.com/photo-1559028012-481c04fa702d?w=160&auto=format&fit=crop&q=60"
+                  alt="Night skyline of a Canadian city" width="80" height="80" loading="lazy">
                 <div class="list-content">
-                  <h3 class="card-headline" id="trend1">
-                    <a href="#" data-i18n="trend1_headline">What the New Budget Really Means for Middle Canada</a>
-                  </h3>
+                  <h3 class="card-headline" id="trend1"><a href="#" data-i18n="trend1_headline">What the New Budget Really Means for Middle Canada</a></h3>
                   <div class="card-meta"><span data-i18n="trend1_date">Feb 27, 2026</span></div>
                 </div>
               </article>
 
               <article class="article-card-list" aria-labelledby="trend2">
-                <img
-                  src="https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=160&auto=format&fit=crop&q=60"
-                  alt="Scientific laboratory glassware lit with colourful reagents"
-                  width="80" height="80"
-                  loading="lazy"
-                />
+                <img src="https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=160&auto=format&fit=crop&q=60"
+                  alt="Scientific laboratory glassware lit with colourful reagents" width="80" height="80" loading="lazy">
                 <div class="list-content">
-                  <h3 class="card-headline" id="trend2">
-                    <a href="#" data-i18n="trend2_headline">Canada's Quiet Quantum Leap: Inside the Labs Changing Everything</a>
-                  </h3>
+                  <h3 class="card-headline" id="trend2"><a href="#" data-i18n="trend2_headline">Canada's Quiet Quantum Leap: Inside the Labs Changing Everything</a></h3>
                   <div class="card-meta"><span data-i18n="trend2_date">Feb 26, 2026</span></div>
                 </div>
               </article>
 
               <article class="article-card-list" aria-labelledby="trend3">
-                <img
-                  src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=160&auto=format&fit=crop&q=60"
-                  alt="Diverse group of young adults collaborating around a table"
-                  width="80" height="80"
-                  loading="lazy"
-                />
+                <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=160&auto=format&fit=crop&q=60"
+                  alt="Diverse group of young adults collaborating around a table" width="80" height="80" loading="lazy">
                 <div class="list-content">
-                  <h3 class="card-headline" id="trend3">
-                    <a href="#" data-i18n="trend3_headline">The New Workforce: Why Young Canadians Are Renegotiating Work Entirely</a>
-                  </h3>
+                  <h3 class="card-headline" id="trend3"><a href="#" data-i18n="trend3_headline">The New Workforce: Why Young Canadians Are Renegotiating Work Entirely</a></h3>
                   <div class="card-meta"><span data-i18n="trend3_date">Feb 25, 2026</span></div>
                 </div>
               </article>
 
               <article class="article-card-list" aria-labelledby="trend4">
-                <img
-                  src="https://images.unsplash.com/photo-1534447677768-be436bb09401?w=160&auto=format&fit=crop&q=60"
-                  alt="Aurora borealis over a northern Canadian landscape"
-                  width="80" height="80"
-                  loading="lazy"
-                />
+                <img src="https://images.unsplash.com/photo-1534447677768-be436bb09401?w=160&auto=format&fit=crop&q=60"
+                  alt="Aurora borealis over a northern Canadian landscape" width="80" height="80" loading="lazy">
                 <div class="list-content">
-                  <h3 class="card-headline" id="trend4">
-                    <a href="#" data-i18n="trend4_headline">Northern Sovereignty: Why the Arctic Is Canada's Defining Test</a>
-                  </h3>
+                  <h3 class="card-headline" id="trend4"><a href="#" data-i18n="trend4_headline">Northern Sovereignty: Why the Arctic Is Canada's Defining Test</a></h3>
                   <div class="card-meta"><span data-i18n="trend4_date">Feb 24, 2026</span></div>
                 </div>
               </article>
-            </nav>
-          </div>
 
-          <!-- Ad / Promo placeholder -->
-          <div class="sidebar-widget" aria-label="Subscription promotion">
-            <div style="background:var(--meridian-black);color:#fff;padding:1.5rem;text-align:center;" role="complementary">
+            </nav>
+          </section>
+
+          <!-- Promo
+               FIX: <div aria-label="Subscription promotion"> → plain <aside>
+                    (aria-label is valid on aside as a landmark) -->
+          <aside class="sidebar-widget" aria-label="Subscription promotion">
+            <div style="background:var(--meridian-black);color:#fff;padding:1.5rem;text-align:center;">
               <p style="font-family:var(--font-display);font-size:1.1rem;font-style:italic;margin-bottom:0.5rem;" data-i18n="promo_heading">"Ideas worth sitting with."</p>
-              <p style="font-family:var(--font-ui);font-size:0.78rem;color:#aaa;margin-bottom:1rem;" data-i18n="promo_subtext">Unlimited access to The Meridian — from $4.99/month.</p>
-              <a href="#" class="btn btn-meridian" style="background:#fff;color:#000;border-color:#fff;" data-i18n="promo_cta">Start Reading</a>
+              <p style="font-family:var(--font-ui);font-size:0.78rem;color:#aaa;margin-bottom:1rem;" data-i18n="promo_subtext">Unlimited access to Infoweb — from $4.99/month.</p>
+              <a href="#" class="btn-meridian" style="background:#fff;color:#000;border-color:#fff;" data-i18n="promo_cta">Start Reading</a>
             </div>
-          </div>
+          </aside>
 
         </aside>
 
       </div>
-      <!-- end row -->
-
     </div>
-    <!-- end container -->
   </main>
 
   <!-- ============================================================
        FOOTER
+       FIX: <div aria-label="Social media links"> → <nav aria-label="...">
+            role="list" removed from all <ul> elements
   ============================================================ -->
   <footer aria-label="Site footer">
     <div class="container py-5">
       <div class="row g-5">
 
-        <!-- Brand -->
         <div class="col-lg-4 col-md-6">
-          <div class="footer-brand">The<span>·</span>Meridian</div>
-          <p class="footer-tagline" data-i18n="footer_tagline">Canada's journal of ideas since 1978.</p>
-          <div class="footer-social mt-3" aria-label="Social media links">
-            <a href="#" aria-label="The Meridian on X (Twitter)"><i class="bi bi-twitter-x" aria-hidden="true"></i></a>
-            <a href="#" aria-label="The Meridian on Facebook"><i class="bi bi-facebook" aria-hidden="true"></i></a>
-            <a href="#" aria-label="The Meridian on Instagram"><i class="bi bi-instagram" aria-hidden="true"></i></a>
-            <a href="#" aria-label="The Meridian on LinkedIn"><i class="bi bi-linkedin" aria-hidden="true"></i></a>
-            <a href="#" aria-label="The Meridian RSS Feed"><i class="bi bi-rss-fill" aria-hidden="true"></i></a>
-          </div>
+          <div class="footer-brand">Info<span>web</span></div>
+          <p class="footer-tagline" data-i18n="footer_tagline">Canada's digital news hub since 2010.</p>
+          <!-- FIX: <div aria-label> → <nav aria-label> -->
+          <nav class="footer-social" aria-label="Social media links">
+            <a href="#" aria-label="Infoweb on X (Twitter)"><i class="bi bi-twitter-x" aria-hidden="true"></i></a>
+            <a href="#" aria-label="Infoweb on Facebook"><i class="bi bi-facebook" aria-hidden="true"></i></a>
+            <a href="#" aria-label="Infoweb on Instagram"><i class="bi bi-instagram" aria-hidden="true"></i></a>
+            <a href="#" aria-label="Infoweb on LinkedIn"><i class="bi bi-linkedin" aria-hidden="true"></i></a>
+            <a href="#" aria-label="Infoweb RSS Feed"><i class="bi bi-rss-fill" aria-hidden="true"></i></a>
+          </nav>
         </div>
 
-        <!-- Nav: Sections -->
         <div class="col-lg-2 col-md-3 col-6">
           <h3 class="footer-nav-heading" data-i18n="footer_sections">Sections</h3>
-          <ul class="footer-links" role="list">
+          <!-- FIX: role="list" removed -->
+          <ul class="footer-links">
             <li><a href="#" data-i18n-nav="nav_politics">Politics</a></li>
             <li><a href="#" data-i18n-nav="nav_culture">Culture</a></li>
             <li><a href="#" data-i18n-nav="nav_science">Science</a></li>
@@ -1215,10 +690,9 @@
           </ul>
         </div>
 
-        <!-- Nav: Company -->
         <div class="col-lg-2 col-md-3 col-6">
           <h3 class="footer-nav-heading" data-i18n="footer_company">Company</h3>
-          <ul class="footer-links" role="list">
+          <ul class="footer-links">
             <li><a href="#" data-i18n="footer_about">About Us</a></li>
             <li><a href="#" data-i18n="footer_masthead">Masthead</a></li>
             <li><a href="#" data-i18n="footer_careers">Careers</a></li>
@@ -1227,10 +701,9 @@
           </ul>
         </div>
 
-        <!-- Nav: Reader -->
         <div class="col-lg-2 col-md-3 col-6">
           <h3 class="footer-nav-heading" data-i18n="footer_reader">Readers</h3>
-          <ul class="footer-links" role="list">
+          <ul class="footer-links">
             <li><a href="#" data-i18n="footer_subscribe">Subscribe</a></li>
             <li><a href="#" data-i18n="footer_newsletter">Newsletter</a></li>
             <li><a href="#" data-i18n="footer_gift">Gift Subscription</a></li>
@@ -1239,7 +712,6 @@
           </ul>
         </div>
 
-        <!-- Language selector in footer -->
         <div class="col-lg-2 col-md-3 col-6">
           <h3 class="footer-nav-heading" data-i18n="footer_language">Language</h3>
           <label for="footerLangSelect" class="visually-hidden" data-i18n="footer_lang_label">Select language</label>
@@ -1252,10 +724,9 @@
       </div>
     </div>
 
-    <!-- Footer bottom bar -->
     <div class="footer-bottom">
       <div class="container d-flex flex-wrap justify-content-between align-items-center gap-2">
-        <span data-i18n="footer_copyright">© 2026 The Meridian Publishing Inc. All rights reserved.</span>
+        <span data-i18n="footer_copyright">© 2026 Infoweb Digital Inc. All rights reserved.</span>
         <nav aria-label="Legal links">
           <a href="#" class="me-3" style="color:#666;" data-i18n="footer_privacy">Privacy Policy</a>
           <a href="#" class="me-3" style="color:#666;" data-i18n="footer_terms">Terms of Use</a>
@@ -1265,30 +736,19 @@
     </div>
   </footer>
 
-  <!-- ============================================================
-       FLOATING HELP BUTTON
-  ============================================================ -->
-  <button
-    class="floating-help"
-    id="helpBtn"
-    aria-label="Need help"
-    data-bs-toggle="modal"
-    data-bs-target="#helpModal"
-  >
+  <!-- FLOATING HELP -->
+  <button class="floating-help" id="helpBtn" aria-label="Need help"
+    data-bs-toggle="modal" data-bs-target="#helpModal">
     <i class="bi bi-question-lg" aria-hidden="true"></i>
   </button>
 
   <!-- ============================================================
        HELP MODAL
+       FIX: all aria-required removed (native required is sufficient
+            and aria-required on required fields is redundant per spec)
   ============================================================ -->
-  <div
-    class="modal fade help-modal"
-    id="helpModal"
-    tabindex="-1"
-    role="dialog"
-    aria-labelledby="helpModalTitle"
-    aria-describedby="helpModalDesc"
-  >
+  <div class="modal fade help-modal" id="helpModal" tabindex="-1"
+    role="dialog" aria-labelledby="helpModalTitle" aria-describedby="helpModalDesc">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
 
@@ -1304,46 +764,27 @@
 
           <form id="helpForm" novalidate aria-label="Contact form">
 
-            <!-- Name -->
             <div class="mb-3">
               <label for="helpName" class="form-label" data-i18n="modal_name_label">Full name <span aria-hidden="true">*</span></label>
-              <input
-                type="text"
-                id="helpName"
-                name="helpName"
-                class="form-control"
+              <input type="text" id="helpName" name="helpName" class="form-control"
                 data-i18n-placeholder="modal_name_placeholder"
                 placeholder="e.g. Marguerite Tremblay"
-                autocomplete="name"
-                required
-                aria-required="true"
-                aria-describedby="helpNameErr"
-              />
+                autocomplete="name" required aria-describedby="helpNameErr">
               <div id="helpNameErr" class="invalid-feedback" role="alert" data-i18n="modal_name_error">Please enter your name.</div>
             </div>
 
-            <!-- Email -->
             <div class="mb-3">
               <label for="helpEmail" class="form-label" data-i18n="modal_email_label">Email address <span aria-hidden="true">*</span></label>
-              <input
-                type="email"
-                id="helpEmail"
-                name="helpEmail"
-                class="form-control"
+              <input type="email" id="helpEmail" name="helpEmail" class="form-control"
                 data-i18n-placeholder="modal_email_placeholder"
                 placeholder="you@example.ca"
-                autocomplete="email"
-                required
-                aria-required="true"
-                aria-describedby="helpEmailErr"
-              />
+                autocomplete="email" required aria-describedby="helpEmailErr">
               <div id="helpEmailErr" class="invalid-feedback" role="alert" data-i18n="modal_email_error">Please enter a valid email address.</div>
             </div>
 
-            <!-- Subject -->
             <div class="mb-3">
               <label for="helpSubject" class="form-label" data-i18n="modal_subject_label">Subject</label>
-              <select id="helpSubject" name="helpSubject" class="form-select" aria-required="false">
+              <select id="helpSubject" name="helpSubject" class="form-select">
                 <option value="" data-i18n="modal_subject_default">Select a topic…</option>
                 <option value="editorial" data-i18n="modal_subject_editorial">Editorial inquiry</option>
                 <option value="correction" data-i18n="modal_subject_correction">Request a correction</option>
@@ -1352,24 +793,16 @@
               </select>
             </div>
 
-            <!-- Message -->
             <div class="mb-3">
               <label for="helpMessage" class="form-label" data-i18n="modal_message_label">Message <span aria-hidden="true">*</span></label>
-              <textarea
-                id="helpMessage"
-                name="helpMessage"
-                class="form-control"
+              <textarea id="helpMessage" name="helpMessage" class="form-control"
                 rows="4"
                 data-i18n-placeholder="modal_message_placeholder"
                 placeholder="Your message…"
-                required
-                aria-required="true"
-                aria-describedby="helpMessageErr"
-              ></textarea>
+                required aria-describedby="helpMessageErr"></textarea>
               <div id="helpMessageErr" class="invalid-feedback" role="alert" data-i18n="modal_message_error">Please enter a message.</div>
             </div>
 
-            <!-- Submit -->
             <button type="submit" class="btn btn-send" data-i18n="modal_submit">Send Message</button>
           </form>
         </div>
@@ -1378,7 +811,7 @@
     </div>
   </div>
 
-  <!-- Bootstrap JS Bundle -->
+  <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
@@ -1387,39 +820,19 @@
     ============================================================ */
     const translations = {
       'en-CA': {
-        /* Meta / top bar */
         skip: 'Skip to main content',
-        top_date: "Saturday, 28 February 2026 · Canada's Literary Journal of Ideas",
-        subscribe_link: 'Subscribe',
-        newsletter_link: 'Newsletter',
-
-        /* Nav */
-        nav_politics: 'Politics',
-        nav_culture: 'Culture',
-        nav_science: 'Science',
-        nav_economy: 'Economy',
-        nav_world: 'World',
-        nav_ideas: 'Ideas',
-
-        /* Hero */
+        top_date: "Saturday, 28 February 2026 · Canada's Digital News Hub",
+        rcmp_link: 'RCMP.ca',
+        canada_link: 'Canada.ca',
+        nav_politics: 'Politics', nav_culture: 'Culture', nav_science: 'Science',
+        nav_economy: 'Economy', nav_world: 'World', nav_ideas: 'Ideas',
         hero_category: 'Environment',
         hero_headline: "The Silence Between Storms: Canada's North at the Edge of Change",
         hero_excerpt: "Across the boreal fringe, scientists and Indigenous communities are documenting a transformation centuries in the making — and warning that the reckoning is arriving faster than anyone predicted.",
-        hero_by: 'By',
-        hero_date: 'February 28, 2026',
-        hero_cta: 'Read More',
-
-        /* Sections */
+        hero_by: 'By', hero_date: 'February 28, 2026', hero_cta: 'Read More',
         section_latest: 'Latest Stories',
-
-        /* Category labels */
-        cat_politics: 'Politics',
-        cat_culture: 'Culture',
-        cat_science: 'Science',
-        cat_economy: 'Economy',
-        cat_ideas: 'Ideas',
-
-        /* Articles */
+        cat_politics: 'Politics', cat_culture: 'Culture', cat_science: 'Science',
+        cat_economy: 'Economy', cat_ideas: 'Ideas',
         art1_headline: "Parliament's Invisible War: The Procedural Crisis No One Is Talking About",
         art1_excerpt: 'Filibustering has become an art form on Parliament Hill, but at what cost to democratic function and public trust?',
         art1_date: 'Feb 26, 2026',
@@ -1433,290 +846,167 @@
         art5_headline: 'The Language We Lost: Revitalization, Technology, and the Limits of Apps',
         art5_date: 'Feb 22, 2026',
         read_min: 'min read',
-
-        /* Pull quote */
         pull_quote: '"The question is not whether Canada will change — it\'s whether we will choose how."',
-
-        /* Trending */
         sidebar_newsletter_title: 'The Daily Briefing',
         sidebar_newsletter_desc: 'Curated analysis and essential reading, delivered each weekday morning.',
         sidebar_trending_title: 'Trending Now',
-        trend1_headline: 'What the New Budget Really Means for Middle Canada',
-        trend1_date: 'Feb 27, 2026',
-        trend2_headline: "Canada's Quiet Quantum Leap: Inside the Labs Changing Everything",
-        trend2_date: 'Feb 26, 2026',
-        trend3_headline: 'The New Workforce: Why Young Canadians Are Renegotiating Work Entirely',
-        trend3_date: 'Feb 25, 2026',
-        trend4_headline: "Northern Sovereignty: Why the Arctic Is Canada's Defining Test",
-        trend4_date: 'Feb 24, 2026',
-
-        /* Promo */
+        trend1_headline: 'What the New Budget Really Means for Middle Canada', trend1_date: 'Feb 27, 2026',
+        trend2_headline: "Canada's Quiet Quantum Leap: Inside the Labs Changing Everything", trend2_date: 'Feb 26, 2026',
+        trend3_headline: 'The New Workforce: Why Young Canadians Are Renegotiating Work Entirely', trend3_date: 'Feb 25, 2026',
+        trend4_headline: "Northern Sovereignty: Why the Arctic Is Canada's Defining Test", trend4_date: 'Feb 24, 2026',
         promo_heading: '"Ideas worth sitting with."',
-        promo_subtext: 'Unlimited access to The Meridian — from $4.99/month.',
+        promo_subtext: 'Unlimited access to Infoweb — from $4.99/month.',
         promo_cta: 'Start Reading',
-
-        /* Newsletter form */
-        form_name_label: 'Your name',
-        form_name_placeholder: 'Your name',
-        form_email_label: 'Email address',
-        form_email_placeholder: 'Email address',
+        form_name_label: 'Your name', form_name_placeholder: 'Your name',
+        form_email_label: 'Email address', form_email_placeholder: 'Email address',
         form_subscribe_btn: 'Subscribe — Free',
         form_disclaimer: 'No spam. Unsubscribe anytime. We respect your privacy.',
-
-        /* Footer */
-        footer_tagline: "Canada's journal of ideas since 1978.",
-        footer_sections: 'Sections',
-        footer_company: 'Company',
-        footer_reader: 'Readers',
-        footer_language: 'Language',
-        footer_lang_label: 'Select language',
-        footer_about: 'About Us',
-        footer_masthead: 'Masthead',
-        footer_careers: 'Careers',
-        footer_advertise: 'Advertise',
-        footer_contact: 'Contact',
-        footer_subscribe: 'Subscribe',
-        footer_newsletter: 'Newsletter',
-        footer_gift: 'Gift Subscription',
-        footer_archive: 'Archive',
-        footer_podcast: 'Podcast',
-        footer_copyright: '© 2026 The Meridian Publishing Inc. All rights reserved.',
-        footer_privacy: 'Privacy Policy',
-        footer_terms: 'Terms of Use',
-        footer_accessibility_policy: 'Accessibility',
-
-        /* Help modal */
+        footer_tagline: "Canada's digital news hub since 2010.",
+        footer_sections: 'Sections', footer_company: 'Company',
+        footer_reader: 'Readers', footer_language: 'Language', footer_lang_label: 'Select language',
+        footer_about: 'About Us', footer_masthead: 'Masthead', footer_careers: 'Careers',
+        footer_advertise: 'Advertise', footer_contact: 'Contact',
+        footer_subscribe: 'Subscribe', footer_newsletter: 'Newsletter',
+        footer_gift: 'Gift Subscription', footer_archive: 'Archive', footer_podcast: 'Podcast',
+        footer_copyright: '© 2026 Infoweb Digital Inc. All rights reserved.',
+        footer_privacy: 'Privacy Policy', footer_terms: 'Terms of Use', footer_accessibility_policy: 'Accessibility',
         modal_title: 'Contact Us',
         modal_desc: "Have a question, correction, or editorial inquiry? We'll respond within two business days.",
-        modal_name_label: 'Full name *',
-        modal_name_placeholder: 'e.g. Marguerite Tremblay',
-        modal_name_error: 'Please enter your name.',
-        modal_email_label: 'Email address *',
-        modal_email_placeholder: 'you@example.ca',
-        modal_email_error: 'Please enter a valid email address.',
-        modal_subject_label: 'Subject',
-        modal_subject_default: 'Select a topic…',
-        modal_subject_editorial: 'Editorial inquiry',
-        modal_subject_correction: 'Request a correction',
-        modal_subject_subscription: 'Subscription support',
-        modal_subject_other: 'Other',
-        modal_message_label: 'Message *',
-        modal_message_placeholder: 'Your message…',
-        modal_message_error: 'Please enter a message.',
+        modal_name_label: 'Full name *', modal_name_placeholder: 'e.g. Marguerite Tremblay', modal_name_error: 'Please enter your name.',
+        modal_email_label: 'Email address *', modal_email_placeholder: 'you@example.ca', modal_email_error: 'Please enter a valid email address.',
+        modal_subject_label: 'Subject', modal_subject_default: 'Select a topic…',
+        modal_subject_editorial: 'Editorial inquiry', modal_subject_correction: 'Request a correction',
+        modal_subject_subscription: 'Subscription support', modal_subject_other: 'Other',
+        modal_message_label: 'Message *', modal_message_placeholder: 'Your message…', modal_message_error: 'Please enter a message.',
         modal_submit: 'Send Message',
-
-        /* Search */
-        search_label: 'Search The Meridian',
-        search_placeholder: 'Search articles…',
+        search_label: 'Search Infoweb', search_placeholder: 'Search articles…',
       },
-
       'fr-CA': {
-        /* Meta / top bar */
         skip: 'Aller au contenu principal',
-        top_date: 'Samedi, 28 février 2026 · La revue littéraire d\'idées du Canada',
-        subscribe_link: 'S\'abonner',
-        newsletter_link: 'Infolettre',
-
-        /* Nav */
-        nav_politics: 'Politique',
-        nav_culture: 'Culture',
-        nav_science: 'Science',
-        nav_economy: 'Économie',
-        nav_world: 'Monde',
-        nav_ideas: 'Idées',
-
-        /* Hero */
+        top_date: "Samedi, 28 février 2026 · Le portail numérique du Canada",
+        rcmp_link: 'GRC.ca',
+        canada_link: 'Canada.ca',
+        nav_politics: 'Politique', nav_culture: 'Culture', nav_science: 'Science',
+        nav_economy: 'Économie', nav_world: 'Monde', nav_ideas: 'Idées',
         hero_category: 'Environnement',
-        hero_headline: 'Le silence entre les tempêtes : le Grand Nord canadien au bord du changement',
-        hero_excerpt: 'À travers la lisière boréale, scientifiques et communautés autochtones documentent une transformation millénaire — et préviennent que l\'heure des comptes arrive plus vite que prévu.',
-        hero_by: 'Par',
-        hero_date: '28 février 2026',
-        hero_cta: 'Lire l\'article',
-
-        /* Sections */
+        hero_headline: "Le silence entre les tempêtes : le Grand Nord canadien au bord du changement",
+        hero_excerpt: "À travers la lisière boréale, scientifiques et communautés autochtones documentent une transformation millénaire — et préviennent que l'heure des comptes arrive plus vite que prévu.",
+        hero_by: 'Par', hero_date: '28 février 2026', hero_cta: "Lire l'article",
         section_latest: 'Derniers articles',
-
-        /* Category labels */
-        cat_politics: 'Politique',
-        cat_culture: 'Culture',
-        cat_science: 'Science',
-        cat_economy: 'Économie',
-        cat_ideas: 'Idées',
-
-        /* Articles */
-        art1_headline: 'La guerre invisible du Parlement : la crise procédurale dont personne ne parle',
-        art1_excerpt: 'L\'obstruction est devenue un art sur la Colline du Parlement, mais à quel coût pour la démocratie et la confiance du public ?',
+        cat_politics: 'Politique', cat_culture: 'Culture', cat_science: 'Science',
+        cat_economy: 'Économie', cat_ideas: 'Idées',
+        art1_headline: "La guerre invisible du Parlement : la crise procédurale dont personne ne parle",
+        art1_excerpt: "L'obstruction est devenue un art sur la Colline du Parlement, mais à quel coût pour la démocratie et la confiance du public ?",
         art1_date: '26 févr. 2026',
-        art2_headline: 'Les nouveaux artisans : comment la génération Z redéfinit l\'artisanat à l\'ère numérique',
-        art2_excerpt: 'De la céramique à l\'impression typographique, les jeunes Canadiens reviennent à la fabrication tangible — non par nostalgie, mais en signe de résistance.',
+        art2_headline: "Les nouveaux artisans : comment la génération Z redéfinit l'artisanat à l'ère numérique",
+        art2_excerpt: "De la céramique à l'impression typographique, les jeunes Canadiens reviennent à la fabrication tangible — non par nostalgie, mais en signe de résistance.",
         art2_date: '25 févr. 2026',
-        art3_headline: 'L\'IA en clinique : promesses, périls et les patients au milieu',
+        art3_headline: "L'IA en clinique : promesses, périls et les patients au milieu",
         art3_date: '24 févr. 2026',
-        art4_headline: 'Le paradoxe du logement : pourquoi construire plus ne règle pas l\'abordabilité',
+        art4_headline: "Le paradoxe du logement : pourquoi construire plus ne règle pas l'abordabilité",
         art4_date: '23 févr. 2026',
-        art5_headline: 'La langue perdue : revitalisation, technologie et les limites des applications',
+        art5_headline: "La langue perdue : revitalisation, technologie et les limites des applications",
         art5_date: '22 févr. 2026',
         read_min: 'min de lecture',
-
-        /* Pull quote */
-        pull_quote: '« La question n\'est pas de savoir si le Canada changera — mais si nous choisirons comment. »',
-
-        /* Trending */
-        sidebar_newsletter_title: 'L\'Infolettre du matin',
+        pull_quote: "« La question n'est pas de savoir si le Canada changera — mais si nous choisirons comment. »",
+        sidebar_newsletter_title: "L'Infolettre du matin",
         sidebar_newsletter_desc: 'Analyses choisies et lecture essentielle, livrées chaque matin de semaine.',
         sidebar_trending_title: 'Tendances',
-        trend1_headline: 'Ce que le nouveau budget signifie vraiment pour la classe moyenne canadienne',
-        trend1_date: '27 févr. 2026',
-        trend2_headline: 'Le bond quantique discret du Canada : à l\'intérieur des laboratoires qui changent tout',
-        trend2_date: '26 févr. 2026',
-        trend3_headline: 'La nouvelle main-d\'œuvre : pourquoi les jeunes Canadiens renégocient entièrement le travail',
-        trend3_date: '25 févr. 2026',
-        trend4_headline: 'La souveraineté du Nord : pourquoi l\'Arctique est l\'épreuve décisive du Canada',
-        trend4_date: '24 févr. 2026',
-
-        /* Promo */
+        trend1_headline: 'Ce que le nouveau budget signifie vraiment pour la classe moyenne canadienne', trend1_date: '27 févr. 2026',
+        trend2_headline: "Le bond quantique discret du Canada : à l'intérieur des laboratoires qui changent tout", trend2_date: '26 févr. 2026',
+        trend3_headline: "La nouvelle main-d'œuvre : pourquoi les jeunes Canadiens renégocient entièrement le travail", trend3_date: '25 févr. 2026',
+        trend4_headline: "La souveraineté du Nord : pourquoi l'Arctique est l'épreuve décisive du Canada", trend4_date: '24 févr. 2026',
         promo_heading: '« Des idées qui méritent réflexion. »',
-        promo_subtext: 'Accès illimité au Meridian — dès 4,99 $/mois.',
+        promo_subtext: 'Accès illimité à Infoweb — dès 4,99 $/mois.',
         promo_cta: 'Commencer à lire',
-
-        /* Newsletter form */
-        form_name_label: 'Votre nom',
-        form_name_placeholder: 'Votre nom',
-        form_email_label: 'Adresse courriel',
-        form_email_placeholder: 'Adresse courriel',
-        form_subscribe_btn: 'S\'abonner — Gratuit',
+        form_name_label: 'Votre nom', form_name_placeholder: 'Votre nom',
+        form_email_label: 'Adresse courriel', form_email_placeholder: 'Adresse courriel',
+        form_subscribe_btn: "S'abonner — Gratuit",
         form_disclaimer: 'Aucun pourriel. Désabonnement en tout temps. Nous respectons votre vie privée.',
-
-        /* Footer */
-        footer_tagline: 'La revue d\'idées du Canada depuis 1978.',
-        footer_sections: 'Rubriques',
-        footer_company: 'Entreprise',
-        footer_reader: 'Lecteurs',
-        footer_language: 'Langue',
-        footer_lang_label: 'Choisir la langue',
-        footer_about: 'À propos',
-        footer_masthead: 'Équipe éditoriale',
-        footer_careers: 'Carrières',
-        footer_advertise: 'Publicité',
-        footer_contact: 'Contact',
-        footer_subscribe: 'S\'abonner',
-        footer_newsletter: 'Infolettre',
-        footer_gift: 'Abonnement cadeau',
-        footer_archive: 'Archives',
-        footer_podcast: 'Balado',
-        footer_copyright: '© 2026 The Meridian Publishing Inc. Tous droits réservés.',
-        footer_privacy: 'Politique de confidentialité',
-        footer_terms: 'Conditions d\'utilisation',
-        footer_accessibility_policy: 'Accessibilité',
-
-        /* Help modal */
+        footer_tagline: "Le portail numérique du Canada depuis 2010.",
+        footer_sections: 'Rubriques', footer_company: 'Entreprise',
+        footer_reader: 'Lecteurs', footer_language: 'Langue', footer_lang_label: 'Choisir la langue',
+        footer_about: 'À propos', footer_masthead: 'Équipe éditoriale', footer_careers: 'Carrières',
+        footer_advertise: 'Publicité', footer_contact: 'Contact',
+        footer_subscribe: "S'abonner", footer_newsletter: 'Infolettre',
+        footer_gift: 'Abonnement cadeau', footer_archive: 'Archives', footer_podcast: 'Balado',
+        footer_copyright: '© 2026 Infoweb Numérique Inc. Tous droits réservés.',
+        footer_privacy: 'Politique de confidentialité', footer_terms: "Conditions d'utilisation", footer_accessibility_policy: 'Accessibilité',
         modal_title: 'Nous contacter',
-        modal_desc: 'Vous avez une question, une correction ou une demande éditoriale ? Nous répondons dans les deux jours ouvrables.',
-        modal_name_label: 'Nom complet *',
-        modal_name_placeholder: 'ex. Marguerite Tremblay',
-        modal_name_error: 'Veuillez entrer votre nom.',
-        modal_email_label: 'Adresse courriel *',
-        modal_email_placeholder: 'vous@exemple.ca',
-        modal_email_error: 'Veuillez entrer une adresse courriel valide.',
-        modal_subject_label: 'Sujet',
-        modal_subject_default: 'Choisir un sujet…',
-        modal_subject_editorial: 'Demande éditoriale',
-        modal_subject_correction: 'Demander une correction',
-        modal_subject_subscription: 'Assistance abonnement',
-        modal_subject_other: 'Autre',
-        modal_message_label: 'Message *',
-        modal_message_placeholder: 'Votre message…',
-        modal_message_error: 'Veuillez entrer un message.',
+        modal_desc: "Vous avez une question, une correction ou une demande éditoriale ? Nous répondons dans les deux jours ouvrables.",
+        modal_name_label: 'Nom complet *', modal_name_placeholder: 'ex. Marguerite Tremblay', modal_name_error: 'Veuillez entrer votre nom.',
+        modal_email_label: 'Adresse courriel *', modal_email_placeholder: 'vous@exemple.ca', modal_email_error: 'Veuillez entrer une adresse courriel valide.',
+        modal_subject_label: 'Sujet', modal_subject_default: 'Choisir un sujet…',
+        modal_subject_editorial: 'Demande éditoriale', modal_subject_correction: 'Demander une correction',
+        modal_subject_subscription: 'Assistance abonnement', modal_subject_other: 'Autre',
+        modal_message_label: 'Message *', modal_message_placeholder: 'Votre message…', modal_message_error: 'Veuillez entrer un message.',
         modal_submit: 'Envoyer le message',
-
-        /* Search */
-        search_label: 'Rechercher dans The Meridian',
-        search_placeholder: 'Rechercher des articles…',
+        search_label: 'Rechercher dans Infoweb', search_placeholder: 'Rechercher des articles…',
       }
     };
 
     /* ============================================================
-       CURRENT LANGUAGE STATE
+       LANGUAGE
     ============================================================ */
-    let currentLang = localStorage.getItem('meridian-lang') || 'en-CA';
+    let currentLang = localStorage.getItem('infoweb-lang') || 'en-CA';
 
     function applyLanguage(lang) {
       const t = translations[lang];
       if (!t) return;
-
       currentLang = lang;
-      localStorage.setItem('meridian-lang', lang);
+      localStorage.setItem('infoweb-lang', lang);
       document.documentElement.lang = lang;
 
-      /* Toggle button label shows the OTHER language */
-      const langToggle = document.getElementById('langLabel');
-      if (langToggle) langToggle.textContent = lang === 'en-CA' ? 'FR' : 'EN';
+      const lbl = document.getElementById('langLabel');
+      if (lbl) lbl.textContent = lang === 'en-CA' ? 'FR' : 'EN';
 
-      /* Sync footer select */
-      const footerSel = document.getElementById('footerLangSelect');
-      if (footerSel) footerSel.value = lang;
+      const sel = document.getElementById('footerLangSelect');
+      if (sel) sel.value = lang;
 
-      /* Update data-i18n elements */
       document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.getAttribute('data-i18n');
-        if (t[key] !== undefined) el.textContent = t[key];
+        const v = t[el.getAttribute('data-i18n')];
+        if (v !== undefined) el.textContent = v;
       });
-
-      /* Update data-i18n-nav (same mechanism) */
       document.querySelectorAll('[data-i18n-nav]').forEach(el => {
-        const key = el.getAttribute('data-i18n-nav');
-        if (t[key] !== undefined) el.textContent = t[key];
+        const v = t[el.getAttribute('data-i18n-nav')];
+        if (v !== undefined) el.textContent = v;
       });
-
-      /* Update placeholders */
       document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-        const key = el.getAttribute('data-i18n-placeholder');
-        if (t[key] !== undefined) el.placeholder = t[key];
+        const v = t[el.getAttribute('data-i18n-placeholder')];
+        if (v !== undefined) el.placeholder = v;
       });
-
-      /* Update aria-label for skip link */
-      const skipLink = document.querySelector('.skip-link');
-      if (skipLink && t['skip']) skipLink.textContent = t['skip'];
     }
 
     /* ============================================================
        DARK MODE
     ============================================================ */
     function applyTheme(dark) {
-      const htmlEl = document.documentElement;
-      htmlEl.setAttribute('data-bs-theme', dark ? 'dark' : 'light');
-      localStorage.setItem('meridian-theme', dark ? 'dark' : 'light');
-
+      document.documentElement.setAttribute('data-bs-theme', dark ? 'dark' : 'light');
+      localStorage.setItem('infoweb-theme', dark ? 'dark' : 'light');
       const icon = document.getElementById('themeIcon');
-      const btn = document.getElementById('themeToggle');
-      if (icon) {
-        icon.className = dark ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill';
-      }
+      const btn  = document.getElementById('themeToggle');
+      if (icon) icon.className = dark ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill';
       if (btn) {
-        btn.setAttribute('aria-pressed', dark ? 'true' : 'false');
+        btn.setAttribute('aria-pressed', String(dark));
         btn.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
       }
     }
-
-    function isDark() {
-      return document.documentElement.getAttribute('data-bs-theme') === 'dark';
-    }
+    const isDark = () => document.documentElement.getAttribute('data-bs-theme') === 'dark';
 
     /* ============================================================
-       SEARCH OVERLAY
+       SEARCH
     ============================================================ */
     const searchOverlay = document.getElementById('searchOverlay');
-    const searchOpen = document.getElementById('searchOpen');
-    const searchClose = document.getElementById('searchClose');
-    const searchInput = document.getElementById('searchInput');
+    const searchOpen    = document.getElementById('searchOpen');
+    const searchClose   = document.getElementById('searchClose');
+    const searchInput   = document.getElementById('searchInput');
 
     function openSearch() {
       searchOverlay.classList.add('active');
       searchOpen.setAttribute('aria-expanded', 'true');
-      setTimeout(() => searchInput && searchInput.focus(), 50);
       document.body.style.overflow = 'hidden';
+      setTimeout(() => searchInput && searchInput.focus(), 50);
     }
-
     function closeSearch() {
       searchOverlay.classList.remove('active');
       searchOpen.setAttribute('aria-expanded', 'false');
@@ -1727,17 +1017,16 @@
     /* ============================================================
        FORM VALIDATION
     ============================================================ */
-    function setupFormValidation(formId) {
-      const form = document.getElementById(formId);
+    function setupFormValidation(id) {
+      const form = document.getElementById(id);
       if (!form) return;
-      form.addEventListener('submit', function(e) {
+      form.addEventListener('submit', e => {
         e.preventDefault();
         e.stopPropagation();
         if (!form.checkValidity()) {
           form.classList.add('was-validated');
         } else {
           form.classList.remove('was-validated');
-          /* Success feedback */
           const btn = form.querySelector('[type="submit"]');
           if (btn) {
             const orig = btn.textContent;
@@ -1750,52 +1039,28 @@
     }
 
     /* ============================================================
-       INITIALISATION
+       INIT
     ============================================================ */
-    document.addEventListener('DOMContentLoaded', function() {
-
-      /* Restore theme */
-      const savedTheme = localStorage.getItem('meridian-theme');
-      if (savedTheme === 'dark') {
-        applyTheme(true);
-      } else {
-        applyTheme(false);
-      }
-
-      /* Restore language */
+    document.addEventListener('DOMContentLoaded', () => {
+      applyTheme(localStorage.getItem('infoweb-theme') === 'dark');
       applyLanguage(currentLang);
 
-      /* --- Event listeners --- */
-
-      /* Theme toggle */
-      document.getElementById('themeToggle').addEventListener('click', function() {
-        applyTheme(!isDark());
-      });
-
-      /* Language toggle (header) */
-      document.getElementById('langToggle').addEventListener('click', function() {
-        applyLanguage(currentLang === 'en-CA' ? 'fr-CA' : 'en-CA');
-      });
-
-      /* Footer language select */
-      document.getElementById('footerLangSelect').addEventListener('change', function() {
+      document.getElementById('themeToggle').addEventListener('click', () => applyTheme(!isDark()));
+      document.getElementById('langToggle').addEventListener('click', () =>
+        applyLanguage(currentLang === 'en-CA' ? 'fr-CA' : 'en-CA'));
+      document.getElementById('footerLangSelect').addEventListener('change', function () {
         applyLanguage(this.value);
       });
 
-      /* Search */
       searchOpen.addEventListener('click', openSearch);
       searchClose.addEventListener('click', closeSearch);
-      searchOverlay.addEventListener('click', function(e) {
-        if (e.target === searchOverlay) closeSearch();
-      });
-      document.addEventListener('keydown', function(e) {
+      searchOverlay.addEventListener('click', e => { if (e.target === searchOverlay) closeSearch(); });
+      document.addEventListener('keydown', e => {
         if (e.key === 'Escape' && searchOverlay.classList.contains('active')) closeSearch();
       });
 
-      /* Forms */
       setupFormValidation('helpForm');
       setupFormValidation('newsletterForm');
-
     });
   </script>
 
