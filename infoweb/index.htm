@@ -92,16 +92,67 @@
     }
 
     /* ============================================================
-       CANADA.CA H1 RED BAR
-       Colour #A62A1E · 72px wide · 6px thick · .2em below H1
+       WCAG LINK HOVER & FOCUS — BEST PRACTICE
+       - Never rely on colour alone (WCAG 1.4.1)
+       - Underline always present for body links; nav links use
+         underline + colour change on hover/focus
+       - Focus indicator: 3px solid, offset 3px, ≥3:1 contrast
+         against both light and dark backgrounds (WCAG 2.4.11)
     ============================================================ */
-    h1::after {
-      content: '';
-      display: block;
-      width: 72px;
-      height: 6px;
-      background: #A62A1E;
-      margin-top: 0.2em;
+    /* All interactive elements get a robust focus ring */
+    :focus-visible {
+      outline: 3px solid #0057CC;   /* AA contrast on white & dark bg */
+      outline-offset: 3px;
+      border-radius: 2px;
+      /* Ensure focus visible even on coloured backgrounds */
+      box-shadow: 0 0 0 5px rgba(0, 87, 204, 0.2);
+    }
+
+    /* Body / prose links: always underlined, colour change + bold on hover */
+    a {
+      color: inherit;
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+      text-decoration-skip-ink: auto;
+      transition: color var(--transition), text-decoration-thickness var(--transition);
+    }
+    a:hover, a:focus-visible {
+      color: var(--meridian-primary);
+      text-decoration-thickness: 3px;   /* thickness change = non-colour cue */
+      text-underline-offset: 2px;
+    }
+
+    /* Nav / UI links suppress underline by default, show on hover/focus */
+    nav a, .brand-logo, .card-headline a, .article-card-list a,
+    .btn-meridian, .footer-links a,
+    .footer-bottom nav a, .top-bar a {
+      text-decoration: none;
+    }
+    nav a:hover, nav a:focus-visible,
+    .card-headline a:hover, .card-headline a:focus-visible,
+    .article-card-list a:hover, .article-card-list a:focus-visible,
+    .footer-links a:hover, .footer-links a:focus-visible,
+    .footer-bottom nav a:hover, .footer-bottom nav a:focus-visible,
+    .top-bar a:hover, .top-bar a:focus-visible {
+      color: var(--meridian-primary);
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 3px;
+    }
+    /* Footer links on dark bg: use gold on hover for contrast */
+    .footer-links a:hover, .footer-links a:focus-visible,
+    .footer-bottom-links a:hover, .footer-bottom-links a:focus-visible {
+      color: #C9AA71;
+    }
+
+    /* Visually hidden but in DOM for screen readers */
+    .vh-label {
+      position: absolute;
+      width: 1px; height: 1px;
+      padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0);
+      white-space: nowrap; border: 0;
     }
 
     /* ============================================================
@@ -121,17 +172,8 @@
       transition: color var(--transition);
     }
     /* Navigation / UI links (cards, nav, footer) suppress underline */
-    nav a, .brand-logo, .card-headline a, .article-card-list a,
-    .btn-meridian, .footer-links a,
-    .footer-bottom nav a, .top-bar a { text-decoration: none; }
-    a:hover { color: var(--meridian-primary); }
 
     img { max-width: 100%; height: auto; display: block; object-fit: cover; }
-
-    /* WCAG AA focus */
-    :focus-visible { outline: 3px solid var(--meridian-primary); outline-offset: 3px; border-radius: 2px; }
-
-    /* Indigenous language support per Canada.ca spec */
     :lang(iu) { font-family: 'Noto Sans Canadian Aboriginal', var(--font-body); }
     :lang(iu) :is(h1, h2, h3, h4, h5, h6) { font-weight: bold; }
 
@@ -155,7 +197,6 @@
       padding: 0.35rem 0; color: var(--meridian-muted);
     }
     .top-bar a { color: var(--meridian-muted); font-weight: 500; }
-    .top-bar a:hover { color: var(--meridian-primary); }
 
     /* ============================================================
        MAIN NAV
@@ -184,7 +225,6 @@
       color: var(--bs-body-color); border-bottom: 2px solid transparent;
       transition: color var(--transition), border-color var(--transition);
     }
-    .nav-links li a:hover,
     .nav-links li a[aria-current="page"] { color: var(--meridian-primary); border-bottom-color: var(--meridian-primary); }
 
     .nav-controls { display: flex; align-items: center; gap: 0.5rem; }
@@ -230,6 +270,7 @@
 
     .hero-headline {
       /* Slightly larger than H1 spec for hero impact, still Lato bold */
+      font-family: var(--font-heading);
       font-size: clamp(37px, 5vw, 52px); font-weight: 700;
       line-height: 1.1; margin-bottom: 1rem;
     }
@@ -263,7 +304,6 @@
     .article-card .card-img-wrapper img { width: 100%; height: 220px; object-fit: cover; transition: transform 0.5s ease; }
     .article-card:hover .card-img-wrapper img { transform: scale(1.04); }
     .article-card .card-headline { font-family: var(--font-heading); font-size: 22px; font-weight: 700; line-height: 1.25; margin-bottom: 0.4rem; }
-    .article-card .card-headline a:hover { color: var(--meridian-primary); }
     .article-card .card-excerpt { font-size: 18px; color: var(--meridian-muted); line-height: 1.6; margin-bottom: 0.5rem; }
     .article-card .card-meta { font-family: var(--font-ui); font-size: 18px; color: var(--meridian-muted); letter-spacing: 0.02em; }
 
@@ -319,14 +359,30 @@
     footer { background: var(--meridian-black); color: #ccc; margin-top: 3rem; }
     [data-bs-theme="dark"] footer { background: #0d0f11; border-top: 1px solid #2a2d30; }
 
-    .footer-brand { font-family: var(--font-heading); font-size: 2rem; font-weight: 700; color: #fff; letter-spacing: 0; }
-    .footer-brand span { color: var(--meridian-accent); }
+    /* ── Footer emblem (replaces text brand) ── */
+    .footer-emblem {
+      display: flex; align-items: flex-start; gap: 0.75rem;
+    }
+    .footer-emblem-icon {
+      flex-shrink: 0; margin-top: 0.15rem;
+      filter: drop-shadow(0 1px 2px rgba(0,0,0,0.6));
+    }
+    .footer-emblem-text {
+      display: flex; flex-direction: column; gap: 0.2rem;
+    }
+    .footer-emblem-name {
+      font-family: var(--font-heading); font-size: 22px; font-weight: 700;
+      color: #fff; letter-spacing: 0.02em; line-height: 1.1;
+    }
+    .footer-emblem-sub {
+      font-family: var(--font-body); font-size: 18px;
+      color: #C9AA71; line-height: 1.3; max-width: 22ch;
+    }
 .footer-nav-heading { font-family: var(--font-ui); font-size: 18px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #fff; margin-bottom: 1rem; }
 
     .footer-links { list-style: none; padding: 0; margin: 0; }
     .footer-links li { margin-bottom: 0.45rem; }
     .footer-links a { font-family: var(--font-ui); font-size: 18px; color: #888; transition: color var(--transition); }
-    .footer-links a:hover { color: #fff; }
 
 
 
@@ -352,7 +408,6 @@
     }
     .footer-bottom-links a:first-child { padding-left: 0; }
     .footer-bottom-links a:last-child::after { display: none; }
-    .footer-bottom-links a:hover { color: #fff; }
     /* Wordmark: SVG is black — invert to white on the dark footer */
     .footer-wordmark img {
       height: 40px; width: auto; display: block;
@@ -514,17 +569,15 @@
 
           <div class="col-lg-5 hero-content">
             <span class="category-label" data-i18n="cat_hr">Human Resources</span>
-            <h1 class="hero-headline" id="hero-headline">
-              <a href="#" data-i18n="hero_headline">The Silence Between Storms: Canada's North at the Edge of Change</a>
-            </h1>
+            <h1 class="visually-hidden" id="hero-headline">Infoweb</h1>
+            <p class="hero-headline" aria-hidden="false">
+              <a href="#" data-i18n="hero_headline">New HR Framework Launched for RCMP Members Nationwide</a>
+            </p>
             <p class="hero-excerpt" data-i18n="hero_excerpt">
-              Across the boreal fringe, scientists and Indigenous communities are documenting a transformation centuries in the making — and warning that the reckoning is arriving faster than anyone predicted.
+              The new People Management Framework introduces updated leave policies, performance review cycles, and wellness supports for all regular and civilian members.
             </p>
             <p class="hero-byline">
-              <small><span data-i18n="hero_by">By</span>
-              <strong>Marguerite Tremblay</strong>
-              &nbsp;·&nbsp;
-              <time datetime="2026-02-28" data-i18n="hero_date">February 28, 2026</time></small>
+              <small><time datetime="2026-02-28" data-i18n="hero_date">February 28, 2026</time></small>
             </p>
             <a href="#" class="btn-meridian mt-3" data-i18n="hero_cta">Read More</a>
           </div>
@@ -554,10 +607,10 @@
                 </div>
                 <span class="category-label" data-i18n="cat_security">Security</span>
                 <h2 class="card-headline" id="art1-headline">
-                  <a href="#" data-i18n="art1_headline">Parliament's Invisible War: The Procedural Crisis No One Is Talking About</a>
+                  <a href="#" data-i18n="art1_headline">Enhanced Cybersecurity Protocols Rolled Out Across All Divisions</a>
                 </h2>
-                <p class="card-excerpt" data-i18n="art1_excerpt">Filibustering has become an art form on Parliament Hill, but at what cost to democratic function and public trust?</p>
-                <div class="card-meta"><small><strong>Élise Fontaine</strong> &nbsp;·&nbsp; <span data-i18n="art1_date">Feb 26, 2026</span> &nbsp;·&nbsp; <span data-i18n="read_min">8 min read</span></small></div>
+                <p class="card-excerpt" data-i18n="art1_excerpt">A phased rollout of multi-factor authentication and encrypted communication tools is now underway in response to an updated national threat assessment.</p>
+                <div class="card-meta"><small><span data-i18n="art1_date">February 26, 2026</span></small></div>
               </article>
             </div>
 
@@ -572,10 +625,10 @@
                 </div>
                 <span class="category-label" data-i18n="cat_commissioner">Commissioner</span>
                 <h2 class="card-headline" id="art2-headline">
-                  <a href="#" data-i18n="art2_headline">The New Artisans: How Gen Z Is Redefining Craft in a Hyperdigital Age</a>
+                  <a href="#" data-i18n="art2_headline">Commissioner's Message: Building Trust Through Accountability</a>
                 </h2>
-                <p class="card-excerpt" data-i18n="art2_excerpt">From ceramics to letterpress, young Canadians are returning to tangible making — not as nostalgia, but as resistance.</p>
-                <div class="card-meta"><small><strong>James Adeyemi</strong> &nbsp;·&nbsp; <span data-i18n="art2_date">Feb 25, 2026</span> &nbsp;·&nbsp; <span data-i18n="read_min">6 min read</span></small></div>
+                <p class="card-excerpt" data-i18n="art2_excerpt">The Commissioner addresses members directly on transparency measures, the Independent Civilian Review mechanism, and the path forward on institutional reform.</p>
+                <div class="card-meta"><small><span data-i18n="art2_date">February 25, 2026</span></small></div>
               </article>
             </div>
 
@@ -594,9 +647,9 @@
                 </div>
                 <span class="category-label" data-i18n="cat_it">Information Technology</span>
                 <h2 class="card-headline" id="art3-headline" style="font-size:22px;">
-                  <a href="#" data-i18n="art3_headline">AI in the Clinic: Promise, Peril, and the Patients Caught Between</a>
+                  <a href="#" data-i18n="art3_headline">RCMP Digital Transformation Strategy 2026–2030 Released</a>
                 </h2>
-                <div class="card-meta"><small><strong>Dr. Priya Nair</strong> &nbsp;·&nbsp; <span data-i18n="art3_date">Feb 24, 2026</span></small></div>
+                <div class="card-meta"><small><span data-i18n="art3_date">February 24, 2026</span></small></div>
               </article>
             </div>
 
@@ -611,9 +664,9 @@
                 </div>
                 <span class="category-label" data-i18n="cat_facilities">Facilities</span>
                 <h2 class="card-headline" id="art4-headline" style="font-size:22px;">
-                  <a href="#" data-i18n="art4_headline">The Housing Paradox: Why Building More Isn't Fixing Affordability</a>
+                  <a href="#" data-i18n="art4_headline">Major Facility Upgrades Approved for Prairie and Atlantic Detachments</a>
                 </h2>
-                <div class="card-meta"><small><strong>Lena Kowalski</strong> &nbsp;·&nbsp; <span data-i18n="art4_date">Feb 23, 2026</span></small></div>
+                <div class="card-meta"><small><span data-i18n="art4_date">February 23, 2026</span></small></div>
               </article>
             </div>
 
@@ -628,9 +681,9 @@
                 </div>
                 <span class="category-label" data-i18n="cat_operations">Operations</span>
                 <h2 class="card-headline" id="art5-headline" style="font-size:22px;">
-                  <a href="#" data-i18n="art5_headline">The Language We Lost: Revitalization, Technology, and the Limits of Apps</a>
+                  <a href="#" data-i18n="art5_headline">Operation Northern Shield: Results and Next Steps</a>
                 </h2>
-                <div class="card-meta"><small><strong>Rebecca Crow Feather</strong> &nbsp;·&nbsp; <span data-i18n="art5_date">Feb 22, 2026</span></small></div>
+                <div class="card-meta"><small><span data-i18n="art5_date">February 22, 2026</span></small></div>
               </article>
             </div>
 
@@ -654,7 +707,7 @@
                   alt="Commissioner at podium addressing personnel" width="80" height="80" loading="lazy">
                 <div class="list-content">
                   <h3 class="card-headline" id="comm1"><a href="#" data-i18n="comm1_headline">Message from the Commissioner: Priorities for 2026</a></h3>
-                  <div class="card-meta"><small><span data-i18n="comm1_date">Feb 28, 2026</span></small></div>
+                  <div class="card-meta"><small><span data-i18n="comm1_date">February 28, 2026</span></small></div>
                 </div>
               </article>
 
@@ -663,7 +716,7 @@
                   alt="RCMP officers in formal uniform at ceremony" width="80" height="80" loading="lazy">
                 <div class="list-content">
                   <h3 class="card-headline" id="comm2"><a href="#" data-i18n="comm2_headline">Promotions & Honours — Winter 2026</a></h3>
-                  <div class="card-meta"><small><span data-i18n="comm2_date">Feb 20, 2026</span></small></div>
+                  <div class="card-meta"><small><span data-i18n="comm2_date">February 20, 2026</span></small></div>
                 </div>
               </article>
 
@@ -672,7 +725,7 @@
                   alt="Officers participating in community engagement event" width="80" height="80" loading="lazy">
                 <div class="list-content">
                   <h3 class="card-headline" id="comm3"><a href="#" data-i18n="comm3_headline">National Indigenous Policing Strategy Update</a></h3>
-                  <div class="card-meta"><small><span data-i18n="comm3_date">Feb 14, 2026</span></small></div>
+                  <div class="card-meta"><small><span data-i18n="comm3_date">February 14, 2026</span></small></div>
                 </div>
               </article>
 
@@ -681,7 +734,7 @@
                   alt="Handshake between officials at partnership signing" width="80" height="80" loading="lazy">
                 <div class="list-content">
                   <h3 class="card-headline" id="comm4"><a href="#" data-i18n="comm4_headline">New Federal-Provincial Policing Agreements Signed</a></h3>
-                  <div class="card-meta"><small><span data-i18n="comm4_date">Feb 7, 2026</span></small></div>
+                  <div class="card-meta"><small><span data-i18n="comm4_date">February 7, 2026</span></small></div>
                 </div>
               </article>
 
@@ -690,7 +743,7 @@
                   alt="Personnel reviewing policy documents at a table" width="80" height="80" loading="lazy">
                 <div class="list-content">
                   <h3 class="card-headline" id="comm5"><a href="#" data-i18n="comm5_headline">Wellness & Mental Health Resources for Members</a></h3>
-                  <div class="card-meta"><small><span data-i18n="comm5_date">Jan 31, 2026</span></small></div>
+                  <div class="card-meta"><small><span data-i18n="comm5_date">January 31, 2026</span></small></div>
                 </div>
               </article>
 
@@ -707,7 +760,7 @@
                   alt="Night skyline of a Canadian city" width="80" height="80" loading="lazy">
                 <div class="list-content">
                   <h3 class="card-headline" id="trend1"><a href="#" data-i18n="trend1_headline">What the New Budget Really Means for Middle Canada</a></h3>
-                  <div class="card-meta"><small><span data-i18n="trend1_date">Feb 27, 2026</span></small></div>
+                  <div class="card-meta"><small><span data-i18n="trend1_date">February 27, 2026</span></small></div>
                 </div>
               </article>
 
@@ -716,7 +769,7 @@
                   alt="Scientific laboratory glassware lit with colourful reagents" width="80" height="80" loading="lazy">
                 <div class="list-content">
                   <h3 class="card-headline" id="trend2"><a href="#" data-i18n="trend2_headline">Canada's Quiet Quantum Leap: Inside the Labs Changing Everything</a></h3>
-                  <div class="card-meta"><small><span data-i18n="trend2_date">Feb 26, 2026</span></small></div>
+                  <div class="card-meta"><small><span data-i18n="trend2_date">February 26, 2026</span></small></div>
                 </div>
               </article>
 
@@ -725,7 +778,7 @@
                   alt="Diverse group of young adults collaborating around a table" width="80" height="80" loading="lazy">
                 <div class="list-content">
                   <h3 class="card-headline" id="trend3"><a href="#" data-i18n="trend3_headline">The New Workforce: Why Young Canadians Are Renegotiating Work Entirely</a></h3>
-                  <div class="card-meta"><small><span data-i18n="trend3_date">Feb 25, 2026</span></small></div>
+                  <div class="card-meta"><small><span data-i18n="trend3_date">February 25, 2026</span></small></div>
                 </div>
               </article>
 
@@ -734,7 +787,7 @@
                   alt="Aurora borealis over a northern Canadian landscape" width="80" height="80" loading="lazy">
                 <div class="list-content">
                   <h3 class="card-headline" id="trend4"><a href="#" data-i18n="trend4_headline">Northern Sovereignty: Why the Arctic Is Canada's Defining Test</a></h3>
-                  <div class="card-meta"><small><span data-i18n="trend4_date">Feb 24, 2026</span></small></div>
+                  <div class="card-meta"><small><span data-i18n="trend4_date">February 24, 2026</span></small></div>
                 </div>
               </article>
 
@@ -756,8 +809,23 @@
     <div class="container py-5">
       <div class="row g-5">
 
-        <div class="col-lg-2 col-md-4 col-12">
-          <div class="footer-brand">Info<span>web</span></div>
+        <div class="col-lg-2 col-md-4 col-12 d-flex align-items-start">
+          <!-- Accessible visual emblem replacing text brand -->
+          <div class="footer-emblem" role="img" aria-label="Infoweb — Government of Canada internal news portal">
+            <svg class="footer-emblem-icon" viewBox="0 0 48 48" focusable="false" aria-hidden="true"
+                 xmlns="http://www.w3.org/2000/svg" width="48" height="48">
+              <!-- Shield shape -->
+              <path d="M24 2 L44 10 L44 28 C44 38 34 45 24 47 C14 45 4 38 4 28 L4 10 Z"
+                    fill="#1A1D20" stroke="#C9AA71" stroke-width="2"/>
+              <!-- Maple leaf silhouette -->
+              <path d="M24 10 L26 16 L32 14 L28 20 L34 22 L28 24 L30 32 L24 28 L18 32 L20 24 L14 22 L20 20 L16 14 L22 16 Z"
+                    fill="#C9AA71"/>
+            </svg>
+            <div class="footer-emblem-text">
+              <span class="footer-emblem-name" lang="en">Infoweb</span>
+              <span class="footer-emblem-sub" data-i18n="footer_emblem_sub">Internal Communications Portal</span>
+            </div>
+          </div>
         </div>
 
         <!-- Regions column -->
@@ -942,34 +1010,35 @@
         hero_category: 'Human Resources',
         cat_hr: 'Human Resources', cat_security: 'Security', cat_commissioner: 'Commissioner',
         cat_it: 'Information Technology', cat_facilities: 'Facilities', cat_operations: 'Operations',
-        hero_headline: "The Silence Between Storms: Canada's North at the Edge of Change",
-        hero_excerpt: "Across the boreal fringe, scientists and Indigenous communities are documenting a transformation centuries in the making — and warning that the reckoning is arriving faster than anyone predicted.",
-        hero_by: 'By', hero_date: 'February 28, 2026', hero_cta: 'Read More',
+        hero_headline: 'New HR Framework Launched for RCMP Members Nationwide',
+        hero_excerpt: 'The new People Management Framework introduces updated leave policies, performance review cycles, and wellness supports for all regular and civilian members.',
+        hero_date: 'February 28, 2026', hero_cta: 'Read More',
         section_latest: 'Latest Stories',
-        art1_headline: "Parliament's Invisible War: The Procedural Crisis No One Is Talking About",
-        art1_excerpt: 'Filibustering has become an art form on Parliament Hill, but at what cost to democratic function and public trust?',
-        art1_date: 'Feb 26, 2026',
-        art2_headline: 'The New Artisans: How Gen Z Is Redefining Craft in a Hyperdigital Age',
-        art2_excerpt: 'From ceramics to letterpress, young Canadians are returning to tangible making — not as nostalgia, but as resistance.',
-        art2_date: 'Feb 25, 2026',
-        art3_headline: 'AI in the Clinic: Promise, Peril, and the Patients Caught Between',
-        art3_date: 'Feb 24, 2026',
-        art4_headline: "The Housing Paradox: Why Building More Isn't Fixing Affordability",
-        art4_date: 'Feb 23, 2026',
-        art5_headline: 'The Language We Lost: Revitalization, Technology, and the Limits of Apps',
-        art5_date: 'Feb 22, 2026',
+        art1_headline: 'Enhanced Cybersecurity Protocols Rolled Out Across All Divisions',
+        art1_excerpt: 'A phased rollout of multi-factor authentication and encrypted communication tools is now underway in response to an updated national threat assessment.',
+        art1_date: 'February 26, 2026',
+        art2_headline: 'Commissioner\'s Message: Building Trust Through Accountability',
+        art2_excerpt: 'The Commissioner addresses members directly on transparency measures, the Independent Civilian Review mechanism, and the path forward on institutional reform.',
+        art2_date: 'February 25, 2026',
+        art3_headline: 'RCMP Digital Transformation Strategy 2026–2030 Released',
+        art3_date: 'February 24, 2026',
+        art4_headline: 'Major Facility Upgrades Approved for Prairie and Atlantic Detachments',
+        art4_date: 'February 23, 2026',
+        art5_headline: 'Operation Northern Shield: Results and Next Steps',
+        art5_date: 'February 22, 2026',
         read_min: 'min read',
         sidebar_commissioner_title: "Commissioner's Corner",
-        comm1_headline: "Message from the Commissioner: Priorities for 2026", comm1_date: 'Feb 28, 2026',
-        comm2_headline: 'Promotions & Honours — Winter 2026', comm2_date: 'Feb 20, 2026',
-        comm3_headline: 'National Indigenous Policing Strategy Update', comm3_date: 'Feb 14, 2026',
-        comm4_headline: 'New Federal-Provincial Policing Agreements Signed', comm4_date: 'Feb 7, 2026',
-        comm5_headline: 'Wellness & Mental Health Resources for Members', comm5_date: 'Jan 31, 2026',
+        comm1_headline: "Message from the Commissioner: Priorities for 2026", comm1_date: 'February 28, 2026',
+        comm2_headline: 'Promotions & Honours — Winter 2026', comm2_date: 'February 20, 2026',
+        comm3_headline: 'National Indigenous Policing Strategy Update', comm3_date: 'February 14, 2026',
+        comm4_headline: 'New Federal-Provincial Policing Agreements Signed', comm4_date: 'February 7, 2026',
+        comm5_headline: 'Wellness & Mental Health Resources for Members', comm5_date: 'January 31, 2026',
         sidebar_trending_title: 'Trending Now',
-        trend1_headline: 'What the New Budget Really Means for Middle Canada', trend1_date: 'Feb 27, 2026',
-        trend2_headline: "Canada's Quiet Quantum Leap: Inside the Labs Changing Everything", trend2_date: 'Feb 26, 2026',
-        trend3_headline: 'The New Workforce: Why Young Canadians Are Renegotiating Work Entirely', trend3_date: 'Feb 25, 2026',
-        trend4_headline: "Northern Sovereignty: Why the Arctic Is Canada's Defining Test", trend4_date: 'Feb 24, 2026',
+        trend1_headline: 'What the New Budget Really Means for Middle Canada', trend1_date: 'February 27, 2026',
+        trend2_headline: "Canada's Quiet Quantum Leap: Inside the Labs Changing Everything", trend2_date: 'February 26, 2026',
+        trend3_headline: 'The New Workforce: Why Young Canadians Are Renegotiating Work Entirely', trend3_date: 'February 25, 2026',
+        trend4_headline: "Northern Sovereignty: Why the Arctic Is Canada's Defining Test", trend4_date: 'February 24, 2026',
+        footer_emblem_sub: 'Internal Communications Portal',
         footer_tagline: '',
         footer_sections: 'Regions', footer_company: 'Divisions',
         footer_reader: 'Organisation', footer_language: 'Resources', footer_lang_label: 'Select language',
@@ -1018,34 +1087,35 @@
         hero_category: 'Ressources humaines',
         cat_hr: 'Ressources humaines', cat_security: 'Sécurité', cat_commissioner: 'Commissaire',
         cat_it: 'Technologies de l\'information', cat_facilities: 'Installations', cat_operations: 'Opérations',
-        hero_headline: "Le silence entre les tempêtes : le Grand Nord canadien au bord du changement",
-        hero_excerpt: "À travers la lisière boréale, scientifiques et communautés autochtones documentent une transformation millénaire — et préviennent que l'heure des comptes arrive plus vite que prévu.",
-        hero_by: 'Par', hero_date: '28 février 2026', hero_cta: "Lire l'article",
+        hero_headline: 'Nouveau cadre RH lancé pour les membres de la GRC à l\'échelle nationale',
+        hero_excerpt: 'Le nouveau Cadre de gestion des personnes introduit des politiques de congé actualisées, des cycles d\'évaluation du rendement et des soutiens au mieux-être pour tous les membres.',
+        hero_date: '28 février 2026', hero_cta: "Lire l'article",
         section_latest: 'Derniers articles',
-        art1_headline: "La guerre invisible du Parlement : la crise procédurale dont personne ne parle",
+        art1_headline: 'Nouveaux protocoles de cybersécurité déployés dans toutes les divisions',
         art1_excerpt: "L'obstruction est devenue un art sur la Colline du Parlement, mais à quel coût pour la démocratie et la confiance du public ?",
-        art1_date: '26 févr. 2026',
-        art2_headline: "Les nouveaux artisans : comment la génération Z redéfinit l'artisanat à l'ère numérique",
+        art1_date: '26 février 2026',
+        art2_headline: 'Message du commissaire : bâtir la confiance par la responsabilisation',
         art2_excerpt: "De la céramique à l'impression typographique, les jeunes Canadiens reviennent à la fabrication tangible — non par nostalgie, mais en signe de résistance.",
-        art2_date: '25 févr. 2026',
-        art3_headline: "L'IA en clinique : promesses, périls et les patients au milieu",
-        art3_date: '24 févr. 2026',
-        art4_headline: "Le paradoxe du logement : pourquoi construire plus ne règle pas l'abordabilité",
-        art4_date: '23 févr. 2026',
-        art5_headline: "La langue perdue : revitalisation, technologie et les limites des applications",
-        art5_date: '22 févr. 2026',
+        art2_date: '25 février 2026',
+        art3_headline: 'Stratégie de transformation numérique de la GRC 2026–2030 publiée',
+        art3_date: '24 février 2026',
+        art4_headline: 'Mises à niveau majeures des installations approuvées dans les Prairies et l\'Atlantique',
+        art4_date: '23 février 2026',
+        art5_headline: 'Opération Bouclier du Nord : résultats et prochaines étapes',
+        art5_date: '22 février 2026',
         read_min: 'min de lecture',
         sidebar_commissioner_title: "Coin du commissaire",
-        comm1_headline: "Message du commissaire : priorités pour 2026", comm1_date: '28 févr. 2026',
-        comm2_headline: 'Promotions et distinctions — Hiver 2026', comm2_date: '20 févr. 2026',
-        comm3_headline: 'Mise à jour de la stratégie nationale de services de police autochtones', comm3_date: '14 févr. 2026',
-        comm4_headline: 'Signature de nouveaux accords fédéraux-provinciaux de services de police', comm4_date: '7 févr. 2026',
-        comm5_headline: 'Ressources sur le mieux-être et la santé mentale pour les membres', comm5_date: '31 janv. 2026',
+        comm1_headline: "Message du commissaire : priorités pour 2026", comm1_date: '28 février 2026',
+        comm2_headline: 'Promotions et distinctions — Hiver 2026', comm2_date: '20 février 2026',
+        comm3_headline: 'Mise à jour de la stratégie nationale de services de police autochtones', comm3_date: '14 février 2026',
+        comm4_headline: 'Signature de nouveaux accords fédéraux-provinciaux de services de police', comm4_date: '7 février 2026',
+        comm5_headline: 'Ressources sur le mieux-être et la santé mentale pour les membres', comm5_date: '31 janvier 2026',
         sidebar_trending_title: 'Tendances',
-        trend1_headline: 'Ce que le nouveau budget signifie vraiment pour la classe moyenne canadienne', trend1_date: '27 févr. 2026',
-        trend2_headline: "Le bond quantique discret du Canada : à l'intérieur des laboratoires qui changent tout", trend2_date: '26 févr. 2026',
-        trend3_headline: "La nouvelle main-d'œuvre : pourquoi les jeunes Canadiens renégocient entièrement le travail", trend3_date: '25 févr. 2026',
-        trend4_headline: "La souveraineté du Nord : pourquoi l'Arctique est l'épreuve décisive du Canada", trend4_date: '24 févr. 2026',
+        trend1_headline: 'Ce que le nouveau budget signifie vraiment pour la classe moyenne canadienne', trend1_date: '27 février 2026',
+        trend2_headline: "Le bond quantique discret du Canada : à l'intérieur des laboratoires qui changent tout", trend2_date: '26 février 2026',
+        trend3_headline: "La nouvelle main-d'œuvre : pourquoi les jeunes Canadiens renégocient entièrement le travail", trend3_date: '25 février 2026',
+        trend4_headline: "La souveraineté du Nord : pourquoi l'Arctique est l'épreuve décisive du Canada", trend4_date: '24 février 2026',
+        footer_emblem_sub: 'Portail de communications internes',
         footer_tagline: '',
         footer_sections: 'Régions', footer_company: 'Divisions',
         footer_reader: 'Organisation', footer_language: 'Ressources', footer_lang_label: 'Choisir la langue',
