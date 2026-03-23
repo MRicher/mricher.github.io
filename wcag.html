@@ -320,7 +320,6 @@
       ✦ Beautify
     </button>
     <button class="btn btn-ghost" onclick="clearAll()">✕ Clear</button>
-    <button class="btn btn-ghost" onclick="loadSample()">⟳ Sample</button>
     <div class="sep"></div>
     <span id="badge-errors" class="badge badge-err" style="display:none"></span>
     <span id="badge-warns"  class="badge badge-warn" style="display:none"></span>
@@ -606,42 +605,85 @@ function auditTokens(tokens) {
 }
 // ─── FORMAT ───────────────────────────────────────────────────────────────────
 
+// Tags whose entire content (open + text + close) collapses onto one line
+const COMPACT_TAGS = new Set([
+  'a','b','button','cite','code','dt','dd','em','h1','h2','h3','h4','h5','h6',
+  'i','label','legend','li','option','p','small','span','strong','td','th',
+  'title','caption','figcaption','abbr','mark','q','s','u','sup','sub','time'
+]);
+
+// Metadata / structural void tags that stay on their own line at any depth
+const META_VOID = new Set(['meta','link','base','source','track','param','wbr']);
+
 function formatHTML(tokens) {
+  // Pre-pass: find which open-tag indices have exactly one text child and one close,
+  // so we can inline them as: <tag attrs>text</tag>
+  const inlineMap = new Set(); // indices of open tokens to inline
+
+  for (let i = 0; i < tokens.length; i++) {
+    const tok = tokens[i];
+    if (tok.type !== 'open') continue;
+    if (!COMPACT_TAGS.has(tok.tag)) continue;
+
+    // Look ahead: optional single text node then matching close
+    let j = i + 1;
+    // skip if next is text
+    const hasText = j < tokens.length && tokens[j].type === 'text';
+    if (hasText) j++;
+    // next must be the matching close
+    if (j < tokens.length && tokens[j].type === 'close' && tokens[j].tag === tok.tag) {
+      inlineMap.add(i);
+    }
+  }
+
   let out = '';
   let depth = 0;
-
   const pad = (d) => INDENT.repeat(Math.max(0, d));
+  let skip = 0; // tokens to skip because already inlined
 
   tokens.forEach((tok, i) => {
-    const attrs = tok._patchedAttrs ? serializeAttrs(tok._patchedAttrs) : (tok.attrs || '');
-    const attrStr = attrs ? ` ${attrs}` : '';
+    if (skip > 0) { skip--; return; }
+
+    const rawAttrs = tok._patchedAttrs ? serializeAttrs(tok._patchedAttrs) : (tok.attrs || '');
+    const attrStr = rawAttrs ? ' ' + rawAttrs : '';
 
     switch (tok.type) {
       case 'doctype':
-        out += `<!DOCTYPE html>\n`;
+        out += '<!DOCTYPE html>\n';
         break;
+
       case 'comment':
-        out += `${pad(depth)}${tok.value}\n`;
+        out += pad(depth) + tok.value + '\n';
         break;
+
       case 'open': {
-        const inline = INLINE_TAGS.has(tok.tag);
-        out += `${pad(depth)}<${tok.tag}${attrStr}>\n`;
-        if (!inline) depth++;
-        else depth++;
+        if (inlineMap.has(i)) {
+          // Inline: <tag>text</tag> or <tag></tag>
+          const next = tokens[i + 1];
+          const hasText = next && next.type === 'text';
+          const textContent = hasText ? next.value.replace(/\s+/g, ' ').trim() : '';
+          const closeSkip = hasText ? 2 : 1;
+          out += pad(depth) + '<' + tok.tag + attrStr + '>' + textContent + '</' + tok.tag + '>\n';
+          skip = closeSkip;
+        } else {
+          out += pad(depth) + '<' + tok.tag + attrStr + '>\n';
+          depth++;
+        }
         break;
       }
+
       case 'void':
-        out += `${pad(depth)}<${tok.tag}${attrStr}>\n`;
+        out += pad(depth) + '<' + tok.tag + attrStr + '>\n';
         break;
-      case 'close': {
-        const inline = INLINE_TAGS.has(tok.tag);
+
+      case 'close':
         depth = Math.max(0, depth - 1);
-        out += `${pad(depth)}</${tok.tag}>\n`;
+        out += pad(depth) + '</' + tok.tag + '>\n';
         break;
-      }
+
       case 'text': {
         const clean = tok.value.replace(/\s+/g, ' ').trim();
-        if (clean) out += `${pad(depth)}${clean}\n`;
+        if (clean) out += pad(depth) + clean + '\n';
         break;
       }
     }
@@ -761,25 +803,6 @@ function clearAll() {
   ['stat-removed','stat-added','stat-issues'].forEach(id => document.getElementById(id).textContent = '0');
   document.getElementById('wcag-count').textContent = '—';
   window._lastFormatted = '';
-}
-
-function loadSample() {
-  document.getElementById('input').value = `<section>
-  <h1>Welcome</h1>
-  <div onclick="doSomething()">Click me</div>
-  <img src="photo.jpg">
-  <form>
-    <input type="email" required>
-    <input type="text" id="dup">
-    <input type="text" id="dup">
-    <button type="submit">Send</button>
-  </form>
-  <a href="https://example.com" target="_blank">External link</a>
-  <h3>Skipped heading level</h3>
-  <p>Hello world this is   a paragraph  with extra   spaces.</p>
-</section>`;
-  updateInputStats();
-  beautify();
 }
 
 function flashEmpty() {
