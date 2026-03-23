@@ -274,10 +274,12 @@
       border-right: 1px solid #1e1e2e;
       min-width: 42px;
       flex-shrink: 0;
-      /* stay at top while code scrolls horizontally */
       position: sticky;
       left: 0;
       z-index: 1;
+    }
+    .line-nums div {
+      min-height: 1.7em;
     }
     .code-out {
       flex: 1;
@@ -286,9 +288,12 @@
       font-family: 'JetBrains Mono', monospace;
       font-size: 13px; line-height: 1.7;
       padding: 16px;
-      white-space: pre;
-      /* do NOT set overflow here — parent .code-wrapper scrolls */
       min-width: 0;
+    }
+    .code-line {
+      white-space: pre;
+      display: block;
+      min-height: 1.7em;
     }
 
     /* Syntax highlight */
@@ -671,13 +676,17 @@ function beautify() {
   const formatted = formatHTML(tokens);
   const hl = highlight(formatted);
 
-  // Output
+  // Output — one div per line keeps heights in sync with line numbers
   const codeEl = document.getElementById('output');
-  codeEl.innerHTML = hl;
+  codeEl.innerHTML = hl.split('\n').map(line =>
+    `<div class="code-line">${line || ' '}</div>`
+  ).join('');
 
-  // Line numbers
+  // Line numbers — one div per line so they stack correctly
   const lines = formatted.split('\n');
-  document.getElementById('line-nums').textContent = lines.map((_, i) => i + 1).join('\n');
+  document.getElementById('line-nums').innerHTML = lines.map((_, i) =>
+    `<div>${i + 1}</div>`
+  ).join('');
   document.getElementById('out-lines').textContent = `${lines.length} lines`;
 
   // Stats
@@ -706,18 +715,24 @@ function beautify() {
   window._lastFormatted = formatted;
 }
 
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
 function renderWCAG(issues) {
   const body = document.getElementById('wcag-body');
   if (!issues.length) { body.innerHTML = '<div class="wcag-empty">No issues found.</div>'; return; }
 
   const icons = { error: '✖', warn: '⚠', pass: '✔' };
-  body.innerHTML = issues.map(i => `
-    <div class="wcag-issue ${i.level}">
-      <div class="wcag-issue-title">${icons[i.level]} ${i.title}</div>
-      <div class="wcag-issue-ref">WCAG ${i.criterion}</div>
-      <div class="wcag-issue-desc">${i.desc}</div>
-    </div>
-  `).join('');
+  const sorted = [...issues].sort((a,b) => ({error:0,warn:1,pass:2}[a.level] - {error:0,warn:1,pass:2}[b.level]));
+
+  body.innerHTML = sorted.map(i =>
+    '<div class="wcag-issue ' + esc(i.level) + '">' +
+      '<div class="wcag-issue-title">' + icons[i.level] + ' ' + esc(i.title) + '</div>' +
+      '<div class="wcag-issue-ref">WCAG ' + esc(i.criterion) + '</div>' +
+      '<div class="wcag-issue-desc">' + esc(i.desc) + '</div>' +
+    '</div>'
+  ).join('');
 }
 
 function copyOutput() {
