@@ -7,87 +7,74 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
+        * { box-sizing: border-box; }
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
             margin: 0;
             padding: 20px;
-            background: #f5f5f5;
+            background: #f0f4f8;
         }
         .container {
             background: white;
             padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            max-width: 1200px;
+            border-radius: 10px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.12);
+            max-width: 1100px;
             margin: 0 auto;
         }
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-        }
+        h1 { color: #1a2e4a; margin-bottom: 6px; font-size: 1.6em; }
+        .subtitle { color: #666; margin-bottom: 24px; font-size: 0.95em; }
         .result {
             margin-top: 20px;
-            padding: 20px;
+            padding: 16px 20px;
             background: #e8f5e9;
+            border-left: 4px solid #2e7d32;
             border-radius: 5px;
-            font-size: 18px;
+            font-size: 16px;
+            display: none;
         }
-        .loading {
-            color: #666;
-            font-style: italic;
-        }
-        .error {
-            background: #ffebee;
-            color: #c62828;
-        }
+        .result.show { display: block; }
+        .result.loading { background: #e3f2fd; border-color: #1565c0; color: #1565c0; }
+        .result.error { background: #ffebee; border-color: #c62828; color: #333; }
         button {
-            background: #1976d2;
+            background: #c8102e;
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 5px;
+            padding: 11px 22px;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 15px;
+            font-weight: 600;
+            transition: background 0.2s;
         }
-        button:hover {
-            background: #1565c0;
-        }
-        button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
+        button:hover { background: #a00d25; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
         .input-group {
             margin-top: 20px;
             padding: 20px;
             background: #f9f9f9;
-            border-radius: 5px;
+            border-radius: 8px;
             position: relative;
         }
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #333;
-        }
+        .input-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #333; }
         .input-group input {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
-            box-sizing: border-box;
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 15px;
         }
-        .input-group button {
-            margin-top: 10px;
-        }
+        .input-group input:focus { outline: none; border-color: #1565c0; box-shadow: 0 0 0 2px rgba(21,101,192,0.15); }
+        .input-group button { margin-top: 10px; background: #1565c0; }
+        .input-group button:hover { background: #0d47a1; }
         .divider {
             text-align: center;
             margin: 20px 0;
             color: #999;
             position: relative;
+            font-size: 13px;
         }
-        .divider:before,
-        .divider:after {
+        .divider::before, .divider::after {
             content: "";
             position: absolute;
             top: 50%;
@@ -95,943 +82,680 @@
             height: 1px;
             background: #ddd;
         }
-        .divider:before {
-            left: 0;
-        }
-        .divider:after {
-            right: 0;
-        }
+        .divider::before { left: 0; }
+        .divider::after { right: 0; }
         .suggestions {
             position: absolute;
-            top: 100%;
+            top: calc(100% - 10px);
             left: 20px;
             right: 20px;
             background: white;
-            border: 1px solid #ddd;
+            border: 1px solid #ccc;
             border-top: none;
-            border-radius: 0 0 4px 4px;
-            max-height: 200px;
+            border-radius: 0 0 5px 5px;
+            max-height: 220px;
             overflow-y: auto;
             z-index: 1000;
             display: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
-        .suggestions.show {
-            display: block;
-        }
-        .suggestion-item {
-            padding: 10px;
-            cursor: pointer;
-            border-bottom: 1px solid #eee;
-        }
-        .suggestion-item:hover {
-            background: #f5f5f5;
-        }
-        .suggestion-item:last-child {
-            border-bottom: none;
-        }
+        .suggestions.show { display: block; }
+        .suggestion-item { padding: 10px 12px; cursor: pointer; border-bottom: 1px solid #eee; font-size: 14px; }
+        .suggestion-item:hover { background: #f0f4f8; }
+        .suggestion-item:last-child { border-bottom: none; }
         #map {
-            height: 600px;
+            height: 520px;
             margin-top: 20px;
-            border-radius: 5px;
+            border-radius: 8px;
             display: none;
+            border: 1px solid #ddd;
         }
-        #map.show {
-            display: block;
+        #map.show { display: block; }
+        .status-note { font-size: 12px; color: #666; margin-top: 6px; }
+        .spinner {
+            display: inline-block;
+            width: 14px; height: 14px;
+            border: 2px solid rgba(21,101,192,0.3);
+            border-top-color: #1565c0;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
         }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Find your nearest RCMP detachment</h1>
-        <button id="findBtn" onclick="findClosest()" aria-label="Find closest RCMP detachment using your current location">
-            Use my current location
-        </button>
-        
-        <div class="divider">OR</div>
+<div class="container">
+    <h1>Find your nearest RCMP detachment</h1>
+    <p class="subtitle">Locate the closest RCMP detachment by driving distance across Canada.</p>
 
-        <div class="input-group">
-            <label for="addressInput">Enter an address:</label>
-            <input type="text" id="addressInput" />
-            <div id="suggestions" class="suggestions"></div>
-            <button onclick="findByAddress()">Find from Address</button>
-        </div>
-        
-        <div id="result"></div>
-        <div id="map"></div>
+    <button id="findBtn" onclick="findClosest()">Use my current location</button>
+
+    <div class="divider">OR</div>
+
+    <div class="input-group">
+        <label for="addressInput">Enter a Canadian address:</label>
+        <input type="text" id="addressInput" placeholder="e.g. 123 Main St, Calgary, AB" autocomplete="off" />
+        <div id="suggestions" class="suggestions"></div>
+        <button onclick="findByAddress()">Search from address</button>
     </div>
 
-    <script>
-        const detachments = [
-            // Alberta
-            { name: "Airdrie Detachment", lat: 51.303273853596146, lon: -113.98911652454072 },
-            { name: "Athabasca Detachment", lat: 54.71726195561294, lon: -113.25776998428134 },
-            { name: "Banff Detachment", lat: 51.18066374319154, lon: -115.57602648219184 },
-            { name: "Barrhead Detachment", lat: 54.130858763649194, lon: -114.39722134605145 },
-            { name: "Bashaw Detachment", lat: 52.5859987982551, lon: -112.97413008682108 },
-            { name: "Bassano Detachment", lat: 50.792383540994464, lon: -112.45252221759333 },
-            { name: "Beaumont Detachment", lat: 53.33867065059248, lon: -113.42077451424204 },
-            { name: "Beaverlodge Detachment", lat: 55.21179501290534, lon: -119.42467149369631 },
-            { name: "Beiseker Detachment", lat: 51.38673562943297, lon: -113.54144073219953 },
-            { name: "Blackfalds Detachment", lat: 52.374788525827576, lon: -113.81107604835903 },
-            { name: "Bonnyville Detachment", lat: 54.271912094997, lon: -110.72926256364498 },
-            { name: "Bow Island Detachment", lat: 49.87210188271511, lon: -111.37188658349503 },
-            { name: "Boyle Detachment", lat: 54.58755482344513, lon: -112.80847152589793 },
-            { name: "Brooks Detachment", lat: 50.568427815459, lon: -111.90195260375404 },
-            { name: "Camrose Detachment", lat: 53.018481224044, lon: -112.85265092523251 },
-            { name: "Canmore Detachment", lat: 51.07621476581553, lon: -115.3218378391914 },
-            { name: "Cardston Detachment", lat: 49.201688873776845, lon: -113.30217936171772 },
-            { name: "Chateh Detachment", lat: 58.697642167949645, lon: -118.69568889768469 },
-            { name: "Chestermere Detachment", lat: 51.05088565778684, lon: -113.81444268442279 },
-            { name: "Claresholm Detachment", lat: 50.023002337054116, lon: -113.58936886590853 },
-            { name: "Coaldale Detachment", lat: 49.7312398145596, lon: -112.59866134416352 },
-            { name: "Cochrane Detachment", lat: 51.20498171919771, lon: -114.51241468765161 },
-            { name: "Cold Lake Detachment", lat: 54.41101556400877, lon: -110.21516048659875 },
-            { name: "Consort Detachment", lat: 52.00880482535351, lon: -110.77047694576258 },
-            { name: "Coronation Detachment", lat: 52.092967428711034, lon: -111.44876736665128 },
-            { name: "Crowsnest Pass Detachment", lat: 49.610030398105074, lon: -114.44179663139109 },
-            { name: "Devon Detachment", lat: 53.363395918399846, lon: -113.7298101162529 },
-            { name: "Didsbury Detachment", lat: 51.66567851325636, lon: -114.13458978396775 },
-            { name: "Drayton Valley Detachment", lat: 53.22560606510534, lon: -114.98553757885001 },
-            { name: "Drumheller Detachment", lat: 51.46584009125613, lon: -112.70689483035571 },
-            { name: "Edmonton International Airport Detachment", lat: 53.308561828039, lon: -113.58476024319555 },
-            { name: "Edson Detachment", lat: 53.577652061599004, lon: -116.44152147648484 },
-            { name: "Elk Point Detachment", lat: 53.89370142499588, lon: -110.90678653330832 },
-            { name: "Evansburg Detachment", lat: 53.603421633716124, lon: -115.0199913063463 },
-            { name: "Fairview Detachment", lat: 56.06611118472666, lon: -118.39258223256601 },
-            { name: "Faust Detachment", lat: 55.31507223847873, lon: -115.64222777171861 },
-            { name: "Fort Chipewyan Detachment", lat: 58.71474195458482, lon: -111.14627526455064 },
-            { name: "Fort Macleod Detachment", lat: 49.723739596486354, lon: -113.39111858417625 },
-            { name: "Fort Saskatchewan Detachment", lat: 53.68324010489931, lon: -113.23873992405382 },
-            { name: "Fort Vermilion Detachment", lat: 58.38337454035455, lon: -116.0041624045796 },
-            { name: "Fox Creek Detachment", lat: 54.39687917446109, lon: -116.80777495519433 },
-            { name: "Fox Lake Detachment", lat: 58.46389376457064, lon: -114.53482017701772 },
-            { name: "Gleichen Detachment", lat: 50.86783130757046, lon: -113.05282870069641 },
-            { name: "Grande Cache Detachment", lat: 53.89194386136823, lon: -119.11467069888987 },
-            { name: "Grande Prairie City Detachment", lat: 55.17272610417535, lon: -118.79232732877797 },
-            { name: "Grande Prairie Rural Detachment", lat: 55.168390637887825, lon: -118.81469971051656 },
-            { name: "Grimshaw Detachment", lat: 56.189616774397415, lon: -117.60798539108363 },
-            { name: "Hanna Detachment", lat: 51.6443833702485, lon: -111.92697140876045 },
-            { name: "High Level Detachment", lat: 58.51944774118796, lon: -117.13725983767014 },
-            { name: "High Prairie Detachment", lat: 55.43369630098711, lon: -116.50528632511326 },
-            { name: "High River Detachment", lat: 50.57248306800287, lon: -113.84722090557311 },
-            { name: "Hinton Detachment", lat: 53.397894655177176, lon: -117.57573368328214 },
-            { name: "Innisfail Detachment", lat: 52.02644247348459, lon: -113.93979917359282 },
-            { name: "Jasper Detachment", lat: 52.87740346184815, lon: -118.08836735316875 },
-            { name: "Killam Detachment", lat: 52.78910842224297, lon: -111.85521217311947 },
-            { name: "Kitscoty Detachment", lat: 53.3421890878544, lon: -110.33433837843607 },
-            { name: "Lac La Biche Detachment", lat: 54.77189151938715, lon: -111.96303036705501 },
-            { name: "Lake Louise Detachment", lat: 51.42412616627414, lon: -116.17568715756957 },
-            { name: "Langdon Detachment", lat: 50.97258017581341, lon: -113.68128728384069 },
-            { name: "Leduc Detachment", lat: 53.253633981221306, lon: -113.54383281337388 },
-            { name: "Lloydminster Detachment", lat: 53.278496135702284, lon: -110.00850336774576 },
-            { name: "Manning Detachment", lat: 56.92739669083205, lon: -117.62403628271994 },
-            { name: "Maskwacis (Hobbema) Detachment", lat: 52.81481110499712, lon: -113.43707604126375 },
-            { name: "Mayerthorpe Detachment", lat: 53.95023157277253, lon: -115.14182342382956 },
-            { name: "McLennan Detachment", lat: 55.71183546518091, lon: -116.8922166145581 },
-            { name: "Milk River Detachment", lat: 49.153002888231505, lon: -112.08707569531838 },
-            { name: "Morinville Detachment", lat: 53.80399148140562, lon: -113.65601398910746 },
-            { name: "Nanton Detachment", lat: 50.34429836059973, lon: -113.77878885937847 },
-            { name: "Okotoks Detachment", lat: 50.71948155331825, lon: -113.98077955656277 },
-            { name: "Olds Detachment", lat: 51.79357148684576, lon: -114.1328222908999 },
-            { name: "Oyen Detachment", lat: 51.35312655770945, lon: -110.4770989883649 },
-            { name: "Parkland Detachment", lat: 53.53920139352148, lon: -113.93544573895916 },
-            { name: "Peace River Detachment", lat: 56.241435765736696, lon: -117.2925130457973 },
-            { name: "Picture Butte Detachment", lat: 49.87418555241572, lon: -112.7852546719084 },
-            { name: "Piikani Nation Detachment", lat: 49.545946594065725, lon: -113.74858989922346 },
-            { name: "Pincher Creek Detachment", lat: 49.496042210561775, lon: -113.9422106967213 },
-            { name: "Ponoka Detachment", lat: 52.67738337287672, lon: -113.5804330746469 },
-            { name: "Provost Detachment", lat: 52.355785973875975, lon: -110.26580362227442 },
-            { name: "Raymond / Magrath Detachment", lat: 49.46585078675318, lon: -112.66747407217774 },
-            { name: "Red Deer City Detachment", lat: 52.2652255568102, lon: -113.8161728396934 },
-            { name: "Red Earth Creek Detachment", lat: 56.53915703268398, lon: -115.30695549221764 },
-            { name: "Redcliff Detachment", lat: 50.072969812721595, lon: -110.77737671727753 },
-            { name: "Redwater Detachment", lat: 53.949444063805075, lon: -113.12367350599096 },
-            { name: "Rimbey Detachment", lat: 52.64138990629957, lon: -114.23768391636322 },
-            { name: "Rocky Mountain House Detachment", lat: 52.36742328897728, lon: -114.90962746338175 },
-            { name: "Slave Lake Detachment", lat: 55.27577458565401, lon: -114.76061441556445 },
-            { name: "Smoky Lake Detachment", lat: 54.110233067042046, lon: -112.48171957323557 },
-            { name: "Spirit River Detachment", lat: 55.777567162592035, lon: -118.83646784129125 },
-            { name: "St. Albert Detachment", lat: 53.64956119588857, lon: -113.61814105901108 },
-            { name: "St. Paul Detachment", lat: 53.99084956768891, lon: -111.31084314419337 },
-            { name: "Stettler Detachment", lat: 52.3179287956324, lon: -112.72026542400921 },
-            { name: "Strathcona County Detachment", lat: 53.550916846562885, lon: -113.29756732979185 },
-            { name: "Strathmore Detachment", lat: 51.03953653761791, lon: -113.40211540466395 },
-            { name: "Sundre Detachment", lat: 51.80669084377711, lon: -114.6354506962633 },
-            { name: "Swan Hills Detachment", lat: 54.71797139597323, lon: -115.40476870193744 },
-            { name: "Sylvan Lake Detachment", lat: 52.296280608760654, lon: -114.09811358238618 },
-            { name: "Taber-Vauxhall Detachment", lat: 49.774835834985694, lon: -112.15954166152372 },
-            { name: "Thorsby Detachment", lat: 53.23239587049886, lon: -114.04891199179427 },
-            { name: "Three Hills Detachment", lat: 51.70672237800704, lon: -113.26434155241218 },
-            { name: "Tofield Detachment", lat: 53.3720589482857, lon: -112.66238029626554 },
-            { name: "Turner Valley Detachment", lat: 50.67713050696378, lon: -114.27840328650707 },
-            { name: "Two Hills Detachment", lat: 53.713121021268975, lon: -111.74326671236395 },
-            { name: "Valleyview Detachment", lat: 55.06798201700434, lon: -117.27008496663866 },
-            { name: "Vegreville Detachment", lat: 53.50463897616393, lon: -112.08176848761873 },
-            { name: "Vermilion Detachment", lat: 53.3537558692243, lon: -110.85651080762563 },
-            { name: "Viking Detachment", lat: 53.095872232968425, lon: -111.78360065635312 },
-            { name: "Vulcan Detachment", lat: 50.39647096439108, lon: -113.25478860706927 },
-            { name: "Wabasca Detachment", lat: 55.96443775190233, lon: -113.82733899267029 },
-            { name: "Wainwright Detachment", lat: 52.83576527464241, lon: -110.8626916540124 },
-            // Manitoba
-            { name: "Emerson Detachment", lat: 49.00431242910584, lon: -97.23145500233318 },
-            { name: "Manitoba RCMP Headquarters", lat: 49.88464661489753, lon: -97.17894572078933 },
-            { name: "Sprague Detachment", lat: 49.04200451839544, lon: -95.63977027037647 },
-            { name: "Killarney Detachment", lat: 49.178069267313525, lon: -99.66264168319535 },
-            { name: "Deloraine Detachment", lat: 49.186793007186736, lon: -100.49366062984757 },
-            { name: "Morden Detachment", lat: 49.19264240849788, lon: -98.11377543000269 },
-            { name: "Boissevain Detachment", lat: 49.23513724499894, lon: -100.06157410487377 },
-            { name: "Manitou Detachment", lat: 49.236091340691736, lon: -98.53748712075893 },
-            { name: "Melita Detachment", lat: 49.27397868790059, lon: -100.98532659258399 },
-            { name: "Morris Detachment", lat: 49.353098387559974, lon: -97.35992547686516 },
-            { name: "St. Pierre-Jolys Detachment", lat: 49.44637725456496, lon: -96.98554091478302 },
-            { name: "Carman Detachment", lat: 49.50122271009111, lon: -98.00106091668293 },
-            { name: "Steinbach Detachment", lat: 49.539334679554344, lon: -96.6895419731782 },
-            { name: "Reston Detachment", lat: 49.56068300135329, lon: -101.09973845039241 },
-            { name: "Treherne Detachment", lat: 49.626623701441716, lon: -98.69713680239057 },
-            { name: "Souris Detachment", lat: 49.6224373120051, lon: -100.25615162394953 },
-            { name: "Falcon Beach Detachment", lat: 49.689703338014574, lon: -95.32900796538581 },
-            { name: "Virden Detachment", lat: 49.849320125119064, lon: -100.94006083704822 },
-            { name: "Brandon Detachment", lat: 49.86481836739249, lon: -99.91528716293392 },
-            { name: "Carberry Detachment", lat: 49.87370054806593, lon: -99.35840177131546 },
-            { name: "Headingley Detachment", lat: 49.875167983585264, lon: -97.40971535368632 },
-            { name: "Oakbank Detachment", lat: 49.94175936611877, lon: -96.844071722572 },
-            { name: "Whitemouth Detachment", lat: 49.956276458336255, lon: -95.97606316406075 },
-            { name: "Red River North Detachment", lat: 49.97088134110909, lon: -97.0101488734608 },
-            { name: "Portage La Prairie Detachment", lat: 49.975317460476944, lon: -98.28489993811397 },
-            { name: "Beausejour Detachment", lat: 50.06307401867567, lon: -96.5138112777051 },
-            { name: "Minnedosa Detachment", lat: 50.242841856535094, lon: -99.84060776854534 },
-            { name: "Stonewall Detachment", lat: 50.13073804317657, lon: -97.32723231775424 },
-            { name: "Pinawa Detachment", lat: 50.14837774930696, lon: -95.87493806654903 },
-            { name: "Selkirk Detachment", lat: 50.15724791075653, lon: -96.89837342594437 },
-            { name: "Hamiota Detachment", lat: 50.181288996091006, lon: -100.59532010013845 },
-            { name: "Neepawa Detachment", lat: 50.22946803581436, lon: -99.47437937552289 },
-            { name: "Lac du Bonnet Detachment", lat: 50.255161742508946, lon: -96.06706429725335 },
-            { name: "Shoal Lake Detachment", lat: 50.43697156871613, lon: -100.58774439452813 },
-            { name: "Elphinstone Detachment", lat: 50.53262284853499, lon: -100.3199657183866 },
-            { name: "Grand Marais Detachment", lat: 50.533916167776724, lon: -96.58499579744098 },
-            { name: "Powerview Detachment", lat: 50.56784119624821, lon: -96.19767660259834 },
-            { name: "Amaranth Detachment", lat: 50.584486037922936, lon: -98.73175529620904 },
-            { name: "Gimli Detachment", lat: 50.633792502655766, lon: -96.99596026530122 },
-            { name: "Lundar Detachment", lat: 50.696770094839366, lon: -98.03378755445057 },
-            { name: "Russell Detachment", lat: 50.7743880941208, lon: -101.2869748036054 },
-            { name: "Ste. Rose du Lac Detachment", lat: 49.353098387559974, lon: -97.35992547686516 },
-            { name: "Fisher Branch Detachment", lat: 51.082239379468135, lon: -97.61305616061779 },
-            { name: "Dauphin Detachment", lat: 51.15518881324105, lon: -100.0441968610676 },
-            { name: "Ashern Detachment", lat: 51.183951550159264, lon: -98.34782224110411 },
-            { name: "Roblin Detachment", lat: 51.227390095824035, lon: -101.35269426955102 },
-            { name: "Winnipegosis Detachment", lat: 51.649220863682665, lon: -99.92410254612773 },
-            { name: "Gypsumville Detachment", lat: 51.76678463539701, lon: -98.63784108019297 },
-            { name: "Bloodvein Detachment", lat: 51.79024570149924, lon: -96.70302530518063 },
-            { name: "Little Grand Rapids Detachment", lat: 52.00624455434796, lon: -95.47488439816085 },
-            { name: "Swan River Detachment", lat: 52.10698820565967, lon: -101.26142398388255 },
-            { name: "Poplar River Detachment", lat: 52.99107241788359, lon: -97.25177028044696 },
-            { name: "Chemawawin Cree Nation Detachment", lat: 53.10286620482176, lon: -99.80733460447368 },
-            { name: "Grand Rapids Detachment", lat: 53.187444077854046, lon: -99.262317769813 },
-            { name: "Moose Lake Detachment", lat: 53.7036368472093, lon: -100.3288949191245 },
-            { name: "The Pas Detachment", lat: 53.82253585491343, lon: -101.25105668753622 },
-            { name: "Island Lake Detachment", lat: 53.86593740334115, lon: -94.66798471443852 },
-            { name: "Norway House Detachment", lat: 53.994663418957515, lon: -97.76813474190057 },
-            { name: "Gods Lake Narrows Detachment", lat: 54.55560843205429, lon: -94.47698240099429 },
-            { name: "Cranberry Portage Detachment", lat: 54.588595230548464, lon: -101.37892773225569 },
-            { name: "Cross Lake Detachment", lat: 54.62378439303406, lon: -97.77657893987343 },
-            { name: "Flin Flon Detachment", lat: 54.76797725237556, lon: -101.87657833172143 },
-            { name: "Snow Lake Detachment", lat: 54.878413800384784, lon: -100.02446594948837 },
-            { name: "Wabowden Detachment", lat: 54.91054637955159, lon: -98.63451992083806 },
-            { name: "Oxford House Detachment", lat: 54.95527197107634, lon: -95.26442966801642 },
-            { name: "Thompson Detachment", lat: 55.744137530047674, lon: -97.85662337586129 },
-            { name: "Pukatawagan Detachment", lat: 55.7537459298745, lon: -101.29905649205025 },
-            { name: "Nelson House Detachment", lat: 55.78943882759565, lon: -98.88227165173139 },
-            { name: "Shamattawa Detachment", lat: 55.8595075716048, lon: -92.09394053900145 },
-            { name: "Gillam Detachment", lat: 56.347081619883944, lon: -94.70415401735575 },
-            { name: "Leaf Rapids Detachment", lat: 56.46208255053604, lon: -100.01475401254113 },
-            { name: "Lynn Lake Detachment", lat: 56.85303471186375, lon: -101.04660859358381 },
-            { name: "South Indian Lake Detachment", lat: 56.779065868961325, lon: -98.929082656989071 },
-            { name: "Churchill Detachment", lat: 58.76561158660485, lon: -94.1622044346209 },
-            { name: "Winnipeg Airport Detachment", lat: 49.905911391758835, lon: -97.22431956505532 },
-            { name: "Berens River Detachment", lat: 52.35458471583981, lon: -97.02249290207254 },
-            { name: "Wasagaming Detachment", lat: 50.652446322901476, lon: -99.97199201517316 },
-            { name: "Peguis Detachment", lat: 51.29522261406654, lon: -97.548098625995 },
-            { name: "Thompson Detachment (rural)", lat: 55.73221227664644, lon: -97.87243541940812 },
-            // New Brunswick
-            { name: "Blackville Detachment", lat: 46.74770208145764, lon: -65.82749537746646 },
-            { name: "Caledonia Region Detachment", lat: 46.053867094942035, lon: -64.79017699150114 },
-            { name: "Campbellton Detachment", lat: 48.00543314577739, lon: -66.6628844259352 },
-            { name: "Campobello Island Detachment", lat: 44.8830244797979, lon: -66.94296527122623 },
-            { name: "Caraquet Detachment", lat: 47.79219225231981, lon: -64.94555520238838 },
-            { name: "Chaleur Region Detachment", lat: 47.640251098649756, lon: -65.69021006704465 },
-            { name: "Chipman Detachment", lat: 46.18286565719072, lon: -65.86684307687295 },
-            { name: "Codiac Regional Detachment", lat: 46.089649128623435, lon: -64.77229036583589 },
-            { name: "Doaktown Detachment", lat: 46.55433393345073, lon: -66.13189575437627 },
-            { name: "Elsipogtog First Nation Detachment", lat: 46.59238202443025, lon: -64.99249479519149 },
-            { name: "Grand Bay-Westfield Detachment", lat: 45.3706878328703, lon: -66.25634211404271 },
-            { name: "Grand Manan Detachment", lat: 44.68267488467847, lon: -66.78008428387226 },
-            { name: "Hampton Detachment", lat: 45.52160784174765, lon: -65.83083106188512 },
-            { name: "Irishtown Detachment", lat: 46.21442826965066, lon: -64.80658364860209 },
-            { name: "Keswick Detachment", lat: 45.994874682902974, lon: -66.82968786131485 },
-            { name: "Lamèque Detachment", lat: 47.79512878978445, lon: -64.64781209447115 },
-            { name: "McAdam Detachment", lat: 45.59812151351685, lon: -67.32261783156451 },
-            { name: "Minto Detachment", lat: 46.07766936759564, lon: -66.07757033437179 },
-            { name: "Nackawic Detachment", lat: 45.99770953428465, lon: -67.23763056324832 },
-            { name: "Neguac Detachment", lat: 47.24296229775641, lon: -65.08564656549787 },
-            { name: "New Maryland Detachment", lat: 45.882483632584254, lon: -66.69103020564495 },
-            { name: "Oromocto Detachment", lat: 45.8417868054493, lon: -66.50680559794549 },
-            { name: "Perth-Andover Detachment", lat: 46.72312303060834, lon: -67.71517285537344 },
-            { name: "Richibucto Detachment", lat: 46.66744456551328, lon: -64.8668388071312 },
-            { name: "Rogersville Detachment", lat: 46.722220078555345, lon: -65.41808938853256 },
-            { name: "Sackville Detachment", lat: 45.89417704261808, lon: -64.37039329954912 },
-            { name: "Saint-Léonard Detachment", lat: 47.17106333799101, lon: -67.9107702828374 },
-            { name: "Saint-Quentin Detachment", lat: 47.52364674346286, lon: -67.3924571998881 },
-            { name: "Shediac Detachment", lat: 46.22265764601796, lon: -64.50561227519924 },
-            { name: "Saint Andrews Detachment", lat: 45.08163677275316, lon: -67.059440145649 },
-            { name: "St. George Detachment", lat: 45.12683975850757, lon: -66.80832545361629 },
-            { name: "St. Stephen Detachment", lat: 45.19331078380515, lon: -67.28760262943834 },
-            { name: "Sunny Corner Detachment", lat: 46.94845007816654, lon: -65.817182755287 },
-            { name: "Sussex Detachment", lat: 45.72487243140884, lon: -65.49546812040867 },
-            { name: "Tobique First Nation Detachment", lat: 46.77307882066231, lon: -67.707706775076 },
-            { name: "Tracadie Detachment", lat: 47.52256195300265, lon: -64.91962214038973 },
-            { name: "Western Valley Detachment", lat: 46.1718809673233, lon: -67.60213469437545 },
-            { name: "Clair Detachment", lat: 47.25051497444629, lon: -68.60552676738112 },
-            { name: "New Brunswick Headquarters", lat: 45.93225214160297, lon: -66.66533393810352 },
-            // Newfoundland and Labrador
-            { name: "B Division Headquarters", lat: 47.59127358491947, lon: -52.68425961676865 },
-            { name: "Baie Verte Detachment", lat: 49.939064197995904, lon: -56.19406494848389 },
-            { name: "Bay D'Espoir Detachment", lat: 47.936029140768895, lon: -55.755519752684464 },
-            { name: "Bay Roberts Detachment", lat: 47.579206963761614, lon: -53.28061153543904 },
-            { name: "Bay St. George Detachment", lat: 48.549245737180335, lon: -58.558471897184404 },
-            { name: "Bell Island Detachment", lat: 47.63097207132464, lon: -52.94216722605781 },
-            { name: "Bonavista Detachment", lat: 48.635315326543505, lon: -53.10232168690663 },
-            { name: "Burgeo Detachment", lat: 47.61279346141174, lon: -57.611350224410714 },
-            { name: "Burin Peninsula Detachment", lat: 47.166504363315234, lon: -55.1553392416006 },
-            { name: "Carmanville Detachment", lat: 49.40602975610958, lon: -54.29020417023966 },
-            { name: "Cartwright Detachment", lat: 53.69474848083795, lon: -57.01810568633299 },
-            { name: "Channel-Port aux Basques Detachment", lat: 47.60425068358268, lon: -59.172760733581526 },
-            { name: "Clarenville Detachment", lat: 48.14790239194732, lon: -53.967212214126135 },
-            { name: "Corner Brook Detachment", lat: 48.945505711056015, lon: -57.943407921777364 },
-            { name: "Deer Lake Detachment", lat: 49.18532281910501, lon: -57.41755648523174 },
-            { name: "Ferryland Detachment", lat: 47.01859528013098, lon: -52.90370444360654 },
-            { name: "Flower's Cove Detachment", lat: 51.30506925253338, lon: -56.719460038572194 },
-            { name: "Fogo Island Detachment", lat: 49.66634375547894, lon: -54.21901579429497 },
-            { name: "Forteau Detachment", lat: 51.47404664259496, lon: -56.95788586386117 },
-            { name: "Gander Detachment", lat: 48.95117952012299, lon: -54.59538492628105 },
-            { name: "Glovertown Detachment", lat: 48.67248394177237, lon: -54.029511111375264 },
-            { name: "Grand Falls-Windsor Detachment", lat: 48.943881410876514, lon: -55.66142762387127 },
-            { name: "Happy Valley-Goose Bay Detachment", lat: 53.297044700737295, lon: -60.31537134072765 },
-            { name: "Harbour Breton Detachment", lat: 47.468747795869135, lon: -55.82441141453477 },
-            { name: "Harbour Grace Detachment", lat: 47.705709606652114, lon: -53.214444837405516 },
-            { name: "Holyrood Detachment", lat: 47.381641575806476, lon: -53.148215330397534 },
-            { name: "Hopedale Detachment", lat: 55.46064759050756, lon: -60.2115995356244 },
-            { name: "Lewisporte Detachment", lat: 49.239819766428326, lon: -55.05991125096466 },
-            { name: "Makkovik Detachment", lat: 55.08603699724921, lon: -59.17777607807648 },
-            { name: "Mary's Harbour Detachment", lat: 52.308639674182224, lon: -55.84267683180697 },
-            { name: "Nain Detachment", lat: 56.5417249305421, lon: -61.69415291504852 },
-            { name: "Natuashish Detachment", lat: 55.918444691254614, lon: -61.12280639082468 },
-            { name: "New-Wes-Valley Detachment", lat: 49.1676744419953, lon: -53.55395371402524 },
-            { name: "Placentia Detachment", lat: 47.244119259511365, lon: -53.96328356976341 },
-            { name: "Port Saunders Detachment", lat: 50.64644701831345, lon: -57.301190491595015 },
-            { name: "Rigolet Detachment", lat: 54.18081826659487, lon: -58.43316020945047 },
-            { name: "Rocky Harbour Detachment", lat: 49.58244849421263, lon: -57.91304491627043 },
-            { name: "Roddickton Detachment", lat: 50.862291644294494, lon: -56.120639636905906 },
-            { name: "Sheshatshiu Detachment", lat: 53.520839989850515, lon: -60.14614528368582 },
-            { name: "Springdale Detachment", lat: 49.50520815602306, lon: -56.092259461023744 },
-            { name: "St. Anthony Detachment", lat: 51.36955605878371, lon: -55.5964948741473 },
-            { name: "Twillingate Detachment", lat: 49.652201967042835, lon: -54.75676837959728 },
-            { name: "Whitbourne Detachment", lat: 47.44530805899099, lon: -53.52802016758992 },
-            // Northwest Territories 
-            { name: "Aklavik Detachment", lat: 68.21735831918258, lon: -135.00216243871128 },
-            { name: "Behchokǫ̀ Detachment", lat: 62.82580918923685, lon: -116.05587685034263 },
-            { name: "Délı̨nę Detachment", lat: 65.18876689265183, lon: -123.42754165741009 },
-            { name: "Fort Good Hope Detachment", lat: 66.25277128968781, lon: -128.64330083152657 },
-            { name: "Fort Liard Detachment", lat: 60.24164539042202, lon: -123.47177464661154 },
-            { name: "Fort McPherson Detachment", lat: 67.43684266592052, lon: -134.88402560073075 },
-            { name: "Fort Providence Detachment", lat: 61.34965274259713, lon: -117.64549432684515 },
-            { name: "Fort Resolution Detachment", lat: 61.17248607078626, lon: -113.67985440380332 },
-            { name: "Fort Simpson Detachment", lat: 61.865571298219145, lon: -121.35557119365149 },
-            { name: "Fort Smith Detachment", lat: 60.00650536940263, lon: -111.87553888256035 },
-            { name: "Hay River Detachment", lat: 60.80833097280507, lon: -115.78679285519425 },
-            { name: "Inuvik Detachment", lat: 68.35598602982101, lon: -133.72301341650137 },
-            { name: "Łutselkʼe Detachment", lat: 62.40507486659592, lon: -110.73489474367217 },
-            { name: "Norman Wells Detachment", lat: 65.28072700145576, lon: -126.82747160608052 },
-            { name: "Paulatuk Detachment", lat: 69.35010994518623, lon: -124.07156087027099 },
-            { name: "Sachs Harbour Detachment", lat: 71.98453108186676, lon: -125.24617647832662 },
-            { name: "Tuktoyaktuk Detachment", lat: 69.44452577282719, lon: -133.0401754838145 },
-            { name: "Tulita Detachment", lat: 64.90211514449413, lon: -125.58298736073972 },
-            { name: "Ulukhaktok Detachment", lat: 70.73765259873088, lon: -117.76907909137945 },
-            { name: "Whatì Detachment", lat: 63.1442040650088, lon: -117.27491957730594 },
-            { name: "G Division Headquarters and Yellowknife Detachment", lat: 62.454968057708705, lon: -114.37507837197452 },
-            // Nunavut
-            { name: "Arctic Bay Detachment", lat: 73.03414343605671, lon: -85.15999606668306 },
-            { name: "Arviat Detachment", lat: 61.11035594086845, lon: -94.06515129308984 },
-            { name: "Baker Lake Detachment", lat: 64.3169006883082, lon: -96.01948932389301 },
-            { name: "Cambridge Bay Detachment", lat: 69.11553261741153, lon: -105.05148933471935 },
-            { name: "Kinngait Detachment", lat: 64.23503167614403, lon: -76.54056600209391 },
-            { name: "Chesterfield Inlet Detachment", lat: 63.3384680182229, lon: -90.70875090022527 },
-            { name: "Clyde River Detachment", lat: 70.46970473471787, lon: -68.59250260348487 },
-            { name: "Coral Harbour Detachment", lat: 64.13536319313121, lon: -83.16881935298254 },
-            { name: "Gjoa Haven Detachment", lat: 68.62398114513044, lon: -95.87913642026558 },
-            { name: "Grise Fiord Detachment", lat: 76.4178068427171, lon: -82.89947280536569 },
-            { name: "Igloolik Detachment", lat: 69.37789701923046, lon: -81.79811515171681 },
-            { name: "V Division Headquarters and Iqaluit Detachment", lat: 63.75186004045544, lon: -68.52309640078207 },
-            { name: "Kimmirut Detachment", lat: 62.84462186410728, lon: -69.86929591601844 },
-            { name: "Kugaaruk Detachment", lat: 68.53276544703482, lon: -89.82296475204885 },
-            { name: "Kugluktuk Detachment", lat: 67.82795976253027, lon: -115.10246688794805 },
-            { name: "Naujaat Detachment", lat: 66.52313433110173, lon: -86.23214417006693 },
-            { name: "Pangnirtung Detachment", lat: 66.14656973053441, lon: -65.71886170803957 },
-            { name: "Pond Inlet Detachment", lat: 72.6971306557603, lon: -77.97472592909686 },
-            { name: "Qikiqtarjuaq Detachment", lat: 67.55552559258808, lon: -64.02924436573332 },
-            { name: "Rankin Inlet Detachment", lat: 62.809914664863584, lon: -92.08484749610491 },
-            { name: "Resolute Detachment", lat: 74.69829773889758, lon: -94.82168173608622 },
-            { name: "Sanikiluaq Detachment", lat: 56.541821874019824, lon: -79.22414279837614 },
-            { name: "Sanirajak Detachment", lat: 68.79611296862863, lon: -81.24259699758193 },
-            { name: "Taloyoak Detachment", lat: 69.53623845073054, lon: -93.52718608589913 },
-            { name: "Whale Cove Detachment", lat: 62.17276234717579, lon: -92.58114338416165 },
-            // Prince Edward Island
-            { name: "Kings District Detachment", lat: 46.18123376975163, lon: -62.64904025629062 },
-            { name: "Stratford Detachment", lat: 46.217121171042, lon: -63.07848580471206 },
-            { name: "Souris Detachment", lat: 46.35234020362602, lon: -62.23930930390567 },
-            { name: "East Prince Detachment", lat: 46.386066598547046, lon: -63.740653236438064 },
-            { name: "West Prince Detachment", lat: 46.80570138757905, lon: -64.14833242972685 },
-            { name: "Queens District Detachment", lat: 46.23516113109465, lon: -63.20775622957108 },
-            { name: "L Division Headquarters", lat: 46.250372780570935, lon: -63.1370318628669 },
-            // Saskatchewan
-            { name: "Ahtahkakoop Detachment", lat: 53.369304923046975, lon: -106.92565366717085 },
-            { name: "Assiniboia Detachment", lat: 49.628279501295985, lon: -105.9943647628245 },
-            { name: "Battlefords Detachment", lat: 52.7727694635082, lon: -108.29682740589709 },
-            { name: "Beauval Detachment", lat: 55.148011839592904, lon: -107.60757987460391 },
-            { name: "Big River Detachment", lat: 53.831305289249244, lon: -107.02387880813576 },
-            { name: "Biggar Detachment", lat: 52.06129183734373, lon: -107.98411543239912 },
-            { name: "Black Lake Detachment", lat: 59.13346183739736, lon: -105.60711073302785 },
-            { name: "Blaine Lake Detachment", lat: 52.829428738373856, lon: -106.8802125352776 },
-            { name: "Broadview Detachment", lat: 50.38119663674111, lon: -102.58331869303711 },
-            { name: "Buffalo Narrows Detachment", lat: 55.860525487581015, lon: -108.47848825346229 },
-            { name: "Canora Detachment", lat: 51.633211546914715, lon: -102.43746599319716 },
-            { name: "Carlyle Detachment", lat: 49.63683188091564, lon: -102.27150700503351 },
-            { name: "Carnduff Detachment", lat: 49.17331886343377, lon: -101.79422879688246 },
-            { name: "Carrot River Detachment", lat: 53.279207801194076, lon: -103.58917627089613 },
-            { name: "Coronach Detachment", lat: 49.11393415097918, lon: -105.52319260570118 },
-            { name: "Craik Detachment", lat: 51.04564573851868, lon: -105.80971445273039 },
-            { name: "Creighton Detachment", lat: 54.751854393307454, lon: -101.9033600361853 },
-            { name: "Cumberland House Detachment", lat: 53.953346619911535, lon: -102.26363089179665 },
-            { name: "Cut Knife Detachment", lat: 52.74981487891988, lon: -109.0194280061029 },
-            { name: "Deschambault Lake Detachment", lat: 54.911808476106664, lon: -103.37880164316374 },
-            { name: "Esterhazy Detachment", lat: 50.65851520128113, lon: -102.08382691172667 },
-            { name: "Estevan Detachment", lat: 49.13638505007326, lon: -102.99187897596046 },
-            { name: "Fond Du Lac Detachment", lat: 59.321575781624816, lon: -107.1944295652837 },
-            { name: "Fort Qu'Appelle Detachment", lat: 50.76915735449777, lon: -103.79111246347546 },
-            { name: "Gravelbourg Detachment", lat: 49.87639724140397, lon: -106.55115288759933 },
-            { name: "Green Lake Detachment", lat: 54.29084223263758, lon: -107.7942740733168 },
-            { name: "Hudson Bay Detachment", lat: 52.86095833415393, lon: -102.39562695218069 },
-            { name: "Humboldt Detachment", lat: 52.206389765373395, lon: -105.12724587966919 },
-            { name: "Île-à-la-Crosse Detachment", lat: 55.437810547712466, lon: -107.8981079785354 },
-            { name: "Indian Head Detachment", lat: 50.530311135526304, lon: -103.66729588400281 },
-            { name: "Kamsack Detachment", lat: 51.565105955595904, lon: -101.9014162618157 },
-            { name: "Kindersley Detachment", lat: 51.469503505682546, lon: -109.16456617479409 },
-            { name: "La Loche Detachment", lat: 56.4818995687232, lon: -109.43338485177374 },
-            { name: "La Ronge Detachment", lat: 55.104093689999566, lon: -105.27345038514393 },
-            { name: "Lanigan Detachment", lat: 51.85054320076691, lon: -105.03313668893851 },
-            { name: "Leader Detachment", lat: 50.88916090034936, lon: -109.53688761722928 },
-            { name: "Loon Lake Detachment", lat: 54.02418072366931, lon: -109.15731323057373 },
-            { name: "Lumsden Detachment", lat: 50.654204217485045, lon: -104.86386822453075 },
-            { name: "Maidstone Detachment", lat: 53.089416225391034, lon: -109.28007427425925 },
-            { name: "Maple Creek Detachment", lat: 49.90843633298913, lon: -109.48005826022312 },
-            { name: "Martensville Detachment", lat: 52.283720100263814, lon: -106.66955799499928 },
-            { name: "Meadow Lake Detachment", lat: 54.13358522950353, lon: -108.42810988081361 },
-            { name: "Melfort Detachment", lat: 52.867875549868174, lon: -104.60532332124762 },
-            { name: "Melville Detachment", lat: 50.930616296730214, lon: -102.80477399902162 },
-            { name: "Milestone Detachment", lat: 49.994393568394315, lon: -104.51438486925825 },
-            { name: "Moose Jaw Detachment", lat: 50.402850229668786, lon: -105.52857903294347 },
-            { name: "Moosomin Detachment", lat: 50.13934457410171, lon: -101.67117922165912 },
-            { name: "Morse Detachment", lat: 50.415411367283674, lon: -107.03621737158714 },
-            { name: "Nipawin Detachment", lat: 53.36569469776142, lon: -104.01275153295632 },
-            { name: "Onion Lake Detachment", lat: 53.717668336592006, lon: -109.9941803994149 },
-            { name: "Outlook Detachment", lat: 51.48790926212603, lon: -107.0566293100891 },
-            { name: "Pelican Narrows Detachment", lat: 55.17055610085721, lon: -102.93769271155719 },
-            { name: "Pierceland Detachment", lat: 54.33589434724192, lon: -109.77700487577589 },
-            { name: "Pinehouse Detachment", lat: 55.51788879204483, lon: -106.57314520362702 },
-            { name: "Ponteix Detachment", lat: 49.744223571852174, lon: -107.4866108284478 },
-            { name: "Prince Albert Detachment", lat: 53.220192679331994, lon: -105.76114726469363 },
-            { name: "Punnichy Detachment", lat: 51.37090427142433, lon: -104.29310128193465 },
-            { name: "Rose Valley Detachment", lat: 52.28943052153923, lon: -103.81209899031117 },
-            { name: "Rosetown Detachment", lat: 51.55299913774647, lon: -107.98457680475788 },
-            { name: "Rosthern Detachment", lat: 52.66374702086168, lon: -106.34168018362361 },
-            { name: "Sandy Bay Detachment", lat: 55.53060558846501, lon: -102.3194646317983 },
-            { name: "Saskatoon Detachment", lat: 52.08870514145721, lon: -106.65195905683593 },
-            { name: "Shaunavon Detachment", lat: 49.65167036192041, lon: -108.41051764061604 },
-            { name: "Shellbrook Detachment", lat: 53.22112102033581, lon: -106.39212623849151 },
-            { name: "Southend Detachment", lat: 56.32685194883132, lon: -103.25135538289187 },
-            { name: "Southey Detachment", lat: 50.942697671389865, lon: -104.49788010122899 },
-            { name: "Spiritwood Detachment", lat: 53.36352073886282, lon: -107.52042658907477 },
-            { name: "Swift Current Municipal Detachment", lat: 50.282175614220584, lon: -107.79887057707178 },
-            { name: "Swift Current Rural Detachment", lat: 50.29497350947374, lon: -107.80144118178882 },
-            { name: "Tisdale Detachment", lat: 52.850100885308755, lon: -104.0416233324342 },
-            { name: "Turtleford Detachment", lat: 53.39103904863378, lon: -108.95824192688566 },
-            { name: "Unity Detachment", lat: 52.443094739679324, lon: -109.16235983717861 },
-            { name: "Wadena Detachment", lat: 51.94594248468026, lon: -103.80423534420537 },
-            { name: "Wakaw Detachment", lat: 52.649092919114715, lon: -105.74460175147969 },
-            { name: "Warman Detachment", lat: 52.31801854193535, lon: -106.57525495941766 },
-            { name: "Waskesiu Lake Detachment", lat: 53.92175956665005, lon: -106.08693222233718 },
-            { name: "Watrous Detachment", lat: 51.67538737024668, lon: -105.46629056513603 },
-            { name: "Weyburn Detachment", lat: 49.66795817703978, lon: -103.84250210363942 },
-            { name: "White Butte Detachment", lat: 50.44573287039557, lon: -104.38975607701595 },
-            { name: "Wollaston Lake Detachment", lat: 58.10706129448705, lon: -103.16895061896648 },
-            { name: "Wynyard Detachment", lat: 51.763731547896505, lon: -104.18389796813119 },
-            { name: "Yorkton Detachment", lat: 51.21176322263268, lon: -102.4597333423611 },
-            { name: "Saskatchewan RCMP Headquarters", lat: 50.453901393197036, lon: -104.66806969842311 },
-            // Yukon
-            { name: "Beaver Creek Detachment", lat: 62.3831637285805, lon: -140.8743807289492 },
-            { name: "Carcross Detachment", lat: 60.166842761232076, lon: -134.70471147722677 },
-            { name: "Carmacks Detachment", lat: 62.08977602096233, lon: -136.2892672357153 },
-            { name: "Dawson City Detachment", lat: 64.05703780887602, lon: -139.44013443540706 },
-            { name: "Faro Detachment", lat: 62.230668086728734, lon: -133.3566635472941 },
-            { name: "Haines Junction Detachment", lat: 60.75197178125077, lon: -137.5107280314997 },
-            { name: "Mayo Detachment", lat: 63.59558344607216, lon: -135.89777955257398 },
-            { name: "Old Crow Detachment", lat: 67.5690690966879, lon: -139.8324246923276 },
-            { name: "Pelly Crossing Detachment", lat: 62.82380827372366, lon: -136.5775172208898 },
-            { name: "Ross River Detachment", lat: 61.9822740918631, lon: -132.45395262314642 },
-            { name: "Teslin Detachment", lat: 60.164617768451336, lon: -132.7245611215806 },
-            { name: "Watson Lake Detachment", lat: 60.05559404325373, lon: -128.67228345534656 },
-            { name: "M Division Headquarters and Whitehorse Detachment", lat: 60.71812221174552, lon: -135.056315169137 },
-            // Ontario and Quebec
-            { name: "RCMP Eastern Region Headquarters", lat: 45.4854480084927, lon: -73.5879012790956 },
-            { name: "Bas-Saint-Laurent Detachment", lat: 48.42752752026344, lon: -68.5326405048105 },
-            { name: "Côte-Nord Detachment", lat: 50.24897866734242, lon: -66.40058337223786 },
-            { name: "Estrie Detachment", lat: 45.38387096726145, lon: -71.96500358646706 },
-            { name: "Gaspésie-Îles-de-la-Madeleine Detachment", lat: 48.82201426948419, lon: -64.4783810850833 },
-            { name: "Beauce Integrated Border Enforcement Team (IBET) Detachment", lat: 46.12998411472794, lon: -70.6842306696874 },
-            { name: "Champlain Integrated Border Enforcement Team (IBET) Detachment", lat: 45.32470906916477, lon: -73.28602853607299 },
-            { name: "Quebec City Detachment", lat: 46.79911276710591, lon: -71.37143892865825 },
-            { name: "Valleyfield Integrated Border Enforcement Team (IBET) Detachment", lat: 45.261202674793836, lon: -74.10617021468765 },
-            { name: "RCMP Central Region Headquarters", lat: 42.9865179607732, lon: -81.25292181549209 },
-            { name: "Cornwall Detachment", lat: 45.05034971737251, lon: -74.73943656745739 },
-            { name: "Hamilton Niagara Detachment", lat: 43.21289813595168, lon: -79.6914644979305 },
-            { name: "Kingston Detachment", lat: 44.25911192815195, lon: -76.56785540835276 },
-            { name: "Kitchener Detachment", lat: 43.37874835260482, lon: -80.41064148531822 },
-            { name: "London Detachment", lat: 42.98423449169144, lon: -81.252850060795352 },
-            { name: "Ottawa Detachment", lat: 45.43148178413751, lon: -75.66350855219801 },
-            { name: "Sault Ste. Marie Detachment", lat: 46.5167253801352, lon: -84.3412867207684 },
-            { name: "Thunder Bay Detachment", lat: 48.38667974700786, lon: -89.24942327405941 },
-            { name: "Toronto Airport Detachment", lat: 43.69504974696387, lon: -79.58889910933577 },
-            { name: "Toronto North Detachment", lat: 44.05644417794673, lon: -79.42014073191652 },
-            { name: "Toronto West Detachment", lat: 43.53425752240883, lon: -79.90992204972935 },
-            { name: "Windsor Detachment", lat: 42.33249678185193, lon: -82.96593166742896 },
-            { name: "RCMP Northwest Region Headquarters", lat: 53.560399795940675, lon: -113.50908198872482 },
-            { name: "RCMP Pacific Region Headquarters", lat: 49.18007475913055, lon: -122.82863981953838 }
-        ];
+    <div id="result" class="result"></div>
+    <div id="map"></div>
+</div>
 
-        let map = null;
-        let searchTimeout = null;
+<script>
+const detachments = [
+    // Alberta
+    { name: "Airdrie Detachment", lat: 51.303273853596146, lon: -113.98911652454072 },
+    { name: "Athabasca Detachment", lat: 54.71726195561294, lon: -113.25776998428134 },
+    { name: "Banff Detachment", lat: 51.18066374319154, lon: -115.57602648219184 },
+    { name: "Barrhead Detachment", lat: 54.130858763649194, lon: -114.39722134605145 },
+    { name: "Bashaw Detachment", lat: 52.5859987982551, lon: -112.97413008682108 },
+    { name: "Bassano Detachment", lat: 50.792383540994464, lon: -112.45252221759333 },
+    { name: "Beaumont Detachment", lat: 53.33867065059248, lon: -113.42077451424204 },
+    { name: "Beaverlodge Detachment", lat: 55.21179501290534, lon: -119.42467149369631 },
+    { name: "Beiseker Detachment", lat: 51.38673562943297, lon: -113.54144073219953 },
+    { name: "Blackfalds Detachment", lat: 52.374788525827576, lon: -113.81107604835903 },
+    { name: "Bonnyville Detachment", lat: 54.271912094997, lon: -110.72926256364498 },
+    { name: "Bow Island Detachment", lat: 49.87210188271511, lon: -111.37188658349503 },
+    { name: "Boyle Detachment", lat: 54.58755482344513, lon: -112.80847152589793 },
+    { name: "Brooks Detachment", lat: 50.568427815459, lon: -111.90195260375404 },
+    { name: "Camrose Detachment", lat: 53.018481224044, lon: -112.85265092523251 },
+    { name: "Canmore Detachment", lat: 51.07621476581553, lon: -115.3218378391914 },
+    { name: "Cardston Detachment", lat: 49.201688873776845, lon: -113.30217936171772 },
+    { name: "Chateh Detachment", lat: 58.697642167949645, lon: -118.69568889768469 },
+    { name: "Chestermere Detachment", lat: 51.05088565778684, lon: -113.81444268442279 },
+    { name: "Claresholm Detachment", lat: 50.023002337054116, lon: -113.58936886590853 },
+    { name: "Coaldale Detachment", lat: 49.7312398145596, lon: -112.59866134416352 },
+    { name: "Cochrane Detachment", lat: 51.20498171919771, lon: -114.51241468765161 },
+    { name: "Cold Lake Detachment", lat: 54.41101556400877, lon: -110.21516048659875 },
+    { name: "Consort Detachment", lat: 52.00880482535351, lon: -110.77047694576258 },
+    { name: "Coronation Detachment", lat: 52.092967428711034, lon: -111.44876736665128 },
+    { name: "Crowsnest Pass Detachment", lat: 49.610030398105074, lon: -114.44179663139109 },
+    { name: "Devon Detachment", lat: 53.363395918399846, lon: -113.7298101162529 },
+    { name: "Didsbury Detachment", lat: 51.66567851325636, lon: -114.13458978396775 },
+    { name: "Drayton Valley Detachment", lat: 53.22560606510534, lon: -114.98553757885001 },
+    { name: "Drumheller Detachment", lat: 51.46584009125613, lon: -112.70689483035571 },
+    { name: "Edmonton International Airport Detachment", lat: 53.308561828039, lon: -113.58476024319555 },
+    { name: "Edson Detachment", lat: 53.577652061599004, lon: -116.44152147648484 },
+    { name: "Elk Point Detachment", lat: 53.89370142499588, lon: -110.90678653330832 },
+    { name: "Evansburg Detachment", lat: 53.603421633716124, lon: -115.0199913063463 },
+    { name: "Fairview Detachment", lat: 56.06611118472666, lon: -118.39258223256601 },
+    { name: "Faust Detachment", lat: 55.31507223847873, lon: -115.64222777171861 },
+    { name: "Fort Chipewyan Detachment", lat: 58.71474195458482, lon: -111.14627526455064 },
+    { name: "Fort Macleod Detachment", lat: 49.723739596486354, lon: -113.39111858417625 },
+    { name: "Fort Saskatchewan Detachment", lat: 53.68324010489931, lon: -113.23873992405382 },
+    { name: "Fort Vermilion Detachment", lat: 58.38337454035455, lon: -116.0041624045796 },
+    { name: "Fox Creek Detachment", lat: 54.39687917446109, lon: -116.80777495519433 },
+    { name: "Fox Lake Detachment", lat: 58.46389376457064, lon: -114.53482017701772 },
+    { name: "Gleichen Detachment", lat: 50.86783130757046, lon: -113.05282870069641 },
+    { name: "Grande Cache Detachment", lat: 53.89194386136823, lon: -119.11467069888987 },
+    { name: "Grande Prairie City Detachment", lat: 55.17272610417535, lon: -118.79232732877797 },
+    { name: "Grande Prairie Rural Detachment", lat: 55.168390637887825, lon: -118.81469971051656 },
+    { name: "Grimshaw Detachment", lat: 56.189616774397415, lon: -117.60798539108363 },
+    { name: "Hanna Detachment", lat: 51.6443833702485, lon: -111.92697140876045 },
+    { name: "High Level Detachment", lat: 58.51944774118796, lon: -117.13725983767014 },
+    { name: "High Prairie Detachment", lat: 55.43369630098711, lon: -116.50528632511326 },
+    { name: "High River Detachment", lat: 50.57248306800287, lon: -113.84722090557311 },
+    { name: "Hinton Detachment", lat: 53.397894655177176, lon: -117.57573368328214 },
+    { name: "Innisfail Detachment", lat: 52.02644247348459, lon: -113.93979917359282 },
+    { name: "Jasper Detachment", lat: 52.87740346184815, lon: -118.08836735316875 },
+    { name: "Killam Detachment", lat: 52.78910842224297, lon: -111.85521217311947 },
+    { name: "Kitscoty Detachment", lat: 53.3421890878544, lon: -110.33433837843607 },
+    { name: "Lac La Biche Detachment", lat: 54.77189151938715, lon: -111.96303036705501 },
+    { name: "Lake Louise Detachment", lat: 51.42412616627414, lon: -116.17568715756957 },
+    { name: "Langdon Detachment", lat: 50.97258017581341, lon: -113.68128728384069 },
+    { name: "Leduc Detachment", lat: 53.253633981221306, lon: -113.54383281337388 },
+    { name: "Lloydminster Detachment", lat: 53.278496135702284, lon: -110.00850336774576 },
+    { name: "Manning Detachment", lat: 56.92739669083205, lon: -117.62403628271994 },
+    { name: "Maskwacis (Hobbema) Detachment", lat: 52.81481110499712, lon: -113.43707604126375 },
+    { name: "Mayerthorpe Detachment", lat: 53.95023157277253, lon: -115.14182342382956 },
+    { name: "McLennan Detachment", lat: 55.71183546518091, lon: -116.8922166145581 },
+    { name: "Milk River Detachment", lat: 49.153002888231505, lon: -112.08707569531838 },
+    { name: "Morinville Detachment", lat: 53.80399148140562, lon: -113.65601398910746 },
+    { name: "Nanton Detachment", lat: 50.34429836059973, lon: -113.77878885937847 },
+    { name: "Okotoks Detachment", lat: 50.71948155331825, lon: -113.98077955656277 },
+    { name: "Olds Detachment", lat: 51.79357148684576, lon: -114.1328222908999 },
+    { name: "Oyen Detachment", lat: 51.35312655770945, lon: -110.4770989883649 },
+    { name: "Parkland Detachment", lat: 53.53920139352148, lon: -113.93544573895916 },
+    { name: "Peace River Detachment", lat: 56.241435765736696, lon: -117.2925130457973 },
+    { name: "Picture Butte Detachment", lat: 49.87418555241572, lon: -112.7852546719084 },
+    { name: "Piikani Nation Detachment", lat: 49.545946594065725, lon: -113.74858989922346 },
+    { name: "Pincher Creek Detachment", lat: 49.496042210561775, lon: -113.9422106967213 },
+    { name: "Ponoka Detachment", lat: 52.67738337287672, lon: -113.5804330746469 },
+    { name: "Provost Detachment", lat: 52.355785973875975, lon: -110.26580362227442 },
+    { name: "Raymond / Magrath Detachment", lat: 49.46585078675318, lon: -112.66747407217774 },
+    { name: "Red Deer City Detachment", lat: 52.2652255568102, lon: -113.8161728396934 },
+    { name: "Red Earth Creek Detachment", lat: 56.53915703268398, lon: -115.30695549221764 },
+    { name: "Redcliff Detachment", lat: 50.072969812721595, lon: -110.77737671727753 },
+    { name: "Redwater Detachment", lat: 53.949444063805075, lon: -113.12367350599096 },
+    { name: "Rimbey Detachment", lat: 52.64138990629957, lon: -114.23768391636322 },
+    { name: "Rocky Mountain House Detachment", lat: 52.36742328897728, lon: -114.90962746338175 },
+    { name: "Slave Lake Detachment", lat: 55.27577458565401, lon: -114.76061441556445 },
+    { name: "Smoky Lake Detachment", lat: 54.110233067042046, lon: -112.48171957323557 },
+    { name: "Spirit River Detachment", lat: 55.777567162592035, lon: -118.83646784129125 },
+    { name: "St. Albert Detachment", lat: 53.64956119588857, lon: -113.61814105901108 },
+    { name: "St. Paul Detachment", lat: 53.99084956768891, lon: -111.31084314419337 },
+    { name: "Stettler Detachment", lat: 52.3179287956324, lon: -112.72026542400921 },
+    { name: "Strathcona County Detachment", lat: 53.550916846562885, lon: -113.29756732979185 },
+    { name: "Strathmore Detachment", lat: 51.03953653761791, lon: -113.40211540466395 },
+    { name: "Sundre Detachment", lat: 51.80669084377711, lon: -114.6354506962633 },
+    { name: "Swan Hills Detachment", lat: 54.71797139597323, lon: -115.40476870193744 },
+    { name: "Sylvan Lake Detachment", lat: 52.296280608760654, lon: -114.09811358238618 },
+    { name: "Taber-Vauxhall Detachment", lat: 49.774835834985694, lon: -112.15954166152372 },
+    { name: "Thorsby Detachment", lat: 53.23239587049886, lon: -114.04891199179427 },
+    { name: "Three Hills Detachment", lat: 51.70672237800704, lon: -113.26434155241218 },
+    { name: "Tofield Detachment", lat: 53.3720589482857, lon: -112.66238029626554 },
+    { name: "Turner Valley Detachment", lat: 50.67713050696378, lon: -114.27840328650707 },
+    { name: "Two Hills Detachment", lat: 53.713121021268975, lon: -111.74326671236395 },
+    { name: "Valleyview Detachment", lat: 55.06798201700434, lon: -117.27008496663866 },
+    { name: "Vegreville Detachment", lat: 53.50463897616393, lon: -112.08176848761873 },
+    { name: "Vermilion Detachment", lat: 53.3537558692243, lon: -110.85651080762563 },
+    { name: "Viking Detachment", lat: 53.095872232968425, lon: -111.78360065635312 },
+    { name: "Vulcan Detachment", lat: 50.39647096439108, lon: -113.25478860706927 },
+    { name: "Wabasca Detachment", lat: 55.96443775190233, lon: -113.82733899267029 },
+    { name: "Wainwright Detachment", lat: 52.83576527464241, lon: -110.8626916540124 },
+    // Manitoba
+    { name: "Emerson Detachment", lat: 49.00431242910584, lon: -97.23145500233318 },
+    { name: "Manitoba RCMP Headquarters", lat: 49.88464661489753, lon: -97.17894572078933 },
+    { name: "Sprague Detachment", lat: 49.04200451839544, lon: -95.63977027037647 },
+    { name: "Killarney Detachment", lat: 49.178069267313525, lon: -99.66264168319535 },
+    { name: "Deloraine Detachment", lat: 49.186793007186736, lon: -100.49366062984757 },
+    { name: "Morden Detachment", lat: 49.19264240849788, lon: -98.11377543000269 },
+    { name: "Boissevain Detachment", lat: 49.23513724499894, lon: -100.06157410487377 },
+    { name: "Manitou Detachment", lat: 49.236091340691736, lon: -98.53748712075893 },
+    { name: "Melita Detachment", lat: 49.27397868790059, lon: -100.98532659258399 },
+    { name: "Morris Detachment", lat: 49.353098387559974, lon: -97.35992547686516 },
+    { name: "St. Pierre-Jolys Detachment", lat: 49.44637725456496, lon: -96.98554091478302 },
+    { name: "Carman Detachment", lat: 49.50122271009111, lon: -98.00106091668293 },
+    { name: "Steinbach Detachment", lat: 49.539334679554344, lon: -96.6895419731782 },
+    { name: "Reston Detachment", lat: 49.56068300135329, lon: -101.09973845039241 },
+    { name: "Treherne Detachment", lat: 49.626623701441716, lon: -98.69713680239057 },
+    { name: "Souris Detachment", lat: 49.6224373120051, lon: -100.25615162394953 },
+    { name: "Falcon Beach Detachment", lat: 49.689703338014574, lon: -95.32900796538581 },
+    { name: "Virden Detachment", lat: 49.849320125119064, lon: -100.94006083704822 },
+    { name: "Brandon Detachment", lat: 49.86481836739249, lon: -99.91528716293392 },
+    { name: "Carberry Detachment", lat: 49.87370054806593, lon: -99.35840177131546 },
+    { name: "Headingley Detachment", lat: 49.875167983585264, lon: -97.40971535368632 },
+    { name: "Oakbank Detachment", lat: 49.94175936611877, lon: -96.844071722572 },
+    { name: "Whitemouth Detachment", lat: 49.956276458336255, lon: -95.97606316406075 },
+    { name: "Red River North Detachment", lat: 49.97088134110909, lon: -97.0101488734608 },
+    { name: "Portage La Prairie Detachment", lat: 49.975317460476944, lon: -98.28489993811397 },
+    { name: "Beausejour Detachment", lat: 50.06307401867567, lon: -96.5138112777051 },
+    { name: "Minnedosa Detachment", lat: 50.242841856535094, lon: -99.84060776854534 },
+    { name: "Stonewall Detachment", lat: 50.13073804317657, lon: -97.32723231775424 },
+    { name: "Pinawa Detachment", lat: 50.14837774930696, lon: -95.87493806654903 },
+    { name: "Selkirk Detachment", lat: 50.15724791075653, lon: -96.89837342594437 },
+    { name: "Hamiota Detachment", lat: 50.181288996091006, lon: -100.59532010013845 },
+    { name: "Neepawa Detachment", lat: 50.22946803581436, lon: -99.47437937552289 },
+    { name: "Lac du Bonnet Detachment", lat: 50.255161742508946, lon: -96.06706429725335 },
+    { name: "Shoal Lake Detachment", lat: 50.43697156871613, lon: -100.58774439452813 },
+    { name: "Elphinstone Detachment", lat: 50.53262284853499, lon: -100.3199657183866 },
+    { name: "Grand Marais Detachment", lat: 50.533916167776724, lon: -96.58499579744098 },
+    { name: "Powerview Detachment", lat: 50.56784119624821, lon: -96.19767660259834 },
+    { name: "Amaranth Detachment", lat: 50.584486037922936, lon: -98.73175529620904 },
+    { name: "Gimli Detachment", lat: 50.633792502655766, lon: -96.99596026530122 },
+    { name: "Lundar Detachment", lat: 50.696770094839366, lon: -98.03378755445057 },
+    { name: "Russell Detachment", lat: 50.7743880941208, lon: -101.2869748036054 },
+    { name: "Ste. Rose du Lac Detachment", lat: 51.05, lon: -99.50 },
+    { name: "Fisher Branch Detachment", lat: 51.082239379468135, lon: -97.61305616061779 },
+    { name: "Dauphin Detachment", lat: 51.15518881324105, lon: -100.0441968610676 },
+    { name: "Ashern Detachment", lat: 51.183951550159264, lon: -98.34782224110411 },
+    { name: "Roblin Detachment", lat: 51.227390095824035, lon: -101.35269426955102 },
+    { name: "Winnipegosis Detachment", lat: 51.649220863682665, lon: -99.92410254612773 },
+    { name: "Gypsumville Detachment", lat: 51.76678463539701, lon: -98.63784108019297 },
+    { name: "Bloodvein Detachment", lat: 51.79024570149924, lon: -96.70302530518063 },
+    { name: "Little Grand Rapids Detachment", lat: 52.00624455434796, lon: -95.47488439816085 },
+    { name: "Swan River Detachment", lat: 52.10698820565967, lon: -101.26142398388255 },
+    { name: "Poplar River Detachment", lat: 52.99107241788359, lon: -97.25177028044696 },
+    { name: "Chemawawin Cree Nation Detachment", lat: 53.10286620482176, lon: -99.80733460447368 },
+    { name: "Grand Rapids Detachment", lat: 53.187444077854046, lon: -99.262317769813 },
+    { name: "Moose Lake Detachment", lat: 53.7036368472093, lon: -100.3288949191245 },
+    { name: "The Pas Detachment", lat: 53.82253585491343, lon: -101.25105668753622 },
+    { name: "Island Lake Detachment", lat: 53.86593740334115, lon: -94.66798471443852 },
+    { name: "Norway House Detachment", lat: 53.994663418957515, lon: -97.76813474190057 },
+    { name: "Gods Lake Narrows Detachment", lat: 54.55560843205429, lon: -94.47698240099429 },
+    { name: "Cranberry Portage Detachment", lat: 54.588595230548464, lon: -101.37892773225569 },
+    { name: "Cross Lake Detachment", lat: 54.62378439303406, lon: -97.77657893987343 },
+    { name: "Flin Flon Detachment", lat: 54.76797725237556, lon: -101.87657833172143 },
+    { name: "Snow Lake Detachment", lat: 54.878413800384784, lon: -100.02446594948837 },
+    { name: "Wabowden Detachment", lat: 54.91054637955159, lon: -98.63451992083806 },
+    { name: "Oxford House Detachment", lat: 54.95527197107634, lon: -95.26442966801642 },
+    { name: "Thompson Detachment", lat: 55.744137530047674, lon: -97.85662337586129 },
+    { name: "Pukatawagan Detachment", lat: 55.7537459298745, lon: -101.29905649205025 },
+    { name: "Nelson House Detachment", lat: 55.78943882759565, lon: -98.88227165173139 },
+    { name: "Shamattawa Detachment", lat: 55.8595075716048, lon: -92.09394053900145 },
+    { name: "Gillam Detachment", lat: 56.347081619883944, lon: -94.70415401735575 },
+    { name: "Leaf Rapids Detachment", lat: 56.46208255053604, lon: -100.01475401254113 },
+    { name: "Lynn Lake Detachment", lat: 56.85303471186375, lon: -101.04660859358381 },
+    { name: "South Indian Lake Detachment", lat: 56.779065868961325, lon: -98.92908265698907 },
+    { name: "Churchill Detachment", lat: 58.76561158660485, lon: -94.1622044346209 },
+    { name: "Winnipeg Airport Detachment", lat: 49.905911391758835, lon: -97.22431956505532 },
+    { name: "Berens River Detachment", lat: 52.35458471583981, lon: -97.02249290207254 },
+    { name: "Wasagaming Detachment", lat: 50.652446322901476, lon: -99.97199201517316 },
+    { name: "Peguis Detachment", lat: 51.29522261406654, lon: -97.548098625995 },
+    // New Brunswick
+    { name: "Blackville Detachment", lat: 46.74770208145764, lon: -65.82749537746646 },
+    { name: "Caledonia Region Detachment", lat: 46.053867094942035, lon: -64.79017699150114 },
+    { name: "Campbellton Detachment", lat: 48.00543314577739, lon: -66.6628844259352 },
+    { name: "Campobello Island Detachment", lat: 44.8830244797979, lon: -66.94296527122623 },
+    { name: "Caraquet Detachment", lat: 47.79219225231981, lon: -64.94555520238838 },
+    { name: "Chaleur Region Detachment", lat: 47.640251098649756, lon: -65.69021006704465 },
+    { name: "Chipman Detachment", lat: 46.18286565719072, lon: -65.86684307687295 },
+    { name: "Codiac Regional Detachment", lat: 46.089649128623435, lon: -64.77229036583589 },
+    { name: "Doaktown Detachment", lat: 46.55433393345073, lon: -66.13189575437627 },
+    { name: "Elsipogtog First Nation Detachment", lat: 46.59238202443025, lon: -64.99249479519149 },
+    { name: "Grand Bay-Westfield Detachment", lat: 45.3706878328703, lon: -66.25634211404271 },
+    { name: "Grand Manan Detachment", lat: 44.68267488467847, lon: -66.78008428387226 },
+    { name: "Hampton Detachment", lat: 45.52160784174765, lon: -65.83083106188512 },
+    { name: "Irishtown Detachment", lat: 46.21442826965066, lon: -64.80658364860209 },
+    { name: "Keswick Detachment", lat: 45.994874682902974, lon: -66.82968786131485 },
+    { name: "Lamèque Detachment", lat: 47.79512878978445, lon: -64.64781209447115 },
+    { name: "McAdam Detachment", lat: 45.59812151351685, lon: -67.32261783156451 },
+    { name: "Minto Detachment", lat: 46.07766936759564, lon: -66.07757033437179 },
+    { name: "Nackawic Detachment", lat: 45.99770953428465, lon: -67.23763056324832 },
+    { name: "Neguac Detachment", lat: 47.24296229775641, lon: -65.08564656549787 },
+    { name: "New Maryland Detachment", lat: 45.882483632584254, lon: -66.69103020564495 },
+    { name: "Oromocto Detachment", lat: 45.8417868054493, lon: -66.50680559794549 },
+    { name: "Perth-Andover Detachment", lat: 46.72312303060834, lon: -67.71517285537344 },
+    { name: "Richibucto Detachment", lat: 46.66744456551328, lon: -64.8668388071312 },
+    { name: "Rogersville Detachment", lat: 46.722220078555345, lon: -65.41808938853256 },
+    { name: "Sackville Detachment", lat: 45.89417704261808, lon: -64.37039329954912 },
+    { name: "Saint-Léonard Detachment", lat: 47.17106333799101, lon: -67.9107702828374 },
+    { name: "Saint-Quentin Detachment", lat: 47.52364674346286, lon: -67.3924571998881 },
+    { name: "Shediac Detachment", lat: 46.22265764601796, lon: -64.50561227519924 },
+    { name: "Saint Andrews Detachment", lat: 45.08163677275316, lon: -67.059440145649 },
+    { name: "St. George Detachment", lat: 45.12683975850757, lon: -66.80832545361629 },
+    { name: "St. Stephen Detachment", lat: 45.19331078380515, lon: -67.28760262943834 },
+    { name: "Sunny Corner Detachment", lat: 46.94845007816654, lon: -65.817182755287 },
+    { name: "Sussex Detachment", lat: 45.72487243140884, lon: -65.49546812040867 },
+    { name: "Tobique First Nation Detachment", lat: 46.77307882066231, lon: -67.707706775076 },
+    { name: "Tracadie Detachment", lat: 47.52256195300265, lon: -64.91962214038973 },
+    { name: "Western Valley Detachment", lat: 46.1718809673233, lon: -67.60213469437545 },
+    { name: "Clair Detachment", lat: 47.25051497444629, lon: -68.60552676738112 },
+    { name: "New Brunswick Headquarters", lat: 45.93225214160297, lon: -66.66533393810352 },
+    // Newfoundland and Labrador
+    { name: "B Division Headquarters", lat: 47.59127358491947, lon: -52.68425961676865 },
+    { name: "Baie Verte Detachment", lat: 49.939064197995904, lon: -56.19406494848389 },
+    { name: "Bay Roberts Detachment", lat: 47.579206963761614, lon: -53.28061153543904 },
+    { name: "Bay St. George Detachment", lat: 48.549245737180335, lon: -58.558471897184404 },
+    { name: "Bonavista Detachment", lat: 48.635315326543505, lon: -53.10232168690663 },
+    { name: "Burgeo Detachment", lat: 47.61279346141174, lon: -57.611350224410714 },
+    { name: "Burin Peninsula Detachment", lat: 47.166504363315234, lon: -55.1553392416006 },
+    { name: "Carmanville Detachment", lat: 49.40602975610958, lon: -54.29020417023966 },
+    { name: "Cartwright Detachment", lat: 53.69474848083795, lon: -57.01810568633299 },
+    { name: "Channel-Port aux Basques Detachment", lat: 47.60425068358268, lon: -59.172760733581526 },
+    { name: "Clarenville Detachment", lat: 48.14790239194732, lon: -53.967212214126135 },
+    { name: "Corner Brook Detachment", lat: 48.945505711056015, lon: -57.943407921777364 },
+    { name: "Deer Lake Detachment", lat: 49.18532281910501, lon: -57.41755648523174 },
+    { name: "Ferryland Detachment", lat: 47.01859528013098, lon: -52.90370444360654 },
+    { name: "Gander Detachment", lat: 48.95117952012299, lon: -54.59538492628105 },
+    { name: "Glovertown Detachment", lat: 48.67248394177237, lon: -54.029511111375264 },
+    { name: "Grand Falls-Windsor Detachment", lat: 48.943881410876514, lon: -55.66142762387127 },
+    { name: "Happy Valley-Goose Bay Detachment", lat: 53.297044700737295, lon: -60.31537134072765 },
+    { name: "Harbour Breton Detachment", lat: 47.468747795869135, lon: -55.82441141453477 },
+    { name: "Harbour Grace Detachment", lat: 47.705709606652114, lon: -53.214444837405516 },
+    { name: "Hopedale Detachment", lat: 55.46064759050756, lon: -60.2115995356244 },
+    { name: "Lewisporte Detachment", lat: 49.239819766428326, lon: -55.05991125096466 },
+    { name: "Makkovik Detachment", lat: 55.08603699724921, lon: -59.17777607807648 },
+    { name: "Mary's Harbour Detachment", lat: 52.308639674182224, lon: -55.84267683180697 },
+    { name: "Nain Detachment", lat: 56.5417249305421, lon: -61.69415291504852 },
+    { name: "Natuashish Detachment", lat: 55.918444691254614, lon: -61.12280639082468 },
+    { name: "Placentia Detachment", lat: 47.244119259511365, lon: -53.96328356976341 },
+    { name: "Port Saunders Detachment", lat: 50.64644701831345, lon: -57.301190491595015 },
+    { name: "Rigolet Detachment", lat: 54.18081826659487, lon: -58.43316020945047 },
+    { name: "Rocky Harbour Detachment", lat: 49.58244849421263, lon: -57.91304491627043 },
+    { name: "Roddickton Detachment", lat: 50.862291644294494, lon: -56.120639636905906 },
+    { name: "Sheshatshiu Detachment", lat: 53.520839989850515, lon: -60.14614528368582 },
+    { name: "Springdale Detachment", lat: 49.50520815602306, lon: -56.092259461023744 },
+    { name: "St. Anthony Detachment", lat: 51.36955605878371, lon: -55.5964948741473 },
+    { name: "Twillingate Detachment", lat: 49.652201967042835, lon: -54.75676837959728 },
+    { name: "Whitbourne Detachment", lat: 47.44530805899099, lon: -53.52802016758992 },
+    // Northwest Territories
+    { name: "Aklavik Detachment", lat: 68.21735831918258, lon: -135.00216243871128 },
+    { name: "Behchokǫ̀ Detachment", lat: 62.82580918923685, lon: -116.05587685034263 },
+    { name: "Fort Good Hope Detachment", lat: 66.25277128968781, lon: -128.64330083152657 },
+    { name: "Fort Liard Detachment", lat: 60.24164539042202, lon: -123.47177464661154 },
+    { name: "Fort McPherson Detachment", lat: 67.43684266592052, lon: -134.88402560073075 },
+    { name: "Fort Providence Detachment", lat: 61.34965274259713, lon: -117.64549432684515 },
+    { name: "Fort Resolution Detachment", lat: 61.17248607078626, lon: -113.67985440380332 },
+    { name: "Fort Simpson Detachment", lat: 61.865571298219145, lon: -121.35557119365149 },
+    { name: "Fort Smith Detachment", lat: 60.00650536940263, lon: -111.87553888256035 },
+    { name: "Hay River Detachment", lat: 60.80833097280507, lon: -115.78679285519425 },
+    { name: "Inuvik Detachment", lat: 68.35598602982101, lon: -133.72301341650137 },
+    { name: "Norman Wells Detachment", lat: 65.28072700145576, lon: -126.82747160608052 },
+    { name: "Tuktoyaktuk Detachment", lat: 69.44452577282719, lon: -133.0401754838145 },
+    { name: "G Division Headquarters and Yellowknife Detachment", lat: 62.454968057708705, lon: -114.37507837197452 },
+    // Nunavut
+    { name: "Arctic Bay Detachment", lat: 73.03414343605671, lon: -85.15999606668306 },
+    { name: "Arviat Detachment", lat: 61.11035594086845, lon: -94.06515129308984 },
+    { name: "Baker Lake Detachment", lat: 64.3169006883082, lon: -96.01948932389301 },
+    { name: "Cambridge Bay Detachment", lat: 69.11553261741153, lon: -105.05148933471935 },
+    { name: "Kinngait Detachment", lat: 64.23503167614403, lon: -76.54056600209391 },
+    { name: "Clyde River Detachment", lat: 70.46970473471787, lon: -68.59250260348487 },
+    { name: "Gjoa Haven Detachment", lat: 68.62398114513044, lon: -95.87913642026558 },
+    { name: "Grise Fiord Detachment", lat: 76.4178068427171, lon: -82.89947280536569 },
+    { name: "Igloolik Detachment", lat: 69.37789701923046, lon: -81.79811515171681 },
+    { name: "V Division Headquarters and Iqaluit Detachment", lat: 63.75186004045544, lon: -68.52309640078207 },
+    { name: "Kimmirut Detachment", lat: 62.84462186410728, lon: -69.86929591601844 },
+    { name: "Kugaaruk Detachment", lat: 68.53276544703482, lon: -89.82296475204885 },
+    { name: "Kugluktuk Detachment", lat: 67.82795976253027, lon: -115.10246688794805 },
+    { name: "Naujaat Detachment", lat: 66.52313433110173, lon: -86.23214417006693 },
+    { name: "Pangnirtung Detachment", lat: 66.14656973053441, lon: -65.71886170803957 },
+    { name: "Pond Inlet Detachment", lat: 72.6971306557603, lon: -77.97472592909686 },
+    { name: "Rankin Inlet Detachment", lat: 62.809914664863584, lon: -92.08484749610491 },
+    { name: "Resolute Detachment", lat: 74.69829773889758, lon: -94.82168173608622 },
+    { name: "Sanikiluaq Detachment", lat: 56.541821874019824, lon: -79.22414279837614 },
+    { name: "Taloyoak Detachment", lat: 69.53623845073054, lon: -93.52718608589913 },
+    { name: "Whale Cove Detachment", lat: 62.17276234717579, lon: -92.58114338416165 },
+    // Prince Edward Island
+    { name: "Kings District Detachment", lat: 46.18123376975163, lon: -62.64904025629062 },
+    { name: "Stratford Detachment", lat: 46.217121171042, lon: -63.07848580471206 },
+    { name: "Souris Detachment PEI", lat: 46.35234020362602, lon: -62.23930930390567 },
+    { name: "East Prince Detachment", lat: 46.386066598547046, lon: -63.740653236438064 },
+    { name: "West Prince Detachment", lat: 46.80570138757905, lon: -64.14833242972685 },
+    { name: "Queens District Detachment", lat: 46.23516113109465, lon: -63.20775622957108 },
+    { name: "L Division Headquarters", lat: 46.250372780570935, lon: -63.1370318628669 },
+    // Saskatchewan
+    { name: "Assiniboia Detachment", lat: 49.628279501295985, lon: -105.9943647628245 },
+    { name: "Battlefords Detachment", lat: 52.7727694635082, lon: -108.29682740589709 },
+    { name: "Beauval Detachment", lat: 55.148011839592904, lon: -107.60757987460391 },
+    { name: "Biggar Detachment", lat: 52.06129183734373, lon: -107.98411543239912 },
+    { name: "Broadview Detachment", lat: 50.38119663674111, lon: -102.58331869303711 },
+    { name: "Buffalo Narrows Detachment", lat: 55.860525487581015, lon: -108.47848825346229 },
+    { name: "Canora Detachment", lat: 51.633211546914715, lon: -102.43746599319716 },
+    { name: "Carlyle Detachment", lat: 49.63683188091564, lon: -102.27150700503351 },
+    { name: "Carnduff Detachment", lat: 49.17331886343377, lon: -101.79422879688246 },
+    { name: "Estevan Detachment", lat: 49.13638505007326, lon: -102.99187897596046 },
+    { name: "Fort Qu'Appelle Detachment", lat: 50.76915735449777, lon: -103.79111246347546 },
+    { name: "Hudson Bay Detachment", lat: 52.86095833415393, lon: -102.39562695218069 },
+    { name: "Humboldt Detachment", lat: 52.206389765373395, lon: -105.12724587966919 },
+    { name: "Indian Head Detachment", lat: 50.530311135526304, lon: -103.66729588400281 },
+    { name: "Kindersley Detachment", lat: 51.469503505682546, lon: -109.16456617479409 },
+    { name: "La Loche Detachment", lat: 56.4818995687232, lon: -109.43338485177374 },
+    { name: "La Ronge Detachment", lat: 55.104093689999566, lon: -105.27345038514393 },
+    { name: "Maple Creek Detachment", lat: 49.90843633298913, lon: -109.48005826022312 },
+    { name: "Meadow Lake Detachment", lat: 54.13358522950353, lon: -108.42810988081361 },
+    { name: "Melfort Detachment", lat: 52.867875549868174, lon: -104.60532332124762 },
+    { name: "Melville Detachment", lat: 50.930616296730214, lon: -102.80477399902162 },
+    { name: "Moose Jaw Detachment", lat: 50.402850229668786, lon: -105.52857903294347 },
+    { name: "Moosomin Detachment", lat: 50.13934457410171, lon: -101.67117922165912 },
+    { name: "Nipawin Detachment", lat: 53.36569469776142, lon: -104.01275153295632 },
+    { name: "Prince Albert Detachment", lat: 53.220192679331994, lon: -105.76114726469363 },
+    { name: "Rosetown Detachment", lat: 51.55299913774647, lon: -107.98457680475788 },
+    { name: "Saskatoon Detachment", lat: 52.08870514145721, lon: -106.65195905683593 },
+    { name: "Shaunavon Detachment", lat: 49.65167036192041, lon: -108.41051764061604 },
+    { name: "Swift Current Municipal Detachment", lat: 50.282175614220584, lon: -107.79887057707178 },
+    { name: "Tisdale Detachment", lat: 52.850100885308755, lon: -104.0416233324342 },
+    { name: "Unity Detachment", lat: 52.443094739679324, lon: -109.16235983717861 },
+    { name: "Weyburn Detachment", lat: 49.66795817703978, lon: -103.84250210363942 },
+    { name: "Yorkton Detachment", lat: 51.21176322263268, lon: -102.4597333423611 },
+    { name: "Saskatchewan RCMP Headquarters", lat: 50.453901393197036, lon: -104.66806969842311 },
+    // Yukon
+    { name: "Beaver Creek Detachment", lat: 62.3831637285805, lon: -140.8743807289492 },
+    { name: "Carcross Detachment", lat: 60.166842761232076, lon: -134.70471147722677 },
+    { name: "Carmacks Detachment", lat: 62.08977602096233, lon: -136.2892672357153 },
+    { name: "Dawson City Detachment", lat: 64.05703780887602, lon: -139.44013443540706 },
+    { name: "Haines Junction Detachment", lat: 60.75197178125077, lon: -137.5107280314997 },
+    { name: "Watson Lake Detachment", lat: 60.05559404325373, lon: -128.67228345534656 },
+    { name: "M Division Headquarters and Whitehorse Detachment", lat: 60.71812221174552, lon: -135.056315169137 },
+    // Ontario and Quebec
+    { name: "RCMP Eastern Region Headquarters", lat: 45.4854480084927, lon: -73.5879012790956 },
+    { name: "Bas-Saint-Laurent Detachment", lat: 48.42752752026344, lon: -68.5326405048105 },
+    { name: "Côte-Nord Detachment", lat: 50.24897866734242, lon: -66.40058337223786 },
+    { name: "Estrie Detachment", lat: 45.38387096726145, lon: -71.96500358646706 },
+    { name: "Gaspésie-Îles-de-la-Madeleine Detachment", lat: 48.82201426948419, lon: -64.4783810850833 },
+    { name: "Quebec City Detachment", lat: 46.79911276710591, lon: -71.37143892865825 },
+    { name: "Cornwall Detachment", lat: 45.05034971737251, lon: -74.73943656745739 },
+    { name: "Hamilton Niagara Detachment", lat: 43.21289813595168, lon: -79.6914644979305 },
+    { name: "Kingston Detachment", lat: 44.25911192815195, lon: -76.56785540835276 },
+    { name: "Kitchener Detachment", lat: 43.37874835260482, lon: -80.41064148531822 },
+    { name: "London Detachment", lat: 42.98423449169144, lon: -81.25285006079535 },
+    { name: "Ottawa Detachment", lat: 45.43148178413751, lon: -75.66350855219801 },
+    { name: "Sault Ste. Marie Detachment", lat: 46.5167253801352, lon: -84.3412867207684 },
+    { name: "Thunder Bay Detachment", lat: 48.38667974700786, lon: -89.24942327405941 },
+    { name: "Toronto Airport Detachment", lat: 43.69504974696387, lon: -79.58889910933577 },
+    { name: "Windsor Detachment", lat: 42.33249678185193, lon: -82.96593166742896 },
+    { name: "RCMP Northwest Region Headquarters", lat: 53.560399795940675, lon: -113.50908198872482 },
+    { name: "RCMP Pacific Region Headquarters", lat: 49.18007475913055, lon: -122.82863981953838 }
+];
 
-        const addressInput = document.getElementById('addressInput');
-        const suggestionsDiv = document.getElementById('suggestions');
+let map = null;
+let searchTimeout = null;
 
-        // Auto-complete functionality
-        addressInput.addEventListener('input', function() {
-            clearTimeout(searchTimeout);
-            const query = this.value.trim();
-            
-            if (query.length < 3) {
-                suggestionsDiv.classList.remove('show');
-                return;
-            }
-            
-            searchTimeout = setTimeout(() => searchAddresses(query), 300);
-        });
+const addressInput = document.getElementById('addressInput');
+const suggestionsDiv = document.getElementById('suggestions');
 
-        addressInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
-                findByAddress();
-            }
-        });
+addressInput.addEventListener('input', function() {
+    clearTimeout(searchTimeout);
+    const query = this.value.trim();
+    if (query.length < 3) { suggestionsDiv.classList.remove('show'); return; }
+    searchTimeout = setTimeout(() => searchAddresses(query), 350);
+});
 
-        document.addEventListener('click', function(e) {
-            if (e.target !== addressInput) {
-                suggestionsDiv.classList.remove('show');
-            }
-        });
+addressInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') findByAddress();
+});
 
-        async function searchAddresses(query) {
-            try {
-                const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&countrycodes=ca`;
-                const response = await fetch(url);
-                const data = await response.json();
-                
-                // Filter to only show Canadian addresses
-                const canadianResults = data.filter(item => 
-                    item.display_name.includes('Canada') || 
-                    item.address?.country === 'Canada' ||
-                    item.address?.country_code === 'ca'
-                );
-                
-                if (canadianResults && canadianResults.length > 0) {
-                    suggestionsDiv.innerHTML = '';
-                    canadianResults.forEach(item => {
-                        const div = document.createElement('div');
-                        div.className = 'suggestion-item';
-                        div.textContent = item.display_name;
-                        div.onclick = function() {
-                            addressInput.value = item.display_name;
-                            suggestionsDiv.classList.remove('show');
-                            calculateClosest(parseFloat(item.lat), parseFloat(item.lon), item.display_name);
-                        };
-                        suggestionsDiv.appendChild(div);
-                    });
-                    suggestionsDiv.classList.add('show');
-                } else {
+document.addEventListener('click', function(e) {
+    if (e.target !== addressInput) suggestionsDiv.classList.remove('show');
+});
+
+async function searchAddresses(query) {
+    try {
+        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&countrycodes=ca`;
+        const response = await fetch(url);
+        const data = await response.json();
+        if (data && data.length > 0) {
+            suggestionsDiv.innerHTML = '';
+            data.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'suggestion-item';
+                div.textContent = item.display_name;
+                div.onclick = function() {
+                    addressInput.value = item.display_name;
                     suggestionsDiv.classList.remove('show');
-                }
-            } catch (error) {
-                console.error('Error fetching suggestions:', error);
-            }
-        }
-
-        async function geocodeAddress(address) {
-            const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`;
-            const response = await fetch(url);
-            const data = await response.json();
-            
-            if (data && data.length > 0) {
-                return {
-                    lat: parseFloat(data[0].lat),
-                    lon: parseFloat(data[0].lon),
-                    display_name: data[0].display_name
+                    calculateClosest(parseFloat(item.lat), parseFloat(item.lon), item.display_name);
                 };
-            }
-            return null;
-        }
-
-        async function findByAddress() {
-            const address = addressInput.value.trim();
-            
-            if (!address) {
-                alert('Please enter an address');
-                return;
-            }
-            
-            const resultDiv = document.getElementById('result');
-            resultDiv.className = 'result loading';
-            resultDiv.textContent = 'Looking up address...';
-            suggestionsDiv.classList.remove('show');
-            
-            try {
-                const coords = await geocodeAddress(address);
-                
-                if (!coords) {
-                    resultDiv.className = 'result error';
-                    resultDiv.textContent = 'Could not find that address. Please try a different address or be more specific.';
-                    return;
-                }
-                
-                await calculateClosest(coords.lat, coords.lon, coords.display_name);
-            } catch (error) {
-                resultDiv.className = 'result error';
-                resultDiv.textContent = 'We could not access your location. Please enter an address instead.';
-            }
-        }
-
-        async function findClosest() {
-            const resultDiv = document.getElementById('result');
-            const mapDiv = document.getElementById('map');
-            const btn = document.getElementById('findBtn');
-            
-            btn.disabled = true;
-            resultDiv.className = 'result loading';
-            resultDiv.textContent = 'Getting your location...';
-            mapDiv.classList.remove('show');
-
-            if (!navigator.geolocation) {
-                resultDiv.className = 'result error';
-                resultDiv.textContent = 'Geolocation is not supported by your browser. Please use the address lookup instead.';
-                btn.disabled = false;
-                return;
-            }
-
-            navigator.geolocation.getCurrentPosition(async (position) => {
-                const userLat = position.coords.latitude;
-                const userLon = position.coords.longitude;
-                
-                await calculateClosest(userLat, userLon, 'Your Location');
-                btn.disabled = false;
-            }, (error) => {
-                resultDiv.className = 'result error';
-                resultDiv.textContent = 'Error getting location: ' + error.message + '. Please use the address lookup instead.';
-                btn.disabled = false;
+                suggestionsDiv.appendChild(div);
             });
+            suggestionsDiv.classList.add('show');
+        } else {
+            suggestionsDiv.classList.remove('show');
         }
+    } catch (err) { console.error('Suggestions error:', err); }
+}
 
-        function calculateHaversineDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371; // Earth's radius in km
-            const dLat = (lat2 - lat1) * Math.PI / 180;
-            const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                      Math.sin(dLon/2) * Math.sin(dLon/2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            return R * c;
+async function geocodeAddress(address) {
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1&countrycodes=ca`;
+    const response = await fetch(url);
+    const data = await response.json();
+    if (data && data.length > 0) {
+        return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon), display_name: data[0].display_name };
+    }
+    return null;
+}
+
+async function findByAddress() {
+    const address = addressInput.value.trim();
+    if (!address) { alert('Please enter an address'); return; }
+    suggestionsDiv.classList.remove('show');
+    showLoading('Looking up address…');
+    try {
+        const coords = await geocodeAddress(address);
+        if (!coords) {
+            showResult('error', 'Could not find that address. Please try a more specific address.');
+            return;
         }
+        await calculateClosest(coords.lat, coords.lon, coords.display_name);
+    } catch (error) {
+        showResult('error', 'Error looking up address: ' + error.message);
+    }
+}
 
-        async function calculateClosest(userLat, userLon, locationLabel) {
-            const resultDiv = document.getElementById('result');
-            const mapDiv = document.getElementById('map');
-        
-            resultDiv.className = 'result loading';
-            resultDiv.textContent = 'Calculating distances to detachments...';
-        
-            try {
-                // First, find 6 closest detachments by straight-line distance
-                const detachmentsWithDistance = detachments.map(det => {
-                    const distance = calculateHaversineDistance(userLat, userLon, det.lat, det.lon);
-                    return { ...det, straightLineDistance: distance };
-                });
-                
-                // Sort by straight-line distance and take top 6
-                detachmentsWithDistance.sort((a, b) => a.straightLineDistance - b.straightLineDistance);
-                const closestSix = detachmentsWithDistance.slice(0, 6);
-                
-                console.log('Testing these 6 closest detachments by straight-line distance:');
-                closestSix.forEach((det, i) => {
-                    console.log(`${i+1}. ${det.name} - ${det.straightLineDistance.toFixed(1)} km`);
-                });
-        
-                let closestDetachment = null;
-                let closestDetachmentData = null;
-                let shortestDistance = Infinity;
-                let routeGeometry = null;
-        
-                // Only test routing for the 6 closest detachments
-                for (const det of closestSix) {
-                    try {
-                        const url = `https://router.project-osrm.org/route/v1/driving/${userLon},${userLat};${det.lon},${det.lat}?overview=full&geometries=geojson&steps=true`;
-                        
-                        const response = await fetch(url);
-                        const data = await response.json();
-        
-                        // Check if route was successfully calculated
-                        if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
-                            const route = data.routes[0];
-                            
-                            // Get the actual starting and ending points of the route from waypoints
-                            if (data.waypoints && data.waypoints.length >= 2) {
-                                const startWaypoint = data.waypoints[0];
-                                const endWaypoint = data.waypoints[1];
-                                const startLat = startWaypoint.location[1];
-                                const startLon = startWaypoint.location[0];
-                                const endLat = endWaypoint.location[1];
-                                const endLon = endWaypoint.location[0];
-                                
-                                // Calculate distance between user location and route start point (in meters)
-                                const startSnapDist = Math.sqrt(
-                                    Math.pow((startLat - userLat) * 111000, 2) + 
-                                    Math.pow((startLon - userLon) * 111000 * Math.cos(userLat * Math.PI / 180), 2)
-                                );
-                                
-                                // Calculate distance between detachment and route end point (in meters)
-                                const endSnapDist = Math.sqrt(
-                                    Math.pow((endLat - det.lat) * 111000, 2) + 
-                                    Math.pow((endLon - det.lon) * 111000 * Math.cos(det.lat * Math.PI / 180), 2)
-                                );
-                                
-                                // If either endpoint is too far (>1km), there's no proper road connection
-                                if (startSnapDist > 1000 || endSnapDist > 1000) {
-                                    console.log(`${det.name}: Start snap: ${startSnapDist.toFixed(0)}m, End snap: ${endSnapDist.toFixed(0)}m - no direct road access`);
-                                    continue;
-                                }
-                                
-                                const distance = route.distance;
-                                
-                                if (distance > 0 && distance < shortestDistance) {
-                                    shortestDistance = distance;
-                                    closestDetachment = det.name;
-                                    closestDetachmentData = det;
-                                    routeGeometry = route.geometry;
-                                }
-                            }
-                        }
-                    } catch (err) {
-                        console.log(`Could not route to ${det.name}:`, err);
-                        continue;
-                    }
-                }
+function findClosest() {
+    const btn = document.getElementById('findBtn');
+    btn.disabled = true;
+    showLoading('Getting your location…');
+    if (!navigator.geolocation) {
+        showResult('error', 'Geolocation is not supported by your browser. Please use the address lookup instead.');
+        btn.disabled = false;
+        return;
+    }
+    navigator.geolocation.getCurrentPosition(async (position) => {
+        await calculateClosest(position.coords.latitude, position.coords.longitude, 'Your Location');
+        btn.disabled = false;
+    }, (error) => {
+        showResult('error', 'Could not get your location: ' + error.message + '. Please use the address lookup instead.');
+        btn.disabled = false;
+    });
+}
 
-                if (closestDetachment && closestDetachmentData) {
-                    const distanceKm = (shortestDistance / 1000).toFixed(1);
-                    resultDiv.className = 'result';
-                    resultDiv.innerHTML = `<strong>Closest Detachment:</strong><br>${closestDetachment}<br><small>Driving Distance: ${distanceKm} km</small>`;
-                    
-                    mapDiv.classList.add('show');
-                    
-                    if (map) {
-                        map.remove();
-                    }
-                    
-                    map = L.map('map').setView([userLat, userLon], 8);
-                    
-                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                        attribution: '© OpenStreetMap contributors'
-                    }).addTo(map);
-                    
-                    // Green marker for user location
-                    const greenIcon = L.icon({
-                        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-                        iconSize: [25, 41],
-                        iconAnchor: [12, 41],
-                        popupAnchor: [1, -34],
-                        shadowSize: [41, 41]
-                    });
-                    
-                    L.marker([userLat, userLon], {icon: greenIcon})
-                        .addTo(map)
-                        .bindPopup(locationLabel)
-                        .openPopup();
-                    
-                    // Red marker for closest detachment
-                    const redIcon = L.icon({
-                        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-                        iconSize: [25, 41],
-                        iconAnchor: [12, 41],
-                        popupAnchor: [1, -34],
-                        shadowSize: [41, 41]
-                    });
-                    
-                    L.marker([closestDetachmentData.lat, closestDetachmentData.lon], {icon: redIcon})
-                        .addTo(map)
-                        .bindPopup(closestDetachment);
-                    
-                    // Blue markers for other detachments
-                    const blueIcon = L.icon({
-                        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
-                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-                        iconSize: [25, 41],
-                        iconAnchor: [12, 41],
-                        popupAnchor: [1, -34],
-                        shadowSize: [41, 41]
-                    });
-                    
-                    detachments.forEach(det => {
-                        if (det.name !== closestDetachment) {
-                            L.marker([det.lat, det.lon], {icon: blueIcon})
-                                .addTo(map)
-                                .bindPopup(det.name);
-                        }
-                    });
-                    
-                    if (routeGeometry) {
-                        const coords = routeGeometry.coordinates.map(c => [c[1], c[0]]);
-                        L.polyline(coords, {color: 'blue', weight: 4}).addTo(map);
-                    }
-                    
-                    const bounds = L.latLngBounds([
-                        [userLat, userLon],
-                        [closestDetachmentData.lat, closestDetachmentData.lon]
-                    ]);
-                    map.fitBounds(bounds, {padding: [50, 50]});
-                    
-                } else {
-                    // No road routes found, find closest by straight-line distance
-                    let closestStraightLine = null;
-                    let closestStraightLineData = null;
-                    let shortestStraightDistance = Infinity;
-                    
-                    for (const det of detachments) {
-                        // Calculate straight-line distance using Haversine formula
-                        const R = 6371000; // Earth's radius in meters
-                        const dLat = (det.lat - userLat) * Math.PI / 180;
-                        const dLon = (det.lon - userLon) * Math.PI / 180;
-                        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                                  Math.cos(userLat * Math.PI / 180) * Math.cos(det.lat * Math.PI / 180) *
-                                  Math.sin(dLon/2) * Math.sin(dLon/2);
-                        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-                        const distance = R * c;
-                        
-                        if (distance < shortestStraightDistance) {
-                            shortestStraightDistance = distance;
-                            closestStraightLine = det.name;
-                            closestStraightLineData = det;
-                        }
-                    }
-                    
-                    const distanceKm = (shortestStraightDistance / 1000).toFixed(1);
-                    resultDiv.className = 'result error';
-                    resultDiv.innerHTML = `<strong>Closest Detachment:</strong><br>${closestStraightLine}<br><small>Straight-line Distance: ${distanceKm} km</small><br><br><span style="color: #c62828; font-weight: bold;">No directroad acess</span><br><small>There are no accessible roads connecting your location to any RCMP detachment.</small>`;
-                    
-                    mapDiv.classList.add('show');
-                    
-                    if (map) {
-                        map.remove();
-                    }
-                    
-                    map = L.map('map').setView([userLat, userLon], 8);
-                    
-                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                        attribution: '© OpenStreetMap contributors'
-                    }).addTo(map);
-                    
-                    // Green marker for user location
-                    const greenIcon = L.icon({
-                        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-                        iconSize: [25, 41],
-                        iconAnchor: [12, 41],
-                        popupAnchor: [1, -34],
-                        shadowSize: [41, 41]
-                    });
-                    
-                    L.marker([userLat, userLon], {icon: greenIcon})
-                        .addTo(map)
-                        .bindPopup(locationLabel)
-                        .openPopup();
-                    
-                    // Red marker for closest detachment
-                    const redIcon = L.icon({
-                        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-                        iconSize: [25, 41],
-                        iconAnchor: [12, 41],
-                        popupAnchor: [1, -34],
-                        shadowSize: [41, 41]
-                    });
-                    
-                    L.marker([closestStraightLineData.lat, closestStraightLineData.lon], {icon: redIcon})
-                        .addTo(map)
-                        .bindPopup(closestStraightLine + '<br><span style="color: #c62828;">No road access</span>');
-                    
-                    // Blue markers for other detachments
-                    const blueIcon = L.icon({
-                        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
-                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-                        iconSize: [25, 41],
-                        iconAnchor: [12, 41],
-                        popupAnchor: [1, -34],
-                        shadowSize: [41, 41]
-                    });
-                    
-                    detachments.forEach(det => {
-                        if (det.name !== closestStraightLine) {
-                            L.marker([det.lat, det.lon], {icon: blueIcon})
-                                .addTo(map)
-                                .bindPopup(det.name);
-                        }
-                    });
-                    
-                    // Draw a dashed line to show it's not a road route
-                    L.polyline([[userLat, userLon], [closestStraightLineData.lat, closestStraightLineData.lon]], {
-                        color: 'red',
-                        weight: 2,
-                        dashArray: '10, 10',
-                        opacity: 0.6
-                    }).addTo(map);
-                    
-                    const bounds = L.latLngBounds([
-                        [userLat, userLon],
-                        [closestStraightLineData.lat, closestStraightLineData.lon]
-                    ]);
-                    map.fitBounds(bounds, {padding: [50, 50]});
-                }
-            } catch (error) {
-                resultDiv.className = 'result error';
-                resultDiv.textContent = 'Error calculating routes: ' + error.message;
-            }
+function haversineKm(lat1, lon1, lat2, lon2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+function showLoading(msg) {
+    const r = document.getElementById('result');
+    r.className = 'result loading show';
+    r.innerHTML = `<span class="spinner"></span>${msg}`;
+}
+
+function showResult(type, html) {
+    const r = document.getElementById('result');
+    r.className = `result ${type} show`;
+    r.innerHTML = html;
+}
+
+async function tryRoute(userLat, userLon, det) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 6000); // 6s timeout per call
+    try {
+        const url = `https://router.project-osrm.org/route/v1/driving/${userLon},${userLat};${det.lon},${det.lat}?overview=full&geometries=geojson`;
+        const response = await fetch(url, { signal: controller.signal });
+        clearTimeout(timeout);
+        if (!response.ok) return null;
+        const data = await response.json();
+        if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
+            return { distance: data.routes[0].distance, geometry: data.routes[0].geometry };
         }
-    </script>
+    } catch (e) {
+        clearTimeout(timeout);
+    }
+    return null;
+}
+
+async function calculateClosest(userLat, userLon, locationLabel) {
+    showLoading('Finding nearby detachments…');
+
+    // Sort all by straight-line distance, take top 8 candidates
+    const sorted = detachments.map(d => ({
+        ...d,
+        slDist: haversineKm(userLat, userLon, d.lat, d.lon)
+    })).sort((a, b) => a.slDist - b.slDist);
+
+    const candidates = sorted.slice(0, 8);
+
+    showLoading(`Calculating driving routes to ${candidates.length} nearest detachments…`);
+
+    let best = null;
+    let bestDist = Infinity;
+    let bestGeometry = null;
+
+    // Try routing to each candidate with a timeout
+    for (const det of candidates) {
+        const result = await tryRoute(userLat, userLon, det);
+        if (result && result.distance > 0 && result.distance < bestDist) {
+            bestDist = result.distance;
+            best = det;
+            bestGeometry = result.geometry;
+        }
+    }
+
+    // Always render the map — fall back to straight-line if routing failed
+    const usedRouting = !!best;
+    if (!best) {
+        best = sorted[0]; // straight-line closest
+        bestDist = best.slDist * 1000; // convert km to m
+    }
+
+    const distKm = (bestDist / 1000).toFixed(1);
+    const distLabel = usedRouting
+        ? `Driving distance: <strong>${distKm} km</strong>`
+        : `Straight-line distance: <strong>${distKm} km</strong> <span style="color:#c62828">(no road route found)</span>`;
+
+    showResult(
+        usedRouting ? '' : 'error',
+        `<strong>Closest Detachment:</strong><br>
+         <span style="font-size:1.1em;font-weight:bold">${best.name}</span><br>
+         <small>${distLabel}</small>`
+    );
+
+    renderMap(userLat, userLon, locationLabel, best, bestGeometry, usedRouting);
+}
+
+function renderMap(userLat, userLon, locationLabel, closestDet, routeGeometry, usedRouting) {
+    const mapDiv = document.getElementById('map');
+    mapDiv.classList.add('show');
+
+    if (map) { map.remove(); map = null; }
+
+    map = L.map('map').setView([userLat, userLon], 8);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // User location - green
+    const greenIcon = L.icon({
+        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+        iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+    });
+    L.marker([userLat, userLon], { icon: greenIcon }).addTo(map).bindPopup(`<b>${locationLabel}</b>`).openPopup();
+
+    // All other detachments - blue (small, semi-transparent)
+    const blueIcon = L.icon({
+        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+        iconSize: [18, 30], iconAnchor: [9, 30], popupAnchor: [1, -26], shadowSize: [30, 30]
+    });
+    detachments.forEach(det => {
+        if (det.name !== closestDet.name) {
+            L.marker([det.lat, det.lon], { icon: blueIcon, opacity: 0.6 }).addTo(map).bindPopup(det.name);
+        }
+    });
+
+    // Closest detachment - red
+    const redIcon = L.icon({
+        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+        iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+    });
+    L.marker([closestDet.lat, closestDet.lon], { icon: redIcon }).addTo(map)
+        .bindPopup(`<b>${closestDet.name}</b><br><small>Closest detachment</small>`);
+
+    // Route line
+    if (routeGeometry) {
+        const coords = routeGeometry.coordinates.map(c => [c[1], c[0]]);
+        L.polyline(coords, { color: '#1565c0', weight: 4, opacity: 0.8 }).addTo(map);
+    } else {
+        L.polyline([[userLat, userLon], [closestDet.lat, closestDet.lon]], {
+            color: '#c62828', weight: 2, dashArray: '10, 8', opacity: 0.7
+        }).addTo(map);
+    }
+
+    // Fit bounds
+    map.fitBounds(
+        L.latLngBounds([[userLat, userLon], [closestDet.lat, closestDet.lon]]),
+        { padding: [60, 60] }
+    );
+}
+</script>
 </body>
 </html>
