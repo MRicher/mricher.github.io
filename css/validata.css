@@ -293,4 +293,12 @@
 .quill-editor .ql-container {
   border-radius: 0 0 0.25rem 0.25rem;
   min-height: 100px;
+  height: auto;
+  overflow: visible;
+}
+
+.quill-editor .ql-editor {
+  min-height: 100px;
+  height: auto;
+  overflow-y: visible;
 }
