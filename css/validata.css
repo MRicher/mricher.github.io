@@ -277,3 +277,20 @@
     border-left-width: 5px;
   }
 }
+
+/* =================================================================
+   QUILL EDITOR OVERRIDES
+   ================================================================= */
+
+.quill-editor {
+  margin-bottom: 0.5rem;
+}
+
+.quill-editor .ql-toolbar {
+  border-radius: 0.25rem 0.25rem 0 0;
+}
+
+.quill-editor .ql-container {
+  border-radius: 0 0 0.25rem 0.25rem;
+  min-height: 100px;
+}
