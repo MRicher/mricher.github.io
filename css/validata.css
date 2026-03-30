@@ -290,15 +290,30 @@
   border-radius: 0.25rem 0.25rem 0 0;
 }
 
+.quill-editor {
+  margin-bottom: 0.5rem;
+  position: relative;
+  z-index: 0;
+}
+
+.quill-editor .ql-toolbar {
+  border-radius: 0.25rem 0.25rem 0 0;
+}
+
 .quill-editor .ql-container {
   border-radius: 0 0 0.25rem 0.25rem;
   min-height: 100px;
   height: auto;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .quill-editor .ql-editor {
   min-height: 100px;
   height: auto;
-  overflow-y: visible;
+  overflow-y: auto;
+}
+
+.form-row > div {
+  min-width: 0;
+  overflow: visible;
 }
