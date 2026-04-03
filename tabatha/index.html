@@ -1,670 +1,738 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="TabTalks - Expert meeting, workshop, and conference design consulting. Creating engaging and productive collaborative experiences.">
-    <meta property="og:title" content="TabTalks - Meeting & Workshop Design Consulting">
-    <meta property="og:description" content="Specializing in designing meetings, workshops and conferences that drive results and meaningful collaboration.">
-    <meta property="og:type" content="website">
-    <title>TabTalks - Meeting & Workshop Design Consulting</title>
-	<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
-	<link rel="icon" type="image/svg+xml" href="/favicon.svg">
-	<link rel="shortcut icon" href="/favicon.ico">
-	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-	<link rel="manifest" href="/site.webmanifest">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Oxygen:wght@300;400;700&display=swap" rel="stylesheet">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="TabTalks - Designing moments that spark clarity, connection, and change. Creative gatherings, game design, and learning capacity labs."
+    />
+    <meta property="og:title" content="TabTalks - The status quo is not sacred" />
+    <meta
+      property="og:description"
+      content="We help people and organizations reimagine how we connect, create, and navigate complexity, by designing moments that spark clarity, connection, and change."
+    />
+    <meta property="og:type" content="website" />
+    <title>TabTalks - The status quo is not sacred</title>
+    <link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="shortcut icon" href="favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+    <link rel="manifest" href="site.webmanifest" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Oxygen:wght@300;400;700&display=swap" rel="stylesheet" />
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        /* Brand Colors */
+        --purple: #601973;
+        --dark-grey: #58595b;
+        --light-grey: #bbbdc0;
+        --lightest-grey: #e2e3e4;
+        --light-blue: #8fcae7;
+        --light-green: #bed18a;
+        --dark-purple: #42145f;
+        --white: #ffffff;
+        --black: #000000;
+
+        /* Semantic Color Assignments */
+        --bg-primary: var(--white);
+        --bg-secondary: var(--lightest-grey);
+        --bg-accent: #f8f8f9;
+        --text-primary: var(--black);
+        --text-secondary: var(--dark-grey);
+        --text-light: #6b6c6e;
+        --accent: var(--purple);
+        --accent-dark: var(--dark-purple);
+        --border: var(--light-grey);
+        --border-light: #d5d6d8;
+
+        /* Spacing */
+        --spacing-xs: 0.5rem;
+        --spacing-sm: 1rem;
+        --spacing-md: 2rem;
+        --spacing-lg: 4rem;
+        --spacing-xl: 6rem;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family:
+          "Oxygen",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        line-height: 1.7;
+        font-size: 14px;
+        font-weight: 400;
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 var(--spacing-md);
+      }
+
+      .theme-toggle {
+        position: fixed;
+        top: var(--spacing-md);
+        right: var(--spacing-md);
+        width: 44px;
+        height: 44px;
+        background: var(--bg-primary);
+        border: 2px solid var(--border);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: var(--text-secondary);
+        transition: all 0.2s ease;
+        z-index: 1000;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+
+      .theme-toggle:hover {
+        border-color: var(--purple);
+        color: var(--purple);
+      }
+
+      header {
+        padding: var(--spacing-lg) 0;
+        text-align: center;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(to bottom, var(--bg-primary) 0%, var(--bg-accent) 100%);
+      }
+
+      .logo-container {
+        width: 180px;
+        height: 180px;
+        margin: 0 auto var(--spacing-md);
+        background: var(--purple);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 16px rgba(96, 25, 115, 0.15);
+        border: 1px solid var(--border-light);
+      }
+
+      .logo-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        padding: 20px;
+      }
+
+      /* Typography - Following Brand Guidelines */
+
+      /* Company Name - H1 with split styling */
+      h1.company-name {
+        margin-bottom: var(--spacing-sm);
+        margin-top: calc(var(--spacing-lg) * -0.33); /* Remove 1/3 of top padding */
+        display: flex;
+        align-items: baseline;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+
+      /* Tab - Dancing Script Bold 60pt (2x 30pt) Mixed Caps, Purple */
+      h1.company-name .tab {
+        font-family: "Dancing Script", cursive;
+        font-size: 60px;
+        font-weight: 700;
+        color: var(--purple);
+      }
+
+      /* Talks - Oxygen Bold 46pt (2x 23pt) Mixed Caps, Dark purple */
+      h1.company-name .talks {
+        font-family: "Oxygen", sans-serif;
+        font-size: 46px;
+        font-weight: 700;
+        color: var(--dark-purple);
+      }
+
+      /* Subtitle heading - now h2, Oxygen Bold 23pt Mixed Caps, Dark grey */
+      h2.subtitle-heading {
+        font-family: "Oxygen", sans-serif;
+        font-size: 23px;
+        font-weight: 700;
+        color: var(--dark-grey);
+        margin-bottom: var(--spacing-sm);
+        letter-spacing: -0.02em;
+      }
+
+      /* Subtitle - Dancing Script Bold 16pt Mixed Caps, Light blue */
+      .subtitle {
+        font-family: "Dancing Script", cursive;
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--light-blue);
+        max-width: 600px;
+        margin: 0 auto var(--spacing-lg);
+        line-height: 1.6;
+      }
+
+      /* However, for readability, body text in subtitle style uses Oxygen Light */
+      .subtitle-body {
+        font-family: "Oxygen", sans-serif;
+        font-size: 16px;
+        font-weight: 300;
+        color: var(--text-secondary);
+        max-width: 700px;
+        margin: 0 auto var(--spacing-lg);
+        line-height: 1.8;
+      }
+
+      .contact-info {
+        display: flex;
+        gap: var(--spacing-md);
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: var(--spacing-md);
+      }
+
+      .contact-info a {
+        color: var(--purple);
+        text-decoration: none;
+        transition: color 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 400;
+      }
+
+      .contact-info a:hover {
+        color: var(--dark-purple);
+      }
+
+      .social-links {
+        display: flex;
+        gap: var(--spacing-sm);
+      }
+
+      .social-links a {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid var(--border);
+        border-radius: 50%;
+        color: var(--text-secondary);
+        transition: all 0.2s ease;
+      }
+
+      .social-links a:hover {
+        border-color: var(--purple);
+        color: var(--purple);
+        background-color: rgba(96, 25, 115, 0.05);
+      }
+
+      section {
+        padding: var(--spacing-xl) 0;
+        opacity: 0;
+        transform: translateY(20px);
+        transition:
+          opacity 0.6s ease,
+          transform 0.6s ease;
+      }
+
+      section.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* Section Headings - Heading 2 - Oxygen Bold 23pt Mixed Caps, Dark purple */
+      h2 {
+        font-family: "Oxygen", sans-serif;
+        font-size: 23px;
+        font-weight: 700;
+        color: var(--dark-purple);
+        text-align: center;
+        margin-bottom: var(--spacing-lg);
+      }
+
+      /* Heading 3 - Oxygen Bold 18pt Mixed Caps, Dark purple */
+      h3 {
+        font-family: "Oxygen", sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--dark-purple);
+        margin-bottom: var(--spacing-sm);
+      }
+
+      /* Heading 4 - Oxygen Bold 14pt All Caps, Light green */
+      h4 {
+        font-family: "Oxygen", sans-serif;
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--light-green);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      /* Heading 5 - Oxygen Bold 13pt All Caps, grey */
+      h5 {
+        font-family: "Oxygen", sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--dark-grey);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .services-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-md);
+        margin-top: var(--spacing-lg);
+      }
+
+      .service-card {
+        background: var(--white);
+        padding: var(--spacing-md);
+        border: 2px solid var(--border-light);
+        border-radius: 4px;
+        transition: all 0.3s ease;
+        text-align: center;
+      }
+
+      .service-card:hover {
+        border-color: var(--light-green);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        transform: translateY(-2px);
+      }
+
+      .service-card i {
+        font-size: 2.5rem;
+        color: var(--light-blue);
+        margin-bottom: var(--spacing-sm);
+        display: block;
+      }
+
+      .service-card h3,
+      .service-card h4 {
+        text-align: center;
+      }
+
+      /* Body text - Oxygen Regular 14pt Black */
+      .service-card p {
+        color: var(--text-primary);
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1.7;
+        text-align: left;
+      }
+
+      @media (max-width: 600px) {
+        .services-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .about-section {
+        background: var(--bg-secondary);
+        border-top: 2px solid var(--border-light);
+        border-bottom: 2px solid var(--border-light);
+      }
+
+      .about-content {
+        max-width: 800px;
+        margin: 0 auto;
+        color: var(--text-primary);
+        font-size: 14px;
+        line-height: 1.8;
+      }
+
+      .about-content p {
+        margin-bottom: var(--spacing-md);
+      }
+
+      /* Blockquote - Oxygen Light 14pt Mixed Caps, Light blue */
+      blockquote {
+        font-family: "Oxygen", sans-serif;
+        font-size: 14px;
+        font-weight: 300;
+        color: var(--light-blue);
+        border-left: 4px solid var(--light-blue);
+        padding-left: var(--spacing-md);
+        margin: var(--spacing-md) 0;
+        font-style: italic;
+      }
+
+      .contact-form {
+        max-width: 600px;
+        margin: var(--spacing-lg) auto 0;
+      }
+
+      .form-group {
+        margin-bottom: var(--spacing-md);
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: var(--spacing-xs);
+        color: var(--text-secondary);
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .form-group input,
+      .form-group textarea {
+        width: 100%;
+        padding: var(--spacing-sm);
+        background: var(--white);
+        border: 2px solid var(--border);
+        border-radius: 4px;
+        color: var(--text-primary);
+        font-family: "Oxygen", sans-serif;
+        font-size: 14px;
+        transition: border-color 0.2s ease;
+      }
+
+      .form-group input:focus,
+      .form-group textarea:focus {
+        outline: none;
+        border-color: var(--purple);
+      }
+
+      .form-group textarea {
+        resize: vertical;
+        min-height: 150px;
+      }
+
+      button[type="submit"] {
+        width: 100%;
+        padding: var(--spacing-sm) var(--spacing-md);
+        background: var(--purple);
+        color: var(--white);
+        border: none;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        cursor: pointer;
+        transition: background 0.2s ease;
+      }
+
+      button[type="submit"]:hover {
+        background: var(--dark-purple);
+      }
+
+      .form-message {
+        margin-top: var(--spacing-sm);
+        padding: var(--spacing-sm);
+        border-radius: 4px;
+        text-align: center;
+        display: none;
+      }
+
+      .form-message.success {
+        background: rgba(190, 209, 138, 0.15);
+        border: 2px solid var(--light-green);
+        color: var(--dark-grey);
+      }
+
+      .form-message.error {
+        background: rgba(200, 100, 100, 0.1);
+        border: 2px solid #c86464;
+        color: #c86464;
+      }
+
+      /* Footer - Oxygen Regular 14pt */
+      footer {
+        padding: var(--spacing-lg) 0;
+        text-align: center;
+        color: var(--text-secondary);
+        font-size: 14px;
+        border-top: 2px solid var(--border-light);
+        background: var(--bg-secondary);
+      }
+
+      @media (max-width: 768px) {
+        h1.company-name .tab {
+          font-size: 48px;
         }
 
-        :root {
-            /* Brand Colors */
-            --purple: #601973;
-            --dark-grey: #58595b;
-            --light-grey: #BBBDC0;
-            --lightest-grey: #E2E3E4;
-            --light-blue: #8FCAE7;
-            --light-green: #BED18A;
-            --dark-purple: #42145F;
-            --white: #FFFFFF;
-            --black: #000000;
-            
-            /* Semantic Color Assignments */
-            --bg-primary: var(--white);
-            --bg-secondary: var(--lightest-grey);
-            --bg-accent: #F8F8F9;
-            --text-primary: var(--black);
-            --text-secondary: var(--dark-grey);
-            --text-light: #6B6C6E;
-            --accent: var(--purple);
-            --accent-dark: var(--dark-purple);
-            --border: var(--light-grey);
-            --border-light: #D5D6D8;
-            
-            /* Spacing */
-            --spacing-xs: 0.5rem;
-            --spacing-sm: 1rem;
-            --spacing-md: 2rem;
-            --spacing-lg: 4rem;
-            --spacing-xl: 6rem;
+        h1.company-name .talks {
+          font-size: 36px;
         }
 
-        html {
-            scroll-behavior: smooth;
+        h2.subtitle-heading {
+          font-size: 20px;
         }
 
-        body {
-            font-family: 'Oxygen', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.7;
-            font-size: 14px;
-            font-weight: 400;
+        h2 {
+          font-size: 20px;
         }
 
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 var(--spacing-md);
-        }
-
-        .theme-toggle {
-            position: fixed;
-            top: var(--spacing-md);
-            right: var(--spacing-md);
-            width: 44px;
-            height: 44px;
-            background: var(--bg-primary);
-            border: 2px solid var(--border);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: var(--text-secondary);
-            transition: all 0.2s ease;
-            z-index: 1000;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        }
-
-        .theme-toggle:hover {
-            border-color: var(--purple);
-            color: var(--purple);
-        }
-
-        header {
-            padding: var(--spacing-lg) 0;
-            text-align: center;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(to bottom, var(--bg-primary) 0%, var(--bg-accent) 100%);
+        .subtitle {
+          font-size: 14px;
         }
 
         .logo-container {
-            width: 180px;
-            height: 180px;
-            margin: 0 auto var(--spacing-md);
-            background: var(--purple);
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 16px rgba(96, 25, 115, 0.15);
-            border: 1px solid var(--border-light);
+          width: 150px;
+          height: 150px;
         }
 
         .logo-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            padding: 20px;
-        }
-
-        /* Typography - Following Brand Guidelines */
-        
-        /* Company Name - H1 with split styling */
-        h1.company-name {
-            margin-bottom: var(--spacing-sm);
-            margin-top: calc(var(--spacing-lg) * -0.33); /* Remove 1/3 of top padding */
-            display: flex;
-            align-items: baseline;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        /* Tab - Dancing Script Bold 60pt (2x 30pt) Mixed Caps, Purple */
-        h1.company-name .tab {
-            font-family: 'Dancing Script', cursive;
-            font-size: 60px;
-            font-weight: 700;
-            color: var(--purple);
-        }
-
-        /* Talks - Oxygen Bold 46pt (2x 23pt) Mixed Caps, Dark purple */
-        h1.company-name .talks {
-            font-family: 'Oxygen', sans-serif;
-            font-size: 46px;
-            font-weight: 700;
-            color: var(--dark-purple);
-        }
-
-        /* Subtitle heading - now h2, Oxygen Bold 23pt Mixed Caps, Dark grey */
-        h2.subtitle-heading {
-            font-family: 'Oxygen', sans-serif;
-            font-size: 23px;
-            font-weight: 700;
-            color: var(--dark-grey);
-            margin-bottom: var(--spacing-sm);
-            letter-spacing: -0.02em;
-        }
-
-        /* Subtitle - Dancing Script Bold 16pt Mixed Caps, Light blue */
-        .subtitle {
-            font-family: 'Dancing Script', cursive;
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--light-blue);
-            max-width: 600px;
-            margin: 0 auto var(--spacing-lg);
-            line-height: 1.6;
-        }
-
-        /* However, for readability, body text in subtitle style uses Oxygen Light */
-        .subtitle-body {
-            font-family: 'Oxygen', sans-serif;
-            font-size: 16px;
-            font-weight: 300;
-            color: var(--text-secondary);
-            max-width: 700px;
-            margin: 0 auto var(--spacing-lg);
-            line-height: 1.8;
+          padding: 15px;
         }
 
         .contact-info {
-            display: flex;
-            gap: var(--spacing-md);
-            align-items: center;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: var(--spacing-md);
+          flex-direction: column;
+          gap: var(--spacing-sm);
         }
 
-        .contact-info a {
-            color: var(--purple);
-            text-decoration: none;
-            transition: color 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 400;
+        .theme-toggle {
+          top: var(--spacing-sm);
+          right: var(--spacing-sm);
         }
-
-        .contact-info a:hover {
-            color: var(--dark-purple);
-        }
-
-        .social-links {
-            display: flex;
-            gap: var(--spacing-sm);
-        }
-
-        .social-links a {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid var(--border);
-            border-radius: 50%;
-            color: var(--text-secondary);
-            transition: all 0.2s ease;
-        }
-
-        .social-links a:hover {
-            border-color: var(--purple);
-            color: var(--purple);
-            background-color: rgba(96, 25, 115, 0.05);
-        }
-
-        section {
-            padding: var(--spacing-xl) 0;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
-        }
-
-        section.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Section Headings - Heading 2 - Oxygen Bold 23pt Mixed Caps, Dark purple */
-        h2 {
-            font-family: 'Oxygen', sans-serif;
-            font-size: 23px;
-            font-weight: 700;
-            color: var(--dark-purple);
-            text-align: center;
-            margin-bottom: var(--spacing-lg);
-        }
-
-        /* Heading 3 - Oxygen Bold 18pt Mixed Caps, Dark purple */
-        h3 {
-            font-family: 'Oxygen', sans-serif;
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--dark-purple);
-            margin-bottom: var(--spacing-sm);
-        }
-
-        /* Heading 4 - Oxygen Bold 14pt All Caps, Light green */
-        h4 {
-            font-family: 'Oxygen', sans-serif;
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--light-green);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        /* Heading 5 - Oxygen Bold 13pt All Caps, grey */
-        h5 {
-            font-family: 'Oxygen', sans-serif;
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--dark-grey);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: var(--spacing-md);
-            margin-top: var(--spacing-lg);
-        }
-
-        .service-card {
-            background: var(--white);
-            padding: var(--spacing-md);
-            border: 2px solid var(--border-light);
-            border-radius: 4px;
-            transition: all 0.3s ease;
-        }
-
-        .service-card:hover {
-            border-color: var(--light-green);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            transform: translateY(-2px);
-        }
-
-        .service-card i {
-            font-size: 1.5rem;
-            color: var(--light-blue);
-            margin-bottom: var(--spacing-sm);
-        }
-
-        /* Body text - Oxygen Regular 14pt Black */
-        .service-card p {
-            color: var(--text-primary);
-            font-size: 14px;
-            font-weight: 400;
-            line-height: 1.7;
-        }
-
-        .about-section {
-            background: var(--bg-secondary);
-            border-top: 2px solid var(--border-light);
-            border-bottom: 2px solid var(--border-light);
-        }
-
-        .about-content {
-            max-width: 800px;
-            margin: 0 auto;
-            color: var(--text-primary);
-            font-size: 14px;
-            line-height: 1.8;
-        }
-
-        .about-content p {
-            margin-bottom: var(--spacing-md);
-        }
-
-        /* Blockquote - Oxygen Light 14pt Mixed Caps, Light blue */
-        blockquote {
-            font-family: 'Oxygen', sans-serif;
-            font-size: 14px;
-            font-weight: 300;
-            color: var(--light-blue);
-            border-left: 4px solid var(--light-blue);
-            padding-left: var(--spacing-md);
-            margin: var(--spacing-md) 0;
-            font-style: italic;
-        }
-
-        .contact-form {
-            max-width: 600px;
-            margin: var(--spacing-lg) auto 0;
-        }
-
-        .form-group {
-            margin-bottom: var(--spacing-md);
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: var(--spacing-xs);
-            color: var(--text-secondary);
-            font-size: 13px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: var(--spacing-sm);
-            background: var(--white);
-            border: 2px solid var(--border);
-            border-radius: 4px;
-            color: var(--text-primary);
-            font-family: 'Oxygen', sans-serif;
-            font-size: 14px;
-            transition: border-color 0.2s ease;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--purple);
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 150px;
-        }
-
-        button[type="submit"] {
-            width: 100%;
-            padding: var(--spacing-sm) var(--spacing-md);
-            background: var(--purple);
-            color: var(--white);
-            border: none;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            cursor: pointer;
-            transition: background 0.2s ease;
-        }
-
-        button[type="submit"]:hover {
-            background: var(--dark-purple);
-        }
-
-        .form-message {
-            margin-top: var(--spacing-sm);
-            padding: var(--spacing-sm);
-            border-radius: 4px;
-            text-align: center;
-            display: none;
-        }
-
-        .form-message.success {
-            background: rgba(190, 209, 138, 0.15);
-            border: 2px solid var(--light-green);
-            color: var(--dark-grey);
-        }
-
-        .form-message.error {
-            background: rgba(200, 100, 100, 0.1);
-            border: 2px solid #c86464;
-            color: #c86464;
-        }
-
-        /* Footer - Oxygen Regular 14pt */
-        footer {
-            padding: var(--spacing-lg) 0;
-            text-align: center;
-            color: var(--text-secondary);
-            font-size: 14px;
-            border-top: 2px solid var(--border-light);
-            background: var(--bg-secondary);
-        }
-
-        @media (max-width: 768px) {
-            h1.company-name .tab {
-                font-size: 48px;
-            }
-
-            h1.company-name .talks {
-                font-size: 36px;
-            }
-
-            h2.subtitle-heading {
-                font-size: 20px;
-            }
-
-            h2 {
-                font-size: 20px;
-            }
-
-            .subtitle {
-                font-size: 14px;
-            }
-
-            .logo-container {
-                width: 150px;
-                height: 150px;
-            }
-
-            .logo-container img {
-                padding: 15px;
-            }
-
-            .services-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .contact-info {
-                flex-direction: column;
-                gap: var(--spacing-sm);
-            }
-
-            .theme-toggle {
-                top: var(--spacing-sm);
-                right: var(--spacing-sm);
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
-        <i class="fas fa-sun"></i>
+      <i class="fas fa-sun"></i>
     </button>
 
     <header>
-        <div class="container">
-            <div class="logo-container">
-                <img src="/tabatha/logo.png" alt="TabTalks Logo">
-            </div>
-            <h1 class="company-name">
-                <span class="tab">Tab</span><span class="talks">Talks</span>
-            </h1>
-            <h2 class="subtitle-heading">Meeting & Workshop Design Consulting</h2>
-            <p class="subtitle-body">I design meetings, workshops, and conferences that keep people engaged and lead to real results. Clear structure, practical flow, and focused outcomes—no wasted time, no filler, just work that moves forward.</p>
-            <div class="contact-info">
-                <a href="mailto:contact@tabtalks.io">
-                    <i class="fas fa-envelope"></i>
-                    contact@tabtalks.io
-                </a>
-                <div class="social-links">
-                    <a href="https://linkedin.com/company/tabtalks" aria-label="LinkedIn" target="_blank" rel="noopener">
-                        <i class="fab fa-linkedin-in"></i>
-                    </a>
-                    <a href="https://twitter.com/tabtalks" aria-label="Twitter" target="_blank" rel="noopener">
-                        <i class="fab fa-twitter"></i>
-                    </a>
-                </div>
-            </div>
+      <div class="container">
+        <div class="logo-container">
+          <img src="/tabatha/logo.png" alt="TabTalks Logo" />
         </div>
+        <h1 class="company-name"><span class="tab">Tab</span><span class="talks">Talks</span></h1>
+        <h2 class="subtitle-heading">The status quo is not sacred</h2>
+        <p class="subtitle-body">
+          We weren't born to follow scripts, chase titles, or settle for "how it's always been." I help people and organizations reimagine how we
+          connect, create, and navigate complexity — designing moments that spark clarity, connection, and change. Mix structure with serendipity, and
+          watch what emerges.
+        </p>
+        <div class="contact-info">
+          <a href="#" id="emailLink" aria-label="Email">
+            <i class="fas fa-envelope"></i>
+            <span id="emailDisplay"></span>
+          </a>
+          <div class="social-links">
+            <a href="https://ca.linkedin.com/in/tabathasoltay" aria-label="LinkedIn" target="_blank" rel="noopener">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+          </div>
+        </div>
+      </div>
     </header>
 
     <main>
-        <section id="services">
-            <div class="container">
-                <h2>Services</h2>
-                <div class="services-grid">
-                    <div class="service-card">
-                        <i class="fas fa-users"></i>
-                        <h3>Workshop Design</h3>
-                        <p>I build custom workshops around what your team needs to get done — not generic exercises. The sessions are practical, structured, and outcome-driven, with tools and flow tailored to your goals. Good ideas are useful; clear next steps are better.</p>
-                    </div>
-                    <div class="service-card">
-                        <i class="fas fa-clipboard-list"></i>
-                        <h3>Meeting Architecture</h3>
-                        <p>I turn routine meetings into focused working sessions. Strong agendas, smart participation methods, and simple decision frameworks keep things moving. Shorter meetings, better results. That's the point.</p>
-                    </div>
-                    <div class="service-card">
-                        <i class="fas fa-calendar-alt"></i>
-                        <h3>Conference Planning</h3>
-                        <p>I design conferences starting with purpose, then shape the sessions and experience around it. The program stays coherent, interactive, and paced for real energy, not just back-to-back speakers.</p>
-                    </div>
-                    <div class="service-card">
-                        <i class="fas fa-chalkboard-teacher"></i>
-                        <h3>Facilitation Training</h3>
-                        <p>I train teams to run their own sessions with confidence. Practical techniques, real scenarios, and hands-on practice. No theory overload — just skills people can use right away.</p>
-                    </div>
-                    <div class="service-card">
-                        <i class="fas fa-hands-helping"></i>
-                        <h3>Event Facilitation</h3>
-                        <p>For high-stakes sessions, I provide neutral, steady facilitation. I keep discussion balanced, productive, and on track, even when views clash. The work gets done without the room going sideways.</p>
-                    </div>
-                    <div class="service-card">
-                        <i class="fas fa-comments"></i>
-                        <h3>Stakeholder Engagement</h3>
-                        <p>I design engagement processes that bring the right voices in and keep the conversation useful. Clear structure, open dialogue, and grounded outcomes. When it works, people leave heard — and decisions stick.</p>
-                    </div>
-                </div>
+      <section id="services">
+        <div class="container">
+          <h2>Services</h2>
+          <div class="services-grid">
+            <div class="service-card">
+              <i class="fas fa-users"></i>
+              <h3>Creative Gatherings</h3>
+              <h4>Where strategy meets storytelling</h4>
+              <p>
+                Working with your team, we design and deliver opportunities for your community and stakeholders to gather and solve complex problems.
+                From C-Suite strategic planning to community design charettes, we create environments for people to co-create solutions to the
+                underlying issues of pervasive problems. Facilitation &amp; co-design, foresight and collective vision making, systems-mapping and
+                strategy with soul, organizational storytelling &amp; narrative rewrites, gamified strategy sprints &amp; innovation labs. Chaos
+                becomes clarity — with a touch of glitter.
+              </p>
             </div>
-        </section>
+            <div class="service-card">
+              <i class="fas fa-dice"></i>
+              <h3>Game Design</h3>
+              <h4>Don't just bring people together — create a space to learn and share</h4>
+              <p>
+                Working with your team, we unpack learning underlying needs to find your "ah-ha" moment and then custom design a board or card game.
+                From idea to printed format, we create a full game package with a replicable experience for your community to learn together. Custom
+                serious game design for events, learning, or engagement; retreat &amp; event experience design (in-person or virtual); community
+                activation strategies; and social chemistry engineering. It's not just about gathering people — it's about making them never want to
+                leave through fun and games!
+              </p>
+            </div>
+            <div class="service-card">
+              <i class="fas fa-flask"></i>
+              <h3>Learning &amp; Capacity Labs</h3>
+              <h4>Learning doesn't have to be boring. Let's make it unforgettable.</h4>
+              <p>
+                Skills and knowledge help build capacity and resilience. Working with your team, we create thoughtful learning opportunities that help
+                you design creative gatherings and develop your own gamified experience. Interactive, large-group workshops &amp; custom training
+                design; gamified, asynchronous learning journeys; bespoke toolkits &amp; resources; and learning experience co-design with
+                train-the-trainer. Knowledge sticks when it comes with a little mischief, a lot of meaning, and a sprinkling of fun.
+              </p>
+            </div>
+            <div class="service-card">
+              <i class="fas fa-puzzle-piece"></i>
+              <h3>Games</h3>
+              <h4>Why play?</h4>
+              <p>
+                Games are fun — but they can also get serious. Serious games create a safe space to foster empathy between players, test new ideas,
+                and learn content in an engaging way. They use fun to motivate people to ask questions and explore topics that are often taboo. Custom
+                designed board and card games target the "pain points" as a deliberative dialogue tool, seeding a common lexicon and direction amongst
+                players who are often unable to see past their own assumptions. Examples include ReStrukt (community engagement), Shrimps Matter
+                (ocean ecosystems), and Can I Help? (mental health &amp; inclusion).
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-        <section id="about" class="about-section">
-            <div class="container">
-                <h2>About TabTalks</h2>
-                <div class="about-content">
-                    <p>At TabTalks, I focus on one simple idea: meetings should be worth people's time. Too often, sessions run long, drift off track, or end without clear decisions. Workshops feel busy but go nowhere. Conferences look good on paper but don't land. I help organizations fix that by designing gatherings that are structured, practical, and built to get real results.</p>
-                    <p>I've spent more than ten years planning and leading meetings, workshops, and conferences for a wide range of organizations. No two groups are the same, and I don't treat them that way. A short leadership session, a hands-on working workshop, or a multi-day conference all need different pacing, tools, and energy. My role is to shape the experience so people stay involved, conversations stay focused, and the time invested actually pays off.</p>
-                    <p>I start by getting clear on what you're trying to achieve and who's in the room. From there, I design the flow — the activities, the decision points, the moments where people need to think, talk, or build something together. I draw on tested facilitation approaches and practical design methods, then adapt them to your setting. The outcome is straightforward: stronger participation, clearer direction, and next steps people understand and can act on.</p>
-                    <p>If you want your next meeting or event to feel purposeful — and maybe even a bit energizing — I'd be glad to help design it with you.</p>
-                </div>
-            </div>
-        </section>
+      <section id="about" class="about-section">
+        <div class="container">
+          <h2>About TabTalks</h2>
+          <div class="about-content">
+            <h3>Tabatha</h3>
+            <h4>Chief Catalyst of Mischief, Connections &amp; Possibilities</h4>
+            <p>
+              The status quo shouldn't be our default. I help people, teams, and organizations shake off the "supposed to" and step into something far
+              more powerful: curiosity, courage, and a custom-built way of working, living, and connecting.
+            </p>
+            <p>
+              Over the past 20 years, I've been a transformation maven in government, a connector of dots across global networks, a designer of
+              learning adventures that defy the usual, and a facilitator who makes complexity feel like a game worth playing. I've led national
+              initiatives, co-designed policy, supported cross-sector partnerships, built communities of practice, and brought unlikely collaborators
+              together to tackle impossible problems (and enjoy it).
+            </p>
+            <p>
+              My toolkit includes systems thinking, storytelling, sense-making, serious play, and a little well-placed chaos. I blend structure with
+              serendipity, designing spaces where people show up fully, think differently, and leave with something they didn't know they were looking
+              for.
+            </p>
+            <blockquote>I work best when things are messy, bold ideas are welcome, and we're allowed to break some rules along the way.</blockquote>
+            <p>
+              Whether you're leading change, launching something new, or just feeling stuck, I help people like you bring wild ideas to life and build
+              teams and strategies that stick. Curious? Good. That's where the magic starts.
+            </p>
+          </div>
+        </div>
+      </section>
 
-        <section id="contact">
-            <div class="container">
-                <h2>Let's Talk</h2>
-                <form class="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
-                    <div class="form-group">
-                        <label for="name">Name</label>
-                        <input type="text" id="name" name="name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="organization">Organization</label>
-                        <input type="text" id="organization" name="organization">
-                    </div>
-                    <div class="form-group">
-                        <label for="message">Tell me about your project</label>
-                        <textarea id="message" name="message" required></textarea>
-                    </div>
-                    <button type="submit">Send Message</button>
-                    <div class="form-message" id="formMessage"></div>
-                </form>
+      <section id="contact">
+        <div class="container">
+          <h2>Let's Talk</h2>
+          <form class="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+            <div class="form-group">
+              <label for="name">Name</label>
+              <input type="text" id="name" name="name" required />
             </div>
-        </section>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" required />
+            </div>
+            <div class="form-group">
+              <label for="organization">Organization</label>
+              <input type="text" id="organization" name="organization" />
+            </div>
+            <div class="form-group">
+              <label for="message">Tell me about your project</label>
+              <textarea id="message" name="message" required></textarea>
+            </div>
+            <button type="submit">Send Message</button>
+            <div class="form-message" id="formMessage"></div>
+          </form>
+        </div>
+      </section>
     </main>
 
     <footer>
-        <div class="container">
-            <p>&copy; 2026 TabTalks. All rights reserved.</p>
-        </div>
+      <div class="container">
+        <p>&copy; 2026 TabTalks. All rights reserved.</p>
+      </div>
     </footer>
 
     <script>
-        // Theme toggle - maintains light theme per brand guidelines
-        const themeToggle = document.getElementById('themeToggle');
-        const themeIcon = themeToggle.querySelector('i');
+      // Email obfuscation - assembled at runtime to block scrapers
+      const u = "contact";
+      const d = ["tabtalks", "io"].join(".");
+      const email = u + "@" + d;
+      const emailLink = document.getElementById("emailLink");
+      const emailDisplay = document.getElementById("emailDisplay");
+      emailDisplay.textContent = email;
+      emailLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        window.location.href = "mailto:" + email;
+      });
 
-        // Since brand guidelines specify light background with dark text, we'll keep it simple
-        themeToggle.style.display = 'none'; // Hide theme toggle to maintain brand consistency
+      // Theme toggle - maintains light theme per brand guidelines
+      const themeToggle = document.getElementById("themeToggle");
+      const themeIcon = themeToggle.querySelector("i");
 
-        // Intersection Observer for scroll reveal
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
+      // Since brand guidelines specify light background with dark text, we'll keep it simple
+      themeToggle.style.display = "none"; // Hide theme toggle to maintain brand consistency
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, observerOptions);
+      // Intersection Observer for scroll reveal
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: "0px 0px -50px 0px",
+      };
 
-        document.querySelectorAll('section').forEach(section => {
-            observer.observe(section);
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+          }
         });
+      }, observerOptions);
 
-        // Form handling
-        const form = document.querySelector('.contact-form');
-        const formMessage = document.getElementById('formMessage');
+      document.querySelectorAll("section").forEach((section) => {
+        observer.observe(section);
+      });
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const formData = new FormData(form);
-            
-            try {
-                const response = await fetch(form.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                });
+      // Form handling
+      const form = document.querySelector(".contact-form");
+      const formMessage = document.getElementById("formMessage");
 
-                if (response.ok) {
-                    formMessage.textContent = 'Message sent successfully. I\'ll be in touch soon.';
-                    formMessage.className = 'form-message success';
-                    formMessage.style.display = 'block';
-                    form.reset();
-                } else {
-                    throw new Error('Form submission failed');
-                }
-            } catch (error) {
-                formMessage.textContent = 'Something went wrong. Please try emailing directly.';
-                formMessage.className = 'form-message error';
-                formMessage.style.display = 'block';
-            }
-        });
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+
+        try {
+          const response = await fetch(form.action, {
+            method: "POST",
+            body: formData,
+            headers: {
+              Accept: "application/json",
+            },
+          });
+
+          if (response.ok) {
+            formMessage.textContent = "Message sent successfully. I'll be in touch soon.";
+            formMessage.className = "form-message success";
+            formMessage.style.display = "block";
+            form.reset();
+          } else {
+            throw new Error("Form submission failed");
+          }
+        } catch (error) {
+          formMessage.textContent = "Something went wrong. Please try emailing directly.";
+          formMessage.className = "form-message error";
+          formMessage.style.display = "block";
+        }
+      });
     </script>
-</body>
+  </body>
 </html>
-
