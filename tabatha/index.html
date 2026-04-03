@@ -36,11 +36,15 @@
         --dark-grey: #58595b;
         --light-grey: #bbbdc0;
         --lightest-grey: #e2e3e4;
-        --light-blue: #8fcae7;
-        --light-green: #bed18a;
+        --light-blue: #8fcae7; /* decorative only — borders, icons, bg tints */
+        --light-green: #bed18a; /* decorative only — borders, bg tints */
         --dark-purple: #42145f;
         --white: #ffffff;
         --black: #000000;
+
+        /* WCAG-compliant text alternatives for light brand colors */
+        --text-blue: #1a6b96; /* 5.85:1 on white ✅ replaces light-blue for text */
+        --text-green: #536a28; /* 6.07:1 on white ✅ replaces light-green for text */
 
         /* Semantic Color Assignments */
         --bg-primary: var(--white);
@@ -141,19 +145,17 @@
         padding: 20px;
       }
 
-      /* Typography - Following Brand Guidelines */
-
-      /* Company Name - H1 with split styling */
+      /* Company Name */
       h1.company-name {
         margin-bottom: var(--spacing-sm);
-        margin-top: calc(var(--spacing-lg) * -0.33); /* Remove 1/3 of top padding */
+        margin-top: calc(var(--spacing-lg) * -0.33);
         display: flex;
         align-items: baseline;
         justify-content: center;
         gap: 0.5rem;
       }
 
-      /* Tab - Dancing Script Bold 60pt (2x 30pt) Mixed Caps, Purple */
+      /* Tab — Dancing Script Bold, Purple 11.15:1 on white ✅ */
       h1.company-name .tab {
         font-family: "Dancing Script", cursive;
         font-size: 60px;
@@ -161,7 +163,7 @@
         color: var(--purple);
       }
 
-      /* Talks - Oxygen Bold 46pt (2x 23pt) Mixed Caps, Dark purple */
+      /* Talks — Oxygen Bold, Dark purple 14.03:1 on white ✅ */
       h1.company-name .talks {
         font-family: "Oxygen", sans-serif;
         font-size: 46px;
@@ -169,7 +171,7 @@
         color: var(--dark-purple);
       }
 
-      /* Subtitle heading - now h2, Oxygen Bold 23pt Mixed Caps, Dark grey */
+      /* Subtitle heading — Dark grey 7.01:1 on white ✅ */
       h2.subtitle-heading {
         font-family: "Oxygen", sans-serif;
         font-size: 23px;
@@ -179,18 +181,7 @@
         letter-spacing: -0.02em;
       }
 
-      /* Subtitle - Dancing Script Bold 16pt Mixed Caps, Light blue */
-      .subtitle {
-        font-family: "Dancing Script", cursive;
-        font-size: 16px;
-        font-weight: 700;
-        color: var(--light-blue);
-        max-width: 600px;
-        margin: 0 auto var(--spacing-lg);
-        line-height: 1.6;
-      }
-
-      /* However, for readability, body text in subtitle style uses Oxygen Light */
+      /* Subtitle body — Dark grey 7.01:1 on white ✅ */
       .subtitle-body {
         font-family: "Oxygen", sans-serif;
         font-size: 16px;
@@ -210,6 +201,7 @@
         margin-top: var(--spacing-md);
       }
 
+      /* Purple links — 11.15:1 on white ✅ */
       .contact-info a {
         color: var(--purple);
         text-decoration: none;
@@ -261,7 +253,7 @@
         transform: translateY(0);
       }
 
-      /* Section Headings - Heading 2 - Oxygen Bold 23pt Mixed Caps, Dark purple */
+      /* Section h2 — Dark purple 14.03:1 on white ✅ */
       h2 {
         font-family: "Oxygen", sans-serif;
         font-size: 23px;
@@ -271,7 +263,7 @@
         margin-bottom: var(--spacing-lg);
       }
 
-      /* Heading 3 - Oxygen Bold 18pt Mixed Caps, Dark purple */
+      /* h3 — Dark purple 14.03:1 on white ✅ */
       h3 {
         font-family: "Oxygen", sans-serif;
         font-size: 18px;
@@ -280,17 +272,19 @@
         margin-bottom: var(--spacing-sm);
       }
 
-      /* Heading 4 - Oxygen Bold 14pt All Caps, Light green */
+      /* h4 — WCAG fix: --text-green (#536a28) 6.07:1 on white ✅
+         Original --light-green (#bed18a) was 1.66:1 — FAILS */
       h4 {
         font-family: "Oxygen", sans-serif;
         font-size: 14px;
         font-weight: 700;
-        color: var(--light-green);
+        color: var(--text-green);
         text-transform: uppercase;
         letter-spacing: 0.05em;
+        margin-bottom: var(--spacing-xs);
       }
 
-      /* Heading 5 - Oxygen Bold 13pt All Caps, grey */
+      /* h5 — Dark grey 7.01:1 on white ✅ */
       h5 {
         font-family: "Oxygen", sans-serif;
         font-size: 13px;
@@ -299,6 +293,8 @@
         text-transform: uppercase;
         letter-spacing: 0.05em;
       }
+
+      /* ── Services ── */
 
       .services-grid {
         display: grid;
@@ -317,11 +313,12 @@
       }
 
       .service-card:hover {
-        border-color: var(--light-green);
+        border-color: var(--light-green); /* decorative border — not text ✅ */
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         transform: translateY(-2px);
       }
 
+      /* Icon — light-blue as decorative color ✅ */
       .service-card i {
         font-size: 2.5rem;
         color: var(--light-blue);
@@ -334,12 +331,55 @@
         text-align: center;
       }
 
-      /* Body text - Oxygen Regular 14pt Black */
+      /* Body text — black on white 21:1 ✅ */
       .service-card p {
         color: var(--text-primary);
         font-size: 14px;
         font-weight: 400;
         line-height: 1.7;
+        text-align: left;
+        margin-top: var(--spacing-sm);
+      }
+
+      /* Service bullet list */
+      .service-list {
+        list-style: none;
+        margin: var(--spacing-sm) 0;
+        text-align: left;
+      }
+
+      .service-list li {
+        font-size: 14px;
+        color: var(--text-primary);
+        line-height: 1.7;
+        padding: 0.2rem 0 0.2rem 1.4rem;
+        position: relative;
+      }
+
+      /* Arrow bullet — --text-blue 5.85:1 on white ✅ */
+      .service-list li::before {
+        content: "→";
+        position: absolute;
+        left: 0;
+        color: var(--text-blue);
+        font-size: 12px;
+        top: 0.3rem;
+      }
+
+      /* Card pull-quote — dark purple on light-blue tint
+         #42145f on #dff0f9 ≈ 10:1 ✅
+         Original light-blue text on white was 1.78:1 — FAILS */
+      .card-quote {
+        font-family: "Oxygen", sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        font-style: italic;
+        color: var(--dark-purple);
+        background: #dff0f9;
+        border-left: 4px solid var(--light-blue);
+        padding: 0.75rem var(--spacing-sm);
+        margin-top: var(--spacing-sm);
+        border-radius: 0 4px 4px 0;
         text-align: left;
       }
 
@@ -348,6 +388,8 @@
           grid-template-columns: 1fr;
         }
       }
+
+      /* ── About ── */
 
       .about-section {
         background: var(--bg-secondary);
@@ -363,21 +405,36 @@
         line-height: 1.8;
       }
 
+      .about-content h3 {
+        margin-bottom: var(--spacing-xs);
+      }
+
+      .about-content h4 {
+        margin-bottom: var(--spacing-md);
+        /* h4 on --bg-secondary (#e2e3e4): --text-green (#536a28) = 4.72:1 ✅ */
+      }
+
       .about-content p {
         margin-bottom: var(--spacing-md);
       }
 
-      /* Blockquote - Oxygen Light 14pt Mixed Caps, Light blue */
+      /* Blockquote — dark purple on light-blue tint
+         #42145f on #dff0f9 ≈ 10:1 ✅
+         Original: light-blue text on white = 1.78:1 — FAILS */
       blockquote {
         font-family: "Oxygen", sans-serif;
-        font-size: 14px;
+        font-size: 15px;
         font-weight: 300;
-        color: var(--light-blue);
+        color: var(--dark-purple);
+        background: #dff0f9;
         border-left: 4px solid var(--light-blue);
-        padding-left: var(--spacing-md);
+        padding: var(--spacing-sm) var(--spacing-md);
         margin: var(--spacing-md) 0;
         font-style: italic;
+        border-radius: 0 4px 4px 0;
       }
+
+      /* ── Contact ── */
 
       .contact-form {
         max-width: 600px;
@@ -388,6 +445,7 @@
         margin-bottom: var(--spacing-md);
       }
 
+      /* Label — dark grey 7.01:1 on white ✅ */
       .form-group label {
         display: block;
         margin-bottom: var(--spacing-xs);
@@ -422,6 +480,7 @@
         min-height: 150px;
       }
 
+      /* Button — white on purple 11.15:1 ✅ */
       button[type="submit"] {
         width: 100%;
         padding: var(--spacing-sm) var(--spacing-md);
@@ -451,7 +510,7 @@
 
       .form-message.success {
         background: rgba(190, 209, 138, 0.15);
-        border: 2px solid var(--light-green);
+        border: 2px solid var(--text-green);
         color: var(--dark-grey);
       }
 
@@ -461,7 +520,7 @@
         color: #c86464;
       }
 
-      /* Footer - Oxygen Regular 14pt */
+      /* Footer — dark grey on lightest-grey 5.46:1 ✅ */
       footer {
         padding: var(--spacing-lg) 0;
         text-align: center;
@@ -486,10 +545,6 @@
 
         h2 {
           font-size: 20px;
-        }
-
-        .subtitle {
-          font-size: 14px;
         }
 
         .logo-container {
@@ -526,9 +581,9 @@
         <h1 class="company-name"><span class="tab">Tab</span><span class="talks">Talks</span></h1>
         <h2 class="subtitle-heading">The status quo is not sacred</h2>
         <p class="subtitle-body">
-          We weren't born to follow scripts, chase titles, or settle for "how it's always been." I help people and organizations reimagine how we
-          connect, create, and navigate complexity — designing moments that spark clarity, connection, and change. Mix structure with serendipity, and
-          watch what emerges.
+          We weren't born to follow scripts, chase titles, or settle for “how it's always been.” Let's unlearn the default — and (co)design something
+          wildly better. I help people and organizations reimagine how we connect, create, and navigate complexity, by designing moments that spark
+          clarity, connection, and change. Mix structure with serendipity, and watch what emerges.
         </p>
         <div class="contact-info">
           <a href="#" id="emailLink" aria-label="Email">
@@ -556,34 +611,57 @@
               <p>
                 Working with your team, we design and deliver opportunities for your community and stakeholders to gather and solve complex problems.
                 From C-Suite strategic planning to community design charettes, we create environments for people to co-create solutions to the
-                underlying issues of pervasive problems. Facilitation &amp; co-design, foresight and collective vision making, systems-mapping and
-                strategy with soul, organizational storytelling &amp; narrative rewrites, gamified strategy sprints &amp; innovation labs. Chaos
-                becomes clarity — with a touch of glitter.
+                underlying issues of pervasive problems.
               </p>
+              <ul class="service-list">
+                <li>Facilitation &amp; co-design</li>
+                <li>Foresight and collective vision making</li>
+                <li>Systems-mapping and strategy with soul</li>
+                <li>Organizational storytelling &amp; narrative rewrites</li>
+                <li>Gamified strategy sprints &amp; innovation labs</li>
+              </ul>
+              <blockquote class="card-quote">Chaos becomes clarity — with a touch of glitter.</blockquote>
             </div>
+
             <div class="service-card">
               <i class="fas fa-dice"></i>
               <h3>Game Design</h3>
               <h4>Don't just bring people together — create a space to learn and share</h4>
               <p>
                 Working with your team, we unpack learning underlying needs to find your "ah-ha" moment and then custom design a board or card game.
-                From idea to printed format, we create a full game package with a replicable experience for your community to learn together. Custom
-                serious game design for events, learning, or engagement; retreat &amp; event experience design (in-person or virtual); community
-                activation strategies; and social chemistry engineering. It's not just about gathering people — it's about making them never want to
-                leave through fun and games!
+                From idea to printed format, we create a full game package with a replicable experience for your community to learn together.
               </p>
+              <ul class="service-list">
+                <li>Custom serious game design for events, learning, or engagement</li>
+                <li>Retreat &amp; event experience design (in-person or virtual)</li>
+                <li>Community activation strategies and relationship building</li>
+                <li>Social chemistry engineering (curated connections + playful rituals)</li>
+              </ul>
+              <blockquote class="card-quote">
+                It's not just about gathering people — it's about making them never want to leave through fun and games!
+              </blockquote>
             </div>
+
             <div class="service-card">
               <i class="fas fa-flask"></i>
               <h3>Learning &amp; Capacity Labs</h3>
               <h4>Learning doesn't have to be boring. Let's make it unforgettable.</h4>
               <p>
                 Skills and knowledge help build capacity and resilience. Working with your team, we create thoughtful learning opportunities that help
-                you design creative gatherings and develop your own gamified experience. Interactive, large-group workshops &amp; custom training
-                design; gamified, asynchronous learning journeys; bespoke toolkits &amp; resources; and learning experience co-design with
-                train-the-trainer. Knowledge sticks when it comes with a little mischief, a lot of meaning, and a sprinkling of fun.
+                you design creative gatherings and develop your own gamified experience. While showing you "behind the curtain" may be a terrible
+                business decision, it is in service of amplifying your impact.
               </p>
+              <ul class="service-list">
+                <li>Interactive, large-group workshops &amp; custom training design</li>
+                <li>Gamified, asynchronous learning journeys</li>
+                <li>Bespoke toolkits &amp; resources</li>
+                <li>Learning experience co-design with internal teams with train the trainer</li>
+              </ul>
+              <blockquote class="card-quote">
+                Knowledge sticks when it comes with a little mischief, a lot of meaning and a sprinkling of fun.
+              </blockquote>
             </div>
+
             <div class="service-card">
               <i class="fas fa-puzzle-piece"></i>
               <h3>Games</h3>
@@ -592,9 +670,13 @@
                 Games are fun — but they can also get serious. Serious games create a safe space to foster empathy between players, test new ideas,
                 and learn content in an engaging way. They use fun to motivate people to ask questions and explore topics that are often taboo. Custom
                 designed board and card games target the "pain points" as a deliberative dialogue tool, seeding a common lexicon and direction amongst
-                players who are often unable to see past their own assumptions. Examples include ReStrukt (community engagement), Shrimps Matter
-                (ocean ecosystems), and Can I Help? (mental health &amp; inclusion).
+                players who are often unable to see past their own assumptions.
               </p>
+              <ul class="service-list">
+                <li><strong>ReStrukt</strong> — empowering your community through engagement &amp; exploring complex community relationships</li>
+                <li><strong>Shrimps Matter</strong> — demonstrating the interconnected and fragile nature of an ocean ecosystem</li>
+                <li><strong>Can I Help?</strong> — exploring mental health and barriers to inclusion by prompting empathy and conversation</li>
+              </ul>
             </div>
           </div>
         </div>
@@ -678,10 +760,7 @@
 
       // Theme toggle - maintains light theme per brand guidelines
       const themeToggle = document.getElementById("themeToggle");
-      const themeIcon = themeToggle.querySelector("i");
-
-      // Since brand guidelines specify light background with dark text, we'll keep it simple
-      themeToggle.style.display = "none"; // Hide theme toggle to maintain brand consistency
+      themeToggle.style.display = "none"; // Hide to maintain brand consistency
 
       // Intersection Observer for scroll reveal
       const observerOptions = {
