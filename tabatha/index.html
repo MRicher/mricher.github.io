@@ -298,9 +298,15 @@
 
       .services-grid {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(3, 1fr);
         gap: var(--spacing-md);
         margin-top: var(--spacing-lg);
+      }
+
+      @media (max-width: 900px) {
+        .services-grid {
+          grid-template-columns: 1fr;
+        }
       }
 
       .service-card {
@@ -381,12 +387,6 @@
         margin-top: var(--spacing-sm);
         border-radius: 0 4px 4px 0;
         text-align: left;
-      }
-
-      @media (max-width: 600px) {
-        .services-grid {
-          grid-template-columns: 1fr;
-        }
       }
 
       /* ── About ── */
@@ -566,6 +566,220 @@
           right: var(--spacing-sm);
         }
       }
+      /* ── Games "Learn more" button ── */
+
+      .games-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: var(--spacing-sm);
+        padding: 0.6rem 1.2rem;
+        background: transparent;
+        color: var(--purple);
+        border: 2px solid var(--purple);
+        border-radius: 4px;
+        font-family: "Oxygen", sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .games-btn:hover {
+        background: var(--purple);
+        color: var(--white);
+      }
+
+      /* ── Lightbox overlay ── */
+
+      .lightbox-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+        padding: var(--spacing-md);
+        opacity: 0;
+        visibility: hidden;
+        transition:
+          opacity 0.3s ease,
+          visibility 0.3s ease;
+      }
+
+      .lightbox-overlay.open {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .lightbox-panel {
+        background: var(--white);
+        border-radius: 8px;
+        padding: var(--spacing-md) var(--spacing-md) var(--spacing-md);
+        max-width: 600px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        position: relative;
+        transform: translateY(16px);
+        transition: transform 0.3s ease;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+      }
+
+      .lightbox-overlay.open .lightbox-panel {
+        transform: translateY(0);
+      }
+
+      .lightbox-close {
+        position: absolute;
+        top: var(--spacing-sm);
+        right: var(--spacing-sm);
+        width: 36px;
+        height: 36px;
+        background: transparent;
+        border: 2px solid var(--border-light);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: var(--text-secondary);
+        transition: all 0.2s ease;
+        font-size: 14px;
+      }
+
+      .lightbox-close:hover {
+        border-color: var(--purple);
+        color: var(--purple);
+      }
+
+      .lightbox-header {
+        text-align: center;
+        margin-bottom: var(--spacing-sm);
+      }
+
+      .lightbox-header i {
+        font-size: 2rem;
+        color: var(--light-blue);
+        display: block;
+        margin-bottom: 0.5rem;
+      }
+
+      .lightbox-header h3 {
+        margin-bottom: 0.25rem;
+      }
+
+      .lightbox-header h4 {
+        margin-bottom: 0;
+      }
+
+      .lightbox-intro {
+        font-size: 14px;
+        color: var(--text-secondary);
+        line-height: 1.8;
+        margin-bottom: var(--spacing-md);
+        padding-bottom: var(--spacing-md);
+        border-bottom: 2px solid var(--border-light);
+      }
+
+      /* ── Carousel ── */
+
+      .carousel {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .carousel-track {
+        display: flex;
+        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .carousel-slide {
+        min-width: 100%;
+        padding: 0 0.25rem;
+        box-sizing: border-box;
+      }
+
+      .carousel-slide-icon {
+        text-align: center;
+        margin-bottom: 0.75rem;
+      }
+
+      .carousel-slide-icon i {
+        font-size: 2rem;
+        color: var(--light-blue);
+      }
+
+      .carousel-slide h3 {
+        text-align: center;
+        margin-bottom: 0.25rem;
+      }
+
+      .carousel-slide h4 {
+        text-align: center;
+        margin-bottom: var(--spacing-sm);
+      }
+
+      .carousel-slide p {
+        font-size: 14px;
+        color: var(--text-primary);
+        line-height: 1.8;
+        text-align: left;
+        min-height: 6rem;
+      }
+
+      .carousel-controls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--spacing-sm);
+        margin-top: var(--spacing-md);
+      }
+
+      .carousel-btn {
+        width: 38px;
+        height: 38px;
+        border: 2px solid var(--border-light);
+        border-radius: 50%;
+        background: transparent;
+        color: var(--text-secondary);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        font-size: 13px;
+      }
+
+      .carousel-btn:hover {
+        border-color: var(--purple);
+        color: var(--purple);
+      }
+
+      .carousel-dots {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        border: 2px solid var(--border);
+        background: transparent;
+        cursor: pointer;
+        padding: 0;
+        transition: all 0.2s ease;
+      }
+
+      .dot.active {
+        background: var(--purple);
+        border-color: var(--purple);
+      }
     </style>
   </head>
   <body>
@@ -640,6 +854,9 @@
               <blockquote class="card-quote">
                 It's not just about gathering people — it's about making them never want to leave through fun and games!
               </blockquote>
+              <button class="games-btn" id="openGamesLightbox" aria-haspopup="dialog">
+                <i class="fas fa-puzzle-piece"></i> Learn more about custom games
+              </button>
             </div>
 
             <div class="service-card">
@@ -660,23 +877,6 @@
               <blockquote class="card-quote">
                 Knowledge sticks when it comes with a little mischief, a lot of meaning and a sprinkling of fun.
               </blockquote>
-            </div>
-
-            <div class="service-card">
-              <i class="fas fa-puzzle-piece"></i>
-              <h3>Games</h3>
-              <h4>Why play?</h4>
-              <p>
-                Games are fun — but they can also get serious. Serious games create a safe space to foster empathy between players, test new ideas,
-                and learn content in an engaging way. They use fun to motivate people to ask questions and explore topics that are often taboo. Custom
-                designed board and card games target the "pain points" as a deliberative dialogue tool, seeding a common lexicon and direction amongst
-                players who are often unable to see past their own assumptions.
-              </p>
-              <ul class="service-list">
-                <li><strong>ReStrukt</strong> — empowering your community through engagement &amp; exploring complex community relationships</li>
-                <li><strong>Shrimps Matter</strong> — demonstrating the interconnected and fragile nature of an ocean ecosystem</li>
-                <li><strong>Can I Help?</strong> — exploring mental health and barriers to inclusion by prompting empathy and conversation</li>
-              </ul>
             </div>
           </div>
         </div>
@@ -745,8 +945,125 @@
       </div>
     </footer>
 
+    <!-- Games Lightbox -->
+    <div class="lightbox-overlay" id="gamesLightbox" role="dialog" aria-modal="true" aria-labelledby="lightboxTitle">
+      <div class="lightbox-panel">
+        <button class="lightbox-close" id="closeLightbox" aria-label="Close">
+          <i class="fas fa-times"></i>
+        </button>
+        <div class="lightbox-header">
+          <i class="fas fa-puzzle-piece"></i>
+          <h3 id="lightboxTitle">Custom Games</h3>
+          <h4>Why play?</h4>
+        </div>
+        <p class="lightbox-intro">
+          Games are fun — but they can also get serious. Serious games create a safe space to foster empathy between players, test new ideas, and
+          learn content in an engaging way. They use fun to motivate people to ask questions and explore topics that are often taboo. Custom designed
+          board and card games target the "pain points" as a deliberative dialogue tool, seeding a common lexicon and direction amongst players who
+          are often unable to see past their own assumptions.
+        </p>
+
+        <div class="carousel" aria-label="Game examples">
+          <div class="carousel-track" id="carouselTrack">
+            <div class="carousel-slide" role="group" aria-label="Game 1 of 3">
+              <div class="carousel-slide-icon"><i class="fas fa-globe-americas"></i></div>
+              <h3>ReStrukt</h3>
+              <h4>Empowering your community</h4>
+              <p>
+                A suite of games focused on community engagement and exploring the complex and emotive relationships in a community faced with a
+                challenge. ReStrukt creates space for participants to surface assumptions, test ideas, and build shared direction — even when views
+                clash.
+              </p>
+            </div>
+
+            <div class="carousel-slide" role="group" aria-label="Game 2 of 3">
+              <div class="carousel-slide-icon"><i class="fas fa-fish"></i></div>
+              <h3>Shrimps Matter</h3>
+              <h4>Ocean ecosystems &amp; interconnection</h4>
+              <p>
+                A game that demonstrates the interconnected and fragile nature of an ocean ecosystem. Current content is based around a Canadian
+                Maritime ecosystem. Players discover how small changes ripple through the whole system — and why every species (yes, even shrimps)
+                matters.
+              </p>
+            </div>
+
+            <div class="carousel-slide" role="group" aria-label="Game 3 of 3">
+              <div class="carousel-slide-icon"><i class="fas fa-hands-helping"></i></div>
+              <h3>Can I Help?</h3>
+              <h4>Mental health &amp; inclusion</h4>
+              <p>
+                A game that explores mental health and barriers to inclusion in a community by prompting conversations and empathy. Players can share
+                lived experiences if they choose, creating a safe and supported space to explore topics that are often hard to talk about.
+              </p>
+            </div>
+          </div>
+
+          <div class="carousel-controls">
+            <button class="carousel-btn" id="carouselPrev" aria-label="Previous game">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <div class="carousel-dots" id="carouselDots" aria-label="Game navigation">
+              <button class="dot active" data-index="0" aria-label="Game 1"></button>
+              <button class="dot" data-index="1" aria-label="Game 2"></button>
+              <button class="dot" data-index="2" aria-label="Game 3"></button>
+            </div>
+            <button class="carousel-btn" id="carouselNext" aria-label="Next game">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script>
-      // Email obfuscation - assembled at runtime to block scrapers
+      // ── Games Lightbox ──
+      const lightbox = document.getElementById("gamesLightbox");
+      const openBtn = document.getElementById("openGamesLightbox");
+      const closeBtn = document.getElementById("closeLightbox");
+
+      function openLightbox() {
+        lightbox.classList.add("open");
+        document.body.style.overflow = "hidden";
+        closeBtn.focus();
+      }
+
+      function closeLightbox() {
+        lightbox.classList.remove("open");
+        document.body.style.overflow = "";
+        openBtn.focus();
+      }
+
+      openBtn.addEventListener("click", openLightbox);
+      closeBtn.addEventListener("click", closeLightbox);
+
+      lightbox.addEventListener("click", (e) => {
+        if (e.target === lightbox) closeLightbox();
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && lightbox.classList.contains("open")) closeLightbox();
+      });
+
+      // ── Carousel ──
+      const track = document.getElementById("carouselTrack");
+      const dots = document.querySelectorAll(".dot");
+      const slides = document.querySelectorAll(".carousel-slide");
+      let current = 0;
+
+      function goTo(index) {
+        current = (index + slides.length) % slides.length;
+        track.style.transform = `translateX(-${current * 100}%)`;
+        dots.forEach((d, i) => d.classList.toggle("active", i === current));
+      }
+
+      document.getElementById("carouselPrev").addEventListener("click", () => goTo(current - 1));
+      document.getElementById("carouselNext").addEventListener("click", () => goTo(current + 1));
+      dots.forEach((d) => d.addEventListener("click", () => goTo(+d.dataset.index)));
+
+      // Reset carousel to slide 1 each time lightbox opens
+      openBtn.addEventListener("click", () => goTo(0));
+
+      // ── Email obfuscation ──
       const u = "contact";
       const d = ["tabtalks", "io"].join(".");
       const email = u + "@" + d;
