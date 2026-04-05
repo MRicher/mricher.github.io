@@ -703,6 +703,16 @@
         box-sizing: border-box;
       }
 
+      .carousel-slide-img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        border-radius: 6px;
+        margin-bottom: var(--spacing-sm);
+        display: block;
+        background: var(--lightest-grey);
+      }
+
       .carousel-slide-icon {
         text-align: center;
         margin-bottom: 0.75rem;
@@ -854,9 +864,7 @@
               <blockquote class="card-quote">
                 It's not just about gathering people — it's about making them never want to leave through fun and games!
               </blockquote>
-              <button class="games-btn" id="openGamesLightbox" aria-haspopup="dialog">
-                <i class="fas fa-puzzle-piece"></i> Learn more about custom games
-              </button>
+              <button class="games-btn" id="openGamesLightbox" aria-haspopup="dialog">Learn more about custom games</button>
             </div>
 
             <div class="service-card">
@@ -966,7 +974,7 @@
         <div class="carousel" aria-label="Game examples">
           <div class="carousel-track" id="carouselTrack">
             <div class="carousel-slide" role="group" aria-label="Game 1 of 3">
-              <div class="carousel-slide-icon"><i class="fas fa-globe-americas"></i></div>
+              <img src="https://picsum.photos/seed/restrukt/600/180" alt="ReStrukt game" class="carousel-slide-img" />
               <h3>ReStrukt</h3>
               <h4>Empowering your community</h4>
               <p>
@@ -977,7 +985,7 @@
             </div>
 
             <div class="carousel-slide" role="group" aria-label="Game 2 of 3">
-              <div class="carousel-slide-icon"><i class="fas fa-fish"></i></div>
+              <img src="https://picsum.photos/seed/shrimps/600/180" alt="Shrimps Matter game" class="carousel-slide-img" />
               <h3>Shrimps Matter</h3>
               <h4>Ocean ecosystems &amp; interconnection</h4>
               <p>
@@ -988,7 +996,7 @@
             </div>
 
             <div class="carousel-slide" role="group" aria-label="Game 3 of 3">
-              <div class="carousel-slide-icon"><i class="fas fa-hands-helping"></i></div>
+              <img src="https://picsum.photos/seed/canIhelp/600/180" alt="Can I Help? game" class="carousel-slide-img" />
               <h3>Can I Help?</h3>
               <h4>Mental health &amp; inclusion</h4>
               <p>
