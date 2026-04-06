@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	<style>
+	 :root {
+	   --gc-red: #af3c43;
+	   --gc-red-dark: #8b1a1f;
+	   --gc-blue: #26374a;
+	   --gc-blue-light: #335075;
+	   --gc-link: #2b4380;
+	   --gc-focus: #ffbf47;
+	   --gc-border: #d3d3d3;
+	   --gc-bg-header: #26374a;
+	   --gc-bg-stripe: #f5f5f5;
+	   --gc-bg-hover: #e8f0fc;
+	   --gc-text: #333;
+	   --gc-text-muted: #5c5c5c;
+	   --gc-badge-en-bg: #e8f0fc;
+	   --gc-badge-en: #2b4380;
+	   --gc-badge-fr-bg: #fde8e9;
+	   --gc-badge-fr: #8b1a1f;
+	   --gc-badge-prev-bg: #f0f0f0;
+	   --gc-badge-prev: #5c5c5c;
+	   --gc-shadow: 0 1px 3px rgba(0,0,0,0.08);
+	 }
+
+	 * { box-sizing: border-box; margin: 0; padding: 0; }
+
+	 .gc-content {
+	   font-family: 'Noto Sans', 'Helvetica Neue', Arial, sans-serif;
+	   font-size: 16px;
+	   color: var(--gc-text);
+	   padding: 2rem 0 3rem;
+	   max-width: 100%;
+	 }
+
+	 .gc-section-header {
+	   border-left: 4px solid var(--gc-red);
+	   padding-left: 1rem;
+	   margin-bottom: 1.5rem;
+	 }
+
+	 .gc-section-header h2 {
+	   font-size: 1.5rem;
+	   font-weight: 700;
+	   color: var(--gc-blue);
+	   line-height: 1.3;
+	   letter-spacing: -0.01em;
+	 }
+
+	 .gc-section-header p {
+	   font-size: 0.9rem;
+	   color: var(--gc-text-muted);
+	   margin-top: 0.3rem;
+	 }
+
+	 .gc-controls {
+	   display: flex;
+	   flex-wrap: wrap;
+	   gap: 12px;
+	   margin-bottom: 1.25rem;
+	   align-items: center;
+	 }
+
+	 .gc-search-wrap {
+	   position: relative;
+	   flex: 1;
+	   min-width: 220px;
+	 }
+
+	 .gc-search-wrap svg {
+	   position: absolute;
+	   left: 12px;
+	   top: 50%;
+	   transform: translateY(-50%);
+	   width: 16px;
+	   height: 16px;
+	   fill: var(--gc-text-muted);
+	   pointer-events: none;
+	 }
+
+	 .gc-search {
+	   width: 100%;
+	   padding: 0.55rem 1rem 0.55rem 2.5rem;
+	   font-size: 0.9rem;
+	   border: 2px solid var(--gc-border);
+	   border-radius: 4px;
+	   background: #fff;
+	   color: var(--gc-text);
+	   transition: border-color 0.15s;
+	   font-family: inherit;
+	 }
+	 .gc-search:focus {
+	   outline: 3px solid var(--gc-focus);
+	   outline-offset: 0;
+	   border-color: var(--gc-blue);
+	 }
+
+	 .gc-filter-group {
+	   display: flex;
+	   gap: 6px;
+	   align-items: center;
+	   flex-wrap: wrap;
+	 }
+
+	 .gc-filter-btn {
+	   padding: 0.4rem 0.85rem;
+	   font-size: 0.82rem;
+	   font-family: inherit;
+	   border: 1.5px solid var(--gc-border);
+	   border-radius: 20px;
+	   background: #fff;
+	   color: var(--gc-text);
+	   cursor: pointer;
+	   transition: background 0.12s, border-color 0.12s, color 0.12s;
+	   font-weight: 500;
+	 }
+	 .gc-filter-btn:focus {
+	   outline: 3px solid var(--gc-focus);
+	   outline-offset: 1px;
+	 }
+	 .gc-filter-btn.active, .gc-filter-btn:hover {
+	   background: var(--gc-blue);
+	   border-color: var(--gc-blue);
+	   color: #fff;
+	 }
+
+	 .gc-result-count {
+	   font-size: 0.85rem;
+	   color: var(--gc-text-muted);
+	   margin-bottom: 0.75rem;
+	 }
+	 .gc-result-count strong { color: var(--gc-blue); }
+
+	 .gc-table-wrapper {
+	   width: 100%;
+	   overflow-x: auto;
+	   border: 1px solid var(--gc-border);
+	   border-radius: 6px;
+	   box-shadow: var(--gc-shadow);
+	 }
+
+	 table.gc-table {
+	   width: 100%;
+	   border-collapse: collapse;
+	   table-layout: fixed;
+	   font-size: 0.9rem;
+	 }
+
+	 .gc-table thead {
+	   background: var(--gc-bg-header);
+	 }
+
+	 .gc-table thead th {
+	   color: #fff;
+	   font-weight: 600;
+	   font-size: 0.82rem;
+	   text-transform: uppercase;
+	   letter-spacing: 0.04em;
+	   padding: 0.85rem 1rem;
+	   text-align: left;
+	   cursor: pointer;
+	   user-select: none;
+	   white-space: nowrap;
+	   position: relative;
+	 }
+	 .gc-table thead th:focus {
+	   outline: 3px solid var(--gc-focus);
+	   outline-offset: -3px;
+	 }
+	 .gc-table thead th .sort-icon {
+	   display: inline-block;
+	   margin-left: 5px;
+	   opacity: 0.5;
+	   font-size: 0.7rem;
+	   vertical-align: middle;
+	 }
+	 .gc-table thead th.sorted-asc .sort-icon::after { content: '▲'; opacity: 1; }
+	 .gc-table thead th.sorted-desc .sort-icon::after { content: '▼'; opacity: 1; }
+	 .gc-table thead th:not(.sorted-asc):not(.sorted-desc) .sort-icon::after { content: '⇅'; }
+
+	 .gc-table colgroup col:nth-child(1) { width: 9%; }
+	 .gc-table colgroup col:nth-child(2) { width: 9%; }
+	 .gc-table colgroup col:nth-child(3) { width: 24%; }
+	 .gc-table colgroup col:nth-child(4) { width: 24%; }
+	 .gc-table colgroup col:nth-child(5) { width: 18%; }
+	 .gc-table colgroup col:nth-child(6) { width: 16%; }
+
+	 .gc-table tbody tr {
+	   border-bottom: 1px solid var(--gc-border);
+	   transition: background 0.1s;
+	 }
+	 .gc-table tbody tr:nth-child(even) { background: var(--gc-bg-stripe); }
+	 .gc-table tbody tr:hover { background: var(--gc-bg-hover); }
+	 .gc-table tbody tr:focus-within { outline: 2px solid var(--gc-focus); outline-offset: -2px; }
+
+	 .gc-table td {
+	   padding: 0.8rem 1rem;
+	   vertical-align: top;
+	   color: var(--gc-text);
+	   line-height: 1.45;
+	 }
+
+	 .abbr-pill {
+	   display: inline-block;
+	   font-weight: 700;
+	   font-size: 0.92rem;
+	   letter-spacing: 0.02em;
+	   padding: 2px 0;
+	   color: var(--gc-blue);
+	 }
+
+	 .lang-badge {
+	   display: inline-block;
+	   font-size: 0.7rem;
+	   font-weight: 600;
+	   padding: 2px 6px;
+	   border-radius: 3px;
+	   text-transform: uppercase;
+	   letter-spacing: 0.04em;
+	   vertical-align: middle;
+	   margin-left: 4px;
+	 }
+	 .lang-en { background: var(--gc-badge-en-bg); color: var(--gc-badge-en); }
+	 .lang-fr { background: var(--gc-badge-fr-bg); color: var(--gc-badge-fr); }
+
+	 .full-title { font-size: 0.88rem; color: var(--gc-text); }
+	 .full-title-fr { font-size: 0.82rem; color: var(--gc-text-muted); margin-top: 2px; font-style: italic; }
+
+	 .prev-tag {
+	   display: inline-block;
+	   font-size: 0.75rem;
+	   background: var(--gc-badge-prev-bg);
+	   color: var(--gc-badge-prev);
+	   border: 1px solid #ccc;
+	   border-radius: 3px;
+	   padding: 1px 6px;
+	   margin: 2px 2px 2px 0;
+	   font-family: 'Courier New', monospace;
+	 }
+	 .no-prev { color: var(--gc-text-muted); font-size: 0.8rem; font-style: italic; }
+
+	 .status-badge {
+	   display: inline-block;
+	   font-size: 0.75rem;
+	   padding: 3px 8px;
+	   border-radius: 3px;
+	   font-weight: 600;
+	   text-transform: uppercase;
+	   letter-spacing: 0.03em;
+	 }
+	 .status-current { background: #d5f0d5; color: #1d6b1d; }
+	 .status-deprecated { background: #fde8e9; color: #8b1a1f; }
+	 .status-provisional { background: #fef6e0; color: #6b4c00; }
+
+	 .gc-no-results {
+	   text-align: center;
+	   padding: 2.5rem 1rem;
+	   color: var(--gc-text-muted);
+	   font-size: 0.9rem;
+	 }
+
+	 .gc-table-footer {
+	   display: flex;
+	   justify-content: space-between;
+	   align-items: center;
+	   margin-top: 1rem;
+	   font-size: 0.82rem;
+	   color: var(--gc-text-muted);
+	   flex-wrap: wrap;
+	   gap: 8px;
+	 }
+
+	 .gc-legend {
+	   display: flex;
+	   gap: 12px;
+	   flex-wrap: wrap;
+	   margin-top: 1.25rem;
+	   padding: 0.75rem 1rem;
+	   background: var(--gc-bg-stripe);
+	   border-left: 3px solid var(--gc-border);
+	   border-radius: 0 4px 4px 0;
+	   font-size: 0.8rem;
+	   color: var(--gc-text-muted);
+	 }
+	 .gc-legend-item { display: flex; align-items: center; gap: 5px; }
+	</style>
+	<title></title>
+</head>
+<body>
+	<div class="gc-content" role="main">
+		<div class="gc-section-header">
+			<h2>Government of Canada — Abbreviations / Abréviations du gouvernement du Canada</h2>
+			<p>Official English and French abbreviations, full titles, and previously used designations — Abréviations officielles anglaises et françaises, titres complets et désignations antérieures</p>
+		</div>
+		<div class="gc-controls">
+			<div class="gc-search-wrap" role="search">
+				<svg aria-hidden="true" viewbox="0 0 24 24">
+				<path d="M10 2a8 8 0 105.293 14.293l4.707 4.707 1.414-1.414-4.707-4.707A8 8 0 0010 2zm0 2a6 6 0 110 12A6 6 0 0110 4z"></path></svg> <input aria-label="Search the abbreviations table" class="gc-search" id="tableSearch" oninput="filterTable()" placeholder="Search abbreviations, titles… / Rechercher…" type="search">
+			</div>
+			<div aria-label="Filter by status" class="gc-filter-group" role="group">
+				<button aria-pressed="true" class="gc-filter-btn active" onclick="setFilter('all', this)">All / Tous</button> <button aria-pressed="false" class="gc-filter-btn" onclick="setFilter('current', this)">Current / Courant</button> <button aria-pressed="false" class="gc-filter-btn" onclick="setFilter('deprecated', this)">Deprecated / Déprécié</button>
+			</div>
+		</div>
+		<p aria-atomic="true" aria-live="polite" class="gc-result-count" id="resultCount"></p>
+		<div aria-label="Abbreviations data table" class="gc-table-wrapper" role="region" tabindex="0">
+			<table aria-describedby="tableCaption" class="gc-table" id="abbrevTable">
+				<caption id="tableCaption" style="position:absolute;left:-9999px;">
+					Government of Canada bilingual abbreviations — columns: English abbreviation, French abbreviation, English full title, French full title, previous abbreviations, status
+				</caption>
+				<colgroup>
+					<col>
+					<col>
+					<col>
+					<col>
+					<col>
+					<col>
+				</colgroup>
+				<thead>
+					<tr>
+						<th aria-sort="none" class="sorted-asc" data-col="0" onclick="sortTable(0, this)" onkeydown="if(event.key==='Enter'||event.key===' ')sortTable(0,this)" scope="col" tabindex="0">Abbrev. (EN) <span aria-hidden="true" class="sort-icon"></span></th>
+						<th aria-sort="none" data-col="1" onclick="sortTable(1, this)" onkeydown="if(event.key==='Enter'||event.key===' ')sortTable(1,this)" scope="col" tabindex="0">Abbrev. (FR) <span aria-hidden="true" class="sort-icon"></span></th>
+						<th aria-sort="none" data-col="2" onclick="sortTable(2, this)" onkeydown="if(event.key==='Enter'||event.key===' ')sortTable(2,this)" scope="col" tabindex="0">Full Title (English) <span aria-hidden="true" class="sort-icon"></span></th>
+						<th aria-sort="none" data-col="3" onclick="sortTable(3, this)" onkeydown="if(event.key==='Enter'||event.key===' ')sortTable(3,this)" scope="col" tabindex="0">Titre complet (français) <span aria-hidden="true" class="sort-icon"></span></th>
+						<th data-col="4" scope="col">Previous Abbrev. / Précédentes</th>
+						<th aria-sort="none" data-col="5" onclick="sortTable(5, this)" onkeydown="if(event.key==='Enter'||event.key===' ')sortTable(5,this)" scope="col" tabindex="0">Status / Statut <span aria-hidden="true" class="sort-icon"></span></th>
+					</tr>
+				</thead>
+				<tbody id="tableBody"></tbody>
+			</table>
+		</div>
+		<div class="gc-table-footer">
+			<div class="gc-legend">
+				<span class="gc-legend-item"><span class="status-badge status-current">Current</span> Active, officially recognized</span> <span class="gc-legend-item"><span class="status-badge status-deprecated">Deprecated</span> No longer in use / Hors d'usage</span>
+			</div>
+		</div>
+	</div>
+	<script>
+	const data = [
+	 { en: "AAFC", fr: "AAC", titleEn: "Agriculture and Agri-Food Canada", titleFr: "Agriculture et Agroalimentaire Canada", prev: ["Agr"], status: "current" },
+	 { en: "CATSA", fr: "ACSTA", titleEn: "Canadian Air Transport Security Authority", titleFr: "Administration canadienne de la sûreté du transport aérien", prev: [], status: "current" },
+	 { en: "CBSA", fr: "ASFC", titleEn: "Canada Border Services Agency", titleFr: "Agence des services frontaliers du Canada", prev: ["CCRA", "ADRC"], status: "current" },
+	 { en: "CDS", fr: "CESD", titleEn: "Commissioner of the Environment and Sustainable Development", titleFr: "Commissaire à l'environnement et au développement durable", prev: [], status: "current" },
+	 { en: "CEAA", fr: "ACEE", titleEn: "Canadian Environmental Assessment Agency", titleFr: "Agence canadienne d'évaluation environnementale", prev: ["FEARO"], status: "deprecated" },
+	 { en: "CFIA", fr: "ACIA", titleEn: "Canadian Food Inspection Agency", titleFr: "Agence canadienne d'inspection des aliments", prev: [], status: "current" },
+	 { en: "CIRNAC", fr: "RCAANC", titleEn: "Crown-Indigenous Relations and Northern Affairs Canada", titleFr: "Relations Couronne-Autochtones et Affaires du Nord Canada", prev: ["INAC", "AANDC", "DIAND"], status: "current" },
+	 { en: "CRTC", fr: "CRTC", titleEn: "Canadian Radio-television and Telecommunications Commission", titleFr: "Conseil de la radiodiffusion et des télécommunications canadiennes", prev: ["BBG", "CTC"], status: "current" },
+	 { en: "CSE", fr: "CST", titleEn: "Communications Security Establishment", titleFr: "Centre de la sécurité des télécommunications", prev: ["CSIS"], status: "current" },
+	 { en: "CSIS", fr: "SCRS", titleEn: "Canadian Security Intelligence Service", titleFr: "Service canadien du renseignement de sécurité", prev: [], status: "current" },
+	 { en: "CTA", fr: "OTC", titleEn: "Canadian Transportation Agency", titleFr: "Office des transports du Canada", prev: ["NTA", "CTC"], status: "current" },
+	 { en: "DFO", fr: "MPO", titleEn: "Fisheries and Oceans Canada", titleFr: "Pêches et Océans Canada", prev: ["DOF"], status: "current" },
+	 { en: "DND", fr: "MDN", titleEn: "Department of National Defence", titleFr: "Ministère de la Défense nationale", prev: [], status: "current" },
+	 { en: "ECCC", fr: "ECCC", titleEn: "Environment and Climate Change Canada", titleFr: "Environnement et Changement climatique Canada", prev: ["EC", "DOE"], status: "current" },
+	 { en: "ESDC", fr: "EDSC", titleEn: "Employment and Social Development Canada", titleFr: "Emploi et Développement social Canada", prev: ["HRSDC", "HRDC", "DOL"], status: "current" },
+	 { en: "Finance", fr: "Finances", titleEn: "Department of Finance Canada", titleFr: "Ministère des Finances Canada", prev: ["DOF"], status: "current" },
+	 { en: "GAC", fr: "AMC", titleEn: "Global Affairs Canada", titleFr: "Affaires mondiales Canada", prev: ["DFATD", "DFAIT", "DEA"], status: "current" },
+	 { en: "HC", fr: "SC", titleEn: "Health Canada", titleFr: "Santé Canada", prev: ["DOH", "NHW"], status: "current" },
+	 { en: "IAAC", fr: "AEIC", titleEn: "Impact Assessment Agency of Canada", titleFr: "Agence d'évaluation d'impact du Canada", prev: ["CEAA", "ACEE"], status: "current" },
+	 { en: "ISED", fr: "ISDE", titleEn: "Innovation, Science and Economic Development Canada", titleFr: "Innovation, Sciences et Développement économique Canada", prev: ["IC", "IT", "DOC"], status: "current" },
+	 { en: "ISC", fr: "SAC", titleEn: "Indigenous Services Canada", titleFr: "Services aux Autochtones Canada", prev: ["INAC", "DIAND"], status: "current" },
+	 { en: "JUS", fr: "JUS", titleEn: "Department of Justice Canada", titleFr: "Ministère de la Justice Canada", prev: ["DOJ"], status: "current" },
+	 { en: "LAC", fr: "BAC", titleEn: "Library and Archives Canada", titleFr: "Bibliothèque et Archives Canada", prev: ["NAC", "NA"], status: "current" },
+	 { en: "NRCan", fr: "RNCan", titleEn: "Natural Resources Canada", titleFr: "Ressources naturelles Canada", prev: ["EMR", "NRCAN"], status: "current" },
+	 { en: "NSERC", fr: "CRSNG", titleEn: "Natural Sciences and Engineering Research Council of Canada", titleFr: "Conseil de recherches en sciences naturelles et en génie du Canada", prev: [], status: "current" },
+	 { en: "NRC", fr: "CNRC", titleEn: "National Research Council Canada", titleFr: "Conseil national de recherches Canada", prev: [], status: "current" },
+	 { en: "OAG", fr: "BVG", titleEn: "Office of the Auditor General of Canada", titleFr: "Bureau du vérificateur général du Canada", prev: [], status: "current" },
+	 { en: "PCH", fr: "PCH", titleEn: "Canadian Heritage", titleFr: "Patrimoine canadien", prev: ["DOC", "Secrétariat d'État"], status: "current" },
+	 { en: "PCO", fr: "BCP", titleEn: "Privy Council Office", titleFr: "Bureau du Conseil privé", prev: [], status: "current" },
+	 { en: "PMO", fr: "CPM", titleEn: "Prime Minister's Office", titleFr: "Cabinet du Premier ministre", prev: [], status: "current" },
+	 { en: "PS", fr: "SP", titleEn: "Public Safety Canada", titleFr: "Sécurité publique Canada", prev: ["SG", "JS"], status: "current" },
+	 { en: "PSC", fr: "CFP", titleEn: "Public Service Commission of Canada", titleFr: "Commission de la fonction publique du Canada", prev: ["CSC"], status: "current" },
+	 { en: "PSPC", fr: "SPAC", titleEn: "Public Services and Procurement Canada", titleFr: "Services publics et Approvisionnement Canada", prev: ["PWGSC", "TPSGC", "DPW"], status: "current" },
+	 { en: "SSC", fr: "SSC", titleEn: "Shared Services Canada", titleFr: "Services partagés Canada", prev: [], status: "current" },
+	 { en: "StatCan", fr: "StatCan", titleEn: "Statistics Canada", titleFr: "Statistique Canada", prev: ["DBS", "CBS"], status: "current" },
+	 { en: "TC", fr: "TC", titleEn: "Transport Canada", titleFr: "Transports Canada", prev: ["DOT"], status: "current" },
+	 { en: "TBS", fr: "SCT", titleEn: "Treasury Board of Canada Secretariat", titleFr: "Secrétariat du Conseil du Trésor du Canada", prev: ["TB"], status: "current" },
+	 { en: "VAC", fr: "ACC", titleEn: "Veterans Affairs Canada", titleFr: "Anciens Combattants Canada", prev: ["DVA", "DND"], status: "current" },
+	 { en: "WEDA", fr: "ADEO", titleEn: "Western Economic Diversification Agency", titleFr: "Agence de diversification de l'économie de l'Ouest", prev: ["WD", "WEDC"], status: "deprecated" },
+	];
+
+	let activeFilter = 'all';
+	let sortCol = 0;
+	let sortDir = 1;
+	let filteredData = [...data];
+
+	function renderTable(rows) {
+	 const tbody = document.getElementById('tableBody');
+	 const count = document.getElementById('resultCount');
+	 if (!rows.length) {
+	   tbody.innerHTML = '<tr><td colspan="6" class="gc-no-results">No results found. / Aucun résultat trouvé.<\/td><\/tr>';
+	   count.innerHTML = '<strong>0<\/strong> results';
+	   return;
+	 }
+	 count.innerHTML = 'Showing <strong>' + rows.length + '<\/strong> of <strong>' + data.length + '<\/strong> entries';
+	 tbody.innerHTML = rows.map(r => {
+	   const prevHtml = r.prev.length
+	     ? r.prev.map(p => '<span class="prev-tag">' + p + '<\/span>').join('')
+	     : '<span class="no-prev">—<\/span>';
+	   const statusHtml = '<span class="status-badge status-' + r.status + '">' + (r.status === 'current' ? 'Current' : 'Deprecated') + '<\/span>';
+	   return '<tr>' +
+	     '<td><span class="abbr-pill">' + r.en + '<\/span> <span class="lang-badge lang-en" aria-label="English">EN<\/span><\/td>' +
+	     '<td><span class="abbr-pill">' + r.fr + '<\/span> <span class="lang-badge lang-fr" aria-label="French">FR<\/span><\/td>' +
+	     '<td><div class="full-title">' + r.titleEn + '<\/div><\/td>' +
+	     '<td><div class="full-title full-title-fr">' + r.titleFr + '<\/div><\/td>' +
+	     '<td>' + prevHtml + '<\/td>' +
+	     '<td>' + statusHtml + '<\/td>' +
+	   '<\/tr>';
+	 }).join('');
+	}
+
+	function applyFiltersAndSort() {
+	 const q = (document.getElementById('tableSearch').value || '').toLowerCase();
+	 filteredData = data.filter(r => {
+	   const matchFilter = activeFilter === 'all' || r.status === activeFilter;
+	   const matchSearch = !q || [r.en, r.fr, r.titleEn, r.titleFr, ...r.prev].some(v => v.toLowerCase().includes(q));
+	   return matchFilter && matchSearch;
+	 });
+	 filteredData.sort((a, b) => {
+	   const keys = ['en', 'fr', 'titleEn', 'titleFr', null, 'status'];
+	   const k = keys[sortCol];
+	   if (!k) return 0;
+	   return sortDir * a[k].localeCompare(b[k]);
+	 });
+	 renderTable(filteredData);
+	}
+
+	function filterTable() { applyFiltersAndSort(); }
+
+	function setFilter(f, btn) {
+	 activeFilter = f;
+	 document.querySelectorAll('.gc-filter-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed','false'); });
+	 btn.classList.add('active'); btn.setAttribute('aria-pressed','true');
+	 applyFiltersAndSort();
+	}
+
+	function sortTable(col, th) {
+	 if (sortCol === col) { sortDir *= -1; }
+	 else { sortCol = col; sortDir = 1; }
+	 document.querySelectorAll('.gc-table thead th').forEach(h => { h.classList.remove('sorted-asc','sorted-desc'); h.setAttribute('aria-sort','none'); });
+	 th.classList.add(sortDir === 1 ? 'sorted-asc' : 'sorted-desc');
+	 th.setAttribute('aria-sort', sortDir === 1 ? 'ascending' : 'descending');
+	 applyFiltersAndSort();
+	}
+
+	applyFiltersAndSort();
+	</script>
+</body>
+</html>
