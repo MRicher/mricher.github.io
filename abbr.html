@@ -51,7 +51,7 @@
 	.legacy-label{font-size:.68rem;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--color-text-secondary);margin-bottom:.3rem}
 	.legacy-item{display:flex;align-items:baseline;flex-wrap:wrap;gap:3px 6px;margin-bottom:.3rem}
 	.legacy-item:last-child{margin-bottom:0}
-	.lg-abbr{font-size:.82rem;font-weight:500;color:var(--color-text-secondary);text-decoration:line-through;text-decoration-color:var(--gc-border)}
+	.lg-abbr{font-size:.82rem;font-weight:500;color:var(--color-text-secondary);text-decoration-color:var(--gc-border)}
 	.lg-sep{font-size:.75rem;color:var(--color-text-secondary);opacity:.6;flex-shrink:0}
 	.lg-arrow{font-size:.75rem;color:var(--color-text-secondary);opacity:.55;flex-shrink:0;padding:0 2px}
 	.lg-link{font-size:.82rem;color:var(--gc-link);text-decoration:underline;cursor:pointer;background:none;border:none;font-family:var(--gc-font);padding:0;font-weight:500}
@@ -190,9 +190,9 @@
 	 if(isDesktop){
 	   const ths=[
 	     {label:'Abbreviation EN / FR',key:'en'},
-	     {label:'Full title (English)',key:'titleEn'},
-	     {label:'Titre complet (français)',key:null},
-	     {label:'Previous / Précédentes',key:null},
+	     {label:'English full title',key:'titleEn'},
+	     {label:'French full title',key:null},
+	     {label:'Previous',key:null},
 	   ].map(c=>{
 	     const cls=c.key&&sortKey===c.key?'asc':'';
 	     const si=c.key?'<span class="si" aria-hidden="true"><\/span>':'';
@@ -205,7 +205,7 @@
 	     const legHtml=r.prev.length?r.prev.map(p=>{
 	       const currentIdx=rows.indexOf(r);
 	       return`<div class="dt-legacy-item">
-	         <span style="font-weight:500;color:var(--color-text-secondary);text-decoration:line-through;text-decoration-color:rgba(0,0,0,0.25)">${hl(p.en,q)}&nbsp;/&nbsp;${hl(p.fr,q)}<\/span>
+	         <span style="font-weight:500;color:var(--color-text-secondary);text-decoration-color:rgba(0,0,0,0.25)">${hl(p.en,q)}&nbsp;/&nbsp;${hl(p.fr,q)}<\/span>
 	         <span class="lg-arrow">→<\/span>
 	         <button class="lg-link" onclick="scrollTo('${r.en}')" title="Go to current: ${r.en} / ${r.fr}">${hl(r.en,q)}&nbsp;/&nbsp;${hl(r.fr,q)}<\/button>
 	       <\/div>
