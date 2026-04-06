@@ -291,8 +291,8 @@
 <body>
 	<div class="gc-content" role="main">
 		<div class="gc-section-header">
-			<h2>Government of Canada — Abbreviations / Abréviations du gouvernement du Canada</h2>
-			<p>Official English and French abbreviations, full titles, and previously used designations — Abréviations officielles anglaises et françaises, titres complets et désignations antérieures</p>
+			<h2><abbr>RCMP</abbr> — Abbreviations</h2>
+			<p>Official English and French abbreviations, full titles, and previously used designations</p>
 		</div>
 		<div class="gc-controls">
 			<div class="gc-search-wrap" role="search">
@@ -300,7 +300,7 @@
 				<path d="M10 2a8 8 0 105.293 14.293l4.707 4.707 1.414-1.414-4.707-4.707A8 8 0 0010 2zm0 2a6 6 0 110 12A6 6 0 0110 4z"></path></svg> <input aria-label="Search the abbreviations table" class="gc-search" id="tableSearch" oninput="filterTable()" placeholder="Search abbreviations, titles… / Rechercher…" type="search">
 			</div>
 			<div aria-label="Filter by status" class="gc-filter-group" role="group">
-				<button aria-pressed="true" class="gc-filter-btn active" onclick="setFilter('all', this)">All / Tous</button> <button aria-pressed="false" class="gc-filter-btn" onclick="setFilter('current', this)">Current / Courant</button> <button aria-pressed="false" class="gc-filter-btn" onclick="setFilter('deprecated', this)">Deprecated / Déprécié</button>
+				<button aria-pressed="true" class="gc-filter-btn active" onclick="setFilter('all', this)">All / Tous</button> <button aria-pressed="false" class="gc-filter-btn" onclick="setFilter('current', this)">Current</button> <button aria-pressed="false" class="gc-filter-btn" onclick="setFilter('deprecated', this)">Deprecated / Déprécié</button>
 			</div>
 		</div>
 		<p aria-atomic="true" aria-live="polite" class="gc-result-count" id="resultCount"></p>
@@ -319,12 +319,12 @@
 				</colgroup>
 				<thead>
 					<tr>
-						<th aria-sort="none" class="sorted-asc" data-col="0" onclick="sortTable(0, this)" onkeydown="if(event.key==='Enter'||event.key===' ')sortTable(0,this)" scope="col" tabindex="0">Abbrev. (EN) <span aria-hidden="true" class="sort-icon"></span></th>
-						<th aria-sort="none" data-col="1" onclick="sortTable(1, this)" onkeydown="if(event.key==='Enter'||event.key===' ')sortTable(1,this)" scope="col" tabindex="0">Abbrev. (FR) <span aria-hidden="true" class="sort-icon"></span></th>
-						<th aria-sort="none" data-col="2" onclick="sortTable(2, this)" onkeydown="if(event.key==='Enter'||event.key===' ')sortTable(2,this)" scope="col" tabindex="0">Full Title (English) <span aria-hidden="true" class="sort-icon"></span></th>
-						<th aria-sort="none" data-col="3" onclick="sortTable(3, this)" onkeydown="if(event.key==='Enter'||event.key===' ')sortTable(3,this)" scope="col" tabindex="0">Titre complet (français) <span aria-hidden="true" class="sort-icon"></span></th>
-						<th data-col="4" scope="col">Previous Abbrev. / Précédentes</th>
-						<th aria-sort="none" data-col="5" onclick="sortTable(5, this)" onkeydown="if(event.key==='Enter'||event.key===' ')sortTable(5,this)" scope="col" tabindex="0">Status / Statut <span aria-hidden="true" class="sort-icon"></span></th>
+						<th aria-sort="none" class="sorted-asc" data-col="0" onclick="sortTable(0, this)" onkeydown="if(event.key==='Enter'||event.key===' ')sortTable(0,this)" scope="col" tabindex="0">English abbreviation <span aria-hidden="true" class="sort-icon"></span></th>
+						<th aria-sort="none" data-col="1" onclick="sortTable(1, this)" onkeydown="if(event.key==='Enter'||event.key===' ')sortTable(1,this)" scope="col" tabindex="0">French abbreviation <span aria-hidden="true" class="sort-icon"></span></th>
+						<th aria-sort="none" data-col="2" onclick="sortTable(2, this)" onkeydown="if(event.key==='Enter'||event.key===' ')sortTable(2,this)" scope="col" tabindex="0">English full title <span aria-hidden="true" class="sort-icon"></span></th>
+						<th aria-sort="none" data-col="3" onclick="sortTable(3, this)" onkeydown="if(event.key==='Enter'||event.key===' ')sortTable(3,this)" scope="col" tabindex="0">French full title <span aria-hidden="true" class="sort-icon"></span></th>
+						<th data-col="4" scope="col">Previous abbreviation</th>
+						<th aria-sort="none" data-col="5" onclick="sortTable(5, this)" onkeydown="if(event.key==='Enter'||event.key===' ')sortTable(5,this)" scope="col" tabindex="0">Status <span aria-hidden="true" class="sort-icon"></span></th>
 					</tr>
 				</thead>
 				<tbody id="tableBody"></tbody>
@@ -388,7 +388,7 @@
 	 const tbody = document.getElementById('tableBody');
 	 const count = document.getElementById('resultCount');
 	 if (!rows.length) {
-	   tbody.innerHTML = '<tr><td colspan="6" class="gc-no-results">No results found. / Aucun résultat trouvé.<\/td><\/tr>';
+	   tbody.innerHTML = '<tr><td colspan="6" class="gc-no-results">No results found.<\/td><\/tr>';
 	   count.innerHTML = '<strong>0<\/strong> results';
 	   return;
 	 }
