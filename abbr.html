@@ -206,8 +206,6 @@
 	       const currentIdx=rows.indexOf(r);
 	       return`<div class="dt-legacy-item">
 	         <span style="font-weight:500;color:var(--color-text-secondary);text-decoration-color:rgba(0,0,0,0.25)">${hl(p.en,q)}&nbsp;/&nbsp;${hl(p.fr,q)}<\/span>
-	         <span class="lg-arrow">→<\/span>
-	         <button class="lg-link" onclick="scrollTo('${r.en}')" title="Go to current: ${r.en} / ${r.fr}">${hl(r.en,q)}&nbsp;/&nbsp;${hl(r.fr,q)}<\/button>
 	       <\/div>
 	       <div style="font-size:.73rem;color:var(--color-text-secondary);font-style:italic;margin-top:1px;margin-bottom:5px">${hl(p.titleEn,q)}<\/div>`;
 	     }).join(''):'<span style="font-size:.78rem;color:var(--color-text-secondary)">—<\/span>';
