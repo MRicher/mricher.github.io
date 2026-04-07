@@ -92,16 +92,16 @@
 <body>
 	<div class="wrap" role="main">
 		<div class="hd-bar">
-			<h2>Abbreviations — Abréviations</h2>
-			<p>Government of Canada · Gouvernement du Canada</p>
+			<h2>Abbreviations</h2>
+			<p><abbr>RCMP</abbr></p>
 		</div>
 		<div class="controls">
 			<div class="sw" role="search">
 				<svg aria-hidden="true" viewbox="0 0 24 24">
-				<path d="M10 2a8 8 0 105.293 14.293l4.707 4.707 1.414-1.414-4.707-4.707A8 8 0 0010 2zm0 2a6 6 0 110 12A6 6 0 0110 4z"></path></svg> <input aria-label="Search abbreviations and titles" class="gs" id="q" oninput="render()" placeholder="Search / Rechercher…" type="search">
+				<path d="M10 2a8 8 0 105.293 14.293l4.707 4.707 1.414-1.414-4.707-4.707A8 8 0 0010 2zm0 2a6 6 0 110 12A6 6 0 0110 4z"></path></svg> <input aria-label="Search abbreviations and titles" class="gs" id="q" oninput="render()" placeholder="Search" type="search">
 			</div>
 			<div aria-label="Sort order" class="pills" role="group">
-				<button aria-pressed="true" class="pill on" onclick="setSort('en',this)">Sort EN</button> <button aria-pressed="false" class="pill" onclick="setSort('fr',this)">Sort FR</button> <button aria-pressed="false" class="pill" onclick="setSort('titleEn',this)">Sort by title</button>
+				<button aria-pressed="true" class="pill on" onclick="setSort('en',this)">Sort English</button> <button aria-pressed="false" class="pill" onclick="setSort('fr',this)">Sort French</button>
 			</div>
 		</div>
 		<p aria-atomic="true" aria-live="polite" class="cnt" id="cnt"></p>
