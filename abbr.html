@@ -300,22 +300,22 @@
         .col-leg {
           width: 26%;
         }
-        .dt-legacy-item {
-          margin-bottom: 0.4rem;
-          font-size: 0.78rem;
-        }
-        .dt-legacy-item:last-child {
-          margin-bottom: 0;
-        }
-        .dt-legacy-item dt {
-          font-weight: 500;
-          color: var(--color-text-secondary);
-        }
-        .dt-legacy-item dd {
-          font-style: italic;
-          color: var(--color-text-secondary);
-          margin-left: 0;
-        }
+      }
+      .dt-legacy-item {
+        margin-bottom: 0.4rem;
+        font-size: 0.78rem;
+      }
+      .dt-legacy-item:last-child {
+        margin-bottom: 0;
+      }
+      .dt-legacy-item dt {
+        font-weight: 500;
+        color: var(--color-text-secondary);
+      }
+      .dt-legacy-item dd {
+        font-style: italic;
+        color: var(--color-text-secondary);
+        margin-left: 0;
       }
     </style>
     <title></title>
@@ -678,7 +678,7 @@
               const legHtml = r.prev.length
                 ? `<div class="legacy-block">
                     <div class="legacy-label">Previously<\/div>
-                    <dl>${r.prev.map((p) => `<dt class="lg-abbr">${hl(p.en, q)}<\/dt><dd class="lg-title">${hl(p.titleEn, q)}<\/dd>`).join("")}<\/dl>
+                    <dl class="dt-legacy-item">${r.prev.map((p) => `<dt>${hl(p.en, q)}<\/dt><dd>${hl(p.titleEn, q)}<\/dd>`).join("")}<\/dl>
                   <\/div>`
                 : "";
               return `<div class="ci" id="row-${r.en}">
