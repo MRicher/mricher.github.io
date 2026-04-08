@@ -130,15 +130,6 @@
         background: var(--gc-hover);
       }
 
-      .row-top {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 10px;
-        margin-bottom: 0.45rem;
-      }
-      .abbr-block {
-      }
       .abbr-current {
         font-size: 1.05rem;
         font-weight: 700;
@@ -208,39 +199,6 @@
         font-size: 0.82rem;
         font-weight: 500;
         color: var(--color-text-secondary);
-        text-decoration-color: var(--gc-border);
-      }
-      .lg-sep {
-        font-size: 0.75rem;
-        color: var(--color-text-secondary);
-        opacity: 0.6;
-        flex-shrink: 0;
-      }
-      .lg-arrow {
-        font-size: 0.75rem;
-        color: var(--color-text-secondary);
-        opacity: 0.55;
-        flex-shrink: 0;
-        padding: 0 2px;
-      }
-      .lg-link {
-        font-size: 0.82rem;
-        color: var(--gc-link);
-        text-decoration: underline;
-        cursor: pointer;
-        background: none;
-        border: none;
-        font-family: var(--gc-font);
-        padding: 0;
-        font-weight: 500;
-      }
-      .lg-link:hover {
-        color: var(--gc-navy);
-      }
-      .lg-link:focus {
-        outline: 3px solid var(--gc-focus);
-        outline-offset: 1px;
-        border-radius: 2px;
       }
       .lg-title {
         font-size: 0.78rem;
@@ -343,15 +301,20 @@
           width: 26%;
         }
         .dt-legacy-item {
-          display: flex;
-          align-items: baseline;
-          flex-wrap: wrap;
-          gap: 2px 5px;
-          margin-bottom: 0.3rem;
+          margin-bottom: 0.4rem;
           font-size: 0.78rem;
         }
         .dt-legacy-item:last-child {
           margin-bottom: 0;
+        }
+        .dt-legacy-item dt {
+          font-weight: 500;
+          color: var(--color-text-secondary);
+        }
+        .dt-legacy-item dd {
+          font-style: italic;
+          color: var(--color-text-secondary);
+          margin-left: 0;
         }
       }
     </style>
@@ -651,11 +614,6 @@
         return text.replace(re, '<mark style="background:#ffbf47;color:#1a1a1a;border-radius:2px;padding:0 1px">$1<\/mark>');
       }
 
-      function scrollTo(id) {
-        const el = document.getElementById("row-" + id);
-        if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
-
       function render() {
         const q = (document.getElementById("q").value || "").trim().toLowerCase();
         let rows = DATA.filter((r) => {
@@ -694,64 +652,45 @@
           const trs = rows
             .map((r) => {
               const legHtml = r.prev.length
-                ? r.prev
-                    .map((p) => {
-                      const currentIdx = rows.indexOf(r);
-                      return `<div class="dt-legacy-item">
-	         <dl>
-				<dt>${hl(p.en, q)}<\/dt>
-				<dd>${hl(p.titleEn, q)}<\/dd>
-			</dl>`;
-                    })
-                    .join("")
+                ? `<dl class="dt-legacy-item">${r.prev.map((p) => `<dt>${hl(p.en, q)}<\/dt><dd>${hl(p.titleEn, q)}<\/dd>`).join("")}<\/dl>`
                 : "—";
 
               return `<tr id="row-${r.en}">
-	       <td class="col-abbr">
-	         <div><abbr>${hl(r.en, q)}<\/abbr><\/div>
-	         <div><abbr><i lang"fr">${hl(r.fr, q)}<\/i><\/abbr><\/div>
-	       <\/td>
-	       <td class="col-en">${hl(r.titleEn, q)}<\/td>
-	       <td class="col-fr"><i lang="fr">${hl(r.titleFr, q)}<\/i><\/td>
-	       <td class="col-leg">${legHtml}<\/td>
-	     <\/tr>`;
+                <td class="col-abbr">
+                  <div><abbr>${hl(r.en, q)}<\/abbr><\/div>
+                  <div><abbr><i lang="fr">${hl(r.fr, q)}<\/i><\/abbr><\/div>
+                <\/td>
+                <td class="col-en">${hl(r.titleEn, q)}<\/td>
+                <td class="col-fr"><i lang="fr">${hl(r.titleFr, q)}<\/i><\/td>
+                <td class="col-leg">${legHtml}<\/td>
+              <\/tr>`;
             })
             .join("");
 
           document.getElementById("list").innerHTML = `<table class="dt" aria-label="Government of Canada bilingual abbreviations">
-	     <caption style="position:absolute;left:-9999px">Bilingual abbreviations with legacy references<\/caption>
-	     <thead><tr>${ths}<\/tr><\/thead>
-	     <tbody>${trs}<\/tbody>
-	   <\/table>`;
+            <caption style="position:absolute;left:-9999px">Bilingual abbreviations with legacy references<\/caption>
+            <thead><tr>${ths}<\/tr><\/thead>
+            <tbody>${trs}<\/tbody>
+          <\/table>`;
         } else {
           const cards = rows
             .map((r) => {
               const legHtml = r.prev.length
-                ? `
-	       <div class="legacy-block">
-	         <div class="legacy-label">Previously<\/div>
-	         ${r.prev
-             .map(
-               (p) => `
-	           <div class="legacy-item">
-	             <span class="lg-abbr">${hl(p.en, q)}<\/span>
-	           <\/div>
-	           <div class="lg-title">${hl(p.titleEn, q)}<\/div>
-	         `,
-             )
-             .join("")}
-	       <\/div>`
+                ? `<div class="legacy-block">
+                    <div class="legacy-label">Previously<\/div>
+                    <dl>${r.prev.map((p) => `<dt class="lg-abbr">${hl(p.en, q)}<\/dt><dd class="lg-title">${hl(p.titleEn, q)}<\/dd>`).join("")}<\/dl>
+                  <\/div>`
                 : "";
               return `<div class="ci" id="row-${r.en}">
-	       <div class="abbr-pair-row" style="margin-bottom:.4rem">
-	         <span class="abbr-current">${hl(r.en, q)}<\/span>
-	         <span class="abbr-sep">/<\/span>
-	         <span class="abbr-current-fr">${hl(r.fr, q)}<\/span>
-	       <\/div>
-	       <div class="title-en">${hl(r.titleEn, q)}<\/div>
-	       <div class="title-fr">${hl(r.titleFr, q)}<\/div>
-	       ${legHtml}
-	     <\/div>`;
+                <div class="abbr-pair-row" style="margin-bottom:.4rem">
+                  <span class="abbr-current">${hl(r.en, q)}<\/span>
+                  <span class="abbr-sep">/<\/span>
+                  <span class="abbr-current-fr">${hl(r.fr, q)}<\/span>
+                <\/div>
+                <div class="title-en">${hl(r.titleEn, q)}<\/div>
+                <div class="title-fr">${hl(r.titleFr, q)}<\/div>
+                ${legHtml}
+              <\/div>`;
             })
             .join("");
           document.getElementById("list").innerHTML = `<div class="card-list">${cards}<\/div>`;
