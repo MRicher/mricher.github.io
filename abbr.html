@@ -710,8 +710,8 @@
 	         <div><abbr>${hl(r.en, q)}<\/abbr><\/div>
 	         <div><abbr><i lang"fr">${hl(r.fr, q)}<\/i><\/abbr><\/div>
 	       <\/td>
-	       <td class="col-en"><span style="font-weight:500">${hl(r.titleEn, q)}<\/span><\/td>
-	       <td class="col-fr"><span style="font-style:italic;color:var(--color-text-secondary);font-size:.85rem">${hl(r.titleFr, q)}<\/span><\/td>
+	       <td class="col-en">${hl(r.titleEn, q)}<\/td>
+	       <td class="col-fr"><i lang="fr">${hl(r.titleFr, q)}<\/i><\/td>
 	       <td class="col-leg">${legHtml}<\/td>
 	     <\/tr>`;
             })
@@ -733,9 +733,7 @@
              .map(
                (p) => `
 	           <div class="legacy-item">
-	             <span class="lg-abbr">${hl(p.en, q)}&nbsp;/&nbsp;${hl(p.fr, q)}<\/span>
-	             <span class="lg-arrow">→<\/span>
-	             <button class="lg-link" onclick="scrollTo('${r.en}')">${hl(r.en, q)}&nbsp;/&nbsp;${hl(r.fr, q)}<\/button>
+	             <span class="lg-abbr">${hl(p.en, q)}<\/span>
 	           <\/div>
 	           <div class="lg-title">${hl(p.titleEn, q)}<\/div>
 	         `,
