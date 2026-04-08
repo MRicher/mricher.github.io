@@ -698,9 +698,10 @@
                     .map((p) => {
                       const currentIdx = rows.indexOf(r);
                       return `<div class="dt-legacy-item">
-	         <span style="font-weight:500;color:var(--color-text-secondary);text-decoration-color:rgba(0,0,0,0.25)">${hl(p.en, q)}<\/span>
-	       <\/div>
-	       <div style="font-size:.73rem;color:var(--color-text-secondary);margin-top:1px;margin-bottom:5px">${hl(p.titleEn, q)}<\/div>`;
+	         <dl>
+				<dt>${hl(p.en, q)}<\/dt>
+				<dd>${hl(p.titleEn, q)}<\/dd>
+			</dl>`;
                     })
                     .join("")
                 : '<span style="font-size:.78rem;color:var(--color-text-secondary)">—<\/span>';
