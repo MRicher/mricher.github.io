@@ -23,18 +23,16 @@
       "columns"    : [
         { "orderable": true  },
         { "orderable": false },
-        { "orderable": true  },
-        { "orderable": false }
+        { "orderable": true  }
       ]
     }'
   >
-    <caption class="wb-inv">Government of Canada bilingual abbreviations with legacy references</caption>
+    <caption class="wb-inv">Government of Canada English abbreviations with links to French equivalents</caption>
     <thead>
       <tr>
         <th scope="col">English abbreviation</th>
         <th scope="col">Full English form</th>
         <th scope="col">French abbreviation</th>
-        <th scope="col">Full French form</th>
       </tr>
     </thead>
     <tbody id="abbr-tbody"></tbody>
@@ -42,53 +40,56 @@
 
   <script>
   (function () {
+    /* Update this to the actual French page URL on rcmp.ca */
+    var FR_PAGE = "/fr/abreviations";
+
     var DATA = [
-      { en:"AAFC",    fr:"AAC",     titleEn:"Agriculture and Agri-Food Canada",                                titleFr:"Agriculture et Agroalimentaire Canada",                                    prev:[{en:"Agr",   fr:"Agr",   titleEn:"Agriculture Canada",                                   titleFr:"Agriculture Canada"}] },
-      { en:"CATSA",   fr:"ACSTA",   titleEn:"Canadian Air Transport Security Authority",                       titleFr:"Administration canadienne de la sûreté du transport aérien",               prev:[] },
-      { en:"CBSA",    fr:"ASFC",    titleEn:"Canada Border Services Agency",                                   titleFr:"Agence des services frontaliers du Canada",                                prev:[{en:"CCRA", fr:"ADRC", titleEn:"Canada Customs and Revenue Agency",                    titleFr:"Agence des douanes et du revenu du Canada"},{en:"RC",fr:"RC",titleEn:"Revenue Canada",titleFr:"Revenu Canada"}] },
-      { en:"CDS",     fr:"CESD",    titleEn:"Commissioner of the Environment and Sustainable Development",     titleFr:"Commissaire à l'environnement et au développement durable",                prev:[] },
-      { en:"CEAA",    fr:"ACEE",    titleEn:"Canadian Environmental Assessment Agency",                        titleFr:"Agence canadienne d'évaluation environnementale",                          prev:[{en:"FEARO",fr:"FEARO",titleEn:"Federal Environmental Assessment Review Office",       titleFr:"Bureau fédéral d'examen des évaluations environnementales"}] },
-      { en:"CFIA",    fr:"ACIA",    titleEn:"Canadian Food Inspection Agency",                                 titleFr:"Agence canadienne d'inspection des aliments",                              prev:[] },
-      { en:"CIRNAC",  fr:"RCAANC",  titleEn:"Crown-Indigenous Relations and Northern Affairs Canada",          titleFr:"Relations Couronne-Autochtones et Affaires du Nord Canada",                prev:[{en:"INAC", fr:"AINC", titleEn:"Indian and Northern Affairs Canada",                   titleFr:"Affaires indiennes et du Nord Canada"},{en:"AANDC",fr:"AADNC",titleEn:"Aboriginal Affairs and Northern Development Canada",titleFr:"Affaires autochtones et Développement du Nord Canada"}] },
-      { en:"CRTC",    fr:"CRTC",    titleEn:"Canadian Radio-television and Telecommunications Commission",     titleFr:"Conseil de la radiodiffusion et des télécommunications canadiennes",        prev:[{en:"BBG",  fr:"BBG",  titleEn:"Board of Broadcast Governors",                         titleFr:"Bureau des gouverneurs de la radiodiffusion"}] },
-      { en:"CSE",     fr:"CST",     titleEn:"Communications Security Establishment",                           titleFr:"Centre de la sécurité des télécommunications",                             prev:[] },
-      { en:"CSIS",    fr:"SCRS",    titleEn:"Canadian Security Intelligence Service",                          titleFr:"Service canadien du renseignement de sécurité",                            prev:[] },
-      { en:"CTA",     fr:"OTC",     titleEn:"Canadian Transportation Agency",                                  titleFr:"Office des transports du Canada",                                          prev:[{en:"NTA",  fr:"ONT",  titleEn:"National Transportation Agency",                       titleFr:"Office national des transports"}] },
-      { en:"DFO",     fr:"MPO",     titleEn:"Fisheries and Oceans Canada",                                     titleFr:"Pêches et Océans Canada",                                                  prev:[{en:"DOF",  fr:"MPO",  titleEn:"Department of Fisheries",                              titleFr:"Ministère des Pêches"}] },
-      { en:"DND",     fr:"MDN",     titleEn:"Department of National Defence",                                  titleFr:"Ministère de la Défense nationale",                                        prev:[] },
-      { en:"ECCC",    fr:"ECCC",    titleEn:"Environment and Climate Change Canada",                           titleFr:"Environnement et Changement climatique Canada",                            prev:[{en:"EC",   fr:"EC",   titleEn:"Environment Canada",                                   titleFr:"Environnement Canada"}] },
-      { en:"ESDC",    fr:"EDSC",    titleEn:"Employment and Social Development Canada",                        titleFr:"Emploi et Développement social Canada",                                    prev:[{en:"HRSDC",fr:"RHDCC",titleEn:"Human Resources and Skills Development Canada",        titleFr:"Ressources humaines et Développement des compétences Canada"},{en:"HRDC",fr:"DRHC",titleEn:"Human Resources Development Canada",titleFr:"Développement des ressources humaines Canada"}] },
-      { en:"Finance", fr:"Finances",titleEn:"Department of Finance Canada",                                    titleFr:"Ministère des Finances Canada",                                            prev:[] },
-      { en:"GAC",     fr:"AMC",     titleEn:"Global Affairs Canada",                                           titleFr:"Affaires mondiales Canada",                                                prev:[{en:"DFATD",fr:"MAECD",titleEn:"Foreign Affairs, Trade and Development Canada",        titleFr:"Affaires étrangères, Commerce et Développement Canada"},{en:"DFAIT",fr:"MAECI",titleEn:"Foreign Affairs and International Trade Canada",titleFr:"Affaires étrangères et Commerce international Canada"}] },
-      { en:"HC",      fr:"SC",      titleEn:"Health Canada",                                                   titleFr:"Santé Canada",                                                             prev:[{en:"NHW",  fr:"SNS",  titleEn:"National Health and Welfare",                          titleFr:"Santé nationale et Bien-être social"}] },
-      { en:"IAAC",    fr:"AEIC",    titleEn:"Impact Assessment Agency of Canada",                              titleFr:"Agence d'évaluation d'impact du Canada",                                  prev:[{en:"CEAA", fr:"ACEE", titleEn:"Canadian Environmental Assessment Agency",              titleFr:"Agence canadienne d'évaluation environnementale"}] },
-      { en:"ISED",    fr:"ISDE",    titleEn:"Innovation, Science and Economic Development Canada",             titleFr:"Innovation, Sciences et Développement économique Canada",                  prev:[{en:"IC",   fr:"IC",   titleEn:"Industry Canada",                                      titleFr:"Industrie Canada"}] },
-      { en:"ISC",     fr:"SAC",     titleEn:"Indigenous Services Canada",                                      titleFr:"Services aux Autochtones Canada",                                          prev:[{en:"INAC", fr:"AINC", titleEn:"Indian and Northern Affairs Canada",                   titleFr:"Affaires indiennes et du Nord Canada"}] },
-      { en:"JUS",     fr:"JUS",     titleEn:"Department of Justice Canada",                                    titleFr:"Ministère de la Justice Canada",                                           prev:[] },
-      { en:"LAC",     fr:"BAC",     titleEn:"Library and Archives Canada",                                     titleFr:"Bibliothèque et Archives Canada",                                          prev:[{en:"NAC",  fr:"ANC",  titleEn:"National Archives of Canada",                          titleFr:"Archives nationales du Canada"}] },
-      { en:"NRCan",   fr:"RNCan",   titleEn:"Natural Resources Canada",                                        titleFr:"Ressources naturelles Canada",                                             prev:[{en:"EMR",  fr:"EMR",  titleEn:"Energy, Mines and Resources",                          titleFr:"Énergie, Mines et Ressources"}] },
-      { en:"NSERC",   fr:"CRSNG",   titleEn:"Natural Sciences and Engineering Research Council of Canada",     titleFr:"Conseil de recherches en sciences naturelles et en génie du Canada",       prev:[] },
-      { en:"NRC",     fr:"CNRC",    titleEn:"National Research Council Canada",                                titleFr:"Conseil national de recherches Canada",                                    prev:[] },
-      { en:"OAG",     fr:"BVG",     titleEn:"Office of the Auditor General of Canada",                         titleFr:"Bureau du vérificateur général du Canada",                                prev:[] },
-      { en:"PCH",     fr:"PCH",     titleEn:"Canadian Heritage",                                               titleFr:"Patrimoine canadien",                                                      prev:[] },
-      { en:"PCO",     fr:"BCP",     titleEn:"Privy Council Office",                                            titleFr:"Bureau du Conseil privé",                                                 prev:[] },
-      { en:"PMO",     fr:"CPM",     titleEn:"Prime Minister's Office",                                         titleFr:"Cabinet du Premier ministre",                                              prev:[] },
-      { en:"PS",      fr:"SP",      titleEn:"Public Safety Canada",                                            titleFr:"Sécurité publique Canada",                                                prev:[{en:"SG",   fr:"SG",   titleEn:"Solicitor General Canada",                             titleFr:"Solliciteur général Canada"}] },
-      { en:"PSC",     fr:"CFP",     titleEn:"Public Service Commission of Canada",                             titleFr:"Commission de la fonction publique du Canada",                             prev:[] },
-      { en:"PSPC",    fr:"SPAC",    titleEn:"Public Services and Procurement Canada",                          titleFr:"Services publics et Approvisionnement Canada",                             prev:[{en:"PWGSC",fr:"TPSGC",titleEn:"Public Works and Government Services Canada",          titleFr:"Travaux publics et Services gouvernementaux Canada"}] },
-      { en:"SSC",     fr:"SSC",     titleEn:"Shared Services Canada",                                          titleFr:"Services partagés Canada",                                                prev:[] },
-      { en:"StatCan", fr:"StatCan", titleEn:"Statistics Canada",                                               titleFr:"Statistique Canada",                                                      prev:[{en:"DBS",  fr:"BSE",  titleEn:"Dominion Bureau of Statistics",                        titleFr:"Bureau fédéral de la statistique"}] },
-      { en:"TC",      fr:"TC",      titleEn:"Transport Canada",                                                titleFr:"Transports Canada",                                                        prev:[{en:"DOT",  fr:"MDT",  titleEn:"Department of Transport",                              titleFr:"Ministère des Transports"}] },
-      { en:"TBS",     fr:"SCT",     titleEn:"Treasury Board of Canada Secretariat",                            titleFr:"Secrétariat du Conseil du Trésor du Canada",                              prev:[] },
-      { en:"VAC",     fr:"ACC",     titleEn:"Veterans Affairs Canada",                                         titleFr:"Anciens Combattants Canada",                                               prev:[{en:"DVA",  fr:"ACV",  titleEn:"Department of Veterans Affairs",                       titleFr:"Ministère des Affaires des anciens combattants"}] },
-      { en:"WEDA",    fr:"ADEO",    titleEn:"Western Economic Diversification Agency",                         titleFr:"Agence de diversification de l'économie de l'Ouest",                      prev:[{en:"WD",   fr:"DEO",  titleEn:"Western Economic Diversification Canada",               titleFr:"Diversification de l'économie de l'Ouest Canada"}] },
+      { en:"AAFC",    fr:"AAC",     titleEn:"Agriculture and Agri-Food Canada",                                prev:[{en:"Agr",   titleEn:"Agriculture Canada"}] },
+      { en:"CATSA",   fr:"ACSTA",   titleEn:"Canadian Air Transport Security Authority",                       prev:[] },
+      { en:"CBSA",    fr:"ASFC",    titleEn:"Canada Border Services Agency",                                   prev:[{en:"CCRA",  titleEn:"Canada Customs and Revenue Agency"},{en:"RC",titleEn:"Revenue Canada"}] },
+      { en:"CDS",     fr:"CESD",    titleEn:"Commissioner of the Environment and Sustainable Development",     prev:[] },
+      { en:"CEAA",    fr:"ACEE",    titleEn:"Canadian Environmental Assessment Agency",                        prev:[{en:"FEARO", titleEn:"Federal Environmental Assessment Review Office"}] },
+      { en:"CFIA",    fr:"ACIA",    titleEn:"Canadian Food Inspection Agency",                                 prev:[] },
+      { en:"CIRNAC",  fr:"RCAANC",  titleEn:"Crown-Indigenous Relations and Northern Affairs Canada",          prev:[{en:"INAC",  titleEn:"Indian and Northern Affairs Canada"},{en:"AANDC",titleEn:"Aboriginal Affairs and Northern Development Canada"}] },
+      { en:"CRTC",    fr:"CRTC",    titleEn:"Canadian Radio-television and Telecommunications Commission",     prev:[{en:"BBG",   titleEn:"Board of Broadcast Governors"}] },
+      { en:"CSE",     fr:"CST",     titleEn:"Communications Security Establishment",                           prev:[] },
+      { en:"CSIS",    fr:"SCRS",    titleEn:"Canadian Security Intelligence Service",                          prev:[] },
+      { en:"CTA",     fr:"OTC",     titleEn:"Canadian Transportation Agency",                                  prev:[{en:"NTA",   titleEn:"National Transportation Agency"}] },
+      { en:"DFO",     fr:"MPO",     titleEn:"Fisheries and Oceans Canada",                                     prev:[{en:"DOF",   titleEn:"Department of Fisheries"}] },
+      { en:"DND",     fr:"MDN",     titleEn:"Department of National Defence",                                  prev:[] },
+      { en:"ECCC",    fr:"ECCC",    titleEn:"Environment and Climate Change Canada",                           prev:[{en:"EC",    titleEn:"Environment Canada"}] },
+      { en:"ESDC",    fr:"EDSC",    titleEn:"Employment and Social Development Canada",                        prev:[{en:"HRSDC", titleEn:"Human Resources and Skills Development Canada"},{en:"HRDC",titleEn:"Human Resources Development Canada"}] },
+      { en:"Finance", fr:"Finances",titleEn:"Department of Finance Canada",                                    prev:[] },
+      { en:"GAC",     fr:"AMC",     titleEn:"Global Affairs Canada",                                           prev:[{en:"DFATD", titleEn:"Foreign Affairs, Trade and Development Canada"},{en:"DFAIT",titleEn:"Foreign Affairs and International Trade Canada"}] },
+      { en:"HC",      fr:"SC",      titleEn:"Health Canada",                                                   prev:[{en:"NHW",   titleEn:"National Health and Welfare"}] },
+      { en:"IAAC",    fr:"AEIC",    titleEn:"Impact Assessment Agency of Canada",                              prev:[{en:"CEAA",  titleEn:"Canadian Environmental Assessment Agency"}] },
+      { en:"ISED",    fr:"ISDE",    titleEn:"Innovation, Science and Economic Development Canada",             prev:[{en:"IC",    titleEn:"Industry Canada"}] },
+      { en:"ISC",     fr:"SAC",     titleEn:"Indigenous Services Canada",                                      prev:[{en:"INAC",  titleEn:"Indian and Northern Affairs Canada"}] },
+      { en:"JUS",     fr:"JUS",     titleEn:"Department of Justice Canada",                                    prev:[] },
+      { en:"LAC",     fr:"BAC",     titleEn:"Library and Archives Canada",                                     prev:[{en:"NAC",   titleEn:"National Archives of Canada"}] },
+      { en:"NRCan",   fr:"RNCan",   titleEn:"Natural Resources Canada",                                        prev:[{en:"EMR",   titleEn:"Energy, Mines and Resources"}] },
+      { en:"NSERC",   fr:"CRSNG",   titleEn:"Natural Sciences and Engineering Research Council of Canada",     prev:[] },
+      { en:"NRC",     fr:"CNRC",    titleEn:"National Research Council Canada",                                prev:[] },
+      { en:"OAG",     fr:"BVG",     titleEn:"Office of the Auditor General of Canada",                         prev:[] },
+      { en:"PCH",     fr:"PCH",     titleEn:"Canadian Heritage",                                               prev:[] },
+      { en:"PCO",     fr:"BCP",     titleEn:"Privy Council Office",                                            prev:[] },
+      { en:"PMO",     fr:"CPM",     titleEn:"Prime Minister's Office",                                         prev:[] },
+      { en:"PS",      fr:"SP",      titleEn:"Public Safety Canada",                                            prev:[{en:"SG",    titleEn:"Solicitor General Canada"}] },
+      { en:"PSC",     fr:"CFP",     titleEn:"Public Service Commission of Canada",                             prev:[] },
+      { en:"PSPC",    fr:"SPAC",    titleEn:"Public Services and Procurement Canada",                          prev:[{en:"PWGSC", titleEn:"Public Works and Government Services Canada"}] },
+      { en:"SSC",     fr:"SSC",     titleEn:"Shared Services Canada",                                          prev:[] },
+      { en:"StatCan", fr:"StatCan", titleEn:"Statistics Canada",                                               prev:[{en:"DBS",   titleEn:"Dominion Bureau of Statistics"}] },
+      { en:"TC",      fr:"TC",      titleEn:"Transport Canada",                                                prev:[{en:"DOT",   titleEn:"Department of Transport"}] },
+      { en:"TBS",     fr:"SCT",     titleEn:"Treasury Board of Canada Secretariat",                            prev:[] },
+      { en:"VAC",     fr:"ACC",     titleEn:"Veterans Affairs Canada",                                         prev:[{en:"DVA",   titleEn:"Department of Veterans Affairs"}] },
+      { en:"WEDA",    fr:"ADEO",    titleEn:"Western Economic Diversification Agency",                         prev:[{en:"WD",    titleEn:"Western Economic Diversification Canada"}] },
     ];
 
     function esc(s) {
       return (s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
 
-    function prevEnHtml(prev) {
+    function prevHtml(prev) {
       if (!prev.length) return "";
       var items = prev.map(function (p) {
         return "<dt>" + esc(p.en) + "</dt><dd>" + esc(p.titleEn) + "</dd>";
@@ -96,20 +97,12 @@
       return "<p><strong>Previously known as</strong></p><dl>" + items + "</dl>";
     }
 
-    function prevFrHtml(prev) {
-      if (!prev.length) return "";
-      var items = prev.map(function (p) {
-        return "<dt>" + esc(p.fr) + "</dt><dd>" + esc(p.titleFr) + "</dd>";
-      }).join("");
-      return "<p><strong>Previously known as</strong></p><dl>" + items + "</dl>";
-    }
-
     document.getElementById("abbr-tbody").innerHTML = DATA.map(function (r) {
+      var anchor = FR_PAGE + "#" + r.fr;
       return "<tr>" +
         "<td>" + esc(r.en) + "</td>" +
-        "<td>" + esc(r.titleEn) + prevEnHtml(r.prev) + "</td>" +
-        "<td>" + esc(r.fr)  + "</td>" +
-        "<td>" + esc(r.titleFr) + prevFrHtml(r.prev) + "</td>" +
+        "<td>" + esc(r.titleEn) + prevHtml(r.prev) + "</td>" +
+        "<td><a href='" + anchor + "' lang='fr' hreflang='fr'>" + esc(r.fr) + "</a></td>" +
         "</tr>";
     }).join("");
   }());
