@@ -4,27 +4,12 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Abbreviations – RCMP</title>
-  <!--
-    WET / GCWeb assets — already present on rcmp.ca.
-    Remove these <link> and <script> tags when embedding in an existing page.
-  -->
+  <!-- Already on rcmp.ca — remove when embedding -->
   <link rel="stylesheet" href="https://www.canada.ca/etc/designs/canada/wet-boew/css/theme.min.css" />
 </head>
 <body vocab="http://schema.org/" typeof="WebPage">
 
-  <!--
-    ═══════════════════════════════════════════════
-    EMBED START — paste from here into your page
-    ═══════════════════════════════════════════════
-  -->
-
-  <!-- Minimal scoped CSS — only what WET does not already provide -->
-  <style>
-    .abbr-en    { font-weight: 700; color: #26374a; display: block; }
-    .abbr-fr    { color: #af3c43; font-style: italic; display: block; font-size: .9em; }
-    .prev-abbr  { font-weight: 600; }
-    .prev-title { font-style: italic; color: #5a5a5a; font-size: .9em; display: block; }
-  </style>
+  <!-- ═══ EMBED START ═══ -->
 
   <h2>Abbreviations — <abbr title="Royal Canadian Mounted Police">RCMP</abbr></h2>
 
@@ -37,8 +22,8 @@
       "order"      : [[0, "asc"]],
       "columns"    : [
         { "orderable": true  },
-        { "orderable": true  },
         { "orderable": false },
+        { "orderable": true  },
         { "orderable": false }
       ]
     }'
@@ -46,15 +31,13 @@
     <caption class="wb-inv">Government of Canada bilingual abbreviations with legacy references</caption>
     <thead>
       <tr>
-        <th scope="col">Abbrev. EN</th>
-        <th scope="col">Abbrev. FR</th>
-        <th scope="col">Full title (EN / FR)</th>
-        <th scope="col">Previously known as</th>
+        <th scope="col">English abbreviation</th>
+        <th scope="col">Full English form</th>
+        <th scope="col">French abbreviation</th>
+        <th scope="col">Full French form</th>
       </tr>
     </thead>
-    <tbody id="abbr-tbody">
-      <!-- rows injected by the script below -->
-    </tbody>
+    <tbody id="abbr-tbody"></tbody>
   </table>
 
   <script>
@@ -102,35 +85,39 @@
     ];
 
     function esc(s) {
-      return (s || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+      return (s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
 
-    var tbody = document.getElementById("abbr-tbody");
-    tbody.innerHTML = DATA.map(function (r) {
-      var prevHtml = r.prev.length
-        ? r.prev.map(function (p) {
-            return '<span class="prev-abbr">' + esc(p.en) + " / " + esc(p.fr) + "</span>" +
-                   '<span class="prev-title">' + esc(p.titleEn) + "</span>";
-          }).join("")
-        : "&mdash;";
+    function prevEnHtml(prev) {
+      if (!prev.length) return "";
+      var items = prev.map(function (p) {
+        return "<dt>" + esc(p.en) + "</dt><dd>" + esc(p.titleEn) + "</dd>";
+      }).join("");
+      return "<p><strong>Previously known as</strong></p><dl>" + items + "</dl>";
+    }
 
+    function prevFrHtml(prev) {
+      if (!prev.length) return "";
+      var items = prev.map(function (p) {
+        return "<dt>" + esc(p.fr) + "</dt><dd>" + esc(p.titleFr) + "</dd>";
+      }).join("");
+      return "<p><strong>Previously known as</strong></p><dl>" + items + "</dl>";
+    }
+
+    document.getElementById("abbr-tbody").innerHTML = DATA.map(function (r) {
       return "<tr>" +
-        "<td><span class='abbr-en'>" + esc(r.en) + "</span></td>" +
-        "<td><span class='abbr-fr'>" + esc(r.fr) + "</span></td>" +
-        "<td>" + esc(r.titleEn) + "<br><i lang='fr'>" + esc(r.titleFr) + "</i></td>" +
-        "<td>" + prevHtml + "</td>" +
+        "<td>" + esc(r.en) + "</td>" +
+        "<td>" + esc(r.titleEn) + prevEnHtml(r.prev) + "</td>" +
+        "<td>" + esc(r.fr)  + "</td>" +
+        "<td>" + esc(r.titleFr) + prevFrHtml(r.prev) + "</td>" +
         "</tr>";
     }).join("");
   }());
   </script>
 
-  <!--
-    ═══════════════════════════════════════════════
-    EMBED END
-    ═══════════════════════════════════════════════
-  -->
+  <!-- ═══ EMBED END ═══ -->
 
-  <!-- WET boot — already on rcmp.ca, remove when embedding -->
+  <!-- Already on rcmp.ca — remove when embedding -->
   <script src="https://www.canada.ca/etc/designs/canada/wet-boew/js/wet-boew.min.js"></script>
 </body>
 </html>
