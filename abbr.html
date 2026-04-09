@@ -1,391 +1,136 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>RCMP Abbreviations</title>
-    <!--
-      WET / Canada.ca compatible component.
-      This file is designed to be embedded inside an existing WET page
-      (which already loads wet-boew, GCWeb theme CSS, and Bootstrap 3).
-      The styles below only add component-specific rules that do NOT
-      conflict with WET and use NO custom CSS variables.
-    -->
-    <style>
-      /* ── Component-scoped styles ── */
-      /* Colour palette: GCWeb approved */
-      /* #26374a = GC navy, #af3c43 = GC red, #335075 = GC link blue */
+<html class="no-js" lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Abbreviations – RCMP</title>
+  <!--
+    WET / GCWeb assets — already present on rcmp.ca.
+    Remove these <link> and <script> tags when embedding in an existing page.
+  -->
+  <link rel="stylesheet" href="https://www.canada.ca/etc/designs/canada/wet-boew/css/theme.min.css" />
+</head>
+<body vocab="http://schema.org/" typeof="WebPage">
 
-      .abbr-widget { font-family: "Noto Sans", Arial, sans-serif; }
+  <!--
+    ═══════════════════════════════════════════════
+    EMBED START — paste from here into your page
+    ═══════════════════════════════════════════════
+  -->
 
-      /* Header bar */
-      .abbr-widget .abbr-hd {
-        border-left: 4px solid #af3c43;
-        padding-left: 12px;
-        margin-bottom: 20px;
-      }
-      .abbr-widget .abbr-hd h2 {
-        font-size: 1.3rem;
-        font-weight: 700;
-        color: #26374a;
-        margin: 0 0 4px;
-      }
-      .abbr-widget .abbr-hd p {
-        font-size: 0.8rem;
-        color: #5a5a5a;
-        margin: 0;
-      }
+  <!-- Minimal scoped CSS — only what WET does not already provide -->
+  <style>
+    .abbr-en    { font-weight: 700; color: #26374a; display: block; }
+    .abbr-fr    { color: #af3c43; font-style: italic; display: block; font-size: .9em; }
+    .prev-abbr  { font-weight: 600; }
+    .prev-title { font-style: italic; color: #5a5a5a; font-size: .9em; display: block; }
+  </style>
 
-      /* Controls row */
-      .abbr-widget .abbr-controls {
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        -ms-flex-wrap: wrap;
-            flex-wrap: wrap;
-        gap: 10px;
-        margin-bottom: 12px;
-        -webkit-box-align: center;
-            -ms-flex-align: center;
-                align-items: center;
-      }
-      .abbr-widget .abbr-sw { position: relative; -webkit-box-flex: 1; -ms-flex: 1 1 220px; flex: 1 1 220px; }
-      .abbr-widget .abbr-sw svg {
-        position: absolute;
-        left: 10px;
-        top: 50%;
-        -webkit-transform: translateY(-50%);
-                transform: translateY(-50%);
-        width: 14px;
-        height: 14px;
-        fill: #767676;
-        pointer-events: none;
-      }
-      .abbr-widget input[type="search"].abbr-gs {
-        width: 100%;
-        padding: 7px 12px 7px 32px;
-        font-size: 0.875rem;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        font-family: inherit;
-        color: #333;
-        background: #fff;
-        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
-                box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
-        -webkit-transition: border-color .15s ease-in-out, -webkit-box-shadow .15s ease-in-out;
-                transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-      }
-      .abbr-widget input[type="search"].abbr-gs:focus {
-        border-color: #3b99fc;
-        outline: 3px solid #ffbf47;
-        outline-offset: 0;
-        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px rgba(59,153,252,.4);
-                box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px rgba(59,153,252,.4);
-      }
+  <h2>Abbreviations — <abbr title="Royal Canadian Mounted Police">RCMP</abbr></h2>
 
-      /* Sort pills */
-      .abbr-widget .abbr-pills { display: -webkit-box; display: -ms-flexbox; display: flex; gap: 6px; -ms-flex-wrap: wrap; flex-wrap: wrap; }
-      .abbr-widget .abbr-pill {
-        padding: 5px 14px;
-        font-size: 0.76rem;
-        font-weight: 600;
-        border: 1px solid #26374a;
-        border-radius: 20px;
-        background: #fff;
-        color: #26374a;
-        cursor: pointer;
-        font-family: inherit;
-        -webkit-transition: background .12s, color .12s;
-                transition: background .12s, color .12s;
-      }
-      .abbr-widget .abbr-pill:focus { outline: 3px solid #ffbf47; outline-offset: 1px; }
-      .abbr-widget .abbr-pill.on { background: #26374a; color: #fff; }
+  <table
+    id="abbr-table"
+    class="wb-tables table table-striped table-hover"
+    data-wb-tables='{
+      "paging"     : true,
+      "pageLength" : 20,
+      "order"      : [[0, "asc"]],
+      "columns"    : [
+        { "orderable": true  },
+        { "orderable": true  },
+        { "orderable": false },
+        { "orderable": false }
+      ]
+    }'
+  >
+    <caption class="wb-inv">Government of Canada bilingual abbreviations with legacy references</caption>
+    <thead>
+      <tr>
+        <th scope="col">Abbrev. EN</th>
+        <th scope="col">Abbrev. FR</th>
+        <th scope="col">Full title (EN / FR)</th>
+        <th scope="col">Previously known as</th>
+      </tr>
+    </thead>
+    <tbody id="abbr-tbody">
+      <!-- rows injected by the script below -->
+    </tbody>
+  </table>
 
-      /* Count line */
-      .abbr-widget .abbr-cnt { font-size: 0.8rem; color: #5a5a5a; margin-bottom: 8px; }
-      .abbr-widget .abbr-cnt strong { color: #26374a; }
+  <script>
+  (function () {
+    var DATA = [
+      { en:"AAFC",    fr:"AAC",     titleEn:"Agriculture and Agri-Food Canada",                                titleFr:"Agriculture et Agroalimentaire Canada",                                    prev:[{en:"Agr",   fr:"Agr",   titleEn:"Agriculture Canada",                                   titleFr:"Agriculture Canada"}] },
+      { en:"CATSA",   fr:"ACSTA",   titleEn:"Canadian Air Transport Security Authority",                       titleFr:"Administration canadienne de la sûreté du transport aérien",               prev:[] },
+      { en:"CBSA",    fr:"ASFC",    titleEn:"Canada Border Services Agency",                                   titleFr:"Agence des services frontaliers du Canada",                                prev:[{en:"CCRA", fr:"ADRC", titleEn:"Canada Customs and Revenue Agency",                    titleFr:"Agence des douanes et du revenu du Canada"},{en:"RC",fr:"RC",titleEn:"Revenue Canada",titleFr:"Revenu Canada"}] },
+      { en:"CDS",     fr:"CESD",    titleEn:"Commissioner of the Environment and Sustainable Development",     titleFr:"Commissaire à l'environnement et au développement durable",                prev:[] },
+      { en:"CEAA",    fr:"ACEE",    titleEn:"Canadian Environmental Assessment Agency",                        titleFr:"Agence canadienne d'évaluation environnementale",                          prev:[{en:"FEARO",fr:"FEARO",titleEn:"Federal Environmental Assessment Review Office",       titleFr:"Bureau fédéral d'examen des évaluations environnementales"}] },
+      { en:"CFIA",    fr:"ACIA",    titleEn:"Canadian Food Inspection Agency",                                 titleFr:"Agence canadienne d'inspection des aliments",                              prev:[] },
+      { en:"CIRNAC",  fr:"RCAANC",  titleEn:"Crown-Indigenous Relations and Northern Affairs Canada",          titleFr:"Relations Couronne-Autochtones et Affaires du Nord Canada",                prev:[{en:"INAC", fr:"AINC", titleEn:"Indian and Northern Affairs Canada",                   titleFr:"Affaires indiennes et du Nord Canada"},{en:"AANDC",fr:"AADNC",titleEn:"Aboriginal Affairs and Northern Development Canada",titleFr:"Affaires autochtones et Développement du Nord Canada"}] },
+      { en:"CRTC",    fr:"CRTC",    titleEn:"Canadian Radio-television and Telecommunications Commission",     titleFr:"Conseil de la radiodiffusion et des télécommunications canadiennes",        prev:[{en:"BBG",  fr:"BBG",  titleEn:"Board of Broadcast Governors",                         titleFr:"Bureau des gouverneurs de la radiodiffusion"}] },
+      { en:"CSE",     fr:"CST",     titleEn:"Communications Security Establishment",                           titleFr:"Centre de la sécurité des télécommunications",                             prev:[] },
+      { en:"CSIS",    fr:"SCRS",    titleEn:"Canadian Security Intelligence Service",                          titleFr:"Service canadien du renseignement de sécurité",                            prev:[] },
+      { en:"CTA",     fr:"OTC",     titleEn:"Canadian Transportation Agency",                                  titleFr:"Office des transports du Canada",                                          prev:[{en:"NTA",  fr:"ONT",  titleEn:"National Transportation Agency",                       titleFr:"Office national des transports"}] },
+      { en:"DFO",     fr:"MPO",     titleEn:"Fisheries and Oceans Canada",                                     titleFr:"Pêches et Océans Canada",                                                  prev:[{en:"DOF",  fr:"MPO",  titleEn:"Department of Fisheries",                              titleFr:"Ministère des Pêches"}] },
+      { en:"DND",     fr:"MDN",     titleEn:"Department of National Defence",                                  titleFr:"Ministère de la Défense nationale",                                        prev:[] },
+      { en:"ECCC",    fr:"ECCC",    titleEn:"Environment and Climate Change Canada",                           titleFr:"Environnement et Changement climatique Canada",                            prev:[{en:"EC",   fr:"EC",   titleEn:"Environment Canada",                                   titleFr:"Environnement Canada"}] },
+      { en:"ESDC",    fr:"EDSC",    titleEn:"Employment and Social Development Canada",                        titleFr:"Emploi et Développement social Canada",                                    prev:[{en:"HRSDC",fr:"RHDCC",titleEn:"Human Resources and Skills Development Canada",        titleFr:"Ressources humaines et Développement des compétences Canada"},{en:"HRDC",fr:"DRHC",titleEn:"Human Resources Development Canada",titleFr:"Développement des ressources humaines Canada"}] },
+      { en:"Finance", fr:"Finances",titleEn:"Department of Finance Canada",                                    titleFr:"Ministère des Finances Canada",                                            prev:[] },
+      { en:"GAC",     fr:"AMC",     titleEn:"Global Affairs Canada",                                           titleFr:"Affaires mondiales Canada",                                                prev:[{en:"DFATD",fr:"MAECD",titleEn:"Foreign Affairs, Trade and Development Canada",        titleFr:"Affaires étrangères, Commerce et Développement Canada"},{en:"DFAIT",fr:"MAECI",titleEn:"Foreign Affairs and International Trade Canada",titleFr:"Affaires étrangères et Commerce international Canada"}] },
+      { en:"HC",      fr:"SC",      titleEn:"Health Canada",                                                   titleFr:"Santé Canada",                                                             prev:[{en:"NHW",  fr:"SNS",  titleEn:"National Health and Welfare",                          titleFr:"Santé nationale et Bien-être social"}] },
+      { en:"IAAC",    fr:"AEIC",    titleEn:"Impact Assessment Agency of Canada",                              titleFr:"Agence d'évaluation d'impact du Canada",                                  prev:[{en:"CEAA", fr:"ACEE", titleEn:"Canadian Environmental Assessment Agency",              titleFr:"Agence canadienne d'évaluation environnementale"}] },
+      { en:"ISED",    fr:"ISDE",    titleEn:"Innovation, Science and Economic Development Canada",             titleFr:"Innovation, Sciences et Développement économique Canada",                  prev:[{en:"IC",   fr:"IC",   titleEn:"Industry Canada",                                      titleFr:"Industrie Canada"}] },
+      { en:"ISC",     fr:"SAC",     titleEn:"Indigenous Services Canada",                                      titleFr:"Services aux Autochtones Canada",                                          prev:[{en:"INAC", fr:"AINC", titleEn:"Indian and Northern Affairs Canada",                   titleFr:"Affaires indiennes et du Nord Canada"}] },
+      { en:"JUS",     fr:"JUS",     titleEn:"Department of Justice Canada",                                    titleFr:"Ministère de la Justice Canada",                                           prev:[] },
+      { en:"LAC",     fr:"BAC",     titleEn:"Library and Archives Canada",                                     titleFr:"Bibliothèque et Archives Canada",                                          prev:[{en:"NAC",  fr:"ANC",  titleEn:"National Archives of Canada",                          titleFr:"Archives nationales du Canada"}] },
+      { en:"NRCan",   fr:"RNCan",   titleEn:"Natural Resources Canada",                                        titleFr:"Ressources naturelles Canada",                                             prev:[{en:"EMR",  fr:"EMR",  titleEn:"Energy, Mines and Resources",                          titleFr:"Énergie, Mines et Ressources"}] },
+      { en:"NSERC",   fr:"CRSNG",   titleEn:"Natural Sciences and Engineering Research Council of Canada",     titleFr:"Conseil de recherches en sciences naturelles et en génie du Canada",       prev:[] },
+      { en:"NRC",     fr:"CNRC",    titleEn:"National Research Council Canada",                                titleFr:"Conseil national de recherches Canada",                                    prev:[] },
+      { en:"OAG",     fr:"BVG",     titleEn:"Office of the Auditor General of Canada",                         titleFr:"Bureau du vérificateur général du Canada",                                prev:[] },
+      { en:"PCH",     fr:"PCH",     titleEn:"Canadian Heritage",                                               titleFr:"Patrimoine canadien",                                                      prev:[] },
+      { en:"PCO",     fr:"BCP",     titleEn:"Privy Council Office",                                            titleFr:"Bureau du Conseil privé",                                                 prev:[] },
+      { en:"PMO",     fr:"CPM",     titleEn:"Prime Minister's Office",                                         titleFr:"Cabinet du Premier ministre",                                              prev:[] },
+      { en:"PS",      fr:"SP",      titleEn:"Public Safety Canada",                                            titleFr:"Sécurité publique Canada",                                                prev:[{en:"SG",   fr:"SG",   titleEn:"Solicitor General Canada",                             titleFr:"Solliciteur général Canada"}] },
+      { en:"PSC",     fr:"CFP",     titleEn:"Public Service Commission of Canada",                             titleFr:"Commission de la fonction publique du Canada",                             prev:[] },
+      { en:"PSPC",    fr:"SPAC",    titleEn:"Public Services and Procurement Canada",                          titleFr:"Services publics et Approvisionnement Canada",                             prev:[{en:"PWGSC",fr:"TPSGC",titleEn:"Public Works and Government Services Canada",          titleFr:"Travaux publics et Services gouvernementaux Canada"}] },
+      { en:"SSC",     fr:"SSC",     titleEn:"Shared Services Canada",                                          titleFr:"Services partagés Canada",                                                prev:[] },
+      { en:"StatCan", fr:"StatCan", titleEn:"Statistics Canada",                                               titleFr:"Statistique Canada",                                                      prev:[{en:"DBS",  fr:"BSE",  titleEn:"Dominion Bureau of Statistics",                        titleFr:"Bureau fédéral de la statistique"}] },
+      { en:"TC",      fr:"TC",      titleEn:"Transport Canada",                                                titleFr:"Transports Canada",                                                        prev:[{en:"DOT",  fr:"MDT",  titleEn:"Department of Transport",                              titleFr:"Ministère des Transports"}] },
+      { en:"TBS",     fr:"SCT",     titleEn:"Treasury Board of Canada Secretariat",                            titleFr:"Secrétariat du Conseil du Trésor du Canada",                              prev:[] },
+      { en:"VAC",     fr:"ACC",     titleEn:"Veterans Affairs Canada",                                         titleFr:"Anciens Combattants Canada",                                               prev:[{en:"DVA",  fr:"ACV",  titleEn:"Department of Veterans Affairs",                       titleFr:"Ministère des Affaires des anciens combattants"}] },
+      { en:"WEDA",    fr:"ADEO",    titleEn:"Western Economic Diversification Agency",                         titleFr:"Agence de diversification de l'économie de l'Ouest",                      prev:[{en:"WD",   fr:"DEO",  titleEn:"Western Economic Diversification Canada",               titleFr:"Diversification de l'économie de l'Ouest Canada"}] },
+    ];
 
-      /* ── Table (≥ 769px) ── */
-      .abbr-widget table.abbr-dt {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 0.875rem;
-        border: 1px solid #ddd;
-      }
-      .abbr-widget table.abbr-dt thead th {
-        background: #26374a;
-        color: #fff;
-        font-size: 0.72rem;
-        font-weight: 700;
-        letter-spacing: 0.05em;
-        text-transform: uppercase;
-        padding: 10px 12px;
-        text-align: left;
-        white-space: nowrap;
-        cursor: pointer;
-        -webkit-user-select: none;
-           -moz-user-select: none;
-            -ms-user-select: none;
-                user-select: none;
-        border-right: 1px solid #3d5166;
-      }
-      .abbr-widget table.abbr-dt thead th:last-child { border-right: none; }
-      .abbr-widget table.abbr-dt thead th:focus { outline: 3px solid #ffbf47; outline-offset: -3px; }
-      .abbr-widget table.abbr-dt thead th .si { margin-left: 4px; font-size: 0.65rem; opacity: .6; }
-      .abbr-widget table.abbr-dt thead th.asc .si::after { content: "▲"; }
-      .abbr-widget table.abbr-dt thead th.desc .si::after { content: "▼"; }
-      .abbr-widget table.abbr-dt thead th:not(.asc):not(.desc) .si::after { content: "⇅"; }
-      .abbr-widget table.abbr-dt tbody tr { border-bottom: 1px solid #ddd; }
-      .abbr-widget table.abbr-dt tbody tr:last-child { border-bottom: none; }
-      .abbr-widget table.abbr-dt tbody tr:nth-child(odd) td { background: #f5f5f5; }
-      .abbr-widget table.abbr-dt tbody tr:nth-child(even) td { background: #fff; }
-      .abbr-widget table.abbr-dt tbody tr:hover td { background: #eaf0f8; }
-      .abbr-widget table.abbr-dt tbody td {
-        padding: 10px 12px;
-        vertical-align: top;
-        color: #333;
-        border-right: 1px solid #ddd;
-      }
-      .abbr-widget table.abbr-dt tbody td:last-child { border-right: none; }
-      .abbr-widget .col-abbr { width: 13%; }
-      .abbr-widget .col-en   { width: 28%; }
-      .abbr-widget .col-fr   { width: 28%; }
-      .abbr-widget .col-leg  { width: 31%; }
+    function esc(s) {
+      return (s || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    }
 
-      .abbr-widget .dt-en-abbr  { font-weight: 700; color: #26374a; display: block; }
-      .abbr-widget .dt-fr-abbr  { font-weight: 700; color: #af3c43; font-style: italic; display: block; font-size: 0.9rem; }
+    var tbody = document.getElementById("abbr-tbody");
+    tbody.innerHTML = DATA.map(function (r) {
+      var prevHtml = r.prev.length
+        ? r.prev.map(function (p) {
+            return '<span class="prev-abbr">' + esc(p.en) + " / " + esc(p.fr) + "</span>" +
+                   '<span class="prev-title">' + esc(p.titleEn) + "</span>";
+          }).join("")
+        : "&mdash;";
 
-      .abbr-widget .dt-leg dt { font-weight: 600; font-size: 0.8rem; color: #5a5a5a; }
-      .abbr-widget .dt-leg dd { font-style: italic; font-size: 0.78rem; color: #5a5a5a; margin: 0 0 6px 0; }
-      .abbr-widget .dt-leg dd:last-child { margin-bottom: 0; }
+      return "<tr>" +
+        "<td><span class='abbr-en'>" + esc(r.en) + "</span></td>" +
+        "<td><span class='abbr-fr'>" + esc(r.fr) + "</span></td>" +
+        "<td>" + esc(r.titleEn) + "<br><i lang='fr'>" + esc(r.titleFr) + "</i></td>" +
+        "<td>" + prevHtml + "</td>" +
+        "</tr>";
+    }).join("");
+  }());
+  </script>
 
-      /* ── Cards (< 769px) ── */
-      .abbr-widget .card-list { border: 1px solid #ddd; border-radius: 4px; overflow: hidden; }
-      .abbr-widget .ci {
-        padding: 12px 14px;
-        border-bottom: 1px solid #ddd;
-        background: #fff;
-      }
-      .abbr-widget .ci:last-child { border-bottom: none; }
-      .abbr-widget .ci:nth-child(odd) { background: #f5f5f5; }
-      .abbr-widget .ci:hover { background: #eaf0f8; }
+  <!--
+    ═══════════════════════════════════════════════
+    EMBED END
+    ═══════════════════════════════════════════════
+  -->
 
-      .abbr-widget .abbr-pair { display: -webkit-box; display: -ms-flexbox; display: flex; -webkit-box-align: baseline; -ms-flex-align: baseline; align-items: baseline; -ms-flex-wrap: wrap; flex-wrap: wrap; gap: 0; margin-bottom: 5px; }
-      .abbr-widget .abbr-en  { font-size: 1.05rem; font-weight: 700; color: #26374a; }
-      .abbr-widget .abbr-sep { color: #767676; font-weight: 400; margin: 0 5px; font-size: 0.85rem; }
-      .abbr-widget .abbr-fr  { font-size: 1.05rem; font-weight: 700; color: #af3c43; }
-      .abbr-widget .title-en { font-size: 0.9rem; font-weight: 600; color: #333; margin-bottom: 2px; }
-      .abbr-widget .title-fr { font-size: 0.82rem; color: #5a5a5a; font-style: italic; margin-bottom: 8px; }
-      .abbr-widget .legacy-block { border-top: 1px dashed #ddd; padding-top: 8px; margin-top: 2px; }
-      .abbr-widget .legacy-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #767676; margin-bottom: 4px; }
-      .abbr-widget .lg-dt dt { font-size: 0.82rem; font-weight: 600; color: #5a5a5a; }
-      .abbr-widget .lg-dt dd { font-size: 0.78rem; font-style: italic; color: #5a5a5a; margin: 0 0 4px 0; }
-
-      /* Highlight */
-      .abbr-widget mark { background: #ffbf47; color: #1a1a1a; border-radius: 2px; padding: 0 1px; }
-
-      /* No results */
-      .abbr-widget .no-results { text-align: center; padding: 40px 16px; color: #5a5a5a; font-size: 0.9rem; border: 1px solid #ddd; border-radius: 4px; }
-
-      /* Responsive hide/show */
-      @media (max-width: 768px) { .abbr-widget .dt-view { display: none; } }
-      @media (min-width: 769px) { .abbr-widget .card-view { display: none; } }
-    </style>
-  </head>
-  <body>
-    <!--
-      Drop this <div class="abbr-widget"> block into any WET/GCWeb page.
-      No external dependencies beyond what WET already loads.
-    -->
-    <div class="abbr-widget">
-      <div class="abbr-hd">
-        <h2>Abbreviations</h2>
-        <p><abbr title="Royal Canadian Mounted Police">RCMP</abbr></p>
-      </div>
-
-      <div class="abbr-controls">
-        <div class="abbr-sw" role="search">
-          <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
-            <path d="M10 2a8 8 0 105.293 14.293l4.707 4.707 1.414-1.414-4.707-4.707A8 8 0 0010 2zm0 2a6 6 0 110 12A6 6 0 0110 4z"/>
-          </svg>
-          <input
-            aria-label="Search abbreviations and titles"
-            class="abbr-gs"
-            id="abbr-q"
-            oninput="abbrRender()"
-            placeholder="Search / Rechercher"
-            type="search"
-          />
-        </div>
-        <div aria-label="Sort order" class="abbr-pills" role="group">
-          <button aria-pressed="true"  class="abbr-pill on" onclick="abbrSort('en', this)">Sort English</button>
-          <button aria-pressed="false" class="abbr-pill"    onclick="abbrSort('fr', this)">Sort French</button>
-        </div>
-      </div>
-
-      <p aria-atomic="true" aria-live="polite" class="abbr-cnt" id="abbr-cnt"></p>
-
-      <!-- Desktop table -->
-      <div class="dt-view" id="abbr-dt-wrap"></div>
-
-      <!-- Mobile cards -->
-      <div class="card-view" id="abbr-card-wrap"></div>
-    </div>
-
-    <script>
-    (function () {
-      var DATA = [
-        { en:"AAFC", fr:"AAC", titleEn:"Agriculture and Agri-Food Canada", titleFr:"Agriculture et Agroalimentaire Canada", prev:[{en:"Agr",fr:"Agr",titleEn:"Agriculture Canada",titleFr:"Agriculture Canada"}] },
-        { en:"CATSA", fr:"ACSTA", titleEn:"Canadian Air Transport Security Authority", titleFr:"Administration canadienne de la sûreté du transport aérien", prev:[] },
-        { en:"CBSA", fr:"ASFC", titleEn:"Canada Border Services Agency", titleFr:"Agence des services frontaliers du Canada", prev:[{en:"CCRA",fr:"ADRC",titleEn:"Canada Customs and Revenue Agency",titleFr:"Agence des douanes et du revenu du Canada"},{en:"RC",fr:"RC",titleEn:"Revenue Canada",titleFr:"Revenu Canada"}] },
-        { en:"CDS", fr:"CESD", titleEn:"Commissioner of the Environment and Sustainable Development", titleFr:"Commissaire à l'environnement et au développement durable", prev:[] },
-        { en:"CEAA", fr:"ACEE", titleEn:"Canadian Environmental Assessment Agency", titleFr:"Agence canadienne d'évaluation environnementale", prev:[{en:"FEARO",fr:"FEARO",titleEn:"Federal Environmental Assessment Review Office",titleFr:"Bureau fédéral d'examen des évaluations environnementales"}] },
-        { en:"CFIA", fr:"ACIA", titleEn:"Canadian Food Inspection Agency", titleFr:"Agence canadienne d'inspection des aliments", prev:[] },
-        { en:"CIRNAC", fr:"RCAANC", titleEn:"Crown-Indigenous Relations and Northern Affairs Canada", titleFr:"Relations Couronne-Autochtones et Affaires du Nord Canada", prev:[{en:"INAC",fr:"AINC",titleEn:"Indian and Northern Affairs Canada",titleFr:"Affaires indiennes et du Nord Canada"},{en:"AANDC",fr:"AADNC",titleEn:"Aboriginal Affairs and Northern Development Canada",titleFr:"Affaires autochtones et Développement du Nord Canada"}] },
-        { en:"CRTC", fr:"CRTC", titleEn:"Canadian Radio-television and Telecommunications Commission", titleFr:"Conseil de la radiodiffusion et des télécommunications canadiennes", prev:[{en:"BBG",fr:"BBG",titleEn:"Board of Broadcast Governors",titleFr:"Bureau des gouverneurs de la radiodiffusion"}] },
-        { en:"CSE", fr:"CST", titleEn:"Communications Security Establishment", titleFr:"Centre de la sécurité des télécommunications", prev:[] },
-        { en:"CSIS", fr:"SCRS", titleEn:"Canadian Security Intelligence Service", titleFr:"Service canadien du renseignement de sécurité", prev:[] },
-        { en:"CTA", fr:"OTC", titleEn:"Canadian Transportation Agency", titleFr:"Office des transports du Canada", prev:[{en:"NTA",fr:"ONT",titleEn:"National Transportation Agency",titleFr:"Office national des transports"}] },
-        { en:"DFO", fr:"MPO", titleEn:"Fisheries and Oceans Canada", titleFr:"Pêches et Océans Canada", prev:[{en:"DOF",fr:"MPO",titleEn:"Department of Fisheries",titleFr:"Ministère des Pêches"}] },
-        { en:"DND", fr:"MDN", titleEn:"Department of National Defence", titleFr:"Ministère de la Défense nationale", prev:[] },
-        { en:"ECCC", fr:"ECCC", titleEn:"Environment and Climate Change Canada", titleFr:"Environnement et Changement climatique Canada", prev:[{en:"EC",fr:"EC",titleEn:"Environment Canada",titleFr:"Environnement Canada"}] },
-        { en:"ESDC", fr:"EDSC", titleEn:"Employment and Social Development Canada", titleFr:"Emploi et Développement social Canada", prev:[{en:"HRSDC",fr:"RHDCC",titleEn:"Human Resources and Skills Development Canada",titleFr:"Ressources humaines et Développement des compétences Canada"},{en:"HRDC",fr:"DRHC",titleEn:"Human Resources Development Canada",titleFr:"Développement des ressources humaines Canada"}] },
-        { en:"Finance", fr:"Finances", titleEn:"Department of Finance Canada", titleFr:"Ministère des Finances Canada", prev:[] },
-        { en:"GAC", fr:"AMC", titleEn:"Global Affairs Canada", titleFr:"Affaires mondiales Canada", prev:[{en:"DFATD",fr:"MAECD",titleEn:"Foreign Affairs, Trade and Development Canada",titleFr:"Affaires étrangères, Commerce et Développement Canada"},{en:"DFAIT",fr:"MAECI",titleEn:"Foreign Affairs and International Trade Canada",titleFr:"Affaires étrangères et Commerce international Canada"}] },
-        { en:"HC", fr:"SC", titleEn:"Health Canada", titleFr:"Santé Canada", prev:[{en:"NHW",fr:"SNS",titleEn:"National Health and Welfare",titleFr:"Santé nationale et Bien-être social"}] },
-        { en:"IAAC", fr:"AEIC", titleEn:"Impact Assessment Agency of Canada", titleFr:"Agence d'évaluation d'impact du Canada", prev:[{en:"CEAA",fr:"ACEE",titleEn:"Canadian Environmental Assessment Agency",titleFr:"Agence canadienne d'évaluation environnementale"}] },
-        { en:"ISED", fr:"ISDE", titleEn:"Innovation, Science and Economic Development Canada", titleFr:"Innovation, Sciences et Développement économique Canada", prev:[{en:"IC",fr:"IC",titleEn:"Industry Canada",titleFr:"Industrie Canada"}] },
-        { en:"ISC", fr:"SAC", titleEn:"Indigenous Services Canada", titleFr:"Services aux Autochtones Canada", prev:[{en:"INAC",fr:"AINC",titleEn:"Indian and Northern Affairs Canada",titleFr:"Affaires indiennes et du Nord Canada"}] },
-        { en:"JUS", fr:"JUS", titleEn:"Department of Justice Canada", titleFr:"Ministère de la Justice Canada", prev:[] },
-        { en:"LAC", fr:"BAC", titleEn:"Library and Archives Canada", titleFr:"Bibliothèque et Archives Canada", prev:[{en:"NAC",fr:"ANC",titleEn:"National Archives of Canada",titleFr:"Archives nationales du Canada"}] },
-        { en:"NRCan", fr:"RNCan", titleEn:"Natural Resources Canada", titleFr:"Ressources naturelles Canada", prev:[{en:"EMR",fr:"EMR",titleEn:"Energy, Mines and Resources",titleFr:"Énergie, Mines et Ressources"}] },
-        { en:"NSERC", fr:"CRSNG", titleEn:"Natural Sciences and Engineering Research Council of Canada", titleFr:"Conseil de recherches en sciences naturelles et en génie du Canada", prev:[] },
-        { en:"NRC", fr:"CNRC", titleEn:"National Research Council Canada", titleFr:"Conseil national de recherches Canada", prev:[] },
-        { en:"OAG", fr:"BVG", titleEn:"Office of the Auditor General of Canada", titleFr:"Bureau du vérificateur général du Canada", prev:[] },
-        { en:"PCH", fr:"PCH", titleEn:"Canadian Heritage", titleFr:"Patrimoine canadien", prev:[] },
-        { en:"PCO", fr:"BCP", titleEn:"Privy Council Office", titleFr:"Bureau du Conseil privé", prev:[] },
-        { en:"PMO", fr:"CPM", titleEn:"Prime Minister's Office", titleFr:"Cabinet du Premier ministre", prev:[] },
-        { en:"PS", fr:"SP", titleEn:"Public Safety Canada", titleFr:"Sécurité publique Canada", prev:[{en:"SG",fr:"SG",titleEn:"Solicitor General Canada",titleFr:"Solliciteur général Canada"}] },
-        { en:"PSC", fr:"CFP", titleEn:"Public Service Commission of Canada", titleFr:"Commission de la fonction publique du Canada", prev:[] },
-        { en:"PSPC", fr:"SPAC", titleEn:"Public Services and Procurement Canada", titleFr:"Services publics et Approvisionnement Canada", prev:[{en:"PWGSC",fr:"TPSGC",titleEn:"Public Works and Government Services Canada",titleFr:"Travaux publics et Services gouvernementaux Canada"}] },
-        { en:"SSC", fr:"SSC", titleEn:"Shared Services Canada", titleFr:"Services partagés Canada", prev:[] },
-        { en:"StatCan", fr:"StatCan", titleEn:"Statistics Canada", titleFr:"Statistique Canada", prev:[{en:"DBS",fr:"BSE",titleEn:"Dominion Bureau of Statistics",titleFr:"Bureau fédéral de la statistique"}] },
-        { en:"TC", fr:"TC", titleEn:"Transport Canada", titleFr:"Transports Canada", prev:[{en:"DOT",fr:"MDT",titleEn:"Department of Transport",titleFr:"Ministère des Transports"}] },
-        { en:"TBS", fr:"SCT", titleEn:"Treasury Board of Canada Secretariat", titleFr:"Secrétariat du Conseil du Trésor du Canada", prev:[] },
-        { en:"VAC", fr:"ACC", titleEn:"Veterans Affairs Canada", titleFr:"Anciens Combattants Canada", prev:[{en:"DVA",fr:"ACV",titleEn:"Department of Veterans Affairs",titleFr:"Ministère des Affaires des anciens combattants"}] },
-        { en:"WEDA", fr:"ADEO", titleEn:"Western Economic Diversification Agency", titleFr:"Agence de diversification de l'économie de l'Ouest", prev:[{en:"WD",fr:"DEO",titleEn:"Western Economic Diversification Canada",titleFr:"Diversification de l'économie de l'Ouest Canada"}] },
-      ];
-
-      var sortKey = "en";
-
-      function abbrSort(k, btn) {
-        sortKey = k;
-        var pills = document.querySelectorAll(".abbr-pill");
-        for (var i = 0; i < pills.length; i++) {
-          pills[i].classList.remove("on");
-          pills[i].setAttribute("aria-pressed", "false");
-        }
-        btn.classList.add("on");
-        btn.setAttribute("aria-pressed", "true");
-        abbrRender();
-      }
-      window.abbrSort = abbrSort;
-
-      function esc(s) {
-        return s ? s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;") : "";
-      }
-
-      function hl(text, q) {
-        if (!q || !text) return esc(text);
-        var safe = esc(text);
-        var re = new RegExp("(" + q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + ")", "gi");
-        return safe.replace(re, "<mark>$1</mark>");
-      }
-
-      function abbrRender() {
-        var q = (document.getElementById("abbr-q").value || "").trim().toLowerCase();
-        var rows = DATA.filter(function (r) {
-          if (!q) return true;
-          var fields = [r.en, r.fr, r.titleEn, r.titleFr].concat(
-            r.prev.reduce(function(a,p){ return a.concat([p.en,p.fr,p.titleEn,p.titleFr]); }, [])
-          );
-          return fields.some(function (v) { return v && v.toLowerCase().indexOf(q) !== -1; });
-        });
-        rows.sort(function (a, b) { return a[sortKey].localeCompare(b[sortKey], "en"); });
-
-        document.getElementById("abbr-cnt").innerHTML =
-          "Showing <strong>" + rows.length + "</strong> of <strong>" + DATA.length + "</strong>";
-
-        if (!rows.length) {
-          var nr = '<div class="no-results">No results found &middot; Aucun résultat trouvé</div>';
-          document.getElementById("abbr-dt-wrap").innerHTML = nr;
-          document.getElementById("abbr-card-wrap").innerHTML = nr;
-          return;
-        }
-
-        /* ── Desktop table ── */
-        var cols = [
-          { label: "Abbreviation EN / FR", key: "en" },
-          { label: "English full title",   key: "titleEn" },
-          { label: "French full title",    key: null },
-          { label: "Previous",             key: null }
-        ];
-        var ths = cols.map(function (c) {
-          var cls = c.key && sortKey === c.key ? "asc" : "";
-          var si  = c.key ? '<span class="si" aria-hidden="true"></span>' : "";
-          var tab = c.key ? 'tabindex="0"' : "";
-          var ev  = c.key
-            ? 'onclick="abbrSort(\'' + c.key + '\',this)" onkeydown="if(event.key===\'Enter\'||event.key===\' \')abbrSort(\'' + c.key + '\',this)"'
-            : "";
-          return "<th scope=\"col\" class=\"" + cls + "\" " + tab + " " + ev + ">" + c.label + si + "</th>";
-        }).join("");
-
-        var trs = rows.map(function (r) {
-          var legHtml = r.prev.length
-            ? '<dl class="dt-leg">' + r.prev.map(function(p){
-                return "<dt>" + hl(p.en,q) + "</dt><dd>" + hl(p.titleEn,q) + "</dd>";
-              }).join("") + "</dl>"
-            : "&mdash;";
-          return "<tr>" +
-            "<td class=\"col-abbr\"><span class=\"dt-en-abbr\">" + hl(r.en,q) + "</span><span class=\"dt-fr-abbr\">" + hl(r.fr,q) + "</span></td>" +
-            "<td class=\"col-en\">"  + hl(r.titleEn,q) + "</td>" +
-            "<td class=\"col-fr\"><i lang=\"fr\">" + hl(r.titleFr,q) + "</i></td>" +
-            "<td class=\"col-leg\">" + legHtml + "</td>" +
-            "</tr>";
-        }).join("");
-
-        document.getElementById("abbr-dt-wrap").innerHTML =
-          "<table class=\"abbr-dt\" aria-label=\"Government of Canada bilingual abbreviations\">" +
-            "<caption class=\"wb-inv\">Bilingual abbreviations with legacy references</caption>" +
-            "<thead><tr>" + ths + "</tr></thead>" +
-            "<tbody>" + trs + "</tbody>" +
-          "</table>";
-
-        /* ── Mobile cards ── */
-        var cards = rows.map(function (r) {
-          var legHtml = r.prev.length
-            ? "<div class=\"legacy-block\">" +
-                "<div class=\"legacy-label\">Previously / Précédemment</div>" +
-                "<dl class=\"lg-dt\">" + r.prev.map(function(p){
-                  return "<dt>" + hl(p.en,q) + "</dt><dd>" + hl(p.titleEn,q) + "</dd>";
-                }).join("") + "</dl>" +
-              "</div>"
-            : "";
-          return "<div class=\"ci\">" +
-            "<div class=\"abbr-pair\"><span class=\"abbr-en\">" + hl(r.en,q) + "</span><span class=\"abbr-sep\">/</span><span class=\"abbr-fr\">" + hl(r.fr,q) + "</span></div>" +
-            "<div class=\"title-en\">" + hl(r.titleEn,q) + "</div>" +
-            "<div class=\"title-fr\"><i lang=\"fr\">" + hl(r.titleFr,q) + "</i></div>" +
-            legHtml +
-            "</div>";
-        }).join("");
-
-        document.getElementById("abbr-card-wrap").innerHTML = "<div class=\"card-list\">" + cards + "</div>";
-      }
-      window.abbrRender = abbrRender;
-
-      window.addEventListener("resize", abbrRender);
-      abbrRender();
-    }());
-    </script>
-  </body>
+  <!-- WET boot — already on rcmp.ca, remove when embedding -->
+  <script src="https://www.canada.ca/etc/designs/canada/wet-boew/js/wet-boew.min.js"></script>
+</body>
 </html>
