@@ -225,6 +225,12 @@ document.addEventListener("DOMContentLoaded", () => {
   try {
     console.log(`Abbrevo v${ABBREVO_VERSION} loaded`);
 
+    // Set version in footer (takes priority over creavia.js fallback)
+    const versionElement = document.getElementById("version-info");
+    if (versionElement) {
+      versionElement.textContent = `Version ${ABBREVO_VERSION}`;
+    }
+
     // Add ARIA live region for announcements
     const liveRegion = document.createElement("div");
     liveRegion.id = "aria-live-region";
