@@ -288,20 +288,15 @@
 
 .quill-editor {
   margin-bottom: 0.5rem;
-}
-
-.quill-editor .ql-toolbar {
-  border-radius: 0.25rem 0.25rem 0 0;
-}
-
-.quill-editor {
-  margin-bottom: 0.5rem;
   position: relative;
   z-index: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .quill-editor .ql-toolbar {
   border-radius: 0.25rem 0.25rem 0 0;
+  flex-shrink: 0;
 }
 
 .quill-editor .ql-container {
@@ -309,6 +304,7 @@
   min-height: 100px;
   height: auto;
   overflow: visible;
+  flex-shrink: 0;
 }
 
 .quill-editor .ql-editor {
@@ -320,4 +316,8 @@
 .form-row > div {
   min-width: 0;
   overflow: visible;
+}
+
+.form-row {
+  align-items: start;
 }
