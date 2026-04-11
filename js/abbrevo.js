@@ -547,7 +547,6 @@ function editEntry(id) {
   if (!entry) return;
 
   // Populate form with entry data
-  document.getElementById("internal-only").checked = entry.internalOnly || false;
   document.getElementById("abbr-en").value = entry.abbrEn;
   document.getElementById("abbr-fr").value = entry.abbrFr;
   document.getElementById("title-en").value = entry.titleEn;
@@ -591,7 +590,6 @@ function editEntry(id) {
 
 // Update entry
 function updateEntry(id) {
-  const internalOnly = document.getElementById("internal-only").checked;
   let abbrEn = document.getElementById("abbr-en").value.trim();
   let abbrFr = document.getElementById("abbr-fr").value.trim();
   const titleEn = document.getElementById("title-en").value.trim();
@@ -632,7 +630,6 @@ function updateEntry(id) {
   if (entryIndex !== -1) {
     entries[entryIndex] = {
       id,
-      internalOnly,
       abbrEn,
       abbrFr,
       titleEn,
@@ -688,7 +685,6 @@ function saveToJSON() {
   // Ensure all fields are present in each entry
   const normalizedEntries = entries.map((entry) => ({
     id: entry.id,
-    internalOnly: entry.internalOnly || false,
     abbrEn: entry.abbrEn || "",
     abbrFr: entry.abbrFr || "",
     titleEn: entry.titleEn || "",
