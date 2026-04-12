@@ -870,142 +870,98 @@ function saveToHTML() {
 function generateEnglishTable(sortedEntries) {
   const rows = sortedEntries
     .map((entry) => {
-      // Handle abbreviations
-      const abbrEn = entry.abbrEn === MESSAGES.NO_ABBR_EN ? "" : escapeHtml(entry.abbrEn);
-      const abbrFr = entry.abbrFr === MESSAGES.NO_ABBR_FR ? "" : escapeHtml(entry.abbrFr);
+      const rawAbbrEn = entry.abbrEn === MESSAGES.NO_ABBR_EN ? "" : entry.abbrEn;
+      const rawAbbrFr = entry.abbrFr === MESSAGES.NO_ABBR_FR ? "" : entry.abbrFr;
 
-      // Handle titles with language tags
-      const titleEn = entry.titleEnIsFrench ? `<span lang="fr">${escapeHtml(entry.titleEn)}</span>` : escapeHtml(entry.titleEn);
-      const titleFr = entry.titleFrIsEnglish ? `<span lang="en">${escapeHtml(entry.titleFr)}</span>` : escapeHtml(entry.titleFr);
+      const abbrEn = escapeHtml(rawAbbrEn);
+      const abbrFr = escapeHtml(rawAbbrFr);
 
-      // Combine notes with previous abbreviations
-      let previousNotes = "";
-      const noteParts = [];
+      // English title: wrap in <i lang="fr"> if titleEnIsFrench
+      const titleEn = entry.titleEnIsFrench ? `<i lang="fr">${escapeHtml(entry.titleEn)}</i>` : escapeHtml(entry.titleEn);
 
-      // Add previous abbreviations if present
+      // French title: wrap in <i lang="en"> if titleFrIsEnglish, otherwise lang="fr"
+      const titleFr = entry.titleFrIsEnglish ? `<i lang="en">${escapeHtml(entry.titleFr)}</i>` : `<i lang="fr">${escapeHtml(entry.titleFr)}</i>`;
+
+      // Build "Previously known as" dl — one <dt>/<dd> pair per previous abbreviation
+      let previousBlock = "";
       if (entry.previousAbbrs && entry.previousAbbrs.length > 0) {
-        entry.previousAbbrs.forEach((abbr) => {
-          const parts = [];
-          if (abbr.abbrEn) {
-            parts.push(escapeHtml(abbr.abbrEn));
-            if (abbr.titleEn) parts.push(`(${escapeHtml(abbr.titleEn)})`);
-          }
-          if (abbr.abbrFr) {
-            parts.push(`<span lang="fr">${escapeHtml(abbr.abbrFr)}</span>`);
-            if (abbr.titleFr) parts.push(`(<span lang="fr">${escapeHtml(abbr.titleFr)}</span>)`);
-          }
-          if (parts.length > 0) noteParts.push(parts.join(" "));
-        });
+        const dtItems = entry.previousAbbrs
+          .map((abbr) => {
+            const dtAbbr = abbr.abbrEn ? `<abbr>${escapeHtml(abbr.abbrEn)}</abbr>` : "";
+            const ddTitle = abbr.titleEnIsFrench ? `<i lang="fr">${escapeHtml(abbr.titleEn)}</i>` : escapeHtml(abbr.titleEn);
+            return `<dt>${dtAbbr}</dt><dd>${ddTitle}</dd>`;
+          })
+          .join("\n");
+
+        previousBlock = `<p class="mrgn-tp-md"><strong>Previously known as</strong></p>\n<dl>\n${dtItems}\n</dl>`;
       }
 
-      // Add transparent notes if present
+      // Transparent notes appended after the dl if present
       if (entry.transparentNotes) {
-        noteParts.push(escapeHtml(entry.transparentNotes));
+        previousBlock += (previousBlock ? "\n" : "") + `<p>${escapeHtml(entry.transparentNotes)}</p>`;
       }
 
-      previousNotes = noteParts.join(" / ");
+      // French cross-reference link
+      const frLink = rawAbbrFr ? `<a href="/fr/abreviations#${abbrFr}" lang="fr" hreflang="fr"><i lang="fr">${abbrFr}</i></a>` : "";
 
-      return `\t\t\t<tr>
-\t\t\t\t<td>${abbrEn}</td>
-\t\t\t\t<td>${titleEn}</td>
-\t\t\t\t<td lang="fr">${abbrFr}</td>
-\t\t\t\t<td lang="fr">${titleFr}</td>
-\t\t\t\t<td>${previousNotes}</td>
+      return `\t\t\t<tr id="${abbrEn}">
+\t\t\t\t<td><abbr>${abbrEn}</abbr></td>
+\t\t\t\t<td>${titleEn}${previousBlock ? "\n" + previousBlock : ""}</td>
+\t\t\t\t<td>${frLink}</td>
 \t\t\t</tr>`;
     })
     .join("\n");
 
-  return `<div class="table-container">
-\t<table>
-\t\t<caption>
-\t\t\tBilingual abbreviations and acronyms
-\t\t\t<span class="sr-only">This table contains five columns: English abbreviation or acronym, English full form, French abbreviation or acronym, French full form, and previous abbreviations and acronyms</span>
-\t\t</caption>
-\t\t<thead>
-\t\t\t<tr>
-\t\t\t\t<th scope="col">English abbreviation or acronym</th>
-\t\t\t\t<th scope="col">English full form</th>
-\t\t\t\t<th scope="col">French abbreviation or acronym</th>
-\t\t\t\t<th scope="col">French full form</th>
-\t\t\t\t<th scope="col">Previous abbreviations and acronyms</th>
-\t\t\t</tr>
-\t\t</thead>
-\t\t<tbody>
-${rows}
-\t\t</tbody>
-\t</table>
-</div>`;
+  return `${rows}`;
 }
 
 // Generate French table
 function generateFrenchTable(sortedEntries) {
   const rows = sortedEntries
     .map((entry) => {
-      // Handle abbreviations
-      const abbrEn = entry.abbrEn === MESSAGES.NO_ABBR_EN ? "" : escapeHtml(entry.abbrEn);
-      const abbrFr = entry.abbrFr === MESSAGES.NO_ABBR_FR ? "" : escapeHtml(entry.abbrFr);
+      const rawAbbrEn = entry.abbrEn === MESSAGES.NO_ABBR_EN ? "" : entry.abbrEn;
+      const rawAbbrFr = entry.abbrFr === MESSAGES.NO_ABBR_FR ? "" : entry.abbrFr;
 
-      // Handle titles with language tags
-      const titleEn = entry.titleEnIsFrench ? `<span lang="fr">${escapeHtml(entry.titleEn)}</span>` : escapeHtml(entry.titleEn);
-      const titleFr = entry.titleFrIsEnglish ? `<span lang="en">${escapeHtml(entry.titleFr)}</span>` : escapeHtml(entry.titleFr);
+      const abbrEn = escapeHtml(rawAbbrEn);
+      const abbrFr = escapeHtml(rawAbbrFr);
 
-      // Combine notes with previous abbreviations (French first for French table)
-      let previousNotes = "";
-      const noteParts = [];
+      // French title: wrap in <i lang="en"> if titleFrIsEnglish
+      const titleFr = entry.titleFrIsEnglish ? `<i lang="en">${escapeHtml(entry.titleFr)}</i>` : escapeHtml(entry.titleFr);
 
-      // Add previous abbreviations if present (French first)
+      // English title: wrap in <i lang="fr"> if titleEnIsFrench, otherwise lang="en"
+      const titleEn = entry.titleEnIsFrench ? `<i lang="fr">${escapeHtml(entry.titleEn)}</i>` : `<i lang="en">${escapeHtml(entry.titleEn)}</i>`;
+
+      // Build "Anciennement connu sous" dl — one <dt>/<dd> pair per previous abbreviation
+      let previousBlock = "";
       if (entry.previousAbbrs && entry.previousAbbrs.length > 0) {
-        entry.previousAbbrs.forEach((abbr) => {
-          const parts = [];
-          if (abbr.abbrFr) {
-            parts.push(escapeHtml(abbr.abbrFr));
-            if (abbr.titleFr) parts.push(`(${escapeHtml(abbr.titleFr)})`);
-          }
-          if (abbr.abbrEn) {
-            parts.push(`<span lang="en">${escapeHtml(abbr.abbrEn)}</span>`);
-            if (abbr.titleEn) parts.push(`(<span lang="en">${escapeHtml(abbr.titleEn)}</span>)`);
-          }
-          if (parts.length > 0) noteParts.push(parts.join(" "));
-        });
+        const dtItems = entry.previousAbbrs
+          .map((abbr) => {
+            const dtAbbr = abbr.abbrFr ? `<abbr>${escapeHtml(abbr.abbrFr)}</abbr>` : "";
+            const ddTitle = abbr.titleFrIsEnglish ? `<i lang="en">${escapeHtml(abbr.titleFr)}</i>` : escapeHtml(abbr.titleFr);
+            return `<dt>${dtAbbr}</dt><dd>${ddTitle}</dd>`;
+          })
+          .join("\n");
+
+        previousBlock = `<p class="mrgn-tp-md"><strong>Anciennement connu sous</strong></p>\n<dl>\n${dtItems}\n</dl>`;
       }
 
-      // Add transparent notes if present
+      // Transparent notes appended after the dl if present
       if (entry.transparentNotes) {
-        noteParts.push(escapeHtml(entry.transparentNotes));
+        previousBlock += (previousBlock ? "\n" : "") + `<p>${escapeHtml(entry.transparentNotes)}</p>`;
       }
 
-      previousNotes = noteParts.join(" / ");
+      // English cross-reference link
+      const enLink = rawAbbrEn ? `<a href="/en/abbreviations#${abbrEn}" lang="en" hreflang="en"><i lang="en">${abbrEn}</i></a>` : "";
 
-      return `\t\t\t<tr>
-\t\t\t\t<td>${abbrFr}</td>
-\t\t\t\t<td>${titleFr}</td>
-\t\t\t\t<td lang="en">${abbrEn}</td>
-\t\t\t\t<td lang="en">${titleEn}</td>
-\t\t\t\t<td>${previousNotes}</td>
+      return `\t\t\t<tr id="${abbrFr}">
+\t\t\t\t<td><abbr>${abbrFr}</abbr></td>
+\t\t\t\t<td>${titleFr}${previousBlock ? "\n" + previousBlock : ""}</td>
+\t\t\t\t<td>${enLink}</td>
 \t\t\t</tr>`;
     })
     .join("\n");
 
-  return `<div class="table-container">
-\t<table>
-\t\t<caption>
-\t\t\tAbréviations et acronymes bilingues
-\t\t\t<span class="sr-only">Ce tableau contient cinq colonnes: abréviation ou acronyme français, forme complète en français, abréviation ou acronyme anglais, forme complète en anglais, et abréviations et acronymes précédents</span>
-\t\t</caption>
-\t\t<thead>
-\t\t\t<tr>
-\t\t\t\t<th scope="col">Abréviation ou acronyme français</th>
-\t\t\t\t<th scope="col">Forme complète en français</th>
-\t\t\t\t<th scope="col">Abréviation ou acronyme anglais</th>
-\t\t\t\t<th scope="col">Forme complète en anglais</th>
-\t\t\t\t<th scope="col">Abréviations et acronymes précédents</th>
-\t\t\t</tr>
-\t\t</thead>
-\t\t<tbody>
-${rows}
-\t\t</tbody>
-\t</table>
-</div>`;
+  return `${rows}`;
 }
 
 // Load entries from JSON file
