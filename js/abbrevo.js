@@ -61,6 +61,15 @@ function normalizeString(str) {
   return str ? str.trim().toLowerCase() : "";
 }
 
+/**
+ * Replace straight apostrophes with typographic apostrophes
+ * @param {string} str - String to process
+ * @returns {string} String with ' replaced by '
+ */
+function normalizeApostrophes(str) {
+  return str ? str.replace(/'/g, "\u2019") : str;
+}
+
 // ===================================================================
 // PREVIOUS ABBREVIATION ROWS MANAGEMENT
 // ===================================================================
@@ -156,10 +165,10 @@ function getPreviousAbbreviations() {
   const previousAbbrs = [];
 
   rows.forEach((row) => {
-    const abbrEn = row.querySelector(".previous-abbr-en").value.trim();
-    const abbrFr = row.querySelector(".previous-abbr-fr").value.trim();
-    const titleEn = row.querySelector(".previous-title-en").value.trim();
-    const titleFr = row.querySelector(".previous-title-fr").value.trim();
+    const abbrEn = normalizeApostrophes(row.querySelector(".previous-abbr-en").value.trim());
+    const abbrFr = normalizeApostrophes(row.querySelector(".previous-abbr-fr").value.trim());
+    const titleEn = normalizeApostrophes(row.querySelector(".previous-title-en").value.trim());
+    const titleFr = normalizeApostrophes(row.querySelector(".previous-title-fr").value.trim());
     const titleEnIsFrench = row.querySelector('[id$="-title-en-is-french"]')?.checked || false;
     const titleFrIsEnglish = row.querySelector('[id$="-title-fr-is-english"]')?.checked || false;
 
@@ -277,13 +286,13 @@ function announceToScreenReader(message) {
 
 // Add new entry
 function addEntry() {
-  let abbrEn = document.getElementById("abbr-en").value.trim();
-  let abbrFr = document.getElementById("abbr-fr").value.trim();
-  const titleEn = document.getElementById("title-en").value.trim();
-  const titleFr = document.getElementById("title-fr").value.trim();
+  let abbrEn = normalizeApostrophes(document.getElementById("abbr-en").value.trim());
+  let abbrFr = normalizeApostrophes(document.getElementById("abbr-fr").value.trim());
+  const titleEn = normalizeApostrophes(document.getElementById("title-en").value.trim());
+  const titleFr = normalizeApostrophes(document.getElementById("title-fr").value.trim());
   const titleEnIsFrench = document.getElementById("title-en-is-french").checked;
   const titleFrIsEnglish = document.getElementById("title-fr-is-english").checked;
-  const transparentNotes = document.getElementById("transparent-notes").value.trim();
+  const transparentNotes = normalizeApostrophes(document.getElementById("transparent-notes").value.trim());
   const previousAbbrs = getPreviousAbbreviations();
 
   // Validation - at least one abbreviation and both titles required
@@ -590,13 +599,13 @@ function editEntry(id) {
 
 // Update entry
 function updateEntry(id) {
-  let abbrEn = document.getElementById("abbr-en").value.trim();
-  let abbrFr = document.getElementById("abbr-fr").value.trim();
-  const titleEn = document.getElementById("title-en").value.trim();
-  const titleFr = document.getElementById("title-fr").value.trim();
+  let abbrEn = normalizeApostrophes(document.getElementById("abbr-en").value.trim());
+  let abbrFr = normalizeApostrophes(document.getElementById("abbr-fr").value.trim());
+  const titleEn = normalizeApostrophes(document.getElementById("title-en").value.trim());
+  const titleFr = normalizeApostrophes(document.getElementById("title-fr").value.trim());
   const titleEnIsFrench = document.getElementById("title-en-is-french").checked;
   const titleFrIsEnglish = document.getElementById("title-fr-is-english").checked;
-  const transparentNotes = document.getElementById("transparent-notes").value.trim();
+  const transparentNotes = normalizeApostrophes(document.getElementById("transparent-notes").value.trim());
   const previousAbbrs = getPreviousAbbreviations();
 
   // Validation - at least one abbreviation and both titles required
