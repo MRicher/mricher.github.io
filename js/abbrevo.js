@@ -801,121 +801,35 @@ function saveToHTML() {
     return normalizeString(a.abbrEn).localeCompare(normalizeString(b.abbrEn));
   });
 
-  // Generate English table
-  const englishTable = generateEnglishTable(sortedEntriesEn);
+  // Generate English tbody rows
+  const englishRows = generateEnglishTable(sortedEntriesEn);
 
   // Sort entries alphabetically by French abbreviation for French table
   const sortedEntriesFr = [...publicEntries].sort((a, b) => {
     return normalizeString(a.abbrFr).localeCompare(normalizeString(b.abbrFr));
   });
 
-  // Generate French table
-  const frenchTable = generateFrenchTable(sortedEntriesFr);
+  // Generate French tbody rows
+  const frenchRows = generateFrenchTable(sortedEntriesFr);
 
-  // Combine both tables in one HTML file
-  const htmlContent = `<!DOCTYPE html>
-<html lang="en-CA">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RCMP Abbreviations and Acronyms / Abréviations et acronymes de la GRC</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .table-container {
-            margin-bottom: 60px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        caption {
-            font-size: 1.5em;
-            font-weight: bold;
-            text-align: left;
-            margin-bottom: 10px;
-            padding: 10px 0;
-        }
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0,0,0,0);
-            white-space: nowrap;
-            border-width: 0;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-            font-weight: bold;
-        }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        tr:hover {
-            background-color: #f5f5f5;
-        }
-        h1 {
-            color: #333;
-            border-bottom: 2px solid #333;
-            padding-bottom: 10px;
-        }
-        .language-section {
-            page-break-after: always;
-        }
-        @media print {
-            .language-section {
-                page-break-after: always;
-            }
-        }
-        @media (max-width: 768px) {
-            table {
-                font-size: 0.9em;
-            }
-            th, td {
-                padding: 8px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="language-section">
-        <h1>English Version</h1>
-        ${englishTable}
-    </div>
-    
-    <div class="language-section">
-        <h1>Version française</h1>
-        ${frenchTable}
-    </div>
-</body>
-</html>`;
+  // Download helper — raw tbody row content only
+  function downloadRows(content, filename) {
+    const blob = new Blob([content], { type: "text/html" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
 
-  // Create and download the file
-  const blob = new Blob([htmlContent], { type: "text/html" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = "abbrevo-bilingual-tables.html";
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
+  downloadRows(englishRows, "abbrevo-en.html");
+  downloadRows(frenchRows, "abbrevo-fr.html");
 
   const currentLang = getCurrentLanguage();
-  const successMsg = currentLang === "fr" ? "HTML enregistré avec succès" : "HTML saved successfully";
+  const successMsg = currentLang === "fr" ? "Fichiers HTML enregistrés avec succès" : "HTML files saved successfully";
   showNotification(successMsg, "success");
 }
 
