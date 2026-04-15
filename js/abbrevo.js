@@ -91,6 +91,9 @@ function addAbbrRow() {
   const titleEnIsFrenchLabel = currentLang === "fr" ? "Le titre est en français" : "Title is in French";
   const titleFrIsEnglishLabel = currentLang === "fr" ? "Le titre est en anglais" : "Title is in English";
 
+  const moveUpLabel = currentLang === "fr" ? "Monter" : "Move up";
+  const moveDownLabel = currentLang === "fr" ? "Descendre" : "Move down";
+
   const rowHTML = `
     <div class="previous-abbr-row mb-3 p-3 border rounded" id="${rowId}">
       <div class="row g-2 mb-2">
@@ -124,7 +127,13 @@ function addAbbrRow() {
         </div>
       </div>
       <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-12 d-flex gap-2 flex-wrap align-items-center">
+          <button type="button" class="btn btn-sm btn-secondary abbr-move-up" onclick="moveAbbrRow('${rowId}', 'up')" aria-label="${moveUpLabel}">
+            <span data-en="Move up" data-fr="Monter">▲ ${moveUpLabel}</span>
+          </button>
+          <button type="button" class="btn btn-sm btn-secondary abbr-move-down" onclick="moveAbbrRow('${rowId}', 'down')" aria-label="${moveDownLabel}">
+            <span data-en="Move down" data-fr="Descendre">▼ ${moveDownLabel}</span>
+          </button>
           <button type="button" class="btn btn-sm btn-danger" onclick="deleteAbbrRow('${rowId}')">
             <span data-en="Delete" data-fr="Supprimer">${deleteLabel}</span>
           </button>
@@ -134,11 +143,54 @@ function addAbbrRow() {
   `;
 
   container.insertAdjacentHTML("beforeend", rowHTML);
+  updateAbbrMoveButtons();
 
   // Focus on the new English abbreviation input
   const newRow = document.getElementById(rowId);
   const firstInput = newRow.querySelector(".previous-abbr-en");
   if (firstInput) firstInput.focus();
+}
+
+/**
+ * Move a previous abbreviation row up or down
+ * @param {string} rowId - ID of the row to move
+ * @param {string} direction - 'up' or 'down'
+ */
+function moveAbbrRow(rowId, direction) {
+  const row = document.getElementById(rowId);
+  if (!row) return;
+
+  if (direction === "up") {
+    const prev = row.previousElementSibling;
+    if (prev) row.parentNode.insertBefore(row, prev);
+  } else {
+    const next = row.nextElementSibling;
+    if (next) row.parentNode.insertBefore(next, row);
+  }
+
+  updateAbbrMoveButtons();
+}
+
+/**
+ * Show/hide and enable/disable move buttons based on row count and position
+ */
+function updateAbbrMoveButtons() {
+  const container = document.getElementById("additional-abbr-container");
+  const rows = container.querySelectorAll(".previous-abbr-row");
+  const count = rows.length;
+
+  rows.forEach((row, index) => {
+    const upBtn = row.querySelector(".abbr-move-up");
+    const downBtn = row.querySelector(".abbr-move-down");
+    if (!upBtn || !downBtn) return;
+
+    // Only visible when 2+ rows exist
+    upBtn.style.display = count >= 2 ? "" : "none";
+    downBtn.style.display = count >= 2 ? "" : "none";
+
+    upBtn.disabled = index === 0;
+    downBtn.disabled = index === count - 1;
+  });
 }
 
 /**
@@ -149,6 +201,7 @@ function deleteAbbrRow(rowId) {
   const row = document.getElementById(rowId);
   if (row) {
     row.remove();
+    updateAbbrMoveButtons();
     const currentLang = getCurrentLanguage();
     const message = currentLang === "fr" ? "Ligne supprimée" : "Row deleted";
     showNotification(message, "info");
