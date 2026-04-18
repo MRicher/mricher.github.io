@@ -706,6 +706,18 @@ function updateEntry(id) {
   renderEntries();
   cancelEdit();
 
+  // Scroll to the updated entry row in the table
+  setTimeout(() => {
+    const rows = document.querySelectorAll("#entries-container tbody tr");
+    const sortedEntries = [...entries].sort((a, b) => normalizeString(a.abbrEn).localeCompare(normalizeString(b.abbrEn)));
+    const updatedIndex = sortedEntries.findIndex((e) => e.id === id);
+    if (updatedIndex !== -1 && rows[updatedIndex]) {
+      rows[updatedIndex].scrollIntoView({ behavior: "smooth", block: "center" });
+      rows[updatedIndex].classList.add("table-warning");
+      setTimeout(() => rows[updatedIndex].classList.remove("table-warning"), 2000);
+    }
+  }, 50);
+
   const currentLang = getCurrentLanguage();
   const successMsg = currentLang === "fr" ? "Entrée mise à jour" : "Entry updated";
   showNotification(successMsg, "success");
@@ -852,15 +864,18 @@ function generateEnglishTable(sortedEntries) {
       // Build "Previously known as" dl — one <dt>/<dd> pair per previous abbreviation
       let previousBlock = "";
       if (entry.previousAbbrs && entry.previousAbbrs.length > 0) {
-        const dtItems = entry.previousAbbrs
-          .map((abbr) => {
-            const dtAbbr = abbr.abbrEn ? `<abbr>${escapeHtml(abbr.abbrEn)}</abbr>` : "";
-            const ddTitle = abbr.titleEnIsFrench ? `<i lang="fr">${escapeHtml(abbr.titleEn)}</i>` : escapeHtml(abbr.titleEn);
-            return `<dt>${dtAbbr}</dt><dd>${ddTitle}</dd>`;
-          })
-          .join("\n");
+        const enItems = entry.previousAbbrs.filter((abbr) => abbr.abbrEn || abbr.titleEn);
+        if (enItems.length > 0) {
+          const dtItems = enItems
+            .map((abbr) => {
+              const dtAbbr = abbr.abbrEn ? `<abbr>${escapeHtml(abbr.abbrEn)}</abbr>` : "";
+              const ddTitle = abbr.titleEnIsFrench ? `<i lang="fr">${escapeHtml(abbr.titleEn)}</i>` : escapeHtml(abbr.titleEn);
+              return `<dt>${dtAbbr}</dt><dd>${ddTitle}</dd>`;
+            })
+            .join("\n");
 
-        previousBlock = `<p class="mrgn-tp-md"><strong>Previously known as</strong></p>\n<dl>\n${dtItems}\n</dl>`;
+          previousBlock = `<p class="mrgn-tp-md"><strong>Previously known as</strong></p>\n<dl>\n${dtItems}\n</dl>`;
+        }
       }
 
       // Transparent notes appended after the dl if present
@@ -872,7 +887,7 @@ function generateEnglishTable(sortedEntries) {
       const frLink = rawAbbrFr ? `<a href="/fr/abreviations#${abbrFr}" lang="fr" hreflang="fr"><i lang="fr">${abbrFr}</i></a>` : "";
 
       return `\t\t\t<tr id="${abbrEn}">
-\t\t\t\t<td><abbr>${abbrEn}</abbr></td>
+\t\t\t\t<td>${abbrEn ? `<abbr>${abbrEn}</abbr>` : ""}</td>
 \t\t\t\t<td>${titleEn}${previousBlock ? "\n" + previousBlock : ""}</td>
 \t\t\t\t<td>${frLink}</td>
 \t\t\t</tr>`;
@@ -901,15 +916,18 @@ function generateFrenchTable(sortedEntries) {
       // Build "Anciennement connu sous" dl — one <dt>/<dd> pair per previous abbreviation
       let previousBlock = "";
       if (entry.previousAbbrs && entry.previousAbbrs.length > 0) {
-        const dtItems = entry.previousAbbrs
-          .map((abbr) => {
-            const dtAbbr = abbr.abbrFr ? `<abbr>${escapeHtml(abbr.abbrFr)}</abbr>` : "";
-            const ddTitle = abbr.titleFrIsEnglish ? `<i lang="en">${escapeHtml(abbr.titleFr)}</i>` : escapeHtml(abbr.titleFr);
-            return `<dt>${dtAbbr}</dt><dd>${ddTitle}</dd>`;
-          })
-          .join("\n");
+        const frItems = entry.previousAbbrs.filter((abbr) => abbr.abbrFr || abbr.titleFr);
+        if (frItems.length > 0) {
+          const dtItems = frItems
+            .map((abbr) => {
+              const dtAbbr = abbr.abbrFr ? `<abbr>${escapeHtml(abbr.abbrFr)}</abbr>` : "";
+              const ddTitle = abbr.titleFrIsEnglish ? `<i lang="en">${escapeHtml(abbr.titleFr)}</i>` : escapeHtml(abbr.titleFr);
+              return `<dt>${dtAbbr}</dt><dd>${ddTitle}</dd>`;
+            })
+            .join("\n");
 
-        previousBlock = `<p class="mrgn-tp-md"><strong>Anciennement connu sous</strong></p>\n<dl>\n${dtItems}\n</dl>`;
+          previousBlock = `<p class="mrgn-tp-md"><strong>Anciennement connu sous</strong></p>\n<dl>\n${dtItems}\n</dl>`;
+        }
       }
 
       // Transparent notes appended after the dl if present
@@ -921,7 +939,7 @@ function generateFrenchTable(sortedEntries) {
       const enLink = rawAbbrEn ? `<a href="/en/abbreviations#${abbrEn}" lang="en" hreflang="en"><i lang="en">${abbrEn}</i></a>` : "";
 
       return `\t\t\t<tr id="${abbrFr}">
-\t\t\t\t<td><abbr>${abbrFr}</abbr></td>
+\t\t\t\t<td>${abbrFr ? `<abbr>${abbrFr}</abbr>` : ""}</td>
 \t\t\t\t<td>${titleFr}${previousBlock ? "\n" + previousBlock : ""}</td>
 \t\t\t\t<td>${enLink}</td>
 \t\t\t</tr>`;
