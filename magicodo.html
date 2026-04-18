@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Magicodo</title>
+    <meta
+      name="description"
+      content="Magicodo — a magical Word-to-HTML converter. Paste, compose, clean, and export rich content as pristine HTML."
+      data-en="Magicodo — a magical Word-to-HTML converter. Paste, compose, clean, and export rich content as pristine HTML."
+      data-fr="Magicodo — un convertisseur magique Word-vers-HTML. Collez, composez, nettoyez et exportez du contenu enrichi en HTML impeccable."
+    />
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/creavia.css" />
+    <link rel="stylesheet" href="css/magicodo.css" />
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main-content" data-en="Skip to main content" data-fr="Passer au contenu principal">Skip to main content</a>
+
+    <header>
+      <nav class="navbar navbar-expand-lg" aria-label="Main navigation">
+        <div class="container-fluid px-4">
+          <div class="navbar-brand d-flex align-items-center gap-2">
+            <span class="brand-wand" aria-hidden="true">✦</span>
+            <span data-en="Magicodo" data-fr="Magicodo">Magicodo</span>
+          </div>
+
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation menu"
+          >
+            <span class="navbar-toggler-icon" aria-hidden="true"></span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link" href="/index.html" data-en="Home" data-fr="Accueil">Home</a>
+              </li>
+            </ul>
+
+            <div class="language-switcher" role="group" aria-label="Settings">
+              <button
+                id="theme-toggle"
+                type="button"
+                class="theme-toggle"
+                aria-label="Toggle dark/light theme"
+              >
+                <span id="theme-text" data-en="Dark mode" data-fr="Mode sombre">Dark mode</span>
+              </button>
+
+              <button
+                id="lang-fr-btn"
+                type="button"
+                class="btn btn-outline-primary btn-sm"
+                data-lang="fr-CA"
+                aria-label="Passer au français"
+                style="display: none"
+              >
+                <span data-en="Français" data-fr="Français">Français</span>
+              </button>
+
+              <button
+                id="lang-en-btn"
+                type="button"
+                class="btn btn-outline-primary btn-sm"
+                data-lang="en-CA"
+                aria-label="Switch to English"
+              >
+                <span data-en="English" data-fr="English">English</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main id="main-content">
+
+      <!-- Hero Banner -->
+      <div class="magicodo-hero">
+        <div class="container-fluid px-4">
+          <div class="hero-inner">
+            <h1 class="hero-title">
+              <span class="hero-wand" aria-hidden="true">✦</span>
+              <span data-en="Magicodo" data-fr="Magicodo">Magicodo</span>
+            </h1>
+            <p class="hero-sub" data-en="Paste Word content, edit freely, and extract clean HTML instantly." data-fr="Collez du contenu Word, modifiez librement, et extrayez du HTML propre instantanément.">
+              Paste Word content, edit freely, and extract clean HTML instantly.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="container-fluid px-4 editor-wrapper">
+
+        <!-- Tab Bar -->
+        <div class="editor-tab-bar" role="tablist" aria-label="Editor tabs">
+          <button
+            class="editor-tab active"
+            id="tab-visual"
+            role="tab"
+            aria-selected="true"
+            aria-controls="panel-visual"
+            data-en="✦ Visual editor"
+            data-fr="✦ Éditeur visuel"
+          >✦ Visual editor</button>
+          <button
+            class="editor-tab"
+            id="tab-html"
+            role="tab"
+            aria-selected="false"
+            aria-controls="panel-html"
+            data-en="⟨/⟩ HTML source"
+            data-fr="⟨/⟩ Code HTML"
+          >⟨/⟩ HTML source</button>
+        </div>
+
+        <!-- Editor Panels -->
+        <div class="editor-panels">
+
+          <!-- Visual Panel -->
+          <div id="panel-visual" role="tabpanel" aria-labelledby="tab-visual" class="editor-panel active">
+            <div class="panel-toolbar">
+              <!-- Text style -->
+              <div class="toolbar-group" role="group" aria-label="Text style">
+                <select id="block-format" class="toolbar-select" aria-label="Block format" title="Block format">
+                  <option value="p" data-en="Paragraph" data-fr="Paragraphe">Paragraph</option>
+                  <option value="h1">Heading 1</option>
+                  <option value="h2">Heading 2</option>
+                  <option value="h3">Heading 3</option>
+                  <option value="h4">Heading 4</option>
+                  <option value="pre">Preformatted</option>
+                  <option value="blockquote">Blockquote</option>
+                </select>
+              </div>
+
+              <div class="toolbar-sep" aria-hidden="true"></div>
+
+              <!-- Inline formatting -->
+              <div class="toolbar-group" role="group" aria-label="Inline formatting">
+                <button class="toolbar-btn" data-cmd="bold" title="Bold (Ctrl+B)" aria-label="Bold"><b>B</b></button>
+                <button class="toolbar-btn" data-cmd="italic" title="Italic (Ctrl+I)" aria-label="Italic"><i>I</i></button>
+                <button class="toolbar-btn" data-cmd="underline" title="Underline (Ctrl+U)" aria-label="Underline"><u>U</u></button>
+                <button class="toolbar-btn" data-cmd="strikeThrough" title="Strikethrough" aria-label="Strikethrough"><s>S</s></button>
+                <button class="toolbar-btn" data-cmd="superscript" title="Superscript" aria-label="Superscript">x²</button>
+                <button class="toolbar-btn" data-cmd="subscript" title="Subscript" aria-label="Subscript">x₂</button>
+              </div>
+
+              <div class="toolbar-sep" aria-hidden="true"></div>
+
+              <!-- Lists -->
+              <div class="toolbar-group" role="group" aria-label="Lists">
+                <button class="toolbar-btn" data-cmd="insertUnorderedList" title="Bullet list" aria-label="Bullet list">≡•</button>
+                <button class="toolbar-btn" data-cmd="insertOrderedList" title="Numbered list" aria-label="Numbered list">≡1</button>
+                <button class="toolbar-btn" data-cmd="outdent" title="Outdent" aria-label="Outdent">⇤</button>
+                <button class="toolbar-btn" data-cmd="indent" title="Indent" aria-label="Indent">⇥</button>
+              </div>
+
+              <div class="toolbar-sep" aria-hidden="true"></div>
+
+              <!-- Alignment -->
+              <div class="toolbar-group" role="group" aria-label="Alignment">
+                <button class="toolbar-btn" data-cmd="justifyLeft" title="Align left" aria-label="Align left">⫷</button>
+                <button class="toolbar-btn" data-cmd="justifyCenter" title="Align center" aria-label="Align center">≡</button>
+                <button class="toolbar-btn" data-cmd="justifyRight" title="Align right" aria-label="Align right">⫸</button>
+                <button class="toolbar-btn" data-cmd="justifyFull" title="Justify" aria-label="Justify">▤</button>
+              </div>
+
+              <div class="toolbar-sep" aria-hidden="true"></div>
+
+              <!-- Link & Image -->
+              <div class="toolbar-group" role="group" aria-label="Insert">
+                <button class="toolbar-btn" id="btn-link" title="Insert/edit link" aria-label="Insert link">🔗</button>
+                <button class="toolbar-btn" id="btn-unlink" title="Remove link" aria-label="Remove link">🔗✕</button>
+                <button class="toolbar-btn" id="btn-image" title="Insert image by URL" aria-label="Insert image">🖼</button>
+                <button class="toolbar-btn" id="btn-table" title="Insert table" aria-label="Insert table">▦</button>
+                <button class="toolbar-btn" id="btn-hr" title="Insert horizontal rule" aria-label="Insert horizontal rule">—</button>
+              </div>
+
+              <div class="toolbar-sep" aria-hidden="true"></div>
+
+              <!-- History -->
+              <div class="toolbar-group" role="group" aria-label="History">
+                <button class="toolbar-btn" data-cmd="undo" title="Undo (Ctrl+Z)" aria-label="Undo">↩</button>
+                <button class="toolbar-btn" data-cmd="redo" title="Redo (Ctrl+Y)" aria-label="Redo">↪</button>
+              </div>
+
+              <div class="toolbar-sep" aria-hidden="true"></div>
+
+              <!-- Clean -->
+              <div class="toolbar-group" role="group" aria-label="Clean">
+                <button class="toolbar-btn toolbar-btn--danger" id="btn-clean-inline" title="Remove inline styles" data-en="Clean styles" data-fr="Nettoyer styles" aria-label="Remove inline styles">Clean styles</button>
+                <button class="toolbar-btn toolbar-btn--danger" id="btn-clear-all" title="Clear all content" data-en="Clear all" data-fr="Tout effacer" aria-label="Clear all content">Clear all</button>
+              </div>
+            </div>
+
+            <!-- Content Editable Area -->
+            <div
+              id="visual-editor"
+              class="visual-editor-area"
+              contenteditable="true"
+              role="textbox"
+              aria-multiline="true"
+              aria-label="Visual editor"
+              data-placeholder-en="Paste your Word / rich-text content here, or start typing…"
+              data-placeholder-fr="Collez votre contenu Word / texte enrichi ici, ou commencez à taper…"
+            ></div>
+          </div>
+
+          <!-- HTML Panel -->
+          <div id="panel-html" role="tabpanel" aria-labelledby="tab-html" class="editor-panel" hidden>
+            <div class="panel-toolbar html-toolbar">
+              <div class="toolbar-group" role="group" aria-label="HTML actions">
+                <button class="toolbar-btn" id="btn-format-html" data-en="⟐ Prettify" data-fr="⟐ Formater" title="Prettify HTML" aria-label="Prettify HTML">⟐ Prettify</button>
+                <button class="toolbar-btn" id="btn-minify-html" data-en="⟐ Minify" data-fr="⟐ Minifier" title="Minify HTML" aria-label="Minify HTML">⟐ Minify</button>
+                <button class="toolbar-btn toolbar-btn--danger" id="btn-clear-html" data-en="Clear" data-fr="Effacer" title="Clear HTML" aria-label="Clear HTML">Clear</button>
+              </div>
+              <div class="toolbar-group ms-auto" role="group" aria-label="Copy actions">
+                <button class="toolbar-btn toolbar-btn--success" id="btn-copy-html" data-en="⎘ Copy HTML" data-fr="⎘ Copier HTML" title="Copy HTML to clipboard" aria-label="Copy HTML">⎘ Copy HTML</button>
+              </div>
+            </div>
+            <textarea
+              id="html-editor"
+              class="html-editor-area"
+              spellcheck="false"
+              aria-label="HTML source editor"
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Action Bar -->
+        <div class="action-bar">
+          <div class="action-bar-left">
+            <span class="word-count" id="word-count" aria-live="polite" aria-label="Word count">0 words</span>
+            <span class="char-count" id="char-count" aria-live="polite" aria-label="Character count">0 chars</span>
+          </div>
+          <div class="action-bar-right">
+            <button type="button" class="btn btn-success btn-sm" id="btn-download-html" data-en="⬇ Download HTML" data-fr="⬇ Télécharger HTML">⬇ Download HTML</button>
+            <button type="button" class="btn btn-primary btn-sm" id="btn-download-txt" data-en="⬇ Download text" data-fr="⬇ Télécharger texte">⬇ Download text</button>
+          </div>
+        </div>
+
+      </div><!-- /.editor-wrapper -->
+    </main>
+
+    <!-- Link Dialog -->
+    <div id="link-dialog" class="float-dialog" hidden role="dialog" aria-modal="true" aria-label="Insert link">
+      <div class="float-dialog-inner">
+        <p class="float-dialog-title" data-en="Insert / edit link" data-fr="Insérer / modifier le lien">Insert / edit link</p>
+        <label for="link-url" class="form-label" data-en="URL" data-fr="URL">URL</label>
+        <input type="url" id="link-url" class="form-control form-control-sm mb-2" placeholder="https://" />
+        <label for="link-text" class="form-label" data-en="Link text (optional)" data-fr="Texte du lien (optionnel)">Link text (optional)</label>
+        <input type="text" id="link-text" class="form-control form-control-sm mb-3" />
+        <div class="d-flex gap-2">
+          <button type="button" class="btn btn-primary btn-sm" id="link-ok" data-en="Insert" data-fr="Insérer">Insert</button>
+          <button type="button" class="btn btn-secondary btn-sm" id="link-cancel" data-en="Cancel" data-fr="Annuler">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Image Dialog -->
+    <div id="image-dialog" class="float-dialog" hidden role="dialog" aria-modal="true" aria-label="Insert image">
+      <div class="float-dialog-inner">
+        <p class="float-dialog-title" data-en="Insert image" data-fr="Insérer une image">Insert image</p>
+        <label for="image-url" class="form-label" data-en="Image URL" data-fr="URL de l'image">Image URL</label>
+        <input type="url" id="image-url" class="form-control form-control-sm mb-2" placeholder="https://…" />
+        <label for="image-alt" class="form-label" data-en="Alt text" data-fr="Texte alternatif">Alt text</label>
+        <input type="text" id="image-alt" class="form-control form-control-sm mb-3" />
+        <div class="d-flex gap-2">
+          <button type="button" class="btn btn-primary btn-sm" id="image-ok" data-en="Insert" data-fr="Insérer">Insert</button>
+          <button type="button" class="btn btn-secondary btn-sm" id="image-cancel" data-en="Cancel" data-fr="Annuler">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast-notification" class="toast-notification" role="status" aria-live="polite"></div>
+
+    <footer class="mt-auto">
+      <div class="container-fluid px-4">
+        <div class="text-center">
+          <p class="mb-0" id="version-info"></p>
+        </div>
+      </div>
+    </footer>
+
+    <button class="back-to-top" aria-label="Back to top"></button>
+
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/creavia.js"></script>
+    <script src="js/magicodo.js"></script>
+  </body>
+</html>
