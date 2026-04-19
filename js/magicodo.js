@@ -46,9 +46,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function initTabs() {
   const tabVisual = document.getElementById("tab-visual");
-  const tabHtml   = document.getElementById("tab-html");
+  const tabHtml = document.getElementById("tab-html");
   const panelVisual = document.getElementById("panel-visual");
-  const panelHtml   = document.getElementById("panel-html");
+  const panelHtml = document.getElementById("panel-html");
 
   tabVisual.addEventListener("click", () => {
     activateTab("visual");
@@ -65,22 +65,22 @@ function initTabs() {
     activateTab("html");
     // Sync visual → HTML when switching to source
     const visualArea = document.getElementById("visual-editor");
-    const htmlArea   = document.getElementById("html-editor");
+    const htmlArea = document.getElementById("html-editor");
     htmlArea.value = cleanHtml(visualArea.innerHTML);
   });
 }
 
 function activateTab(name) {
-  const tabs   = document.querySelectorAll(".editor-tab");
+  const tabs = document.querySelectorAll(".editor-tab");
   const panels = document.querySelectorAll(".editor-panel");
 
-  tabs.forEach(t => {
+  tabs.forEach((t) => {
     const isActive = t.id === `tab-${name}`;
     t.classList.toggle("active", isActive);
     t.setAttribute("aria-selected", isActive ? "true" : "false");
   });
 
-  panels.forEach(p => {
+  panels.forEach((p) => {
     const isActive = p.id === `panel-${name}`;
     p.classList.toggle("active", isActive);
     if (isActive) {
@@ -97,7 +97,7 @@ function activateTab(name) {
 
 function initToolbar() {
   // Exec-command buttons
-  document.querySelectorAll(".toolbar-btn[data-cmd]").forEach(btn => {
+  document.querySelectorAll(".toolbar-btn[data-cmd]").forEach((btn) => {
     btn.addEventListener("mousedown", (e) => {
       e.preventDefault(); // prevent focus loss in editor
       document.execCommand(btn.dataset.cmd, false, null);
@@ -152,11 +152,21 @@ function initToolbar() {
 }
 
 function updateToolbarState() {
-  const cmds = ["bold", "italic", "underline", "strikeThrough",
-                 "superscript", "subscript",
-                 "insertUnorderedList", "insertOrderedList",
-                 "justifyLeft", "justifyCenter", "justifyRight", "justifyFull"];
-  cmds.forEach(cmd => {
+  const cmds = [
+    "bold",
+    "italic",
+    "underline",
+    "strikeThrough",
+    "superscript",
+    "subscript",
+    "insertUnorderedList",
+    "insertOrderedList",
+    "justifyLeft",
+    "justifyCenter",
+    "justifyRight",
+    "justifyFull",
+  ];
+  cmds.forEach((cmd) => {
     const btn = document.querySelector(`.toolbar-btn[data-cmd="${cmd}"]`);
     if (btn) btn.classList.toggle("active", document.queryCommandState(cmd));
   });
@@ -165,7 +175,7 @@ function updateToolbarState() {
 function updateToolbarLang() {
   // Update data-en/data-fr text content of toolbar buttons that have both attrs
   const lang = getLang();
-  document.querySelectorAll(".toolbar-btn[data-en], .toolbar-select option[data-en]").forEach(el => {
+  document.querySelectorAll(".toolbar-btn[data-en], .toolbar-select option[data-en]").forEach((el) => {
     const text = lang === "fr" ? el.getAttribute("data-fr") : el.getAttribute("data-en");
     if (text) el.textContent = text;
   });
@@ -179,8 +189,13 @@ function initEditorEvents() {
   const editor = document.getElementById("visual-editor");
 
   // Toolbar state on selection change
-  editor.addEventListener("keyup", () => { updateToolbarState(); updateCounts(); });
-  editor.addEventListener("mouseup", () => { updateToolbarState(); });
+  editor.addEventListener("keyup", () => {
+    updateToolbarState();
+    updateCounts();
+  });
+  editor.addEventListener("mouseup", () => {
+    updateToolbarState();
+  });
 
   // Clean up paste from Word / rich apps
   editor.addEventListener("paste", (e) => {
@@ -195,7 +210,7 @@ function initEditorEvents() {
       // Plain text: wrap paragraphs
       const paragraphs = text
         .split(/\n\n+/)
-        .map(p => `<p>${escapeHtml(p.replace(/\n/g, "<br>"))}</p>`)
+        .map((p) => `<p>${escapeHtml(p.replace(/\n/g, "<br>"))}</p>`)
         .join("");
       document.execCommand("insertHTML", false, paragraphs || escapeHtml(text));
     }
@@ -212,40 +227,117 @@ function initEditorEvents() {
 // -----------------------------------------------------------------
 
 /**
- * Strip Word-specific namespace garbage while keeping semantic structure.
+ * Aggressively strip all Microsoft Word / rich-app paste garbage.
+ * Keeps only a safe whitelist of semantic tags and href/src/alt attributes.
  */
 function scrubWordHtml(html) {
-  // Use a detached DOM to safely manipulate
+  // ── 1. Pre-process raw string before DOM parsing ──────────────────
+  // Strip XML processing instructions, Word conditional comments, VML
+  html = html
+    .replace(/<\?xml[^>]*>/gi, "")
+    .replace(/<!--\[if[^>]*>[\s\S]*?<!\[endif\]-->/gi, "")
+    .replace(/<!(--)?[^>]*>/gi, "") // all remaining comments
+    .replace(/<xml[\s\S]*?<\/xml>/gi, "") // <xml>…</xml> blocks
+    .replace(/<o:p[\s\S]*?<\/o:p>/gi, "") // <o:p> Office paragraphs
+    .replace(/<o:[^/]*\/>/gi, "") // self-closing Office tags
+    .replace(/<w:[^>]*>[\s\S]*?<\/w:[^>]*>/gi, "") // Word namespace tags
+    .replace(/<m:[^>]*>[\s\S]*?<\/m:[^>]*>/gi, "") // Math namespace tags
+    .replace(/<v:[^>]*>[\s\S]*?<\/v:[^>]*>/gi, "") // VML tags
+    .replace(/&nbsp;/gi, " ")
+    .replace(/\u00a0/g, " "); // non-breaking spaces → regular
+
+  // ── 2. Parse into a detached DOM ─────────────────────────────────
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, "text/html");
 
-  // Remove style, script, meta, link, xml processing elements
-  doc.querySelectorAll("style, script, meta, link, xml, o\\:p").forEach(el => el.remove());
+  // ── 3. Nuke entire non-content elements ──────────────────────────
+  doc.querySelectorAll("style, script, meta, link, head, xml, svg, " + "o\\:p, w\\:sdt, w\\:sdtContent").forEach((el) => el.remove());
 
-  // Walk every element and strip Word/MSO attrs + inline styles
-  doc.body.querySelectorAll("*").forEach(el => {
-    // Remove MSO/Word attributes
-    Array.from(el.attributes).forEach(attr => {
-      if (
-        attr.name.startsWith("mso-") ||
-        attr.name.startsWith("xmlns") ||
-        attr.name === "class" ||
-        attr.name === "style" ||
-        attr.name === "lang" && el.tagName !== "HTML"
-      ) {
-        el.removeAttribute(attr.name);
-      }
+  // ── 4. Whitelist of tags we want to KEEP ─────────────────────────
+  const KEEP_TAGS = new Set([
+    "P",
+    "BR",
+    "HR",
+    "H1",
+    "H2",
+    "H3",
+    "H4",
+    "H5",
+    "H6",
+    "STRONG",
+    "B",
+    "EM",
+    "I",
+    "UL",
+    "OL",
+    "LI",
+    "TABLE",
+    "THEAD",
+    "TBODY",
+    "TFOOT",
+    "TR",
+    "TH",
+    "TD",
+    "BLOCKQUOTE",
+    "A",
+    "IMG",
+    "DIV", // kept temporarily, stripped to content below
+  ]);
+
+  // ── 5. Walk every element bottom-up ──────────────────────────────
+  // Bottom-up so unwrapping a child doesn't invalidate the parent walk
+  const allEls = Array.from(doc.body.querySelectorAll("*")).reverse();
+
+  allEls.forEach((el) => {
+    // (a) Remove ALL attributes first, then restore only safe ones
+    const safeAttrs = {};
+    if (el.tagName === "A") safeAttrs.href = el.getAttribute("href");
+    if (el.tagName === "IMG") {
+      safeAttrs.src = el.getAttribute("src");
+      safeAttrs.alt = el.getAttribute("alt") || "";
+    }
+
+    // Clear every attribute
+    while (el.attributes.length > 0) {
+      el.removeAttribute(el.attributes[0].name);
+    }
+
+    // Restore only the safe ones
+    Object.entries(safeAttrs).forEach(([k, v]) => {
+      if (v) el.setAttribute(k, v);
     });
 
-    // Unwrap meaningless spans/divs that carry no semantic value
-    if ((el.tagName === "SPAN" || el.tagName === "FONT") && el.attributes.length === 0) {
+    // (b) Unwrap tags not in the whitelist (keep their children)
+    if (!KEEP_TAGS.has(el.tagName)) {
       const parent = el.parentNode;
-      while (el.firstChild) parent.insertBefore(el.firstChild, el);
-      parent.removeChild(el);
+      if (parent) {
+        while (el.firstChild) parent.insertBefore(el.firstChild, el);
+        parent.removeChild(el);
+      }
+      return;
+    }
+
+    // (c) Unwrap DIVs that have no meaningful block role — treat as
+    //     pass-through containers only
+    if (el.tagName === "DIV") {
+      const parent = el.parentNode;
+      if (parent) {
+        while (el.firstChild) parent.insertBefore(el.firstChild, el);
+        parent.removeChild(el);
+      }
     }
   });
 
-  return doc.body.innerHTML;
+  // ── 6. Collapse runs of whitespace-only text nodes ───────────────
+  let result = doc.body.innerHTML;
+
+  result = result
+    .replace(/[ \t]{2,}/g, " ") // multiple spaces → one
+    .replace(/(<br\s*\/?>\s*){3,}/gi, "<br><br>") // 3+ <br> → 2
+    .replace(/(<p[^>]*>\s*<\/p>\s*){2,}/gi, "") // consecutive empty <p>
+    .trim();
+
+  return result;
 }
 
 // -----------------------------------------------------------------
@@ -293,15 +385,18 @@ function initHtmlPanel() {
 
   document.getElementById("btn-copy-html").addEventListener("click", () => {
     const html = document.getElementById("html-editor").value;
-    navigator.clipboard.writeText(html).then(() => {
-      showToast(getLang() === "fr" ? "HTML copié !" : "HTML copied!", "success");
-    }).catch(() => {
-      // Fallback for older browsers
-      const ta = document.getElementById("html-editor");
-      ta.select();
-      document.execCommand("copy");
-      showToast(getLang() === "fr" ? "HTML copié !" : "HTML copied!", "success");
-    });
+    navigator.clipboard
+      .writeText(html)
+      .then(() => {
+        showToast(getLang() === "fr" ? "HTML copié !" : "HTML copied!", "success");
+      })
+      .catch(() => {
+        // Fallback for older browsers
+        const ta = document.getElementById("html-editor");
+        ta.select();
+        document.execCommand("copy");
+        showToast(getLang() === "fr" ? "HTML copié !" : "HTML copied!", "success");
+      });
   });
 
   // Live sync: if user edits HTML source manually, reflect on visual on tab switch
@@ -312,13 +407,14 @@ function initHtmlPanel() {
  * Very simple HTML prettifier — indents block tags.
  */
 function prettifyHtml(html) {
-  const BLOCK = /^(div|p|h[1-6]|ul|ol|li|table|thead|tbody|tr|td|th|blockquote|pre|section|article|header|footer|nav|main|aside|figure|figcaption|hr|br)$/i;
+  const BLOCK =
+    /^(div|p|h[1-6]|ul|ol|li|table|thead|tbody|tr|td|th|blockquote|pre|section|article|header|footer|nav|main|aside|figure|figcaption|hr|br)$/i;
   let indent = 0;
   const lines = [];
   // Tokenize into tags and text
   const tokens = html.match(/<[^>]+>|[^<]+/g) || [];
 
-  tokens.forEach(token => {
+  tokens.forEach((token) => {
     if (token.startsWith("</")) {
       // Closing tag
       const tag = token.match(/<\/(\w+)/)?.[1] || "";
@@ -384,10 +480,10 @@ function openLinkDialog() {
   if (sel && sel.rangeCount) {
     const anchor = sel.anchorNode?.parentElement?.closest("a");
     if (anchor) {
-      document.getElementById("link-url").value  = anchor.href || "";
+      document.getElementById("link-url").value = anchor.href || "";
       document.getElementById("link-text").value = anchor.textContent || "";
     } else {
-      document.getElementById("link-url").value  = "";
+      document.getElementById("link-url").value = "";
       document.getElementById("link-text").value = sel.toString() || "";
     }
   }
@@ -401,9 +497,12 @@ function closeLinkDialog() {
 }
 
 function insertLink() {
-  const url  = document.getElementById("link-url").value.trim();
+  const url = document.getElementById("link-url").value.trim();
   const text = document.getElementById("link-text").value.trim();
-  if (!url) { closeLinkDialog(); return; }
+  if (!url) {
+    closeLinkDialog();
+    return;
+  }
 
   restoreSelection();
 
@@ -451,7 +550,10 @@ function closeImageDialog() {
 function insertImage() {
   const url = document.getElementById("image-url").value.trim();
   const alt = document.getElementById("image-alt").value.trim();
-  if (!url) { closeImageDialog(); return; }
+  if (!url) {
+    closeImageDialog();
+    return;
+  }
 
   restoreSelection();
   document.execCommand("insertHTML", false, `<img src="${escapeAttr(url)}" alt="${escapeAttr(alt)}">`);
@@ -486,9 +588,9 @@ function insertTable() {
 
 function cleanInlineStyles() {
   const editor = document.getElementById("visual-editor");
-  editor.querySelectorAll("[style]").forEach(el => el.removeAttribute("style"));
-  editor.querySelectorAll("[class]").forEach(el => el.removeAttribute("class"));
-  editor.querySelectorAll("font").forEach(el => {
+  editor.querySelectorAll("[style]").forEach((el) => el.removeAttribute("style"));
+  editor.querySelectorAll("[class]").forEach((el) => el.removeAttribute("class"));
+  editor.querySelectorAll("font").forEach((el) => {
     const parent = el.parentNode;
     while (el.firstChild) parent.insertBefore(el.firstChild, el);
     parent.removeChild(el);
@@ -507,12 +609,9 @@ function updateCounts() {
   const chars = text.length;
 
   const lang = getLang();
-  document.getElementById("word-count").textContent = lang === "fr"
-    ? `${words} mot${words !== 1 ? "s" : ""}`
-    : `${words} word${words !== 1 ? "s" : ""}`;
-  document.getElementById("char-count").textContent = lang === "fr"
-    ? `${chars} car.`
-    : `${chars} char${chars !== 1 ? "s" : ""}`;
+  document.getElementById("word-count").textContent =
+    lang === "fr" ? `${words} mot${words !== 1 ? "s" : ""}` : `${words} word${words !== 1 ? "s" : ""}`;
+  document.getElementById("char-count").textContent = lang === "fr" ? `${chars} car.` : `${chars} char${chars !== 1 ? "s" : ""}`;
 }
 
 // -----------------------------------------------------------------
@@ -545,11 +644,7 @@ function getLang() {
 }
 
 function escapeHtml(str) {
-  return String(str)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+  return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
 function escapeAttr(str) {
@@ -558,9 +653,9 @@ function escapeAttr(str) {
 
 function downloadFile(content, filename, mimeType) {
   const blob = new Blob([content], { type: mimeType });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement("a");
-  a.href     = url;
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
   a.download = filename;
   document.body.appendChild(a);
   a.click();
