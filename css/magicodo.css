@@ -3,63 +3,6 @@
    ================================================================= */
 
 /* =================================================================
-   HERO BANNER
-   ================================================================= */
-
-.magicodo-hero {
-  background: linear-gradient(135deg, var(--button-primary-bg) 0%, #0f2a6e 100%);
-  padding: 1.75rem 0 1.5rem;
-  margin-bottom: 0;
-}
-
-[data-theme="dark"] .magicodo-hero {
-  background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
-}
-
-.hero-inner {
-  display: flex;
-  align-items: baseline;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-}
-
-.hero-title {
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: #ffffff;
-  letter-spacing: -0.02em;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.hero-wand {
-  font-size: 1.4rem;
-  opacity: 0.9;
-  animation: wand-pulse 3s ease-in-out infinite;
-}
-
-@keyframes wand-pulse {
-  0%, 100% { opacity: 0.9; transform: scale(1); }
-  50%       { opacity: 1;   transform: scale(1.15) rotate(12deg); }
-}
-
-.hero-sub {
-  color: rgba(255,255,255,0.82);
-  font-size: 0.9rem;
-  margin: 0;
-  line-height: 1.5;
-}
-
-/* Brand wand in navbar */
-.brand-wand {
-  color: var(--button-primary-bg);
-  font-size: 1.1rem;
-  animation: wand-pulse 3s ease-in-out infinite;
-}
-
-/* =================================================================
    EDITOR WRAPPER
    ================================================================= */
 
@@ -91,7 +34,10 @@
   color: var(--body-color);
   opacity: 0.55;
   cursor: pointer;
-  transition: opacity 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
   white-space: nowrap;
 }
 
@@ -120,7 +66,9 @@
   border: 1px solid var(--card-border);
   border-top: none;
   border-radius: 0 0 0.5rem 0.5rem;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
 }
 
 .editor-panel {
@@ -145,7 +93,9 @@
   border-bottom: 1px solid var(--card-border);
   background-color: var(--card-bg);
   border-radius: 0;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
   min-height: 44px;
 }
 
@@ -173,7 +123,10 @@
   font-weight: 600;
   line-height: 1;
   padding: 0.28rem 0.45rem;
-  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
   white-space: nowrap;
   min-width: 28px;
   text-align: center;
@@ -225,7 +178,9 @@
   font-size: 0.8rem;
   padding: 0.25rem 0.4rem;
   cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .toolbar-select:focus {
@@ -252,7 +207,9 @@
   font-size: 0.95rem;
   line-height: 1.7;
   outline: none;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
   word-break: break-word;
 }
 
@@ -343,7 +300,9 @@
   overflow-y: auto;
   padding: 1.25rem 1.5rem;
   resize: none;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
   width: 100%;
   outline: none;
   border-radius: 0 0 0.5rem 0.5rem;
@@ -442,7 +401,9 @@
   pointer-events: none;
   position: fixed;
   transform: translateX(-50%) translateY(8px);
-  transition: opacity 0.25s ease, transform 0.25s ease;
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
   z-index: 2000;
   text-align: center;
 }
@@ -453,16 +414,25 @@
   pointer-events: auto;
 }
 
-.toast-success { background-color: #198754; color: #fff; }
-.toast-error   { background-color: #dc3545; color: #fff; }
-.toast-info    { background-color: var(--button-primary-bg); color: #fff; }
+.toast-success {
+  background-color: #198754;
+  color: #fff;
+}
+.toast-error {
+  background-color: #dc3545;
+  color: #fff;
+}
+.toast-info {
+  background-color: var(--button-primary-bg);
+  color: #fff;
+}
 
 /* =================================================================
    DARK MODE ADJUSTMENTS
    ================================================================= */
 
 [data-theme="dark"] .toolbar-btn:hover {
-  background-color: rgba(255,255,255,0.07);
+  background-color: rgba(255, 255, 255, 0.07);
 }
 
 [data-theme="dark"] .toolbar-select {
@@ -508,11 +478,6 @@
    ================================================================= */
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-wand,
-  .brand-wand {
-    animation: none;
-  }
-
   .toast-notification,
   .toolbar-btn,
   .editor-tab {
