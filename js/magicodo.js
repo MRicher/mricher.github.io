@@ -328,16 +328,54 @@ function scrubWordHtml(html) {
     }
   });
 
-  // ── 6. Collapse runs of whitespace-only text nodes ───────────────
+  // ── 6. Post-process the serialised HTML string ────────────────────
   let result = doc.body.innerHTML;
 
-  result = result
-    .replace(/[ \t]{2,}/g, " ") // multiple spaces → one
-    .replace(/(<br\s*\/?>\s*){3,}/gi, "<br><br>") // 3+ <br> → 2
-    .replace(/(<p[^>]*>\s*<\/p>\s*){2,}/gi, "") // consecutive empty <p>
-    .trim();
+  // Remove all HTML comments
+  result = result.replace(/<!--[\s\S]*?-->/g, "");
 
-  return result;
+  // Strip style=, class=, id= attributes (any quote style, with or without value)
+  result = result.replace(/\s+style\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]*)/gi, "");
+  result = result.replace(/\s+class\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]*)/gi, "");
+  result = result.replace(/\s+id\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]*)/gi, "");
+
+  // Strip ALL remaining tag attributes except href, src, alt
+  // Matches any attr="value", attr='value', or attr=value that isn't href/src/alt
+  result = result.replace(/<([a-z][a-z0-9]*)((?:\s+[a-z][a-z0-9\-:]*(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]*))?)*)\s*>/gi, (match, tag, attrString) => {
+    // Keep only href, src, alt from the attribute string
+    const kept = [];
+    const attrRe = /\s+(href|src|alt)\s*=\s*("([^"]*)"|'([^']*)'|([^\s>]*))/gi;
+    let m;
+    while ((m = attrRe.exec(attrString)) !== null) {
+      const name = m[1].toLowerCase();
+      const val = m[3] ?? m[4] ?? m[5] ?? "";
+      kept.push(`${name}="${val}"`);
+    }
+    return kept.length ? `<${tag} ${kept.join(" ")}>` : `<${tag}>`;
+  });
+
+  // Collapse successive spaces and tabs to a single space
+  result = result.replace(/[ \t]{2,}/g, " ");
+
+  // Collapse 3+ line-breaks / <br> combos down to a maximum of two
+  result = result.replace(/(<br\s*\/?>\s*){3,}/gi, "<br><br>");
+
+  // Remove empty tags (nothing inside, or only whitespace / a single space)
+  // Repeat until no more matches (nested empties)
+  const VOID = /^(area|base|br|col|embed|hr|img|input|link|meta|param|source|track|wbr)$/i;
+  let prev = "";
+  while (prev !== result) {
+    prev = result;
+    result = result.replace(/<([a-z][a-z0-9]*)[^>]*>\s*<\/\1>/gi, (match, tag) => (VOID.test(tag) ? match : ""));
+  }
+
+  // Remove tags whose only content is a single space
+  result = result.replace(/<([a-z][a-z0-9]*)[^>]*> <\/\1>/gi, "");
+
+  // Collapse consecutive empty <p> tags
+  result = result.replace(/(<p>\s*<\/p>\s*){2,}/gi, "");
+
+  return result.trim();
 }
 
 // -----------------------------------------------------------------
