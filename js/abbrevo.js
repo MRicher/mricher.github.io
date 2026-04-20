@@ -2,7 +2,7 @@
 // CONSTANTS AND VERSION INFO
 // ===================================================================
 
-const ABBREVO_VERSION = "1.0.2";
+const ABBREVO_VERSION = "1.0.3";
 
 // Message constants for consistency and maintainability
 const MESSAGES = {
@@ -884,7 +884,7 @@ function generateEnglishTable(sortedEntries) {
       }
 
       // French cross-reference link
-      const frLink = rawAbbrFr ? `<a href="/fr/abreviations#${abbrFr}" lang="fr" hreflang="fr"><i lang="fr">${abbrFr}</i></a>` : "";
+      const frLink = rawAbbrFr ? `<a href="/fr/renseignements-organisationnels/outil-recherche-abreviations-grc#${abbrFr}" lang="fr" hreflang="fr"><i lang="fr">${abbrFr}</i></a>` : "";
 
       return `\t\t\t<tr id="${abbrEn}">
 \t\t\t\t<td>${abbrEn ? `<abbr>${abbrEn}</abbr>` : ""}</td>
@@ -936,7 +936,7 @@ function generateFrenchTable(sortedEntries) {
       }
 
       // English cross-reference link
-      const enLink = rawAbbrEn ? `<a href="/en/abbreviations#${abbrEn}" lang="en" hreflang="en"><i lang="en">${abbrEn}</i></a>` : "";
+      const enLink = rawAbbrEn ? `<a href="/en/corporate-information/rcmp-abbreviations-finder#${abbrEn}" lang="en" hreflang="en"><i lang="en">${abbrEn}</i></a>` : "";
 
       return `\t\t\t<tr id="${abbrFr}">
 \t\t\t\t<td>${abbrFr ? `<abbr>${abbrFr}</abbr>` : ""}</td>
