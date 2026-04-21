@@ -775,7 +775,8 @@ function saveToJSON() {
 
   const link = document.createElement("a");
   link.href = url;
-  link.download = "abbrevo-entries.json";
+  const today = new Date().toISOString().slice(0, 10);
+  link.download = `abbrevo-entries-${today}.json`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -837,8 +838,9 @@ function saveToHTML() {
     URL.revokeObjectURL(url);
   }
 
-  downloadRows(englishRows, "abbrevo-en.html");
-  downloadRows(frenchRows, "abbrevo-fr.html");
+  const today = new Date().toISOString().slice(0, 10);
+  downloadRows(englishRows, `abbrevo-en-${today}.html`);
+  downloadRows(frenchRows, `abbrevo-fr-${today}.html`);
 
   const currentLang = getCurrentLanguage();
   const successMsg = currentLang === "fr" ? "Fichiers HTML enregistrés avec succès" : "HTML files saved successfully";
@@ -851,6 +853,8 @@ function generateEnglishTable(sortedEntries) {
     .map((entry) => {
       const rawAbbrEn = entry.abbrEn === MESSAGES.NO_ABBR_EN ? "" : entry.abbrEn;
       const rawAbbrFr = entry.abbrFr === MESSAGES.NO_ABBR_FR ? "" : entry.abbrFr;
+
+      if (!rawAbbrEn) return null;
 
       const abbrEn = escapeHtml(rawAbbrEn);
       const abbrFr = escapeHtml(rawAbbrFr);
@@ -884,7 +888,9 @@ function generateEnglishTable(sortedEntries) {
       }
 
       // French cross-reference link
-      const frLink = rawAbbrFr ? `<a href="/fr/renseignements-organisationnels/outil-recherche-abreviations-grc#${abbrFr}" lang="fr" hreflang="fr"><i lang="fr">${abbrFr}</i></a>` : "";
+      const frLink = rawAbbrFr
+        ? `<a href="/fr/renseignements-organisationnels/outil-recherche-abreviations-grc#${abbrFr}" lang="fr" hreflang="fr"><i lang="fr">${abbrFr}</i></a>`
+        : "";
 
       return `\t\t\t<tr id="${abbrEn}">
 \t\t\t\t<td>${abbrEn ? `<abbr>${abbrEn}</abbr>` : ""}</td>
@@ -892,6 +898,7 @@ function generateEnglishTable(sortedEntries) {
 \t\t\t\t<td>${frLink}</td>
 \t\t\t</tr>`;
     })
+    .filter(Boolean)
     .join("\n");
 
   return `${rows}`;
@@ -903,6 +910,8 @@ function generateFrenchTable(sortedEntries) {
     .map((entry) => {
       const rawAbbrEn = entry.abbrEn === MESSAGES.NO_ABBR_EN ? "" : entry.abbrEn;
       const rawAbbrFr = entry.abbrFr === MESSAGES.NO_ABBR_FR ? "" : entry.abbrFr;
+
+      if (!rawAbbrFr) return null;
 
       const abbrEn = escapeHtml(rawAbbrEn);
       const abbrFr = escapeHtml(rawAbbrFr);
@@ -936,7 +945,9 @@ function generateFrenchTable(sortedEntries) {
       }
 
       // English cross-reference link
-      const enLink = rawAbbrEn ? `<a href="/en/corporate-information/rcmp-abbreviations-finder#${abbrEn}" lang="en" hreflang="en"><i lang="en">${abbrEn}</i></a>` : "";
+      const enLink = rawAbbrEn
+        ? `<a href="/en/corporate-information/rcmp-abbreviations-finder#${abbrEn}" lang="en" hreflang="en"><i lang="en">${abbrEn}</i></a>`
+        : "";
 
       return `\t\t\t<tr id="${abbrFr}">
 \t\t\t\t<td>${abbrFr ? `<abbr>${abbrFr}</abbr>` : ""}</td>
@@ -944,6 +955,7 @@ function generateFrenchTable(sortedEntries) {
 \t\t\t\t<td>${enLink}</td>
 \t\t\t</tr>`;
     })
+    .filter(Boolean)
     .join("\n");
 
   return `${rows}`;
