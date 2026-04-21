@@ -2,7 +2,7 @@
 // CONSTANTS AND VERSION INFO
 // ===================================================================
 
-const ABBREVO_VERSION = "1.0.5";
+const ABBREVO_VERSION = "1.0.6";
 
 // Message constants for consistency and maintainability
 const MESSAGES = {
@@ -902,14 +902,17 @@ function generateEnglishTable(sortedEntries) {
         }
       }
 
-      // French cross-reference link
+      // Transparent notes wrapped in hidden classes (kept in DOM, not printed)
+      const notesBlock = entry.transparentNotes ? `\n<p class="hidden hidden-print">${escapeHtml(entry.transparentNotes)}</p>` : "";
+
+      // French cross-reference link, or accessible en dash if no French equivalent
       const frLink = rawAbbrFr
         ? `<a href="/fr/renseignements-organisationnels/outil-recherche-abreviations-grc#${abbrFr}" lang="fr" hreflang="fr"><i lang="fr">${abbrFr}</i></a>`
-        : "";
+        : `<span aria-label="No French equivalent">&ndash;</span>`;
 
       return `\t\t\t<tr id="${abbrEn}">
 \t\t\t\t<td>${abbrEn ? `<abbr>${abbrEn}</abbr>` : ""}</td>
-\t\t\t\t<td>${titleEn}${previousBlock ? "\n" + previousBlock : ""}</td>
+\t\t\t\t<td>${titleEn}${previousBlock ? "\n" + previousBlock : ""}${notesBlock}</td>
 \t\t\t\t<td>${frLink}</td>
 \t\t\t</tr>`;
     })
@@ -954,14 +957,17 @@ function generateFrenchTable(sortedEntries) {
         }
       }
 
-      // English cross-reference link
+      // Transparent notes wrapped in hidden classes (kept in DOM, not printed)
+      const notesBlock = entry.transparentNotes ? `\n<p class="hidden hidden-print">${escapeHtml(entry.transparentNotes)}</p>` : "";
+
+      // English cross-reference link, or accessible en dash if no English equivalent
       const enLink = rawAbbrEn
         ? `<a href="/en/corporate-information/rcmp-abbreviations-finder#${abbrEn}" lang="en" hreflang="en"><i lang="en">${abbrEn}</i></a>`
-        : "";
+        : `<span aria-label="Aucun équivalent anglais">&ndash;</span>`;
 
       return `\t\t\t<tr id="${abbrFr}">
 \t\t\t\t<td>${abbrFr ? `<abbr>${abbrFr}</abbr>` : ""}</td>
-\t\t\t\t<td>${titleFr}${previousBlock ? "\n" + previousBlock : ""}</td>
+\t\t\t\t<td>${titleFr}${previousBlock ? "\n" + previousBlock : ""}${notesBlock}</td>
 \t\t\t\t<td>${enLink}</td>
 \t\t\t</tr>`;
     })
