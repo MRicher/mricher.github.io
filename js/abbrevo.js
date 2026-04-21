@@ -145,8 +145,10 @@ function addAbbrRow() {
   container.insertAdjacentHTML("beforeend", rowHTML);
   updateAbbrMoveButtons();
 
-  // Mutual exclusion for the new row's toggles
+  // Get the new row once for both toggle wiring and focus
   const newRow = document.getElementById(rowId);
+
+  // Mutual exclusion for the new row's toggles
   const enToggle = newRow.querySelector(`#${rowId}-title-en-is-french`);
   const frToggle = newRow.querySelector(`#${rowId}-title-fr-is-english`);
   enToggle.addEventListener("change", function () {
@@ -157,7 +159,6 @@ function addAbbrRow() {
   });
 
   // Focus on the new English abbreviation input
-  const newRow = document.getElementById(rowId);
   const firstInput = newRow.querySelector(".previous-abbr-en");
   if (firstInput) firstInput.focus();
 }
