@@ -2,7 +2,7 @@
 // CONSTANTS AND VERSION INFO
 // ===================================================================
 
-const ABBREVO_VERSION = "1.0.4";
+const ABBREVO_VERSION = "1.0.5";
 
 // Message constants for consistency and maintainability
 const MESSAGES = {
