@@ -145,6 +145,17 @@ function addAbbrRow() {
   container.insertAdjacentHTML("beforeend", rowHTML);
   updateAbbrMoveButtons();
 
+  // Mutual exclusion for the new row's toggles
+  const newRow = document.getElementById(rowId);
+  const enToggle = newRow.querySelector(`#${rowId}-title-en-is-french`);
+  const frToggle = newRow.querySelector(`#${rowId}-title-fr-is-english`);
+  enToggle.addEventListener("change", function () {
+    if (this.checked) frToggle.checked = false;
+  });
+  frToggle.addEventListener("change", function () {
+    if (this.checked) enToggle.checked = false;
+  });
+
   // Focus on the new English abbreviation input
   const newRow = document.getElementById(rowId);
   const firstInput = newRow.querySelector(".previous-abbr-en");
@@ -286,6 +297,14 @@ let entryCounter = 0;
 document.addEventListener("DOMContentLoaded", () => {
   try {
     console.log(`Abbrevo v${ABBREVO_VERSION} loaded`);
+
+    // Mutual exclusion: "Title is in French" and "Title is in English" toggles
+    document.getElementById("title-en-is-french").addEventListener("change", function () {
+      if (this.checked) document.getElementById("title-fr-is-english").checked = false;
+    });
+    document.getElementById("title-fr-is-english").addEventListener("change", function () {
+      if (this.checked) document.getElementById("title-en-is-french").checked = false;
+    });
 
     // Set version in footer (takes priority over creavia.js fallback)
     const versionElement = document.getElementById("version-info");
@@ -882,11 +901,6 @@ function generateEnglishTable(sortedEntries) {
         }
       }
 
-      // Transparent notes appended after the dl if present
-      if (entry.transparentNotes) {
-        previousBlock += (previousBlock ? "\n" : "") + `<p>${escapeHtml(entry.transparentNotes)}</p>`;
-      }
-
       // French cross-reference link
       const frLink = rawAbbrFr
         ? `<a href="/fr/renseignements-organisationnels/outil-recherche-abreviations-grc#${abbrFr}" lang="fr" hreflang="fr"><i lang="fr">${abbrFr}</i></a>`
@@ -937,11 +951,6 @@ function generateFrenchTable(sortedEntries) {
 
           previousBlock = `<p class="mrgn-tp-md"><strong>Anciennement connu sous</strong></p>\n<dl>\n${dtItems}\n</dl>`;
         }
-      }
-
-      // Transparent notes appended after the dl if present
-      if (entry.transparentNotes) {
-        previousBlock += (previousBlock ? "\n" : "") + `<p>${escapeHtml(entry.transparentNotes)}</p>`;
       }
 
       // English cross-reference link
