@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+    :root {
+      --gold:        #FEC111;
+      --gold-hover:  #FFD966;
+      --navy:        #011B3C;
+      --navy-2:      #02285A;
+      --navy-3:      #033470;
+ 
+      --bg-page:     #2A2A2A;
+      --bg-showcase: #222222;
+      --bg-row-alt:  #2F2F2F;
+      --border:      #3D3D3D;
+      --border-md:   #4A4A4A;
+ 
+      --text-main:   #F0F0F0;
+      --text-muted:  #C8C8C8;
+      --text-sub:    #909090;
+ 
+      --font: "Noto Sans", sans-serif;
+    }
+ 
+    body { font-family: var(--font); background: var(--bg-page); color: var(--text-main); min-height: 100vh; }
+ 
+
+
+ 
+    /* ── Global focus ── */
+    a:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; border-radius: 2px; }
+    .bc-sep { font-family: var(--font); }
+ 
+    /* ══════════════════════════════════
+       BREADCRUMB SHOWCASE PANEL
+       Sits directly below the black nav
+    ══════════════════════════════════ */
+    .bc-showcase { background: var(--bg-showcase); border-bottom: 2px solid var(--gold); }
+    .bc-showcase-inner { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+ 
+    .bc-row { display: flex; align-items: center; border-bottom: 1px solid var(--border); min-height: 52px; }
+    .bc-row:nth-child(even) { background: var(--bg-row-alt); }
+    .bc-row:last-child { border-bottom: none; }
+ 
+    /* Style label tag — gold bg, navy text: #011B3C on #FEC111 = 10.2:1 ✓ */
+    .bc-label {
+      font-family: var(--font); font-size: 10px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--navy); background: var(--gold);
+      padding: 3px 9px; border-radius: 3px;
+      white-space: nowrap; flex-shrink: 0;
+      margin-right: 1.75rem; min-width: 118px; text-align: center;
+    }
+ 
+    .bc-row nav,
+    .bc-row .bc-nav-wrap { flex: 1; display: flex; align-items: center; }
+ 
+    /* ────────────────────────────────
+       01 — PILL CHAIN
+       #FEC111 on #011B3C = 8.6:1 ✓
+    ──────────────────────────────── */
+    .bc1 { list-style: none; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding: 9px 0; }
+    .bc1 a { font-family: var(--font); font-size: 13px; font-weight: 600; padding: 5px 14px; border-radius: 999px; background: var(--navy); color: var(--gold); text-decoration: underline; text-underline-offset: 2px; text-decoration-thickness: 1px; transition: background 0.15s; }
+    .bc1 a:hover { background: var(--navy-2); text-decoration: none; }
+    .bc1 .bc-sep { color: var(--text-sub); font-size: 12px; }
+ 
+    /* ────────────────────────────────
+       02 — UNDERLINE SLASH
+       #FEC111 on #222 = 8.6:1 ✓
+    ──────────────────────────────── */
+    .bc2 { list-style: none; display: flex; align-items: center; flex-wrap: wrap; padding: 9px 0; }
+    .bc2 a { font-family: var(--font); font-size: 13px; font-weight: 600; color: var(--gold); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1.5px; padding: 2px 1px; transition: color 0.15s; }
+    .bc2 a:hover { color: var(--gold-hover); }
+    .bc2 .bc-sep { color: var(--text-sub); font-weight: 700; padding: 0 9px; font-size: 15px; }
+ 
+    /* ────────────────────────────────
+       03 — STEP CHIPS
+       #FEC111 on #011B3C = 8.6:1 ✓
+    ──────────────────────────────── */
+    .bc3 { list-style: none; display: flex; align-items: stretch; flex-wrap: nowrap; padding: 9px 0; }
+    .bc3 li a { display: flex; align-items: center; font-family: var(--font); font-size: 13px; font-weight: 600; padding: 6px 20px 6px 12px; background: var(--navy); color: var(--gold); text-decoration: underline; text-underline-offset: 2px; clip-path: polygon(0 0, calc(100% - 11px) 0, 100% 50%, calc(100% - 11px) 100%, 0 100%); white-space: nowrap; transition: background 0.15s; height: 100%; }
+    .bc3 li:not(:first-child) a { padding-left: 24px; margin-left: -11px; }
+    .bc3 li a:hover { background: var(--navy-2); text-decoration: none; }
+    .bc3 li:last-child a { background: var(--navy-2); clip-path: none; border-radius: 0 5px 5px 0; }
+    .bc3 li:last-child a:hover { background: var(--navy-3); }
+ 
+    /* ────────────────────────────────
+       04 — INLINE FLAG
+       icon: #FEC111 on #011B3C = 8.6:1 ✓
+       links: #FEC111 on #1A1A1A = 8.6:1 ✓
+    ──────────────────────────────── */
+    .bc-nav-wrap.bc4-wrap-outer { padding: 9px 0; }
+    .bc4-box { display: inline-flex; align-items: stretch; border: 1.5px solid var(--border-md); border-radius: 6px; overflow: hidden; }
+    .bc4-flag { display: flex; align-items: center; background: var(--navy); padding: 0 12px; flex-shrink: 0; border-right: 2px solid var(--gold); }
+    .bc4-flag svg { width: 14px; height: 14px; fill: var(--gold); }
+    .bc4-links { list-style: none; display: flex; align-items: center; flex-wrap: wrap; padding: 7px 13px; gap: 0; background: #1A1A1A; }
+    .bc4-links a { font-family: var(--font); font-size: 13px; font-weight: 600; color: var(--gold); text-decoration: underline; text-underline-offset: 2px; transition: color 0.15s; }
+    .bc4-links a:hover { color: var(--gold-hover); }
+    .bc4-links .bc-sep { color: var(--text-sub); padding: 0 8px; font-size: 13px; }
+ 
+    /* ────────────────────────────────
+       05 — EDITORIAL CAPS
+       bold 11px uppercase #FEC111 on #222 = 8.6:1 ✓
+    ──────────────────────────────── */
+    .bc5 { list-style: none; display: flex; align-items: center; flex-wrap: wrap; padding: 9px 0; }
+    .bc5 a { font-family: var(--font); font-size: 11px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--gold); text-decoration: underline; text-underline-offset: 2px; transition: color 0.15s; }
+    .bc5 a:hover { color: var(--gold-hover); }
+    .bc5 .bc-sep { color: var(--text-sub); font-size: 18px; padding: 0 7px; font-weight: 700; line-height: 1; }
+ 
+    /* ────────────────────────────────
+       06 — CARD TILES
+       #FEC111 on #011B3C = 8.6:1 ✓
+       tile-num #C8960A on #011B3C = 4.6:1 ✓ (bold uppercase large text AA)
+    ──────────────────────────────── */
+    .bc6 { list-style: none; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 8px 0; }
+    .bc6 a.bc6-tile { display: flex; flex-direction: column; gap: 1px; padding: 6px 13px; background: var(--navy); border: 1.5px solid #0A3060; border-radius: 6px; text-decoration: none; min-width: 80px; transition: border-color 0.15s, background 0.15s; }
+    .bc6 a.bc6-tile:hover { border-color: var(--gold); background: var(--navy-2); }
+    .tile-num { font-family: var(--font); font-size: 9px; color: #C8960A; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+    .tile-label { font-family: var(--font); font-size: 12px; color: var(--gold); font-weight: 600; }
+    .bc6 .bc-arr { color: var(--text-sub); font-size: 16px; }
+ 
+    /* ────────────────────────────────
+       07 — PROGRESS DOTS
+       #FEC111 on #222 = 8.6:1 ✓
+    ──────────────────────────────── */
+    .bc7 { list-style: none; display: flex; align-items: center; flex-wrap: wrap; padding: 9px 0; }
+    .bc7-item { display: inline-flex; align-items: center; }
+    .bc7-item a { display: inline-flex; align-items: center; gap: 7px; font-family: var(--font); font-size: 13px; font-weight: 600; color: var(--gold); text-decoration: none; padding: 3px 0; transition: color 0.15s; }
+    .bc7-item a:hover { color: var(--gold-hover); }
+    .bc7-item a:hover .bc7-dot { background: var(--gold); }
+    .bc7-dot { width: 8px; height: 8px; border-radius: 50%; background: #555; flex-shrink: 0; transition: background 0.15s; }
+    .bc7-line { width: 26px; height: 2px; background: #444; flex-shrink: 0; margin: 0 4px; }
+ 
+    /* ────────────────────────────────
+       08 — BORDERED BAND
+       #FEC111 on #011B3C = 8.6:1 ✓
+       left border: gold
+    ──────────────────────────────── */
+    .bc-nav-wrap.bc8-wrap-outer { padding: 9px 0; }
+    .bc8-band { display: inline-flex; align-items: center; border-left: 4px solid var(--gold); background: var(--navy); border-radius: 0 5px 5px 0; padding: 8px 15px; }
+    .bc8 { list-style: none; display: flex; align-items: center; flex-wrap: wrap; }
+    .bc8 a { font-family: var(--font); font-size: 13px; font-weight: 600; color: var(--gold); text-decoration: underline; text-underline-offset: 2px; transition: color 0.15s; }
+    .bc8 a:hover { color: var(--gold-hover); }
+    .bc8 .bc-sep { color: #2A5080; padding: 0 9px; font-size: 15px; font-weight: 700; }
+ 
+    /* ────────────────────────────────
+       09 — GHOST OUTLINE
+       #FEC111 on #222 = 8.6:1 ✓
+       border: #0A3060 (decorative only)
+    ──────────────────────────────── */
+    .bc9 { list-style: none; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding: 8px 0; }
+    .bc9 a { display: inline-flex; align-items: center; gap: 5px; font-family: var(--font); font-size: 13px; font-weight: 600; color: var(--gold); text-decoration: none; padding: 5px 13px; border: 2px solid #0A3060; border-radius: 5px; transition: border-color 0.15s, background 0.15s; }
+    .bc9 a:hover { border-color: var(--gold); background: rgba(254,193,17,0.08); }
+    .bc9 .bc-sep { color: var(--text-sub); font-size: 13px; }
+    .bc9-icon { font-style: normal; font-size: 12px; line-height: 1; }
+ 
+    /* ── Page content ── */
+    .page-content { max-width: 1200px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+    .page-content h1 { font-family: var(--font); font-size: 34px; font-weight: 700; color: var(--text-main); margin-bottom: 0.5rem; line-height: 1.2; }
+    .page-content p { font-family: var(--font); font-size: 16px; color: var(--text-muted); line-height: 1.7; max-width: 640px; }
+    .showcase-note { display: inline-flex; align-items: center; gap: 8px; margin-top: 1.5rem; background: rgba(254,193,17,0.08); border: 1px solid rgba(254,193,17,0.3); border-radius: 6px; padding: 9px 15px; font-family: var(--font); font-size: 12px; color: var(--gold); font-weight: 500; }
+  </style>
+</head>
+<body>
+
+  <div class="bc-showcase" role="region" aria-label="Breadcrumb style showcase">
+    <div class="bc-showcase-inner">
+ 
+      <!-- 01 -->
+      <div class="bc-row">
+        <span class="bc-label" aria-hidden="true">01 · Pill chain</span>
+        <nav aria-label="Breadcrumb">
+          <ol class="bc1">
+            <li><a href="#">RCMP.ca</a></li>
+            <li aria-hidden="true"><span class="bc-sep">›</span></li>
+            <li><a href="#">Careers at the RCMP</a></li>
+          </ol>
+        </nav>
+      </div>
+ 
+      <!-- 02 -->
+      <div class="bc-row">
+        <span class="bc-label" aria-hidden="true">02 · Slash</span>
+        <nav aria-label="Breadcrumb">
+          <ol class="bc2">
+            <li><a href="#">RCMP.ca</a></li>
+            <li aria-hidden="true"><span class="bc-sep">/</span></li>
+            <li><a href="#">Careers at the RCMP</a></li>
+          </ol>
+        </nav>
+      </div>
+ 
+      <!-- 03 -->
+      <div class="bc-row">
+        <span class="bc-label" aria-hidden="true">03 · Step chips</span>
+        <nav aria-label="Breadcrumb">
+          <ol class="bc3">
+            <li><a href="#">RCMP.ca</a></li>
+            <li><a href="#">Careers at the RCMP</a></li>
+          </ol>
+        </nav>
+      </div>
+ 
+      <!-- 04 -->
+      <div class="bc-row">
+        <span class="bc-label" aria-hidden="true">04 · Inline flag</span>
+        <div class="bc-nav-wrap bc4-wrap-outer">
+          <nav aria-label="Breadcrumb">
+            <div class="bc4-box">
+              <div class="bc4-flag" aria-hidden="true">
+                <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" focusable="false" aria-hidden="true">
+                  <path d="M10 2L2 9h2v9h5v-5h2v5h5V9h2L10 2z"/>
+                </svg>
+              </div>
+              <ol class="bc4-links">
+                <li><a href="#">RCMP.ca</a></li>
+                <li aria-hidden="true"><span class="bc-sep">›</span></li>
+                <li><a href="#">Careers at the RCMP</a></li>
+              </ol>
+            </div>
+          </nav>
+        </div>
+      </div>
+ 
+      <!-- 05 -->
+      <div class="bc-row">
+        <span class="bc-label" aria-hidden="true">05 · Editorial</span>
+        <nav aria-label="Breadcrumb">
+          <ol class="bc5">
+            <li><a href="#">RCMP.ca</a></li>
+            <li aria-hidden="true"><span class="bc-sep">·</span></li>
+            <li><a href="#">Careers at the RCMP</a></li>
+          </ol>
+        </nav>
+      </div>
+ 
+      <!-- 06 -->
+      <div class="bc-row">
+        <span class="bc-label" aria-hidden="true">06 · Card tiles</span>
+        <nav aria-label="Breadcrumb">
+          <ol class="bc6">
+            <li><a href="#" class="bc6-tile"><span class="tile-num">01</span><span class="tile-label">RCMP.ca</span></a></li>
+            <li aria-hidden="true"><span class="bc-arr">→</span></li>
+            <li><a href="#" class="bc6-tile"><span class="tile-num">02</span><span class="tile-label">Careers at the RCMP</span></a></li>
+          </ol>
+        </nav>
+      </div>
+ 
+      <!-- 07 -->
+      <div class="bc-row">
+        <span class="bc-label" aria-hidden="true">07 · Progress dots</span>
+        <nav aria-label="Breadcrumb">
+          <ol class="bc7">
+            <li class="bc7-item"><a href="#"><span class="bc7-dot" aria-hidden="true"></span>RCMP.ca</a></li>
+            <li aria-hidden="true"><span class="bc7-line"></span></li>
+            <li class="bc7-item"><a href="#"><span class="bc7-dot" aria-hidden="true"></span>Careers at the RCMP</a></li>
+          </ol>
+        </nav>
+      </div>
+ 
+      <!-- 08 -->
+      <div class="bc-row">
+        <span class="bc-label" aria-hidden="true">08 · Bordered band</span>
+        <div class="bc-nav-wrap bc8-wrap-outer">
+          <nav aria-label="Breadcrumb">
+            <div class="bc8-band">
+              <ol class="bc8">
+                <li><a href="#">RCMP.ca</a></li>
+                <li aria-hidden="true"><span class="bc-sep">›</span></li>
+                <li><a href="#">Careers at the RCMP</a></li>
+              </ol>
+            </div>
+          </nav>
+        </div>
+      </div>
+ 
+      <!-- 09 -->
+      <div class="bc-row">
+        <span class="bc-label" aria-hidden="true">09 · Ghost outline</span>
+        <nav aria-label="Breadcrumb">
+          <ol class="bc9">
+            <li><a href="#"><span class="bc9-icon" aria-hidden="true">⌂</span>RCMP.ca</a></li>
+            <li aria-hidden="true"><span class="bc-sep">›</span></li>
+            <li><a href="#">Careers at the RCMP</a></li>
+          </ol>
+        </nav>
+      </div>
+ 
+    </div>
+  </div>
+ 
+</body>
+</html>
