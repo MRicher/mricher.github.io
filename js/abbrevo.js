@@ -70,6 +70,24 @@ function normalizeApostrophes(str) {
   return str ? str.replace(/'/g, "\u2019") : str;
 }
 
+/**
+ * Replace curly/smart single quotes with straight apostrophes
+ * @param {string} str - String to process
+ * @returns {string} String with \u2018 and \u2019 replaced by '
+ */
+function sanitizeQuotes(str) {
+  return str ? str.replace(/[\u2018\u2019]/g, "'") : str;
+}
+
+/**
+ * Format entry ID as a zero-padded 4-digit string
+ * @param {number} id - Entry ID
+ * @returns {string} Zero-padded ID e.g. "0001"
+ */
+function formatEntryId(id) {
+  return String(id + 1).padStart(4, "0");
+}
+
 // ===================================================================
 // PREVIOUS ABBREVIATION ROWS MANAGEMENT
 // ===================================================================
@@ -353,27 +371,18 @@ function announceToScreenReader(message) {
   }
 }
 
-/**
- * Replace curly/smart single quotes with straight apostrophes
- * @param {string} str - String to process
- * @returns {string} String with ' and ' replaced by '
- */
-function sanitizeQuotes(str) {
-  return str ? str.replace(/[\u2018\u2019]/g, "'") : str;
-}
-
 // ===================================================================
 // ENTRY MANAGEMENT FUNCTIONS
 // ===================================================================
 
 // Add new entry
 function addEntry() {
-  let abbrEn = normalizeApostrophes(document.getElementById("abbr-en").value.trim());
-  let abbrFr = normalizeApostrophes(document.getElementById("abbr-fr").value.trim());
   let abbrEn = normalizeApostrophes(sanitizeQuotes(document.getElementById("abbr-en").value.trim()));
   let abbrFr = normalizeApostrophes(sanitizeQuotes(document.getElementById("abbr-fr").value.trim()));
   const titleEn = normalizeApostrophes(sanitizeQuotes(document.getElementById("title-en").value.trim()));
   const titleFr = normalizeApostrophes(sanitizeQuotes(document.getElementById("title-fr").value.trim()));
+  const titleEnIsFrench = document.getElementById("title-en-is-french").checked;
+  const titleFrIsEnglish = document.getElementById("title-fr-is-english").checked;
   const transparentNotes = normalizeApostrophes(sanitizeQuotes(document.getElementById("transparent-notes").value.trim()));
   const previousAbbrs = getPreviousAbbreviations();
 
@@ -681,13 +690,13 @@ function editEntry(id) {
 
 // Update entry
 function updateEntry(id) {
-  let abbrEn = normalizeApostrophes(document.getElementById("abbr-en").value.trim());
-  let abbrFr = normalizeApostrophes(document.getElementById("abbr-fr").value.trim());
-  const titleEn = normalizeApostrophes(document.getElementById("title-en").value.trim());
-  const titleFr = normalizeApostrophes(document.getElementById("title-fr").value.trim());
+  let abbrEn = normalizeApostrophes(sanitizeQuotes(document.getElementById("abbr-en").value.trim()));
+  let abbrFr = normalizeApostrophes(sanitizeQuotes(document.getElementById("abbr-fr").value.trim()));
+  const titleEn = normalizeApostrophes(sanitizeQuotes(document.getElementById("title-en").value.trim()));
+  const titleFr = normalizeApostrophes(sanitizeQuotes(document.getElementById("title-fr").value.trim()));
   const titleEnIsFrench = document.getElementById("title-en-is-french").checked;
   const titleFrIsEnglish = document.getElementById("title-fr-is-english").checked;
-  const transparentNotes = normalizeApostrophes(document.getElementById("transparent-notes").value.trim());
+  const transparentNotes = normalizeApostrophes(sanitizeQuotes(document.getElementById("transparent-notes").value.trim()));
   const previousAbbrs = getPreviousAbbreviations();
 
   // Validation - at least one abbreviation and both titles required
@@ -914,15 +923,6 @@ function generateEnglishTable(sortedEntries) {
       // Transparent notes wrapped in hidden classes (kept in DOM, not printed)
       const notesBlock = entry.transparentNotes ? `\n<p class="hidden hidden-print">${escapeHtml(entry.transparentNotes)}</p>` : "";
 
-      /**
-       * Format entry ID as a zero-padded 4-digit string
-       * @param {number} id - Entry ID
-       * @returns {string} Zero-padded ID e.g. "0001"
-       */
-      function formatEntryId(id) {
-        return String(id + 1).padStart(4, "0");
-      }
-
       // French cross-reference link, or accessible en dash if no French equivalent
       const frLink = rawAbbrFr
         ? `<a href="/fr/renseignements-organisationnels/outil-recherche-abreviations-grc#${formatEntryId(entry.id)}" lang="fr" hreflang="fr"><i lang="fr">${abbrFr}</i></a>`
@@ -977,15 +977,6 @@ function generateFrenchTable(sortedEntries) {
 
       // Transparent notes wrapped in hidden classes (kept in DOM, not printed)
       const notesBlock = entry.transparentNotes ? `\n<p class="hidden hidden-print">${escapeHtml(entry.transparentNotes)}</p>` : "";
-
-      /**
-       * Format entry ID as a zero-padded 4-digit string
-       * @param {number} id - Entry ID
-       * @returns {string} Zero-padded ID e.g. "0001"
-       */
-      function formatEntryId(id) {
-        return String(id + 1).padStart(4, "0");
-      }
 
       // English cross-reference link, or accessible en dash if no English equivalent
       const enLink = rawAbbrEn
