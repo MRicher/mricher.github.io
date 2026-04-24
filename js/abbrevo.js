@@ -230,10 +230,10 @@ function getPreviousAbbreviations() {
   const previousAbbrs = [];
 
   rows.forEach((row) => {
-    const abbrEn = normalizeApostrophes(row.querySelector(".previous-abbr-en").value.trim());
-    const abbrFr = normalizeApostrophes(row.querySelector(".previous-abbr-fr").value.trim());
-    const titleEn = normalizeApostrophes(row.querySelector(".previous-title-en").value.trim());
-    const titleFr = normalizeApostrophes(row.querySelector(".previous-title-fr").value.trim());
+    const abbrEn = normalizeApostrophes(sanitizeQuotes(row.querySelector(".previous-abbr-en").value.trim()));
+    const abbrFr = normalizeApostrophes(sanitizeQuotes(row.querySelector(".previous-abbr-fr").value.trim()));
+    const titleEn = normalizeApostrophes(sanitizeQuotes(row.querySelector(".previous-title-en").value.trim()));
+    const titleFr = normalizeApostrophes(sanitizeQuotes(row.querySelector(".previous-title-fr").value.trim()));
     const titleEnIsFrench = row.querySelector('[id$="-title-en-is-french"]')?.checked || false;
     const titleFrIsEnglish = row.querySelector('[id$="-title-fr-is-english"]')?.checked || false;
 
@@ -353,6 +353,15 @@ function announceToScreenReader(message) {
   }
 }
 
+/**
+ * Replace curly/smart single quotes with straight apostrophes
+ * @param {string} str - String to process
+ * @returns {string} String with ' and ' replaced by '
+ */
+function sanitizeQuotes(str) {
+  return str ? str.replace(/[\u2018\u2019]/g, "'") : str;
+}
+
 // ===================================================================
 // ENTRY MANAGEMENT FUNCTIONS
 // ===================================================================
@@ -361,11 +370,11 @@ function announceToScreenReader(message) {
 function addEntry() {
   let abbrEn = normalizeApostrophes(document.getElementById("abbr-en").value.trim());
   let abbrFr = normalizeApostrophes(document.getElementById("abbr-fr").value.trim());
-  const titleEn = normalizeApostrophes(document.getElementById("title-en").value.trim());
-  const titleFr = normalizeApostrophes(document.getElementById("title-fr").value.trim());
-  const titleEnIsFrench = document.getElementById("title-en-is-french").checked;
-  const titleFrIsEnglish = document.getElementById("title-fr-is-english").checked;
-  const transparentNotes = normalizeApostrophes(document.getElementById("transparent-notes").value.trim());
+  let abbrEn = normalizeApostrophes(sanitizeQuotes(document.getElementById("abbr-en").value.trim()));
+  let abbrFr = normalizeApostrophes(sanitizeQuotes(document.getElementById("abbr-fr").value.trim()));
+  const titleEn = normalizeApostrophes(sanitizeQuotes(document.getElementById("title-en").value.trim()));
+  const titleFr = normalizeApostrophes(sanitizeQuotes(document.getElementById("title-fr").value.trim()));
+  const transparentNotes = normalizeApostrophes(sanitizeQuotes(document.getElementById("transparent-notes").value.trim()));
   const previousAbbrs = getPreviousAbbreviations();
 
   // Validation - at least one abbreviation and both titles required
@@ -905,16 +914,25 @@ function generateEnglishTable(sortedEntries) {
       // Transparent notes wrapped in hidden classes (kept in DOM, not printed)
       const notesBlock = entry.transparentNotes ? `\n<p class="hidden hidden-print">${escapeHtml(entry.transparentNotes)}</p>` : "";
 
+      /**
+       * Format entry ID as a zero-padded 4-digit string
+       * @param {number} id - Entry ID
+       * @returns {string} Zero-padded ID e.g. "0001"
+       */
+      function formatEntryId(id) {
+        return String(id + 1).padStart(4, "0");
+      }
+
       // French cross-reference link, or accessible en dash if no French equivalent
       const frLink = rawAbbrFr
-        ? `<a href="/fr/renseignements-organisationnels/outil-recherche-abreviations-grc#fr-${entry.id}" lang="fr" hreflang="fr"><i lang="fr">${abbrFr}</i></a>`
-        : `<span aria-label="No French equivalent">&ndash;</span>`;
+        ? `<a href="/fr/renseignements-organisationnels/outil-recherche-abreviations-grc#${formatEntryId(entry.id)}" lang="fr" hreflang="fr"><i lang="fr">${abbrFr}</i></a>`
+        : `<abbr title="No French equivalent">&ndash;</abbr>`;
 
-      return `\t\t\t<tr id="en-${entry.id}">
-\t\t\t\t<td>${abbrEn ? `<abbr>${abbrEn}</abbr>` : ""}</td>
-\t\t\t\t<td>${titleEn}${previousBlock ? "\n" + previousBlock : ""}${notesBlock}</td>
-\t\t\t\t<td>${frLink}</td>
-\t\t\t</tr>`;
+      return `      <tr id="${formatEntryId(entry.id)}">
+        <td>${abbrEn ? `<abbr>${abbrEn}</abbr>` : ""}</td>
+        <td>${titleEn}${previousBlock ? "\n" + previousBlock : ""}${notesBlock}</td>
+        <td>${frLink}</td>
+      </tr>`;
     })
     .filter(Boolean)
     .join("\n");
@@ -960,16 +978,25 @@ function generateFrenchTable(sortedEntries) {
       // Transparent notes wrapped in hidden classes (kept in DOM, not printed)
       const notesBlock = entry.transparentNotes ? `\n<p class="hidden hidden-print">${escapeHtml(entry.transparentNotes)}</p>` : "";
 
+      /**
+       * Format entry ID as a zero-padded 4-digit string
+       * @param {number} id - Entry ID
+       * @returns {string} Zero-padded ID e.g. "0001"
+       */
+      function formatEntryId(id) {
+        return String(id + 1).padStart(4, "0");
+      }
+
       // English cross-reference link, or accessible en dash if no English equivalent
       const enLink = rawAbbrEn
-        ? `<a href="/en/corporate-information/rcmp-abbreviations-finder#en-${entry.id}" lang="en" hreflang="en"><i lang="en">${abbrEn}</i></a>`
-        : `<span aria-label="Aucun équivalent anglais">&ndash;</span>`;
+        ? `<a href="/en/corporate-information/rcmp-abbreviation-finder#${formatEntryId(entry.id)}" lang="en" hreflang="en"><i lang="en">${abbrEn}</i></a>`
+        : `<abbr title="Aucun équivalent anglais">&ndash;</abbr>`;
 
-      return `\t\t\t<tr id="fr-${entry.id}">
-\t\t\t\t<td>${abbrFr ? `<abbr>${abbrFr}</abbr>` : ""}</td>
-\t\t\t\t<td>${titleFr}${previousBlock ? "\n" + previousBlock : ""}${notesBlock}</td>
-\t\t\t\t<td>${enLink}</td>
-\t\t\t</tr>`;
+      return `      <tr id="${formatEntryId(entry.id)}">
+        <td>${abbrFr ? `<abbr>${abbrFr}</abbr>` : ""}</td>
+        <td>${titleFr}${previousBlock ? "\n" + previousBlock : ""}${notesBlock}</td>
+        <td>${enLink}</td>
+      </tr>`;
     })
     .filter(Boolean)
     .join("\n");
