@@ -907,10 +907,10 @@ function generateEnglishTable(sortedEntries) {
 
       // French cross-reference link, or accessible en dash if no French equivalent
       const frLink = rawAbbrFr
-        ? `<a href="/fr/renseignements-organisationnels/outil-recherche-abreviations-grc#${abbrFr}" lang="fr" hreflang="fr"><i lang="fr">${abbrFr}</i></a>`
+        ? `<a href="/fr/renseignements-organisationnels/outil-recherche-abreviations-grc#fr-${entry.id}" lang="fr" hreflang="fr"><i lang="fr">${abbrFr}</i></a>`
         : `<span aria-label="No French equivalent">&ndash;</span>`;
 
-      return `\t\t\t<tr id="${abbrEn}">
+      return `\t\t\t<tr id="en-${entry.id}">
 \t\t\t\t<td>${abbrEn ? `<abbr>${abbrEn}</abbr>` : ""}</td>
 \t\t\t\t<td>${titleEn}${previousBlock ? "\n" + previousBlock : ""}${notesBlock}</td>
 \t\t\t\t<td>${frLink}</td>
@@ -962,10 +962,10 @@ function generateFrenchTable(sortedEntries) {
 
       // English cross-reference link, or accessible en dash if no English equivalent
       const enLink = rawAbbrEn
-        ? `<a href="/en/corporate-information/rcmp-abbreviations-finder#${abbrEn}" lang="en" hreflang="en"><i lang="en">${abbrEn}</i></a>`
+        ? `<a href="/en/corporate-information/rcmp-abbreviations-finder#en-${entry.id}" lang="en" hreflang="en"><i lang="en">${abbrEn}</i></a>`
         : `<span aria-label="Aucun équivalent anglais">&ndash;</span>`;
 
-      return `\t\t\t<tr id="${abbrFr}">
+      return `\t\t\t<tr id="fr-${entry.id}">
 \t\t\t\t<td>${abbrFr ? `<abbr>${abbrFr}</abbr>` : ""}</td>
 \t\t\t\t<td>${titleFr}${previousBlock ? "\n" + previousBlock : ""}${notesBlock}</td>
 \t\t\t\t<td>${enLink}</td>
