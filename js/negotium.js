@@ -1,4 +1,4 @@
-const NEGOTIUM_VERSION = "1.0.0";
+const NEGOTIUM_VERSION = "1.0.1";
 const NEGOTIUM_VERSION_STRING = `Version ${NEGOTIUM_VERSION}`;
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -75,7 +75,7 @@ function initializeQuillEditor() {
     return new Quill.imports.delta(cleanDelta);
   });
   quill.clipboard.addMatcher("BR", (node, delta) => {
-    return new Quill.imports.delta([{ insert: " " }]);
+    return new Quill.imports.delta([{ insert: "" }]);
   });
   quill.keyboard.addBinding({ key: "Enter", shiftKey: true }, () => {});
 }
