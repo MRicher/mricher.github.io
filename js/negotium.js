@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function initializeQuillEditor() {
   const toolbarOptions = [
-    ["bold", "italic"],
+    ["bold"],
     [{ list: "ordered" }, { list: "bullet" }],
     [{ indent: "-1" }, { indent: "+1" }],
     [{ header: [2, 3, false] }],
@@ -74,6 +74,10 @@ function initializeQuillEditor() {
     });
     return new Quill.imports.delta(cleanDelta);
   });
+  quill.clipboard.addMatcher("BR", (node, delta) => {
+    return new Quill.imports.delta([{ insert: " " }]);
+  });
+  quill.keyboard.addBinding({ key: "Enter", shiftKey: true }, () => {});
 }
 
 function updatePlaceholderText() {
@@ -166,10 +170,7 @@ function processElements(element) {
           parts.push(`<strong>${content}</strong>`);
         }
       } else if (tagName === "i" || tagName === "em") {
-        const content = processElements(node);
-        if (content.trim()) {
-          parts.push(`<em>${content}</em>`);
-        }
+        parts.push(processElements(node));
       } else if (tagName === "a") {
         const href = sanitizeHref(node.getAttribute("href"));
         const content = processElements(node);
@@ -335,10 +336,7 @@ function processInlineContent(element) {
           parts.push(`<strong>${content}</strong>`);
         }
       } else if (tagName === "i" || tagName === "em") {
-        const content = processInlineContent(node);
-        if (content.trim()) {
-          parts.push(`<em>${content}</em>`);
-        }
+        parts.push(processInlineContent(node));
       } else if (tagName === "a") {
         const href = sanitizeHref(node.getAttribute("href"));
         const content = processInlineContent(node);
