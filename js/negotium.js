@@ -36,14 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function initializeQuillEditor() {
-  const toolbarOptions = [
-    ["bold"],
-    [{ list: "ordered" }, { list: "bullet" }],
-    [{ indent: "-1" }, { indent: "+1" }],
-    [{ header: [2, 3, false] }],
-    ["link"],
-    ["clean"],
-  ];
+  const toolbarOptions = [["bold"], ["italic"], [{ list: "ordered" }, { list: "bullet" }], [{ indent: "-1" }, { indent: "+1" }], ["link"], ["clean"]];
 
   quill = new Quill("#editor", {
     modules: {
@@ -57,16 +50,16 @@ function initializeQuillEditor() {
   });
 
   quill.clipboard.addMatcher(Node.ELEMENT_NODE, (node, delta) => {
+    const ALLOWED_ATTRS = ["bold", "italic", "list", "indent", "link"];
     const cleanDelta = delta.ops.map((op) => {
       if (op.insert && typeof op.insert === "string") {
         const cleanAttributes = {};
         if (op.attributes) {
-          if (op.attributes.bold) cleanAttributes.bold = op.attributes.bold;
-          if (op.attributes.italic) cleanAttributes.italic = op.attributes.italic;
-          if (op.attributes.list) cleanAttributes.list = op.attributes.list;
-          if (op.attributes.indent) cleanAttributes.indent = op.attributes.indent;
-          if (op.attributes.header) cleanAttributes.header = op.attributes.header;
-          if (op.attributes.link) cleanAttributes.link = op.attributes.link;
+          for (const attr of ALLOWED_ATTRS) {
+            if (op.attributes[attr] !== undefined) {
+              cleanAttributes[attr] = op.attributes[attr];
+            }
+          }
         }
         return { insert: op.insert, attributes: Object.keys(cleanAttributes).length > 0 ? cleanAttributes : undefined };
       }
@@ -170,7 +163,10 @@ function processElements(element) {
           parts.push(`<strong>${content}</strong>`);
         }
       } else if (tagName === "i" || tagName === "em") {
-        parts.push(processElements(node));
+        const content = processElements(node);
+        if (content.trim()) {
+          parts.push(`<cite>${content}</cite>`);
+        }
       } else if (tagName === "a") {
         const href = sanitizeHref(node.getAttribute("href"));
         const content = processElements(node);
