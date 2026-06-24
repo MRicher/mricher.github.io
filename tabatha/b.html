@@ -71,7 +71,7 @@
         background-color: var(--bg-primary);
         color: var(--text-primary);
         line-height: 1.7;
-        font-size: 14px;
+        font-size: 16px;
         font-weight: 400;
       }
 
@@ -287,18 +287,24 @@
         transform: translateY(-2px);
       }
 
-      .service-card i {
-        font-size: 2.5rem;
-        color: var(--light-blue);
+      .card-header {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
         margin-bottom: var(--spacing-sm);
-        display: block;
-        text-align: left;
       }
 
-      .service-card h3 {
-        text-align: left;
+      .card-header i {
+        font-size: 2rem;
+        color: var(--light-blue);
+        flex-shrink: 0;
       }
 
+      .card-header h3 {
+        margin-bottom: 0;
+      }
+
+      .service-card p + h4,
       .service-card ul + h4 {
         margin-top: var(--spacing-md);
       }
@@ -756,8 +762,10 @@
           <h2>Services</h2>
           <div class="services-grid">
             <div class="service-card">
-              <i class="fas fa-users" aria-hidden="true"></i>
-              <h3>Co-Design</h3>
+              <div class="card-header">
+                <i class="fas fa-users" aria-hidden="true"></i>
+                <h3>Co-Design</h3>
+              </div>
               <h4>Working through challenges — together</h4>
               <p>We bring people together to talk through real challenges and shape solutions as a group.</p>
               <p>
@@ -781,8 +789,10 @@
             </div>
 
             <div class="service-card">
-              <i class="fas fa-dice" aria-hidden="true"></i>
-              <h3>Game Development</h3>
+              <div class="card-header">
+                <i class="fas fa-dice" aria-hidden="true"></i>
+                <h3>Game Development</h3>
+              </div>
               <h4>Game-based experiences: thinking through complexity in a new way</h4>
               <p>We create simple, interactive games that help people explore real-world challenges in a hands-on way.</p>
               <p>These experiences make it easier to:</p>
@@ -803,8 +813,10 @@
             </div>
 
             <div class="service-card">
-              <i class="fas fa-flask" aria-hidden="true"></i>
-              <h3>Learning &amp; Capacity Labs</h3>
+              <div class="card-header">
+                <i class="fas fa-flask" aria-hidden="true"></i>
+                <h3>Learning &amp; Capacity Labs</h3>
+              </div>
               <h4>Learning doesn't have to be boring. Let's make it unforgettable.</h4>
               <p>
                 Skills and knowledge help build capacity and resilience. Working with your team, we create thoughtful learning opportunities that help
