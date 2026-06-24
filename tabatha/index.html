@@ -32,22 +32,19 @@
       }
 
       :root {
-        /* Brand Colors */
         --purple: #601973;
         --dark-grey: #58595b;
         --light-grey: #bbbdc0;
         --lightest-grey: #e2e3e4;
-        --light-blue: #8fcae7; /* decorative only — borders, icons, bg tints */
-        --light-green: #bed18a; /* decorative only — borders, bg tints */
+        --light-blue: #8fcae7;
+        --light-green: #bed18a;
         --dark-purple: #42145f;
         --white: #ffffff;
         --black: #000000;
 
-        /* WCAG-compliant text alternatives for light brand colors */
-        --text-blue: #1a6b96; /* 5.85:1 on white ✅ replaces light-blue for text */
-        --text-green: #536a28; /* 6.07:1 on white ✅ replaces light-green for text */
+        --text-blue: #1a6b96;
+        --text-green: #536a28;
 
-        /* Semantic Color Assignments */
         --bg-primary: var(--white);
         --bg-secondary: var(--lightest-grey);
         --bg-accent: #f8f8f9;
@@ -59,7 +56,6 @@
         --border: var(--light-grey);
         --border-light: #d5d6d8;
 
-        /* Spacing */
         --spacing-xs: 0.5rem;
         --spacing-sm: 1rem;
         --spacing-md: 2rem;
@@ -146,7 +142,6 @@
         padding: 20px;
       }
 
-      /* Company Name */
       h1.company-name {
         margin-bottom: var(--spacing-sm);
         margin-top: calc(var(--spacing-lg) * -0.33);
@@ -156,7 +151,6 @@
         gap: 0.5rem;
       }
 
-      /* Tab — Dancing Script Bold, Purple 11.15:1 on white ✅ */
       h1.company-name .tab {
         font-family: "Dancing Script", cursive;
         font-size: 60px;
@@ -164,7 +158,6 @@
         color: var(--purple);
       }
 
-      /* Talks — Oxygen Bold, Dark purple 14.03:1 on white ✅ */
       h1.company-name .talks {
         font-family: "Oxygen", sans-serif;
         font-size: 46px;
@@ -172,7 +165,6 @@
         color: var(--dark-purple);
       }
 
-      /* Subtitle heading — Dark grey 7.01:1 on white ✅ */
       h2.subtitle-heading {
         font-family: "Oxygen", sans-serif;
         font-size: 23px;
@@ -182,7 +174,6 @@
         letter-spacing: -0.02em;
       }
 
-      /* Subtitle body — Dark grey 7.01:1 on white ✅ */
       .subtitle-body {
         font-family: "Oxygen", sans-serif;
         font-size: 16px;
@@ -202,7 +193,6 @@
         margin-top: var(--spacing-md);
       }
 
-      /* Purple links — 11.15:1 on white ✅ */
       .contact-info a {
         color: var(--purple);
         text-decoration: none;
@@ -254,7 +244,6 @@
         transform: translateY(0);
       }
 
-      /* Section h2 — Dark purple 14.03:1 on white ✅ */
       h2 {
         font-family: "Oxygen", sans-serif;
         font-size: 23px;
@@ -264,7 +253,6 @@
         margin-bottom: var(--spacing-lg);
       }
 
-      /* h3 — Dark purple 14.03:1 on white ✅ */
       h3 {
         font-family: "Oxygen", sans-serif;
         font-size: 18px;
@@ -285,7 +273,6 @@
         margin-bottom: var(--spacing-xs);
       }
 
-      /* h5 — Dark grey 7.01:1 on white ✅ */
       h5 {
         font-family: "Oxygen", sans-serif;
         font-size: 13px;
@@ -294,8 +281,6 @@
         text-transform: uppercase;
         letter-spacing: 0.05em;
       }
-
-      /* ── Services ── */
 
       .services-grid {
         display: grid;
@@ -320,12 +305,11 @@
       }
 
       .service-card:hover {
-        border-color: var(--light-green); /* decorative border — not text ✅ */
+        border-color: var(--light-green);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         transform: translateY(-2px);
       }
 
-      /* Icon — light-blue as decorative color ✅ */
       .service-card i {
         font-size: 2.5rem;
         color: var(--light-blue);
@@ -333,12 +317,14 @@
         display: block;
       }
 
-      .service-card h3,
-      .service-card h4 {
+      .service-card h3 {
         text-align: center;
       }
 
-      /* Body text — black on white 21:1 ✅ */
+      .service-card h4.section-label {
+        text-align: left;
+      }
+
       .service-card p {
         color: var(--text-primary);
         font-size: 14px;
@@ -348,7 +334,6 @@
         margin-top: var(--spacing-sm);
       }
 
-      /* Service bullet list */
       .service-list {
         list-style: none;
         margin: var(--spacing-sm) 0;
@@ -363,7 +348,6 @@
         position: relative;
       }
 
-      /* Arrow bullet — --text-blue 5.85:1 on white ✅ */
       .service-list li::before {
         content: "→";
         position: absolute;
@@ -390,8 +374,6 @@
         text-align: left;
       }
 
-      /* ── About ── */
-
       .about-section {
         background: var(--bg-secondary);
         border-top: 2px solid var(--border-light);
@@ -412,7 +394,6 @@
 
       .about-content h4 {
         margin-bottom: var(--spacing-md);
-        /* h4 on --bg-secondary (#e2e3e4): --text-green (#536a28) = 4.72:1 ✅ */
       }
 
       .about-content p {
@@ -435,8 +416,6 @@
         border-radius: 0 4px 4px 0;
       }
 
-      /* ── Contact ── */
-
       .contact-form {
         max-width: 600px;
         margin: var(--spacing-lg) auto 0;
@@ -446,7 +425,6 @@
         margin-bottom: var(--spacing-md);
       }
 
-      /* Label — dark grey 7.01:1 on white ✅ */
       .form-group label {
         display: block;
         margin-bottom: var(--spacing-xs);
@@ -481,7 +459,6 @@
         min-height: 150px;
       }
 
-      /* Button — white on purple 11.15:1 ✅ */
       button[type="submit"] {
         width: 100%;
         padding: var(--spacing-sm) var(--spacing-md);
@@ -521,7 +498,6 @@
         color: #c86464;
       }
 
-      /* Footer — dark grey on lightest-grey 5.46:1 ✅ */
       footer {
         padding: var(--spacing-lg) 0;
         text-align: center;
@@ -567,7 +543,6 @@
           right: var(--spacing-sm);
         }
       }
-      /* ── Games "Learn more" button ── */
 
       .games-btn {
         display: inline-flex;
@@ -592,8 +567,6 @@
         background: var(--purple);
         color: var(--white);
       }
-
-      /* ── Lightbox overlay ── */
 
       .lightbox-overlay {
         position: fixed;
@@ -685,8 +658,6 @@
         padding-bottom: var(--spacing-md);
         border-bottom: 2px solid var(--border-light);
       }
-
-      /* ── Carousel ── */
 
       .carousel {
         position: relative;
@@ -804,7 +775,9 @@
           <img src="/tabatha/logo.png" alt="TabTalks Logo" />
         </div>
         <h1 class="company-name"><span class="tab">Tab</span><span class="talks">Talks</span></h1>
-        <p class="subtitle-body"><em>We create spaces where people can think, talk, and figure things out — together.</em></p>
+        <p class="subtitle-body">
+          <em>We create spaces where people can think, talk, and figure things out — together.</em>
+        </p>
         <div class="contact-info">
           <a href="#" id="emailLink" aria-label="Email">
             <i class="fas fa-envelope"></i>
@@ -957,7 +930,6 @@
       </div>
     </footer>
 
-    <!-- Games Lightbox -->
     <div class="lightbox-overlay" id="gamesLightbox" role="dialog" aria-modal="true" aria-labelledby="lightboxTitle">
       <div class="lightbox-panel">
         <button class="lightbox-close" id="closeLightbox" aria-label="Close">
@@ -975,7 +947,7 @@
           are often unable to see past their own assumptions.
         </p>
 
-        <div class="carousel" aria-label="Game examples">
+        <div class="carousel" role="region" aria-label="Game examples">
           <div class="carousel-track" id="carouselTrack">
             <div class="carousel-slide" role="group" aria-label="Game 1 of 3">
               <img src="https://picsum.photos/seed/restrukt/600/180" alt="ReStrukt game" class="carousel-slide-img" />
@@ -1014,7 +986,7 @@
             <button class="carousel-btn" id="carouselPrev" aria-label="Previous game">
               <i class="fas fa-chevron-left"></i>
             </button>
-            <div class="carousel-dots" id="carouselDots" aria-label="Game navigation">
+            <div class="carousel-dots" id="carouselDots" role="group" aria-label="Game navigation">
               <button class="dot active" data-index="0" aria-label="Game 1"></button>
               <button class="dot" data-index="1" aria-label="Game 2"></button>
               <button class="dot" data-index="2" aria-label="Game 3"></button>
@@ -1028,7 +1000,6 @@
     </div>
 
     <script>
-      // ── Games Lightbox ──
       const lightbox = document.getElementById("gamesLightbox");
       const openBtn = document.getElementById("openGamesLightbox");
       const closeBtn = document.getElementById("closeLightbox");
@@ -1056,7 +1027,6 @@
         if (e.key === "Escape" && lightbox.classList.contains("open")) closeLightbox();
       });
 
-      // ── Carousel ──
       const track = document.getElementById("carouselTrack");
       const dots = document.querySelectorAll(".dot");
       const slides = document.querySelectorAll(".carousel-slide");
@@ -1072,10 +1042,8 @@
       document.getElementById("carouselNext").addEventListener("click", () => goTo(current + 1));
       dots.forEach((d) => d.addEventListener("click", () => goTo(+d.dataset.index)));
 
-      // Reset carousel to slide 1 each time lightbox opens
       openBtn.addEventListener("click", () => goTo(0));
 
-      // ── Email obfuscation ──
       const u = "contact";
       const d = ["tabtalks", "io"].join(".");
       const email = u + "@" + d;
@@ -1087,11 +1055,9 @@
         window.location.href = "mailto:" + email;
       });
 
-      // Theme toggle - maintains light theme per brand guidelines
       const themeToggle = document.getElementById("themeToggle");
       themeToggle.style.display = "none"; // Hide to maintain brand consistency
 
-      // Intersection Observer for scroll reveal
       const observerOptions = {
         threshold: 0.1,
         rootMargin: "0px 0px -50px 0px",
@@ -1108,8 +1074,6 @@
       document.querySelectorAll("section").forEach((section) => {
         observer.observe(section);
       });
-
-      // Form handling
       const form = document.querySelector(".contact-form");
       const formMessage = document.getElementById("formMessage");
 
