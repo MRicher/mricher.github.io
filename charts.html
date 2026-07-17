@@ -8,6 +8,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.4.8/modules/accessibility.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.4.8/modules/exporting.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.4.8/modules/export-data.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.4.8/modules/offline-exporting.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.4.8/modules/pattern-fill.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/patternomaly/1.3.2/patternomaly.js"></script>
 <style>
@@ -541,6 +542,7 @@ const I18N = {
     optColoursHeading:"Colours", lblColourMode:"Colour mode",
     cModeDefault:"Default Highcharts palette", cModeSingle:"Single colour",
     cModeMono:"Monochrome palette", cModeCustom:"Custom colours (per point)",
+    cModePattern:"Pattern fills (patternomaly)",
     lblSingleColour:"Colour", lblMonoBase:"Base colour",
     hintCustomColours:"Set a colour for each data row below.",
     optLabelsHeading:"Data labels", lblShowLabels:"Show data labels",
@@ -590,6 +592,7 @@ const I18N = {
     optColoursHeading:"Couleurs", lblColourMode:"Mode de couleur",
     cModeDefault:"Palette Highcharts par défaut", cModeSingle:"Couleur unique",
     cModeMono:"Palette monochrome", cModeCustom:"Couleurs personnalisées (par point)",
+    cModePattern:"Motifs de remplissage (patternomaly)",
     lblSingleColour:"Couleur", lblMonoBase:"Couleur de base",
     hintCustomColours:"Définissez une couleur pour chaque ligne de données ci-dessous.",
     optLabelsHeading:"Étiquettes de données", lblShowLabels:"Afficher les étiquettes de données",
@@ -795,51 +798,55 @@ function renderCustomColourList(){
 /* ---------------------------------------------------------
    8. OPTION GETTERS
 --------------------------------------------------------- */
+function fieldVal(id, isCheckbox){
+  const el = document.getElementById(id);
+  if(!el){ console.warn("Missing field:", id); return isCheckbox ? false : ""; }
+  return isCheckbox ? el.checked : el.value;
+}
+
 function readOptions(){
   return {
-    title: $("#fTitle").value || t("defaultTitle"),
-    subtitle: $("#fSubtitle").value,
-    xAxisTitle: $("#fXAxis").value || t("defaultXAxis"),
-    yAxisTitle: $("#fYAxis").value || t("defaultYAxis"),
-    source: $("#fSource").value,
-    notes: $("#fNotes").value,
-    creditsText: $("#fCredits").value,
-    showHcCredits: $("#fShowHcCredits").checked,
+    title: fieldVal("fTitle") || t("defaultTitle"),
+    subtitle: fieldVal("fSubtitle"),
+    xAxisTitle: fieldVal("fXAxis") || t("defaultXAxis"),
+    yAxisTitle: fieldVal("fYAxis") || t("defaultYAxis"),
+    source: fieldVal("fSource"),
+    notes: fieldVal("fNotes"),
 
-    width: $("#oWidth").value ? parseInt($("#oWidth").value,10) : null,
-    height: parseInt($("#oHeight").value,10) || 420,
-    bgColor: $("#oBg").value,
-    plotBg: $("#oPlotBg").value,
-    borderColor: $("#oBorderColor").value,
-    borderWidth: parseInt($("#oBorderWidth").value,10) || 0,
-    borderRadius: parseInt($("#oBorderRadius").value,10) || 0,
-    shadow: $("#oShadow").checked,
+    width: fieldVal("oWidth") ? parseInt(fieldVal("oWidth"),10) : null,
+    height: parseInt(fieldVal("oHeight"),10) || 420,
+    bgColor: fieldVal("oBg") || "#ffffff",
+    plotBg: fieldVal("oPlotBg") || "#ffffff",
+    borderColor: fieldVal("oBorderColor") || "#d0d5dc",
+    borderWidth: parseInt(fieldVal("oBorderWidth"),10) || 0,
+    borderRadius: parseInt(fieldVal("oBorderRadius"),10) || 0,
+    shadow: fieldVal("oShadow", true),
 
-    colourMode: $("#cMode").value,
-    singleColour: $("#cSingle").value,
-    monoBase: $("#cMono").value,
+    colourMode: fieldVal("cMode") || "default",
+    singleColour: fieldVal("cSingle") || "#26374a",
+    monoBase: fieldVal("cMono") || "#26374a",
 
-    labelsShow: $("#lShow").checked,
-    labelFontSize: parseInt($("#lFontSize").value,10) || 12,
-    labelFontFamily: $("#lFontFamily").value,
-    labelFontColor: $("#lFontColor").value,
-    labelPosition: $("#lPosition").value,
+    labelsShow: fieldVal("lShow", true),
+    labelFontSize: parseInt(fieldVal("lFontSize"),10) || 12,
+    labelFontFamily: fieldVal("lFontFamily") || "Noto Sans, sans-serif",
+    labelFontColor: fieldVal("lFontColor") || "#221f1f",
+    labelPosition: fieldVal("lPosition") || "outside",
 
-    legendShow: $("#gShow").checked,
-    legendPosition: $("#gPosition").value,
+    legendShow: fieldVal("gShow", true),
+    legendPosition: fieldVal("gPosition") || "bottom",
 
-    tooltipEnabled: $("#tEnabled").checked,
-    tooltipShared: $("#tShared").checked,
-    tooltipPrefix: $("#tPrefix").value,
-    tooltipSuffix: $("#tSuffix").value,
+    tooltipEnabled: fieldVal("tEnabled", true),
+    tooltipShared: fieldVal("tShared", true),
+    tooltipPrefix: fieldVal("tPrefix"),
+    tooltipSuffix: fieldVal("tSuffix"),
 
-    animEnabled: $("#aEnabled").checked,
-    animDuration: parseInt($("#aDuration").value,10) || 0,
+    animEnabled: fieldVal("aEnabled", true),
+    animDuration: parseInt(fieldVal("aDuration"),10) || 0,
 
-    a11yDescription: $("#axDescription").value,
-    a11ySrDescription: $("#axSrDescription").value,
-    a11yKeyboard: $("#axKeyboard").checked,
-    a11yPointFormat: $("#axPointFormat").value || "{point.name}: {point.y}."
+    a11yDescription: fieldVal("axDescription"),
+    a11ySrDescription: fieldVal("axSrDescription"),
+    a11yKeyboard: fieldVal("axKeyboard", true),
+    a11yPointFormat: fieldVal("axPointFormat") || "{point.name}: {point.y}."
   };
 }
 
@@ -850,6 +857,33 @@ function legendPositionOptions(pos){
     case "right": return {verticalAlign:"middle", align:"right", layout:"vertical"};
     default: return {verticalAlign:"bottom", align:"center", layout:"horizontal"};
   }
+}
+
+const PATTERN_SHAPES = ["square","circle","diamond","zigzag","line-vertical","diagonal",
+  "cross","dash","triangle","weave","box","dot","ring","plus"];
+
+function patternToDataUrl(shapeType, bgColor, fgColor, size){
+  size = size || 20;
+  const canvas = document.createElement("canvas");
+  canvas.width = size; canvas.height = size;
+  const ctx = canvas.getContext("2d");
+  ctx.fillStyle = pattern.draw(shapeType, bgColor, fgColor, size);
+  ctx.fillRect(0, 0, size, size);
+  return canvas.toDataURL();
+}
+
+function buildPatternColours(n, baseColours){
+  return new Array(n).fill(0).map((_,i)=>{
+    const shape = PATTERN_SHAPES[i % PATTERN_SHAPES.length];
+    const bg = baseColours[i % baseColours.length];
+    return {
+      pattern: {
+        image: patternToDataUrl(shape, bg, "#221f1f", 20),
+        width: 20,
+        height: 20
+      }
+    };
+  });
 }
 
 function buildColours(o){
@@ -866,6 +900,9 @@ function buildColours(o){
   if(o.colourMode === "custom"){
     return state.data.map((r,i)=> r.color || Highcharts.getOptions().colors[i % 10]);
   }
+  if(o.colourMode === "pattern"){
+    return buildPatternColours(n, Highcharts.getOptions().colors);
+  }
   return null; // default palette
 }
 
@@ -880,6 +917,7 @@ function buildChartConfig(){
   const seriesData = state.data.map((r,i)=>{
     const point = { name: r.label, y: r.value };
     if(o.colourMode === "custom") point.color = r.color || Highcharts.getOptions().colors[i % 10];
+    if(o.colourMode === "pattern" && colours) point.color = colours[i];
     return point;
   });
 
@@ -909,10 +947,7 @@ function buildChartConfig(){
       keyboardNavigation: { enabled: o.a11yKeyboard },
       point: { descriptionFormat: o.a11yPointFormat }
     },
-    credits: {
-      enabled: o.showHcCredits || !!o.creditsText,
-      text: o.creditsText || undefined
-    },
+    credits: { enabled: false },
     legend: {
       enabled: o.legendShow && !isPie ? true : (o.legendShow && isPie),
       verticalAlign: legendPos.verticalAlign,
@@ -1238,7 +1273,7 @@ function updateColourFieldVisibility(){
    16. WIRE UP GENERAL INPUT LISTENERS
 --------------------------------------------------------- */
 function initFieldListeners(){
-  const ids = ["fTitle","fSubtitle","fXAxis","fYAxis","fSource","fNotes","fCredits","fShowHcCredits",
+  const ids = ["fTitle","fSubtitle","fXAxis","fYAxis","fSource","fNotes",
     "oWidth","oHeight","oBg","oPlotBg","oBorderColor","oBorderWidth","oBorderRadius","oShadow",
     "cSingle","cMono",
     "lShow","lFontSize","lFontFamily","lFontColor","lPosition",
