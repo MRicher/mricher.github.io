@@ -8,7 +8,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.4.8/modules/accessibility.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.4.8/modules/exporting.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.4.8/modules/export-data.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.4.8/modules/offline-exporting.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.4.8/modules/pattern-fill.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/patternomaly/1.3.2/patternomaly.js"></script>
 <style>
   :root{
     --gc-blue:#26374a;
@@ -271,14 +272,6 @@
           <label for="fNotes" data-i18n="lblNotes">Notes</label>
           <textarea id="fNotes"></textarea>
         </div>
-        <div class="field">
-          <label for="fCredits" data-i18n="lblCredits">Credits text</label>
-          <input type="text" id="fCredits" value="">
-        </div>
-        <div class="checkbox-field">
-          <input type="checkbox" id="fShowHcCredits">
-          <label for="fShowHcCredits" data-i18n="lblShowHcCredits">Show Highcharts.com credits</label>
-        </div>
       </div>
     </details>
 
@@ -336,6 +329,7 @@
             <option value="single" data-i18n="cModeSingle">Single colour</option>
             <option value="mono" data-i18n="cModeMono">Monochrome palette</option>
             <option value="custom" data-i18n="cModeCustom">Custom colours (per point)</option>
+            <option value="pattern" data-i18n="cModePattern">Pattern fills (patternomaly)</option>
           </select>
         </div>
         <div class="field" id="singleColourField" style="display:none;">
@@ -537,8 +531,7 @@ const I18N = {
     settingsHeading:"Chart settings",
     lblTitle:"Chart title", lblSubtitle:"Subtitle",
     lblXAxis:"X-axis title", lblYAxis:"Y-axis title",
-    lblSource:"Data source", lblNotes:"Notes", lblCredits:"Credits text",
-    lblShowHcCredits:"Show Highcharts.com credits",
+    lblSource:"Data source", lblNotes:"Notes",
     dataHeading:"Data editor", colLabel:"Label", colValue:"Value", colActions:"Actions",
     btnAddRow:"+ Add row", btnClearRows:"Clear all",
     optGeneralHeading:"General options",
@@ -587,8 +580,7 @@ const I18N = {
     settingsHeading:"Paramètres du graphique",
     lblTitle:"Titre du graphique", lblSubtitle:"Sous-titre",
     lblXAxis:"Titre de l'axe des X", lblYAxis:"Titre de l'axe des Y",
-    lblSource:"Source des données", lblNotes:"Notes", lblCredits:"Texte des crédits",
-    lblShowHcCredits:"Afficher les crédits Highcharts.com",
+    lblSource:"Source des données", lblNotes:"Notes",
     dataHeading:"Éditeur de données", colLabel:"Étiquette", colValue:"Valeur", colActions:"Actions",
     btnAddRow:"+ Ajouter une ligne", btnClearRows:"Tout effacer",
     optGeneralHeading:"Options générales",
