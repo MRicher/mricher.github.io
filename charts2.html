@@ -1,0 +1,1667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chart Builder / Générateur de graphiques</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.4.8/highcharts.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.4.8/modules/map.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.4.8/modules/accessibility.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.4.8/modules/exporting.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.4.8/modules/export-data.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.4.8/modules/offline-exporting.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.4.8/modules/pattern-fill.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/patternomaly/1.3.2/patternomaly.js"></script>
+<style>
+  :root{
+    --gc-blue:#26374a;
+    --gc-blue-dark:#1c2a38;
+    --gc-link:#284162;
+    --gc-red:#af3c43;
+    --gc-bg:#f5f6f8;
+    --gc-panel:#ffffff;
+    --gc-border:#d0d5dc;
+    --gc-text:#221f1f;
+    --gc-muted:#5c6672;
+    --gc-focus:#0535d2;
+    --radius:4px;
+    font-size:16px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:"Noto Sans","Segoe UI",Helvetica,Arial,sans-serif;
+    background:var(--gc-bg);
+    color:var(--gc-text);
+    line-height:1.5;
+  }
+  a{color:var(--gc-link);}
+  h1,h2,h3,h4{font-family:"Noto Serif","Georgia",serif; color:var(--gc-blue-dark); margin:0 0 .5rem;}
+  header.app-header{
+    background:var(--gc-blue);
+    color:#fff;
+    padding:.9rem 1.25rem;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    border-bottom:4px solid var(--gc-red);
+  }
+  header.app-header h1{color:#fff; font-size:1.3rem; margin:0;}
+  header.app-header .tag{font-size:.8rem; color:#cfd8e3; font-family:inherit;}
+  .lang-switch button{
+    background:transparent;
+    border:1px solid #fff;
+    color:#fff;
+    padding:.4rem .8rem;
+    border-radius:var(--radius);
+    cursor:pointer;
+    font-size:.9rem;
+  }
+  .lang-switch button:hover{background:rgba(255,255,255,.15);}
+  :focus-visible{outline:3px solid var(--gc-focus); outline-offset:2px;}
+  button, input, select, textarea{font-family:inherit; font-size:.95rem;}
+  .skip-link{
+    position:absolute; left:-999px; top:0; background:#fff; color:var(--gc-blue);
+    padding:.6rem 1rem; z-index:200;
+  }
+  .skip-link:focus{left:1rem; top:1rem;}
+
+  .layout{
+    display:grid;
+    grid-template-columns:minmax(300px,420px) 1fr;
+    gap:1.25rem;
+    padding:1.25rem;
+    align-items:start;
+  }
+  @media (max-width:900px){ .layout{grid-template-columns:1fr;} }
+
+  .panel{
+    background:var(--gc-panel);
+    border:1px solid var(--gc-border);
+    border-radius:var(--radius);
+    padding:1rem 1.1rem;
+    margin-bottom:1rem;
+  }
+  details.section{
+    background:var(--gc-panel);
+    border:1px solid var(--gc-border);
+    border-radius:var(--radius);
+    margin-bottom:.75rem;
+  }
+  details.section > summary{
+    cursor:pointer;
+    padding:.7rem 1rem;
+    font-weight:700;
+    color:var(--gc-blue-dark);
+    list-style:none;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  details.section > summary::-webkit-details-marker{display:none;}
+  details.section > summary::after{content:"+"; font-weight:400; font-size:1.2rem;}
+  details.section[open] > summary::after{content:"–";}
+  details.section .section-body{padding:0 1rem 1rem;}
+
+  .field{margin-bottom:.75rem;}
+  .field label{display:block; font-weight:600; margin-bottom:.25rem; font-size:.88rem;}
+  .field .hint{font-size:.78rem; color:var(--gc-muted); margin-top:.2rem;}
+  input[type=text], input[type=number], input[type=color], select, textarea{
+    width:100%;
+    padding:.45rem .55rem;
+    border:1px solid #8b95a1;
+    border-radius:var(--radius);
+    background:#fff;
+    color:var(--gc-text);
+  }
+  textarea{resize:vertical; min-height:4.5rem;}
+  input[type=color]{padding:.15rem; height:2.3rem; width:3.6rem;}
+  .row{display:flex; gap:.6rem; flex-wrap:wrap; align-items:flex-end;}
+  .row .field{flex:1; min-width:110px;}
+  .checkbox-field{display:flex; align-items:center; gap:.5rem; margin-bottom:.6rem;}
+  .checkbox-field input{width:auto;}
+  .checkbox-field label{font-weight:600; margin:0; font-size:.88rem;}
+
+  .btn{
+    background:var(--gc-blue);
+    color:#fff;
+    border:none;
+    padding:.5rem .9rem;
+    border-radius:var(--radius);
+    cursor:pointer;
+    font-weight:600;
+  }
+  .btn:hover{background:var(--gc-blue-dark);}
+  .btn.secondary{background:#fff; color:var(--gc-blue); border:1px solid var(--gc-blue);}
+  .btn.secondary:hover{background:#eef1f5;}
+  .btn.danger{background:#fff; color:var(--gc-red); border:1px solid var(--gc-red);}
+  .btn.danger:hover{background:#fdecec;}
+  .btn.small{padding:.28rem .55rem; font-size:.82rem;}
+  .btn-group{display:flex; gap:.5rem; flex-wrap:wrap; margin-top:.5rem;}
+
+  .chart-type-picker{display:grid; grid-template-columns:repeat(3,1fr); gap:.5rem;}
+  .chart-type-picker button{
+    display:flex; flex-direction:column; align-items:center; gap:.3rem;
+    padding:.6rem .3rem;
+    border:2px solid var(--gc-border);
+    background:#fff;
+    border-radius:var(--radius);
+    cursor:pointer;
+    font-size:.78rem;
+    font-weight:600;
+    color:var(--gc-text);
+  }
+  .chart-type-picker button[aria-pressed="true"]{
+    border-color:var(--gc-blue);
+    background:#eaf0f7;
+    color:var(--gc-blue-dark);
+  }
+  .chart-type-picker svg{width:28px; height:28px;}
+
+  table.data-editor{width:100%; border-collapse:collapse; margin-bottom:.5rem;}
+  table.data-editor th{text-align:left; font-size:.8rem; padding:.3rem .3rem; border-bottom:2px solid var(--gc-border);}
+  table.data-editor td{padding:.25rem .3rem; vertical-align:middle;}
+  table.data-editor input{padding:.35rem .45rem;}
+  table.data-editor .row-actions{display:flex; gap:.25rem;}
+  table.data-editor .row-actions button{
+    background:#fff; border:1px solid var(--gc-border); border-radius:3px; cursor:pointer;
+    width:1.9rem; height:1.9rem; font-size:.85rem;
+  }
+  table.data-editor .row-actions button:hover{background:#eef1f5;}
+
+  .preview-wrap{background:var(--gc-panel); border:1px solid var(--gc-border); border-radius:var(--radius); padding:1rem;}
+  #chartContainer{width:100%; min-height:400px;}
+  .map-status{display:flex; align-items:center; justify-content:center; min-height:400px; color:var(--gc-muted); font-size:.95rem; text-align:center; padding:1rem;}
+
+  .a11y-table-wrap{margin-top:1.25rem;}
+  table.a11y-table{border-collapse:collapse; width:100%; font-size:.92rem;}
+  table.a11y-table caption{text-align:left; font-weight:700; margin-bottom:.4rem; color:var(--gc-blue-dark);}
+  table.a11y-table th, table.a11y-table td{border:1px solid var(--gc-border); padding:.5rem .6rem; text-align:left;}
+  table.a11y-table thead th{background:#eef1f5;}
+  table.a11y-table tbody tr:nth-child(even){background:#fafbfc;}
+
+  .tabs{display:flex; gap:.25rem; border-bottom:1px solid var(--gc-border); margin-top:1rem;}
+  .tabs button{
+    background:#eef1f5; border:1px solid var(--gc-border); border-bottom:none;
+    padding:.5rem 1rem; cursor:pointer; border-radius:4px 4px 0 0; font-weight:600; color:var(--gc-muted);
+  }
+  .tabs button[aria-selected="true"]{background:#fff; color:var(--gc-blue-dark);}
+  .tabpanel{border:1px solid var(--gc-border); border-top:none; background:#fff; padding:0;}
+  .code-block-wrap{position:relative;}
+  .code-block-wrap pre{
+    margin:0; padding:1rem; max-height:420px; overflow:auto; background:#1e2530; color:#e8ecf1;
+    font-family:"SFMono-Regular",Consolas,Menlo,monospace; font-size:.82rem; border-radius:0 0 4px 4px;
+  }
+  .copy-btn{position:absolute; top:.6rem; right:.6rem;}
+
+  .export-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:.5rem; margin-top:.5rem;}
+
+  fieldset{border:1px solid var(--gc-border); border-radius:var(--radius); margin:0 0 1rem; padding:.7rem .9rem;}
+  legend{font-weight:700; padding:0 .4rem; color:var(--gc-blue-dark);}
+
+  .visually-hidden{
+    position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap;
+  }
+  .status-msg{font-size:.85rem; color:var(--gc-muted); margin-top:.4rem;}
+  footer.app-footer{padding:1.25rem; text-align:center; color:var(--gc-muted); font-size:.85rem;}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#mainContent" data-i18n="skipLink">Skip to main content</a>
+
+<header class="app-header">
+  <div>
+    <h1 data-i18n="appTitle">Accessible Chart Builder</h1>
+    <div class="tag" data-i18n="appTag">Highcharts · Bar, Column, Pie, Donut &amp; Canada Map · WCAG 2.2 AA</div>
+  </div>
+  <div class="lang-switch">
+    <button type="button" id="langToggle" aria-pressed="false">Français</button>
+  </div>
+</header>
+
+<main id="mainContent" class="layout">
+
+  <!-- LEFT COLUMN: CONTROLS -->
+  <div id="controls">
+
+    <div class="panel">
+      <h2 data-i18n="chartTypeHeading">Chart type</h2>
+      <div class="chart-type-picker" role="group" aria-label="Chart type">
+        <button type="button" data-type="column" aria-pressed="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="10" width="4" height="11"/><rect x="10" y="4" width="4" height="17"/><rect x="17" y="13" width="4" height="8"/></svg>
+          <span data-i18n="typeColumn">Column</span>
+        </button>
+        <button type="button" data-type="bar" aria-pressed="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="11" height="4"/><rect x="3" y="10" width="17" height="4"/><rect x="3" y="16" width="8" height="4"/></svg>
+          <span data-i18n="typeBar">Bar</span>
+        </button>
+        <button type="button" data-type="pie" aria-pressed="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v9l7 4"/></svg>
+          <span data-i18n="typePie">Pie</span>
+        </button>
+        <button type="button" data-type="donut" aria-pressed="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>
+          <span data-i18n="typeDonut">Donut</span>
+        </button>
+        <button type="button" data-type="map" aria-pressed="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><polygon points="3,6 9,3 15,6 21,3 21,18 15,21 9,18 3,21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
+          <span data-i18n="typeMap">Map</span>
+        </button>
+      </div>
+    </div>
+
+    <details class="section" open>
+      <summary data-i18n="settingsHeading">Chart settings</summary>
+      <div class="section-body">
+        <div class="field">
+          <label for="fTitle" data-i18n="lblTitle">Chart title</label>
+          <input type="text" id="fTitle" value="Chart title">
+        </div>
+        <div class="field">
+          <label for="fSubtitle" data-i18n="lblSubtitle">Subtitle</label>
+          <input type="text" id="fSubtitle" value="">
+        </div>
+        <div class="row">
+          <div class="field" id="xAxisField">
+            <label for="fXAxis" data-i18n="lblXAxis">X-axis title</label>
+            <input type="text" id="fXAxis" value="Category">
+          </div>
+          <div class="field" id="yAxisField">
+            <label for="fYAxis" data-i18n="lblYAxis">Y-axis title</label>
+            <input type="text" id="fYAxis" value="Value">
+          </div>
+        </div>
+        <div class="field">
+          <label for="fSource" data-i18n="lblSource">Data source</label>
+          <input type="text" id="fSource" value="">
+        </div>
+        <div class="field">
+          <label for="fNotes" data-i18n="lblNotes">Notes</label>
+          <textarea id="fNotes"></textarea>
+        </div>
+      </div>
+    </details>
+
+    <details class="section" open>
+      <summary data-i18n="dataHeading">Data editor</summary>
+      <div class="section-body">
+        <div class="checkbox-field" id="mapSplitField" style="display:none;">
+          <input type="checkbox" id="mSplitTerritories" checked>
+          <label for="mSplitTerritories" data-i18n="lblSplitTerritories">Split territories from provinces</label>
+        </div>
+        <table class="data-editor" id="dataTable">
+          <thead>
+            <tr>
+              <th scope="col" data-i18n="colLabel">Label</th>
+              <th scope="col" data-i18n="colValue">Value</th>
+              <th scope="col"><span class="visually-hidden" data-i18n="colActions">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody id="dataRows"></tbody>
+        </table>
+        <div class="btn-group" id="dataRowActions">
+          <button type="button" class="btn small secondary" id="addRowBtn" data-i18n="btnAddRow">+ Add row</button>
+          <button type="button" class="btn small danger" id="clearRowsBtn" data-i18n="btnClearRows">Clear all</button>
+        </div>
+        <p class="status-msg" id="dataStatus" role="status"></p>
+      </div>
+    </details>
+
+    <details class="section">
+      <summary data-i18n="optGeneralHeading">General options</summary>
+      <div class="section-body">
+        <div class="row">
+          <div class="field"><label for="oWidth" data-i18n="lblWidth">Width (px, blank = auto)</label><input type="number" id="oWidth" min="200"></div>
+          <div class="field"><label for="oHeight" data-i18n="lblHeight">Height (px)</label><input type="number" id="oHeight" value="420" min="200"></div>
+        </div>
+        <div class="row">
+          <div class="field"><label for="oBg" data-i18n="lblBgColor">Background colour</label><input type="color" id="oBg" value="#ffffff"></div>
+          <div class="field"><label for="oPlotBg" data-i18n="lblPlotBg">Plot background</label><input type="color" id="oPlotBg" value="#ffffff"></div>
+          <div class="field"><label for="oBorderColor" data-i18n="lblBorderColor">Border colour</label><input type="color" id="oBorderColor" value="#d0d5dc"></div>
+        </div>
+        <div class="row">
+          <div class="field"><label for="oBorderWidth" data-i18n="lblBorderWidth">Border width</label><input type="number" id="oBorderWidth" value="0" min="0" max="10"></div>
+          <div class="field"><label for="oBorderRadius" data-i18n="lblBorderRadius">Border radius</label><input type="number" id="oBorderRadius" value="0" min="0" max="30"></div>
+        </div>
+        <div class="checkbox-field">
+          <input type="checkbox" id="oShadow">
+          <label for="oShadow" data-i18n="lblShadow">Chart shadow</label>
+        </div>
+      </div>
+    </details>
+
+    <details class="section">
+      <summary data-i18n="optColoursHeading">Colours</summary>
+      <div class="section-body">
+        <div class="field">
+          <label for="cMode" data-i18n="lblColourMode">Colour mode</label>
+          <select id="cMode">
+            <option value="default" data-i18n="cModeDefault">Default Highcharts palette</option>
+            <option value="single" data-i18n="cModeSingle">Single colour</option>
+            <option value="mono" data-i18n="cModeMono">Monochrome palette</option>
+            <option value="custom" data-i18n="cModeCustom">Custom colours (per point)</option>
+            <option value="pattern" data-i18n="cModePattern">Pattern fills (patternomaly)</option>
+          </select>
+        </div>
+        <div class="field" id="singleColourField" style="display:none;">
+          <label for="cSingle" data-i18n="lblSingleColour">Colour</label>
+          <input type="color" id="cSingle" value="#26374a">
+        </div>
+        <div class="field" id="monoColourField" style="display:none;">
+          <label for="cMono" data-i18n="lblMonoBase">Base colour</label>
+          <input type="color" id="cMono" value="#26374a">
+        </div>
+        <div id="customColourField" style="display:none;">
+          <p class="hint" data-i18n="hintCustomColours">Set a colour for each data row below.</p>
+          <div id="customColourList"></div>
+        </div>
+      </div>
+    </details>
+
+    <details class="section">
+      <summary data-i18n="optLabelsHeading">Data labels</summary>
+      <div class="section-body">
+        <div class="checkbox-field">
+          <input type="checkbox" id="lShow">
+          <label for="lShow" data-i18n="lblShowLabels">Show data labels</label>
+        </div>
+        <div class="row">
+          <div class="field"><label for="lFontSize" data-i18n="lblFontSize">Font size (px)</label><input type="number" id="lFontSize" value="12" min="8" max="40"></div>
+          <div class="field">
+            <label for="lFontFamily" data-i18n="lblFontFamily">Font family</label>
+            <select id="lFontFamily">
+              <option value="Noto Sans, sans-serif">Noto Sans</option>
+              <option value="Georgia, serif">Georgia</option>
+              <option value="Consolas, monospace">Consolas</option>
+              <option value="Arial, sans-serif">Arial</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="field"><label for="lFontColor" data-i18n="lblFontColor">Font colour</label><input type="color" id="lFontColor" value="#221f1f"></div>
+          <div class="field">
+            <label for="lPosition" data-i18n="lblLabelPosition">Position</label>
+            <select id="lPosition">
+              <option value="outside" data-i18n="posOutside">Outside</option>
+              <option value="inside" data-i18n="posInside">Inside</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <details class="section">
+      <summary data-i18n="optLegendHeading">Legend</summary>
+      <div class="section-body">
+        <div class="checkbox-field">
+          <input type="checkbox" id="gShow" checked>
+          <label for="gShow" data-i18n="lblShowLegend">Show legend</label>
+        </div>
+        <div class="field">
+          <label for="gPosition" data-i18n="lblLegendPosition">Position</label>
+          <select id="gPosition">
+            <option value="bottom" data-i18n="posBottom">Bottom</option>
+            <option value="top" data-i18n="posTop">Top</option>
+            <option value="left" data-i18n="posLeft">Left</option>
+            <option value="right" data-i18n="posRight">Right</option>
+          </select>
+        </div>
+      </div>
+    </details>
+
+    <details class="section">
+      <summary data-i18n="optTooltipHeading">Tooltip</summary>
+      <div class="section-body">
+        <div class="checkbox-field">
+          <input type="checkbox" id="tEnabled" checked>
+          <label for="tEnabled" data-i18n="lblTooltipEnabled">Enable tooltip</label>
+        </div>
+        <div class="checkbox-field">
+          <input type="checkbox" id="tShared">
+          <label for="tShared" data-i18n="lblTooltipShared">Shared tooltip</label>
+        </div>
+        <div class="row">
+          <div class="field"><label for="tPrefix" data-i18n="lblTooltipPrefix">Value prefix</label><input type="text" id="tPrefix" value=""></div>
+          <div class="field"><label for="tSuffix" data-i18n="lblTooltipSuffix">Value suffix</label><input type="text" id="tSuffix" value=""></div>
+        </div>
+      </div>
+    </details>
+
+    <details class="section">
+      <summary data-i18n="optAnimHeading">Animation</summary>
+      <div class="section-body">
+        <div class="checkbox-field">
+          <input type="checkbox" id="aEnabled" checked>
+          <label for="aEnabled" data-i18n="lblAnimEnabled">Enable animation</label>
+        </div>
+        <div class="field">
+          <label for="aDuration" data-i18n="lblAnimDuration">Duration (ms)</label>
+          <input type="number" id="aDuration" value="1000" min="0" max="5000" step="100">
+        </div>
+      </div>
+    </details>
+
+    <details class="section">
+      <summary data-i18n="a11yHeading">Accessibility</summary>
+      <div class="section-body">
+        <div class="field">
+          <label for="axDescription" data-i18n="lblA11yDescription">Chart description</label>
+          <textarea id="axDescription"></textarea>
+          <p class="hint" data-i18n="hintA11yDescription">A short summary of what the chart shows, exposed to assistive technology.</p>
+        </div>
+        <div class="field">
+          <label for="axSrDescription" data-i18n="lblA11ySrDescription">Screen reader description</label>
+          <textarea id="axSrDescription"></textarea>
+        </div>
+        <div class="checkbox-field">
+          <input type="checkbox" id="axKeyboard" checked>
+          <label for="axKeyboard" data-i18n="lblA11yKeyboard">Enable keyboard navigation</label>
+        </div>
+        <div class="field">
+          <label for="axPointFormat" data-i18n="lblA11yPointFormat">Point description format</label>
+          <input type="text" id="axPointFormat" value="{point.name}: {point.y}.">
+          <p class="hint" data-i18n="hintA11yPointFormat">Use {point.name} and {point.y} as placeholders.</p>
+        </div>
+      </div>
+    </details>
+
+  </div>
+
+  <!-- RIGHT COLUMN: PREVIEW + TABLE + CODE + EXPORT -->
+  <div id="output">
+
+    <div class="preview-wrap">
+      <h2 data-i18n="previewHeading">Live preview</h2>
+      <div id="chartContainer" role="img" aria-label="Chart preview"></div>
+
+      <div class="a11y-table-wrap">
+        <h2 data-i18n="tableHeading">Accessible data table</h2>
+        <div id="a11yTableContainer"></div>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:1.25rem;">
+      <h2 data-i18n="exportHeading">Export</h2>
+      <div class="export-grid">
+        <button type="button" class="btn secondary" data-export="png" data-i18n="expPng">PNG image</button>
+        <button type="button" class="btn secondary" data-export="jpeg" data-i18n="expJpeg">JPEG image</button>
+        <button type="button" class="btn secondary" data-export="svg" data-i18n="expSvg">SVG image</button>
+        <button type="button" class="btn secondary" data-export="pdf" data-i18n="expPdf">PDF document</button>
+        <button type="button" class="btn secondary" id="exportJsonBtn" data-i18n="expJson">JSON configuration</button>
+        <button type="button" class="btn secondary" id="exportHtmlOnlyBtn" data-i18n="expHtmlOnly">HTML only</button>
+        <button type="button" class="btn secondary" id="exportCssOnlyBtn" data-i18n="expCssOnly">CSS only</button>
+        <button type="button" class="btn secondary" id="exportJsOnlyBtn" data-i18n="expJsOnly">JavaScript only</button>
+        <button type="button" class="btn" id="exportCompleteBtn" data-i18n="expComplete">Complete HTML page</button>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:1.25rem;">
+      <h2 data-i18n="codeHeading">Generated code</h2>
+      <div class="tabs" role="tablist" aria-label="Generated code">
+        <button role="tab" id="tabBtnHtml" aria-controls="tabHtml" aria-selected="true" data-i18n="tabHtml">HTML</button>
+        <button role="tab" id="tabBtnCss" aria-controls="tabCss" aria-selected="false" data-i18n="tabCss">CSS</button>
+        <button role="tab" id="tabBtnJs" aria-controls="tabJs" aria-selected="false" data-i18n="tabJs">JavaScript</button>
+      </div>
+      <div class="tabpanel">
+        <div id="tabHtml" role="tabpanel" aria-labelledby="tabBtnHtml" class="code-block-wrap">
+          <button type="button" class="btn small secondary copy-btn" data-copy="tabHtml" data-i18n="btnCopy">Copy code</button>
+          <pre id="codeHtml"></pre>
+        </div>
+        <div id="tabCss" role="tabpanel" aria-labelledby="tabBtnCss" class="code-block-wrap" hidden>
+          <button type="button" class="btn small secondary copy-btn" data-copy="tabCss" data-i18n="btnCopy">Copy code</button>
+          <pre id="codeCss"></pre>
+        </div>
+        <div id="tabJs" role="tabpanel" aria-labelledby="tabBtnJs" class="code-block-wrap" hidden>
+          <button type="button" class="btn small secondary copy-btn" data-copy="tabJs" data-i18n="btnCopy">Copy code</button>
+          <pre id="codeJs"></pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer class="app-footer" data-i18n="footerText">Built with vanilla HTML, CSS and JavaScript, and Highcharts. Suitable for adaptation to Government of Canada web standards.</footer>
+
+<div id="liveRegion" class="visually-hidden" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------------------------------------------------------
+   1. TRANSLATIONS
+--------------------------------------------------------- */
+const I18N = {
+  en: {
+    skipLink:"Skip to main content",
+    appTitle:"Accessible Chart Builder",
+    appTag:"Highcharts · Bar, Column, Pie, Donut & Canada Map · WCAG 2.2 AA",
+    chartTypeHeading:"Chart type",
+    typeColumn:"Column", typeBar:"Bar", typePie:"Pie", typeDonut:"Donut", typeMap:"Map",
+    settingsHeading:"Chart settings",
+    lblTitle:"Chart title", lblSubtitle:"Subtitle",
+    lblXAxis:"X-axis title", lblYAxis:"Y-axis title",
+    lblSource:"Data source", lblNotes:"Notes",
+    dataHeading:"Data editor", colLabel:"Label", colValue:"Value", colActions:"Actions",
+    colProvinceTerritory:"Province / territory",
+    lblSplitTerritories:"Split territories from provinces",
+    mapLoading:"Loading Canada map…",
+    mapLoadError:"Could not load the Canada map data. Check your connection and try again.",
+    territoriesCombinedLabel:"Territories (combined)",
+    mapSeriesName:"Value by province/territory",
+    btnAddRow:"+ Add row", btnClearRows:"Clear all",
+    optGeneralHeading:"General options",
+    lblWidth:"Width (px, blank = auto)", lblHeight:"Height (px)",
+    lblBgColor:"Background colour", lblPlotBg:"Plot background", lblBorderColor:"Border colour",
+    lblBorderWidth:"Border width", lblBorderRadius:"Border radius", lblShadow:"Chart shadow",
+    optColoursHeading:"Colours", lblColourMode:"Colour mode",
+    cModeDefault:"Default Highcharts palette", cModeSingle:"Single colour",
+    cModeMono:"Monochrome palette", cModeCustom:"Custom colours (per point)",
+    cModePattern:"Pattern fills (patternomaly)",
+    lblSingleColour:"Colour", lblMonoBase:"Base colour",
+    hintCustomColours:"Set a colour for each data row below.",
+    optLabelsHeading:"Data labels", lblShowLabels:"Show data labels",
+    lblFontSize:"Font size (px)", lblFontFamily:"Font family", lblFontColor:"Font colour",
+    lblLabelPosition:"Position", posOutside:"Outside", posInside:"Inside",
+    optLegendHeading:"Legend", lblShowLegend:"Show legend", lblLegendPosition:"Position",
+    posBottom:"Bottom", posTop:"Top", posLeft:"Left", posRight:"Right",
+    optTooltipHeading:"Tooltip", lblTooltipEnabled:"Enable tooltip", lblTooltipShared:"Shared tooltip",
+    lblTooltipPrefix:"Value prefix", lblTooltipSuffix:"Value suffix",
+    optAnimHeading:"Animation", lblAnimEnabled:"Enable animation", lblAnimDuration:"Duration (ms)",
+    a11yHeading:"Accessibility", lblA11yDescription:"Chart description",
+    hintA11yDescription:"A short summary of what the chart shows, exposed to assistive technology.",
+    lblA11ySrDescription:"Screen reader description",
+    lblA11yKeyboard:"Enable keyboard navigation",
+    lblA11yPointFormat:"Point description format",
+    hintA11yPointFormat:"Use {point.name} and {point.y} as placeholders.",
+    previewHeading:"Live preview", tableHeading:"Accessible data table",
+    exportHeading:"Export",
+    expPng:"PNG image", expJpeg:"JPEG image", expSvg:"SVG image", expPdf:"PDF document",
+    expJson:"JSON configuration", expHtmlOnly:"HTML only", expCssOnly:"CSS only",
+    expJsOnly:"JavaScript only", expComplete:"Complete HTML page",
+    codeHeading:"Generated code", tabHtml:"HTML", tabCss:"CSS", tabJs:"JavaScript",
+    btnCopy:"Copy code", btnCopied:"Copied!",
+    footerText:"Built with vanilla HTML, CSS and JavaScript, and Highcharts. Suitable for adaptation to Government of Canada web standards.",
+    defaultTitle:"Chart title", defaultXAxis:"Category", defaultYAxis:"Value",
+    dataUpdated:"Data updated.", rowAdded:"Row added.", rowDeleted:"Row deleted.", rowsCleared:"All rows cleared.",
+    tableCaption:"Data table for: ",
+    rowLabelPrefix:"Row", deleteRow:"Delete row", moveUp:"Move up", moveDown:"Move down",
+    langButtonLabel:"Français"
+  },
+  fr: {
+    skipLink:"Passer au contenu principal",
+    appTitle:"Générateur de graphiques accessibles",
+    appTag:"Highcharts · Barres, colonnes, secteurs, anneau et carte du Canada · WCAG 2.2 AA",
+    chartTypeHeading:"Type de graphique",
+    typeColumn:"Colonnes", typeBar:"Barres", typePie:"Secteurs", typeDonut:"Anneau", typeMap:"Carte",
+    settingsHeading:"Paramètres du graphique",
+    lblTitle:"Titre du graphique", lblSubtitle:"Sous-titre",
+    lblXAxis:"Titre de l'axe des X", lblYAxis:"Titre de l'axe des Y",
+    lblSource:"Source des données", lblNotes:"Notes",
+    dataHeading:"Éditeur de données", colLabel:"Étiquette", colValue:"Valeur", colActions:"Actions",
+    colProvinceTerritory:"Province / territoire",
+    lblSplitTerritories:"Séparer les territoires des provinces",
+    mapLoading:"Chargement de la carte du Canada…",
+    mapLoadError:"Impossible de charger les données de la carte du Canada. Vérifiez votre connexion et réessayez.",
+    territoriesCombinedLabel:"Territoires (combinés)",
+    mapSeriesName:"Valeur par province/territoire",
+    btnAddRow:"+ Ajouter une ligne", btnClearRows:"Tout effacer",
+    optGeneralHeading:"Options générales",
+    lblWidth:"Largeur (px, vide = auto)", lblHeight:"Hauteur (px)",
+    lblBgColor:"Couleur d'arrière-plan", lblPlotBg:"Arrière-plan de la zone de tracé", lblBorderColor:"Couleur de la bordure",
+    lblBorderWidth:"Épaisseur de la bordure", lblBorderRadius:"Rayon de la bordure", lblShadow:"Ombre du graphique",
+    optColoursHeading:"Couleurs", lblColourMode:"Mode de couleur",
+    cModeDefault:"Palette Highcharts par défaut", cModeSingle:"Couleur unique",
+    cModeMono:"Palette monochrome", cModeCustom:"Couleurs personnalisées (par point)",
+    cModePattern:"Motifs de remplissage (patternomaly)",
+    lblSingleColour:"Couleur", lblMonoBase:"Couleur de base",
+    hintCustomColours:"Définissez une couleur pour chaque ligne de données ci-dessous.",
+    optLabelsHeading:"Étiquettes de données", lblShowLabels:"Afficher les étiquettes de données",
+    lblFontSize:"Taille de police (px)", lblFontFamily:"Police", lblFontColor:"Couleur de police",
+    lblLabelPosition:"Position", posOutside:"Extérieur", posInside:"Intérieur",
+    optLegendHeading:"Légende", lblShowLegend:"Afficher la légende", lblLegendPosition:"Position",
+    posBottom:"Bas", posTop:"Haut", posLeft:"Gauche", posRight:"Droite",
+    optTooltipHeading:"Infobulle", lblTooltipEnabled:"Activer l'infobulle", lblTooltipShared:"Infobulle partagée",
+    lblTooltipPrefix:"Préfixe de la valeur", lblTooltipSuffix:"Suffixe de la valeur",
+    optAnimHeading:"Animation", lblAnimEnabled:"Activer l'animation", lblAnimDuration:"Durée (ms)",
+    a11yHeading:"Accessibilité", lblA11yDescription:"Description du graphique",
+    hintA11yDescription:"Un court résumé de ce que montre le graphique, destiné aux technologies d'assistance.",
+    lblA11ySrDescription:"Description pour lecteur d'écran",
+    lblA11yKeyboard:"Activer la navigation au clavier",
+    lblA11yPointFormat:"Format de description des points",
+    hintA11yPointFormat:"Utilisez {point.name} et {point.y} comme espaces réservés.",
+    previewHeading:"Aperçu en direct", tableHeading:"Tableau de données accessible",
+    exportHeading:"Exporter",
+    expPng:"Image PNG", expJpeg:"Image JPEG", expSvg:"Image SVG", expPdf:"Document PDF",
+    expJson:"Configuration JSON", expHtmlOnly:"HTML seulement", expCssOnly:"CSS seulement",
+    expJsOnly:"JavaScript seulement", expComplete:"Page HTML complète",
+    codeHeading:"Code généré", tabHtml:"HTML", tabCss:"CSS", tabJs:"JavaScript",
+    btnCopy:"Copier le code", btnCopied:"Copié !",
+    footerText:"Créé avec HTML, CSS et JavaScript natifs, et Highcharts. Adaptable aux normes Web du gouvernement du Canada.",
+    defaultTitle:"Titre du graphique", defaultXAxis:"Catégorie", defaultYAxis:"Valeur",
+    dataUpdated:"Données mises à jour.", rowAdded:"Ligne ajoutée.", rowDeleted:"Ligne supprimée.", rowsCleared:"Toutes les lignes ont été effacées.",
+    tableCaption:"Tableau de données pour : ",
+    rowLabelPrefix:"Ligne", deleteRow:"Supprimer la ligne", moveUp:"Déplacer vers le haut", moveDown:"Déplacer vers le bas",
+    langButtonLabel:"English"
+  }
+};
+
+/* ---------------------------------------------------------
+   2. STATE
+--------------------------------------------------------- */
+const state = {
+  lang:"en",
+  chartType:"column",
+  mapSplitTerritories:true,
+  _nonMapBackup:null,
+  data:[
+    {label:"Category A", value:42, color:"#26374a"},
+    {label:"Category B", value:28, color:"#af3c43"},
+    {label:"Category C", value:35, color:"#5b8ac6"},
+    {label:"Category D", value:19, color:"#7fb069"}
+  ]
+};
+
+const CA_PROVINCES = [
+  {hcKey:"ca-ab", en:"Alberta", fr:"Alberta", type:"province"},
+  {hcKey:"ca-bc", en:"British Columbia", fr:"Colombie-Britannique", type:"province"},
+  {hcKey:"ca-mb", en:"Manitoba", fr:"Manitoba", type:"province"},
+  {hcKey:"ca-nb", en:"New Brunswick", fr:"Nouveau-Brunswick", type:"province"},
+  {hcKey:"ca-nl", en:"Newfoundland and Labrador", fr:"Terre-Neuve-et-Labrador", type:"province"},
+  {hcKey:"ca-ns", en:"Nova Scotia", fr:"Nouvelle-Écosse", type:"province"},
+  {hcKey:"ca-on", en:"Ontario", fr:"Ontario", type:"province"},
+  {hcKey:"ca-pe", en:"Prince Edward Island", fr:"Île-du-Prince-Édouard", type:"province"},
+  {hcKey:"ca-qc", en:"Quebec", fr:"Québec", type:"province"},
+  {hcKey:"ca-sk", en:"Saskatchewan", fr:"Saskatchewan", type:"province"},
+  {hcKey:"ca-nt", en:"Northwest Territories", fr:"Territoires du Nord-Ouest", type:"territory"},
+  {hcKey:"ca-nu", en:"Nunavut", fr:"Nunavut", type:"territory"},
+  {hcKey:"ca-yt", en:"Yukon", fr:"Yukon", type:"territory"}
+];
+
+let cachedCanadaMap = null;
+
+let chart = null;
+let rowIdCounter = 0;
+
+function t(key){ return (I18N[state.lang] && I18N[state.lang][key]) || I18N.en[key] || key; }
+
+/* ---------------------------------------------------------
+   3. DOM HELPERS
+--------------------------------------------------------- */
+const $ = (sel) => document.querySelector(sel);
+const $all = (sel) => Array.from(document.querySelectorAll(sel));
+
+function announce(msg){
+  const region = $("#liveRegion");
+  region.textContent = "";
+  window.setTimeout(()=>{ region.textContent = msg; }, 30);
+}
+
+/* ---------------------------------------------------------
+   4. i18n APPLICATION
+--------------------------------------------------------- */
+function applyI18n(){
+  $all("[data-i18n]").forEach(el=>{
+    const key = el.getAttribute("data-i18n");
+    el.textContent = t(key);
+  });
+  document.documentElement.lang = state.lang;
+  document.title = state.lang === "fr" ? "Générateur de graphiques" : "Chart Builder";
+  $("#langToggle").textContent = t("langButtonLabel");
+  $("#langToggle").setAttribute("aria-pressed", state.lang === "fr" ? "true" : "false");
+}
+
+/* ---------------------------------------------------------
+   5. CHART TYPE PICKER
+--------------------------------------------------------- */
+function initChartTypePicker(){
+  $all(".chart-type-picker button").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const newType = btn.getAttribute("data-type");
+      onChartTypeChange(newType);
+      $all(".chart-type-picker button").forEach(b=>b.setAttribute("aria-pressed", b===btn ? "true":"false"));
+      toggleAxisFields();
+      renderAll();
+    });
+  });
+}
+function onChartTypeChange(newType){
+  const wasMap = state.chartType === "map";
+  const willBeMap = newType === "map";
+  if(willBeMap && !wasMap){
+    state._nonMapBackup = state.data;
+    state.data = buildMapRows(state.mapSplitTerritories, true);
+  }else if(!willBeMap && wasMap){
+    state.data = (state._nonMapBackup && state._nonMapBackup.length) ? state._nonMapBackup : [
+      {label:"Category A", value:42, color:"#26374a"},
+      {label:"Category B", value:28, color:"#af3c43"},
+      {label:"Category C", value:35, color:"#5b8ac6"},
+      {label:"Category D", value:19, color:"#7fb069"}
+    ];
+    state._nonMapBackup = null;
+  }
+  state.chartType = newType;
+}
+function toggleAxisFields(){
+  const isPie = state.chartType === "pie" || state.chartType === "donut";
+  const isMap = state.chartType === "map";
+  $("#xAxisField").style.display = (isPie || isMap) ? "none" : "block";
+  $("#yAxisField").style.display = (isPie || isMap) ? "none" : "block";
+  $("#mapSplitField").style.display = isMap ? "flex" : "none";
+}
+
+/* ---------------------------------------------------------
+   5b. CANADA MAP DATA ROWS
+--------------------------------------------------------- */
+function buildMapRows(split, seedSampleValues){
+  const provinces = CA_PROVINCES.filter(p=>p.type==="province");
+  const territories = CA_PROVINCES.filter(p=>p.type==="territory");
+  const palette = ["#26374a","#284162","#5b8ac6","#7fb069","#af3c43","#e0a458","#8858a0","#3f6b8a","#5c8a3f","#a05a2c"];
+  let ci = 0;
+  const rows = provinces.map(p=>({
+    label: p[state.lang],
+    value: seedSampleValues ? Math.round(Math.random()*80)+10 : 0,
+    color: palette[(ci++) % palette.length],
+    hcKeys:[p.hcKey]
+  }));
+  if(split){
+    territories.forEach(tItem=> rows.push({
+      label: tItem[state.lang],
+      value: seedSampleValues ? Math.round(Math.random()*20)+2 : 0,
+      color: palette[(ci++) % palette.length],
+      hcKeys:[tItem.hcKey]
+    }));
+  }else{
+    rows.push({
+      label: t("territoriesCombinedLabel"),
+      value: seedSampleValues ? Math.round(Math.random()*20)+2 : 0,
+      color: palette[(ci++) % palette.length],
+      hcKeys: territories.map(tItem=>tItem.hcKey)
+    });
+  }
+  return rows;
+}
+
+function toggleSplitTerritories(newSplit){
+  const oldByKey = {};
+  state.data.forEach(r=> (r.hcKeys||[]).forEach(k=> oldByKey[k] = r.value));
+  const newRows = buildMapRows(newSplit, false);
+  newRows.forEach(r=>{
+    const vals = r.hcKeys.map(k=> oldByKey[k]).filter(v=> v!==undefined);
+    if(vals.length) r.value = vals.reduce((a,b)=>a+b,0) / vals.length;
+  });
+  state.mapSplitTerritories = newSplit;
+  state.data = newRows;
+}
+
+function relabelMapRows(){
+  if(state.chartType !== "map") return;
+  state.data.forEach(row=>{
+    if(row.hcKeys && row.hcKeys.length === 1){
+      const p = CA_PROVINCES.find(pp=>pp.hcKey===row.hcKeys[0]);
+      if(p) row.label = p[state.lang];
+    }else if(row.hcKeys && row.hcKeys.length > 1){
+      row.label = t("territoriesCombinedLabel");
+    }
+  });
+}
+
+/* ---------------------------------------------------------
+   6. DATA EDITOR
+--------------------------------------------------------- */
+function renderDataEditor(){
+  if(state.chartType === "map"){
+    renderMapDataEditor();
+    return;
+  }
+  $("#addRowBtn").style.display = "";
+  $("#clearRowsBtn").style.display = "";
+  $("#dataRowActions").style.display = "";
+  const tbody = $("#dataRows");
+  tbody.innerHTML = "";
+  state.data.forEach((row,i)=>{
+    if(!row._id) row._id = "row" + (rowIdCounter++);
+    const tr = document.createElement("tr");
+
+    const tdLabel = document.createElement("td");
+    const labelInput = document.createElement("input");
+    labelInput.type = "text";
+    labelInput.value = row.label;
+    labelInput.setAttribute("aria-label", `${t("colLabel")} ${i+1}`);
+    labelInput.addEventListener("input", ()=>{ row.label = labelInput.value; renderAll(false); });
+    tdLabel.appendChild(labelInput);
+
+    const tdValue = document.createElement("td");
+    const valueInput = document.createElement("input");
+    valueInput.type = "number";
+    valueInput.value = row.value;
+    valueInput.setAttribute("aria-label", `${t("colValue")} ${i+1}`);
+    valueInput.addEventListener("input", ()=>{
+      const v = parseFloat(valueInput.value);
+      row.value = isNaN(v) ? 0 : v;
+      renderAll(false);
+    });
+    tdValue.appendChild(valueInput);
+
+    const tdActions = document.createElement("td");
+    const actionsWrap = document.createElement("div");
+    actionsWrap.className = "row-actions";
+
+    const upBtn = document.createElement("button");
+    upBtn.type = "button";
+    upBtn.textContent = "↑";
+    upBtn.setAttribute("aria-label", `${t("moveUp")}: ${row.label || i+1}`);
+    upBtn.disabled = i === 0;
+    upBtn.addEventListener("click", ()=>{
+      if(i>0){ [state.data[i-1], state.data[i]] = [state.data[i], state.data[i-1]]; renderAll(); }
+    });
+
+    const downBtn = document.createElement("button");
+    downBtn.type = "button";
+    downBtn.textContent = "↓";
+    downBtn.setAttribute("aria-label", `${t("moveDown")}: ${row.label || i+1}`);
+    downBtn.disabled = i === state.data.length - 1;
+    downBtn.addEventListener("click", ()=>{
+      if(i < state.data.length-1){ [state.data[i+1], state.data[i]] = [state.data[i], state.data[i+1]]; renderAll(); }
+    });
+
+    const delBtn = document.createElement("button");
+    delBtn.type = "button";
+    delBtn.textContent = "✕";
+    delBtn.setAttribute("aria-label", `${t("deleteRow")}: ${row.label || i+1}`);
+    delBtn.addEventListener("click", ()=>{
+      state.data.splice(i,1);
+      announce(t("rowDeleted"));
+      renderAll();
+    });
+
+    actionsWrap.append(upBtn, downBtn, delBtn);
+    tdActions.appendChild(actionsWrap);
+
+    tr.append(tdLabel, tdValue, tdActions);
+    tbody.appendChild(tr);
+  });
+}
+
+function renderMapDataEditor(){
+  $("#addRowBtn").style.display = "none";
+  $("#clearRowsBtn").style.display = "none";
+  $("#dataRowActions").style.display = "none";
+  const tbody = $("#dataRows");
+  tbody.innerHTML = "";
+  state.data.forEach((row,i)=>{
+    const tr = document.createElement("tr");
+
+    const tdLabel = document.createElement("td");
+    tdLabel.textContent = row.label;
+    tdLabel.style.fontWeight = "600";
+
+    const tdValue = document.createElement("td");
+    const valueInput = document.createElement("input");
+    valueInput.type = "number";
+    valueInput.value = row.value;
+    valueInput.setAttribute("aria-label", `${t("colValue")}: ${row.label}`);
+    valueInput.addEventListener("input", ()=>{
+      const v = parseFloat(valueInput.value);
+      row.value = isNaN(v) ? 0 : v;
+      renderAll(false);
+    });
+    tdValue.appendChild(valueInput);
+
+    const tdActions = document.createElement("td");
+
+    tr.append(tdLabel, tdValue, tdActions);
+    tbody.appendChild(tr);
+  });
+}
+
+function addRow(){
+  const palette = ["#26374a","#af3c43","#5b8ac6","#7fb069","#e0a458","#8858a0"];
+  const color = palette[state.data.length % palette.length];
+  state.data.push({label:`${t("rowLabelPrefix")} ${state.data.length+1}`, value:10, color});
+  announce(t("rowAdded"));
+  renderAll();
+}
+function clearRows(){
+  state.data = [];
+  announce(t("rowsCleared"));
+  renderAll();
+}
+
+/* ---------------------------------------------------------
+   7. CUSTOM COLOUR LIST (for custom colour mode)
+--------------------------------------------------------- */
+function renderCustomColourList(){
+  const wrap = $("#customColourList");
+  wrap.innerHTML = "";
+  state.data.forEach((row,i)=>{
+    const field = document.createElement("div");
+    field.className = "field row";
+    const label = document.createElement("label");
+    label.textContent = row.label || `${t("rowLabelPrefix")} ${i+1}`;
+    label.style.flex = "2";
+    label.style.fontWeight = "400";
+    const input = document.createElement("input");
+    input.type = "color";
+    input.value = row.color || "#26374a";
+    input.setAttribute("aria-label", row.label || `${t("rowLabelPrefix")} ${i+1}`);
+    input.addEventListener("input", ()=>{ row.color = input.value; renderAll(false); });
+    field.append(label, input);
+    wrap.appendChild(field);
+  });
+}
+
+/* ---------------------------------------------------------
+   8. OPTION GETTERS
+--------------------------------------------------------- */
+function fieldVal(id, isCheckbox){
+  const el = document.getElementById(id);
+  if(!el){ console.warn("Missing field:", id); return isCheckbox ? false : ""; }
+  return isCheckbox ? el.checked : el.value;
+}
+
+function readOptions(){
+  return {
+    title: fieldVal("fTitle") || t("defaultTitle"),
+    subtitle: fieldVal("fSubtitle"),
+    xAxisTitle: fieldVal("fXAxis") || t("defaultXAxis"),
+    yAxisTitle: fieldVal("fYAxis") || t("defaultYAxis"),
+    source: fieldVal("fSource"),
+    notes: fieldVal("fNotes"),
+
+    width: fieldVal("oWidth") ? parseInt(fieldVal("oWidth"),10) : null,
+    height: parseInt(fieldVal("oHeight"),10) || 420,
+    bgColor: fieldVal("oBg") || "#ffffff",
+    plotBg: fieldVal("oPlotBg") || "#ffffff",
+    borderColor: fieldVal("oBorderColor") || "#d0d5dc",
+    borderWidth: parseInt(fieldVal("oBorderWidth"),10) || 0,
+    borderRadius: parseInt(fieldVal("oBorderRadius"),10) || 0,
+    shadow: fieldVal("oShadow", true),
+
+    colourMode: fieldVal("cMode") || "default",
+    singleColour: fieldVal("cSingle") || "#26374a",
+    monoBase: fieldVal("cMono") || "#26374a",
+
+    labelsShow: fieldVal("lShow", true),
+    labelFontSize: parseInt(fieldVal("lFontSize"),10) || 12,
+    labelFontFamily: fieldVal("lFontFamily") || "Noto Sans, sans-serif",
+    labelFontColor: fieldVal("lFontColor") || "#221f1f",
+    labelPosition: fieldVal("lPosition") || "outside",
+
+    legendShow: fieldVal("gShow", true),
+    legendPosition: fieldVal("gPosition") || "bottom",
+
+    tooltipEnabled: fieldVal("tEnabled", true),
+    tooltipShared: fieldVal("tShared", true),
+    tooltipPrefix: fieldVal("tPrefix"),
+    tooltipSuffix: fieldVal("tSuffix"),
+
+    animEnabled: fieldVal("aEnabled", true),
+    animDuration: parseInt(fieldVal("aDuration"),10) || 0,
+
+    a11yDescription: fieldVal("axDescription"),
+    a11ySrDescription: fieldVal("axSrDescription"),
+    a11yKeyboard: fieldVal("axKeyboard", true),
+    a11yPointFormat: fieldVal("axPointFormat") || "{point.name}: {point.y}."
+  };
+}
+
+function legendPositionOptions(pos){
+  switch(pos){
+    case "top": return {verticalAlign:"top", align:"center", layout:"horizontal"};
+    case "left": return {verticalAlign:"middle", align:"left", layout:"vertical"};
+    case "right": return {verticalAlign:"middle", align:"right", layout:"vertical"};
+    default: return {verticalAlign:"bottom", align:"center", layout:"horizontal"};
+  }
+}
+
+const PATTERN_SHAPES = ["square","circle","diamond","zigzag","line-vertical","diagonal",
+  "cross","dash","triangle","weave","box","dot","ring","plus"];
+
+function patternToDataUrl(shapeType, bgColor, fgColor, size){
+  size = size || 20;
+  const canvas = document.createElement("canvas");
+  canvas.width = size; canvas.height = size;
+  const ctx = canvas.getContext("2d");
+  ctx.fillStyle = pattern.draw(shapeType, bgColor, fgColor, size);
+  ctx.fillRect(0, 0, size, size);
+  return canvas.toDataURL();
+}
+
+function buildPatternColours(n, baseColours){
+  return new Array(n).fill(0).map((_,i)=>{
+    const shape = PATTERN_SHAPES[i % PATTERN_SHAPES.length];
+    const bg = baseColours[i % baseColours.length];
+    return {
+      pattern: {
+        image: patternToDataUrl(shape, bg, "#221f1f", 20),
+        width: 20,
+        height: 20
+      }
+    };
+  });
+}
+
+function buildColours(o){
+  const n = state.data.length;
+  if(o.colourMode === "single"){
+    return new Array(n).fill(o.singleColour);
+  }
+  if(o.colourMode === "mono"){
+    return Highcharts.color ? Highcharts.getOptions().colors.map((c,i)=>{
+      const shade = Highcharts.color(o.monoBase).brighten((i - n/2) * 0.08).get();
+      return shade;
+    }).slice(0,n) : new Array(n).fill(o.monoBase);
+  }
+  if(o.colourMode === "custom"){
+    return state.data.map((r,i)=> r.color || Highcharts.getOptions().colors[i % 10]);
+  }
+  if(o.colourMode === "pattern"){
+    return buildPatternColours(n, Highcharts.getOptions().colors);
+  }
+  return null; // default palette
+}
+
+/* ---------------------------------------------------------
+   8b. CANADA MAP DATA LOADER
+--------------------------------------------------------- */
+async function getCanadaMapData(){
+  if(cachedCanadaMap) return cachedCanadaMap;
+  const resp = await fetch("https://code.highcharts.com/mapdata/countries/ca/ca-all.topo.json");
+  if(!resp.ok) throw new Error("Failed to fetch Canada map data");
+  cachedCanadaMap = await resp.json();
+  return cachedCanadaMap;
+}
+
+function buildMapSeriesData(o, colours){
+  const points = [];
+  state.data.forEach((row,i)=>{
+    (row.hcKeys||[]).forEach(key=>{
+      const point = { "hc-key": key, value: row.value, name: row.label };
+      if(o.colourMode === "custom") point.color = row.color || Highcharts.getOptions().colors[i % 10];
+      if(o.colourMode === "pattern" && colours) point.color = colours[i];
+      points.push(point);
+    });
+  });
+  return points;
+}
+
+function buildMapColorAxis(o){
+  if(o.colourMode === "custom" || o.colourMode === "pattern") return undefined;
+  const maxColor = o.colourMode === "single" ? o.singleColour
+    : o.colourMode === "mono" ? o.monoBase
+    : "#26374a";
+  return { min: 0, minColor: "#ffffff", maxColor: maxColor };
+}
+
+function buildMapConfig(){
+  const o = readOptions();
+  const colours = buildColours(o);
+  const seriesData = buildMapSeriesData(o, colours);
+  const colorAxis = buildMapColorAxis(o);
+
+  const config = {
+    chart: {
+      backgroundColor: o.bgColor,
+      borderColor: o.borderColor,
+      borderWidth: o.borderWidth,
+      borderRadius: o.borderRadius,
+      height: o.height,
+      width: o.width || null,
+      style: { fontFamily: "Noto Sans, sans-serif" },
+      animation: o.animEnabled
+    },
+    title: { text: o.title },
+    subtitle: { text: o.subtitle || null },
+    mapNavigation: { enabled: true, buttonOptions: { verticalAlign: "bottom" } },
+    accessibility: {
+      enabled: true,
+      description: o.a11yDescription || undefined,
+      screenReaderSection: {
+        beforeChartFormat: o.a11ySrDescription ? `<p>${escapeHtml(o.a11ySrDescription)}</p>` : undefined
+      },
+      keyboardNavigation: { enabled: o.a11yKeyboard },
+      point: { descriptionFormat: (o.a11yPointFormat || "{point.name}: {point.y}.").replace(/point\.y/g,"point.value") }
+    },
+    credits: { enabled: false },
+    colorAxis: colorAxis,
+    legend: { enabled: o.legendShow && !!colorAxis },
+    tooltip: {
+      enabled: o.tooltipEnabled,
+      valuePrefix: o.tooltipPrefix || "",
+      valueSuffix: o.tooltipSuffix || "",
+      pointFormat: "{point.name}: {series.tooltipOptions.valuePrefix}{point.value}{series.tooltipOptions.valueSuffix}"
+    },
+    plotOptions: {
+      series: {
+        animation: o.animEnabled ? { duration: o.animDuration } : false,
+        dataLabels: {
+          enabled: o.labelsShow,
+          format: "{point.name}",
+          style: {
+            fontSize: o.labelFontSize + "px",
+            fontFamily: o.labelFontFamily,
+            color: o.labelFontColor,
+            textOutline: "none"
+          }
+        }
+      }
+    },
+    series: [{
+      type: "map",
+      name: t("mapSeriesName"),
+      data: seriesData,
+      joinBy: "hc-key",
+      states: { hover: { color: "#BADA55" } },
+      borderColor: "#ffffff",
+      borderWidth: 0.5
+    }],
+    exporting: { enabled: false },
+    caption: o.notes ? { text: o.notes } : undefined
+  };
+
+  return { config, options: o };
+}
+
+/* ---------------------------------------------------------
+   9. CHART CONFIG BUILDER
+--------------------------------------------------------- */
+function buildChartConfig(){
+  const o = readOptions();
+  const isPie = state.chartType === "pie" || state.chartType === "donut";
+  const colours = buildColours(o);
+
+  const seriesData = state.data.map((r,i)=>{
+    const point = { name: r.label, y: r.value };
+    if(o.colourMode === "custom") point.color = r.color || Highcharts.getOptions().colors[i % 10];
+    if(o.colourMode === "pattern" && colours) point.color = colours[i];
+    return point;
+  });
+
+  const legendPos = legendPositionOptions(o.legendPosition);
+
+  const config = {
+    chart: {
+      type: state.chartType === "donut" ? "pie" : state.chartType,
+      backgroundColor: o.bgColor,
+      plotBackgroundColor: o.plotBg,
+      borderColor: o.borderColor,
+      borderWidth: o.borderWidth,
+      borderRadius: o.borderRadius,
+      height: o.height,
+      width: o.width || null,
+      style: { fontFamily: "Noto Sans, sans-serif" },
+      animation: o.animEnabled
+    },
+    title: { text: o.title },
+    subtitle: { text: o.subtitle || null },
+    accessibility: {
+      enabled: true,
+      description: o.a11yDescription || undefined,
+      screenReaderSection: {
+        beforeChartFormat: o.a11ySrDescription ? `<p>${escapeHtml(o.a11ySrDescription)}</p>` : undefined
+      },
+      keyboardNavigation: { enabled: o.a11yKeyboard },
+      point: { descriptionFormat: o.a11yPointFormat }
+    },
+    credits: { enabled: false },
+    legend: {
+      enabled: o.legendShow && !isPie ? true : (o.legendShow && isPie),
+      verticalAlign: legendPos.verticalAlign,
+      align: legendPos.align,
+      layout: legendPos.layout
+    },
+    tooltip: {
+      enabled: o.tooltipEnabled,
+      shared: o.tooltipShared,
+      valuePrefix: o.tooltipPrefix || "",
+      valueSuffix: o.tooltipSuffix || ""
+    },
+    plotOptions: {
+      series: {
+        animation: o.animEnabled ? { duration: o.animDuration } : false,
+        dataLabels: {
+          enabled: o.labelsShow,
+          style: {
+            fontSize: o.labelFontSize + "px",
+            fontFamily: o.labelFontFamily,
+            color: o.labelFontColor,
+            textOutline: "none"
+          },
+          distance: o.labelPosition === "inside" ? -30 : 20,
+          inside: o.labelPosition === "inside"
+        }
+      },
+      pie: {
+        innerSize: state.chartType === "donut" ? "60%" : "0%",
+        colors: colours || undefined
+      },
+      column: { colorByPoint: true, colors: colours || undefined },
+      bar: { colorByPoint: true, colors: colours || undefined }
+    },
+    xAxis: isPie ? undefined : {
+      type: "category",
+      title: { text: o.xAxisTitle },
+      categories: state.data.map(r=>r.label)
+    },
+    yAxis: isPie ? undefined : {
+      title: { text: o.yAxisTitle }
+    },
+    series: [{
+      name: o.yAxisTitle || "Series",
+      data: seriesData,
+      colorByPoint: isPie
+    }],
+    exporting: { enabled: false },
+    caption: o.notes ? { text: o.notes } : undefined
+  };
+
+  return { config, options: o };
+}
+
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, s => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[s]));
+}
+
+/* ---------------------------------------------------------
+   10. RENDER CHART
+--------------------------------------------------------- */
+function currentOptions(){
+  return state.chartType === "map" ? buildMapConfig().options : buildChartConfig().options;
+}
+
+async function renderChart(){
+  if(state.chartType === "map"){
+    await renderMapChart();
+    return;
+  }
+  const { config } = buildChartConfig();
+  if(chart){ chart.destroy(); chart = null; }
+  chart = Highcharts.chart("chartContainer", config);
+}
+
+async function renderMapChart(){
+  const container = $("#chartContainer");
+  if(chart){ chart.destroy(); chart = null; }
+  container.innerHTML = `<p class="map-status" role="status">${t("mapLoading")}</p>`;
+  let topo;
+  try{
+    topo = await getCanadaMapData();
+  }catch(e){
+    container.innerHTML = `<p class="map-status" role="alert">${t("mapLoadError")}</p>`;
+    return;
+  }
+  if(state.chartType !== "map") return; // user switched away while fetching
+  container.innerHTML = "";
+  const { config } = buildMapConfig();
+  config.chart.map = topo;
+  chart = Highcharts.mapChart("chartContainer", config);
+}
+
+/* ---------------------------------------------------------
+   11. RENDER ACCESSIBLE TABLE
+--------------------------------------------------------- */
+function renderA11yTable(){
+  const options = currentOptions();
+  const wrap = $("#a11yTableContainer");
+  const isPie = state.chartType === "pie" || state.chartType === "donut";
+  const isMap = state.chartType === "map";
+  const caption = t("tableCaption") + (options.title || t("defaultTitle"));
+  const valueHeader = (isPie || isMap) ? t("colValue") : (options.yAxisTitle || t("colValue"));
+  const labelHeader = isMap ? t("colProvinceTerritory") : (isPie ? t("colLabel") : (options.xAxisTitle || t("colLabel")));
+
+  let html = `<table class="a11y-table"><caption>${escapeHtml(caption)}</caption><thead><tr>`;
+  html += `<th scope="col">${escapeHtml(labelHeader)}</th><th scope="col">${escapeHtml(valueHeader)}</th>`;
+  html += `</tr></thead><tbody>`;
+  state.data.forEach(row=>{
+    html += `<tr><th scope="row">${escapeHtml(row.label)}</th><td>${escapeHtml(String(row.value))}</td></tr>`;
+  });
+  html += `</tbody></table>`;
+  if(options.source){
+    html += `<p class="hint">${escapeHtml((state.lang==="fr"?"Source : ":"Source: ") + options.source)}</p>`;
+  }
+  wrap.innerHTML = html;
+}
+
+/* ---------------------------------------------------------
+   12. CODE GENERATOR
+--------------------------------------------------------- */
+function generateHTML(options){
+  const isPie = state.chartType === "pie" || state.chartType === "donut";
+  const isMap = state.chartType === "map";
+  const labelHeader = isMap ? t("colProvinceTerritory") : (isPie ? t("colLabel") : (options.xAxisTitle || t("colLabel")));
+  const valueHeader = (isPie || isMap) ? t("colValue") : (options.yAxisTitle || t("colValue"));
+  let rows = state.data.map(r=>`      <tr><th scope="row">${escapeHtml(r.label)}</th><td>${escapeHtml(String(r.value))}</td></tr>`).join("\n");
+  const mapScripts = isMap ? `\n  <script src="https://code.highcharts.com/maps/modules/map.js"><\/script>` : "";
+  const containerRole = isMap ? `role="application" aria-label="${escapeHtml(options.title)}"` : `role="img" aria-label="${escapeHtml(options.title)}"`;
+
+  return `<!DOCTYPE html>
+<html lang="${state.lang}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${escapeHtml(options.title)}</title>
+  <link rel="stylesheet" href="chart-styles.css">
+  <script src="https://code.highcharts.com/highcharts.js"><\/script>${mapScripts}
+  <script src="https://code.highcharts.com/modules/accessibility.js"><\/script>
+</head>
+<body>
+  <section class="chart-section">
+    <div id="chart-container" ${containerRole}></div>
+
+    <table class="chart-data-table">
+      <caption>${escapeHtml(t("tableCaption") + options.title)}</caption>
+      <thead>
+        <tr>
+          <th scope="col">${escapeHtml(labelHeader)}</th>
+          <th scope="col">${escapeHtml(valueHeader)}</th>
+        </tr>
+      </thead>
+      <tbody>
+${rows}
+      </tbody>
+    </table>
+    ${options.source ? `<p class="chart-source">${state.lang==="fr"?"Source : ":"Source: "}${escapeHtml(options.source)}</p>` : ""}
+  </section>
+
+  <script src="chart-script.js"><\/script>
+</body>
+</html>`;
+}
+
+function generateCSS(options){
+  return `/* ${options.title} — generated chart styles */
+.chart-section {
+  font-family: "Noto Sans", Arial, sans-serif;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+#chart-container {
+  width: 100%;
+  min-height: ${options.height}px;
+}
+
+.chart-data-table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 1.5rem;
+}
+
+.chart-data-table caption {
+  text-align: left;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.chart-data-table th,
+.chart-data-table td {
+  border: 1px solid #d0d5dc;
+  padding: 0.5rem 0.65rem;
+  text-align: left;
+}
+
+.chart-data-table thead th {
+  background: #eef1f5;
+}
+
+.chart-source {
+  font-size: 0.85rem;
+  color: #5c6672;
+}
+
+:focus-visible {
+  outline: 3px solid #0535d2;
+  outline-offset: 2px;
+}
+`;
+}
+
+function generateJS(options){
+  if(state.chartType === "map"){
+    return generateMapJS(options);
+  }
+  const { config } = buildChartConfig();
+  const cleanConfig = JSON.parse(JSON.stringify(config, (k,v)=> v === undefined ? undefined : v));
+  // remove exporting/false-ish fields not needed in export
+  delete cleanConfig.exporting;
+  cleanConfig.chart.renderTo = undefined;
+
+  const configStr = JSON.stringify(cleanConfig, null, 2)
+    .replace(/"([^"]+)":/g, '$1:');
+
+  return `// Generated chart script for: ${options.title}
+document.addEventListener("DOMContentLoaded", function () {
+  Highcharts.chart("chart-container", ${configStr});
+});
+`;
+}
+
+function generateMapJS(options){
+  const { config } = buildMapConfig();
+  const cleanConfig = JSON.parse(JSON.stringify(config, (k,v)=> v === undefined ? undefined : v));
+  delete cleanConfig.exporting;
+
+  const configStr = JSON.stringify(cleanConfig, null, 2)
+    .replace(/"([^"]+)":/g, '$1:');
+
+  return `// Generated map script for: ${options.title}
+document.addEventListener("DOMContentLoaded", async function () {
+  const mapResponse = await fetch("https://code.highcharts.com/mapdata/countries/ca/ca-all.topo.json");
+  const canadaMap = await mapResponse.json();
+
+  const config = ${configStr};
+  config.chart.map = canadaMap;
+
+  Highcharts.mapChart("chart-container", config);
+});
+`;
+}
+
+function refreshCodePanels(){
+  const options = currentOptions();
+  $("#codeHtml").textContent = generateHTML(options);
+  $("#codeCss").textContent = generateCSS(options);
+  $("#codeJs").textContent = generateJS(options);
+}
+
+/* ---------------------------------------------------------
+   13. TABS
+--------------------------------------------------------- */
+function initTabs(){
+  const tabs = [
+    {btn:"tabBtnHtml", panel:"tabHtml"},
+    {btn:"tabBtnCss", panel:"tabCss"},
+    {btn:"tabBtnJs", panel:"tabJs"}
+  ];
+  tabs.forEach(({btn,panel})=>{
+    $("#"+btn).addEventListener("click", ()=>{
+      tabs.forEach(({btn:b2, panel:p2})=>{
+        $("#"+b2).setAttribute("aria-selected", b2===btn ? "true":"false");
+        $("#"+p2).hidden = p2 !== panel;
+      });
+    });
+  });
+}
+
+function initCopyButtons(){
+  $all(".copy-btn").forEach(btn=>{
+    btn.addEventListener("click", async ()=>{
+      const targetId = btn.getAttribute("data-copy");
+      const pre = document.querySelector("#" + targetId + " pre");
+      try{
+        await navigator.clipboard.writeText(pre.textContent);
+        const original = btn.textContent;
+        btn.textContent = t("btnCopied");
+        announce(t("btnCopied"));
+        setTimeout(()=>{ btn.textContent = original; }, 1800);
+      }catch(e){
+        announce("Could not copy code.");
+      }
+    });
+  });
+}
+
+/* ---------------------------------------------------------
+   14. EXPORTS
+--------------------------------------------------------- */
+function download(filename, content, mime){
+  const blob = new Blob([content], {type: mime});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function initExportButtons(){
+  $all("[data-export]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const type = btn.getAttribute("data-export");
+      if(!chart) return;
+      const typeMap = { png:"image/png", jpeg:"image/jpeg", svg:"image/svg+xml", pdf:"application/pdf" };
+      chart.exportChart({ type: typeMap[type], filename: "chart" });
+    });
+  });
+
+  $("#exportJsonBtn").addEventListener("click", ()=>{
+    const { config } = state.chartType === "map" ? buildMapConfig() : buildChartConfig();
+    if(state.chartType === "map" && cachedCanadaMap){ config.chart = config.chart || {}; config.chart.map = cachedCanadaMap; }
+    download("chart-config.json", JSON.stringify(config, null, 2), "application/json");
+  });
+  $("#exportHtmlOnlyBtn").addEventListener("click", ()=>{
+    download("chart.html", $("#codeHtml").textContent, "text/html");
+  });
+  $("#exportCssOnlyBtn").addEventListener("click", ()=>{
+    download("chart-styles.css", $("#codeCss").textContent, "text/css");
+  });
+  $("#exportJsOnlyBtn").addEventListener("click", ()=>{
+    download("chart-script.js", $("#codeJs").textContent, "application/javascript");
+  });
+  $("#exportCompleteBtn").addEventListener("click", ()=>{
+    const options = currentOptions();
+    const isMap = state.chartType === "map";
+    const mapScript = isMap ? `\n<script src="https://code.highcharts.com/maps/modules/map.js"><\/script>` : "";
+    const complete = `<!DOCTYPE html>
+<html lang="${state.lang}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${escapeHtml(options.title)}</title>
+<style>
+${generateCSS(options)}
+</style>
+<script src="https://code.highcharts.com/highcharts.js"><\/script>${mapScript}
+<script src="https://code.highcharts.com/modules/accessibility.js"><\/script>
+</head>
+<body>
+${generateHTML(options).split("<body>")[1].split("</body>")[0]}
+<script>
+${generateJS(options)}
+<\/script>
+</body>
+</html>`;
+    download("chart-complete.html", complete, "text/html");
+  });
+}
+
+/* ---------------------------------------------------------
+   15. COLOUR MODE FIELD VISIBILITY
+--------------------------------------------------------- */
+function initColourModeToggle(){
+  $("#cMode").addEventListener("change", ()=>{
+    updateColourFieldVisibility();
+    renderAll(false);
+  });
+}
+function updateColourFieldVisibility(){
+  const mode = $("#cMode").value;
+  $("#singleColourField").style.display = mode === "single" ? "block":"none";
+  $("#monoColourField").style.display = mode === "mono" ? "block":"none";
+  $("#customColourField").style.display = mode === "custom" ? "block":"none";
+  if(mode === "custom") renderCustomColourList();
+}
+
+/* ---------------------------------------------------------
+   16. WIRE UP GENERAL INPUT LISTENERS
+--------------------------------------------------------- */
+function initFieldListeners(){
+  const ids = ["fTitle","fSubtitle","fXAxis","fYAxis","fSource","fNotes",
+    "oWidth","oHeight","oBg","oPlotBg","oBorderColor","oBorderWidth","oBorderRadius","oShadow",
+    "cSingle","cMono",
+    "lShow","lFontSize","lFontFamily","lFontColor","lPosition",
+    "gShow","gPosition",
+    "tEnabled","tShared","tPrefix","tSuffix",
+    "aEnabled","aDuration",
+    "axDescription","axSrDescription","axKeyboard","axPointFormat"];
+  ids.forEach(id=>{
+    const el = document.getElementById(id);
+    if(!el) return;
+    const evt = (el.type === "checkbox" || el.tagName === "SELECT") ? "change" : "input";
+    el.addEventListener(evt, ()=> renderAll(false));
+  });
+}
+
+/* ---------------------------------------------------------
+   17. LANGUAGE TOGGLE
+--------------------------------------------------------- */
+function initLangToggle(){
+  $("#langToggle").addEventListener("click", ()=>{
+    state.lang = state.lang === "en" ? "fr" : "en";
+    applyI18n();
+    updateColourFieldVisibility();
+    relabelMapRows();
+    renderAll();
+  });
+}
+
+/* ---------------------------------------------------------
+   18. MASTER RENDER
+--------------------------------------------------------- */
+function renderAll(rebuildEditor){
+  if(rebuildEditor !== false){
+    renderDataEditor();
+    if($("#cMode").value === "custom") renderCustomColourList();
+  }
+  renderChart().catch(()=>{});
+  renderA11yTable();
+  refreshCodePanels();
+}
+
+/* ---------------------------------------------------------
+   19. INIT
+--------------------------------------------------------- */
+function init(){
+  applyI18n();
+  toggleAxisFields();
+  initChartTypePicker();
+  initLangToggle();
+  initTabs();
+  initCopyButtons();
+  initExportButtons();
+  initColourModeToggle();
+  initFieldListeners();
+
+  $("#addRowBtn").addEventListener("click", addRow);
+  $("#clearRowsBtn").addEventListener("click", clearRows);
+  $("#mSplitTerritories").addEventListener("change", (e)=>{
+    toggleSplitTerritories(e.target.checked);
+    renderAll();
+  });
+
+  renderAll();
+}
+
+if(document.readyState === "loading"){
+  document.addEventListener("DOMContentLoaded", init);
+}else{
+  init();
+}
+
+})();
+</script>
+</body>
+</html>
