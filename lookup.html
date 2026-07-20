@@ -1,0 +1,772 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper:#EEF0EF;
+    --paper-raised:#F8F9F8;
+    --ink:#16233A;
+    --ink-soft:#4A5568;
+    --hairline:#CBD3D2;
+    --hairline-strong:#9AA6A5;
+    --match:#2E7D5B;
+    --match-bg:#E4F1EA;
+    --mismatch:#B3382C;
+    --mismatch-bg:#F8E7E4;
+    --flag:#A8720E;
+    --flag-bg:#F6EDDB;
+    --en:#2952A3;
+    --en-bg:#E7ECF6;
+    --fr:#7A3B8C;
+    --fr-bg:#F1E7F4;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);}
+  body{
+    font-family:'IBM Plex Sans',sans-serif;
+    padding:28px 20px 60px;
+    line-height:1.45;
+  }
+  .wrap{max-width:1180px;margin:0 auto;}
+
+  h1,h2,h3{font-family:'Fraunces',serif;font-weight:600;margin:0;color:var(--ink);}
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin:0 0 6px;
+  }
+
+  /* ---------- Header / ticket ---------- */
+  .ticket{
+    background:var(--paper-raised);
+    border:1px solid var(--hairline);
+    border-radius:2px;
+    padding:26px 28px 22px;
+    position:relative;
+    margin-bottom:22px;
+  }
+  .ticket::before{
+    content:"";
+    position:absolute; left:0; top:0; bottom:0; width:5px;
+    background:repeating-linear-gradient(180deg,var(--en) 0 10px, var(--fr) 10px 20px);
+  }
+  .ticket h1{font-size:26px; letter-spacing:-.01em;}
+  .ticket .sub{color:var(--ink-soft); font-size:14.5px; margin-top:6px; max-width:640px;}
+
+  .field-row{
+    display:grid;
+    grid-template-columns:1fr 1fr auto;
+    gap:14px;
+    margin-top:22px;
+    align-items:end;
+  }
+  @media (max-width:820px){ .field-row{grid-template-columns:1fr;} }
+
+  .field label{
+    display:block;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    margin-bottom:6px;
+  }
+  .field.en label{color:var(--en);}
+  .field.fr label{color:var(--fr);}
+  .field input[type=text]{
+    width:100%;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13.5px;
+    padding:10px 12px;
+    border:1.5px solid var(--hairline-strong);
+    border-radius:2px;
+    background:#fff;
+    color:var(--ink);
+  }
+  .field.en input:focus{outline:2px solid var(--en); outline-offset:1px;}
+  .field.fr input:focus{outline:2px solid var(--fr); outline-offset:1px;}
+
+  .stamp-btn{
+    font-family:'IBM Plex Mono',monospace;
+    font-weight:600;
+    font-size:13px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    background:var(--ink);
+    color:var(--paper);
+    border:1.5px solid var(--ink);
+    border-radius:2px;
+    padding:11px 22px;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .stamp-btn:hover{background:#0d1626;}
+  .stamp-btn:disabled{opacity:.5; cursor:progress;}
+  .stamp-btn:focus-visible{outline:2px solid var(--en); outline-offset:2px;}
+
+  .paste-fallback{
+    margin-top:12px;
+    border:1.5px dashed var(--mismatch);
+    background:var(--mismatch-bg);
+    border-radius:2px;
+    padding:12px 14px;
+    font-size:13px;
+  }
+  .paste-fallback p{margin:0 0 8px; color:var(--ink);}
+  .paste-fallback textarea{
+    width:100%;
+    min-height:110px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    padding:8px;
+    border:1px solid var(--hairline-strong);
+    border-radius:2px;
+    resize:vertical;
+  }
+  .paste-fallback .use-btn{
+    margin-top:8px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    padding:6px 12px;
+    background:#fff;
+    border:1.5px solid var(--ink);
+    border-radius:2px;
+    cursor:pointer;
+  }
+
+  .status-line{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    margin-top:10px;
+    min-height:16px;
+  }
+
+  /* ---------- Scorecard ---------- */
+  .scorecard{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:1px;
+    background:var(--hairline);
+    border:1px solid var(--hairline);
+    margin-bottom:26px;
+  }
+  @media (max-width:900px){ .scorecard{grid-template-columns:repeat(3,1fr);} }
+  @media (max-width:520px){ .scorecard{grid-template-columns:repeat(2,1fr);} }
+  .tile{
+    background:var(--paper-raised);
+    padding:14px 12px;
+  }
+  .tile .num{font-family:'Fraunces',serif; font-size:26px; font-weight:600; line-height:1;}
+  .tile .lbl{font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-soft); margin-top:6px;}
+  .tile.ok .num{color:var(--match);}
+  .tile.bad .num{color:var(--mismatch);}
+  .tile.warn .num{color:var(--flag);}
+
+  /* ---------- Sections ---------- */
+  section.block{margin-bottom:30px;}
+  .block-head{
+    display:flex; align-items:baseline; justify-content:space-between;
+    border-bottom:1.5px solid var(--ink); padding-bottom:8px; margin-bottom:14px;
+  }
+  .block-head h2{font-size:18px;}
+  .block-head .count{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--ink-soft);}
+
+  /* ---------- Ledger (paragraph visual compare) ---------- */
+  .ledger{border:1px solid var(--hairline);}
+  .ledger-head{
+    display:grid; grid-template-columns:1fr 34px 1fr;
+    font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:.08em;
+    background:var(--paper-raised); border-bottom:1px solid var(--hairline);
+  }
+  .ledger-head div{padding:8px 12px;}
+  .ledger-head .en-h{color:var(--en);}
+  .ledger-head .fr-h{color:var(--fr); text-align:right;}
+  .ledger-row{
+    display:grid; grid-template-columns:1fr 34px 1fr;
+    border-bottom:1px solid var(--hairline);
+    background:#fff;
+    font-size:13.5px;
+  }
+  .ledger-row:last-child{border-bottom:none;}
+  .ledger-row.dim{background:var(--paper);}
+  .cell{padding:10px 12px; overflow-wrap:anywhere;}
+  .cell .tag{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:10px;
+    padding:1px 6px; border-radius:8px; margin-bottom:5px; letter-spacing:.03em;
+  }
+  .cell.empty{color:var(--ink-soft); font-style:italic; font-size:12.5px;}
+  .cell .txt{color:var(--ink); }
+  .cell .meta{display:block; margin-top:5px; font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--ink-soft);}
+  .cell .meta.flagged{color:var(--flag); font-weight:600;}
+
+  .spine{display:flex; align-items:center; justify-content:center;}
+  .spine .dot{width:11px; height:11px; border-radius:50%; border:2px solid transparent;}
+  .spine .dot.match{background:var(--match);}
+  .spine .dot.mismatch{background:var(--mismatch);}
+  .spine .dot.flag{background:var(--flag);}
+
+  /* tag color chips */
+  .tag.h{background:var(--en-bg); color:var(--en);}
+  .tag.p{background:#EDEDE9; color:var(--ink-soft);}
+  .tag.list{background:var(--fr-bg); color:var(--fr);}
+  .tag.tbl{background:var(--flag-bg); color:var(--flag);}
+  .tag.media{background:var(--match-bg); color:var(--match);}
+
+  /* ---------- Outline compare ---------- */
+  .outline-grid{display:grid; grid-template-columns:1fr 1fr; gap:0; border:1px solid var(--hairline);}
+  .outline-col{padding:14px 16px;}
+  .outline-col.en{border-right:1px solid var(--hairline); background:#fff;}
+  .outline-col.fr{background:#fff;}
+  .outline-col h3{font-size:12px; font-family:'IBM Plex Mono',monospace; text-transform:uppercase; letter-spacing:.08em; margin-bottom:10px;}
+  .outline-col.en h3{color:var(--en);}
+  .outline-col.fr h3{color:var(--fr);}
+  .outline-item{
+    font-size:13px; padding:5px 0 5px calc(var(--lvl,0) * 16px);
+    border-bottom:1px dotted var(--hairline);
+    display:flex; gap:8px; align-items:baseline;
+  }
+  .outline-item .lv{font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--ink-soft); flex-shrink:0;}
+  .outline-item.mismatch{color:var(--mismatch); font-weight:600;}
+
+  /* ---------- Table: links/images/lists ---------- */
+  table.simple{width:100%; border-collapse:collapse; font-size:13px; background:#fff;}
+  table.simple th, table.simple td{border:1px solid var(--hairline); padding:8px 10px; text-align:left; vertical-align:top;}
+  table.simple th{font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; background:var(--paper-raised); color:var(--ink-soft);}
+  table.simple td.mono{font-family:'IBM Plex Mono',monospace; font-size:12px; overflow-wrap:anywhere;}
+  .pill{font-family:'IBM Plex Mono',monospace; font-size:10px; padding:2px 7px; border-radius:8px; display:inline-block;}
+  .pill.ok{background:var(--match-bg); color:var(--match);}
+  .pill.bad{background:var(--mismatch-bg); color:var(--mismatch);}
+
+  /* ---------- Code diff ---------- */
+  .diff-view{
+    background:#0F1A2B; color:#DCE3EE; border-radius:2px; overflow-x:auto;
+    font-family:'IBM Plex Mono',monospace; font-size:12px; line-height:1.65;
+  }
+  .diff-line{display:flex; padding:0 12px; white-space:pre;}
+  .diff-line .gl,.diff-line .gr{width:34px; flex-shrink:0; color:#5C6B85; user-select:none;}
+  .diff-line.add{background:rgba(46,125,91,.22);}
+  .diff-line.add .txt{color:#8FE0B9;}
+  .diff-line.del{background:rgba(179,56,44,.24);}
+  .diff-line.del .txt{color:#F1A79C;}
+  .diff-line.ctx .txt{color:#B8C2D6;}
+  .diff-line .sym{width:16px; flex-shrink:0; color:#5C6B85;}
+
+  .empty-state{
+    border:1.5px dashed var(--hairline-strong); border-radius:2px; padding:34px 20px;
+    text-align:center; color:var(--ink-soft); font-size:14px; background:var(--paper-raised);
+  }
+  .empty-state b{color:var(--ink); display:block; font-family:'Fraunces',serif; font-size:17px; margin-bottom:6px; font-weight:600;}
+
+  .foot-note{font-size:12px; color:var(--ink-soft); margin-top:6px;}
+  a.src-link{color:var(--en); text-decoration:none; border-bottom:1px solid var(--en);}
+  code.inline{font-family:'IBM Plex Mono',monospace; background:var(--paper-raised); padding:1px 5px; border-radius:3px; font-size:12px;}
+</style>
+
+<div class="wrap">
+
+  <div class="ticket">
+    <p class="eyebrow">Bilingual page parity</p>
+    <h1>EN / FR Content Audit</h1>
+    <p class="sub">Pulls everything from the &lt;h1&gt; down to the "date modified" line on each page, then checks that the structure, paragraphs, links, media, and embedded code line up between languages.</p>
+
+    <div class="field-row">
+      <div class="field en">
+        <label for="enUrl">English URL</label>
+        <input type="text" id="enUrl" placeholder="https://example.com/en/page" autocomplete="off">
+      </div>
+      <div class="field fr">
+        <label for="frUrl">French URL</label>
+        <input type="text" id="frUrl" placeholder="https://exemple.com/fr/page" autocomplete="off">
+      </div>
+      <button class="stamp-btn" id="compareBtn">Compare pages</button>
+    </div>
+
+    <div id="enPasteZone"></div>
+    <div id="frPasteZone"></div>
+    <div class="status-line" id="statusLine"></div>
+  </div>
+
+  <div id="results"></div>
+
+</div>
+
+<script>
+(function(){
+  const enUrlInput = document.getElementById('enUrl');
+  const frUrlInput = document.getElementById('frUrl');
+  const compareBtn = document.getElementById('compareBtn');
+  const statusLine = document.getElementById('statusLine');
+  const resultsEl = document.getElementById('results');
+  const enPasteZone = document.getElementById('enPasteZone');
+  const frPasteZone = document.getElementById('frPasteZone');
+
+  let pastedHtml = { en: null, fr: null };
+
+  function setStatus(msg){ statusLine.textContent = msg; }
+
+  // ---------------- Fetch with paste-fallback ----------------
+  async function getHtml(url, lang, zoneEl){
+    if(pastedHtml[lang]) return pastedHtml[lang];
+    try{
+      setStatus('Fetching ' + lang.toUpperCase() + ' page…');
+      const res = await fetch(url, { mode:'cors' });
+      if(!res.ok) throw new Error('HTTP ' + res.status);
+      const text = await res.text();
+      if(!text || text.length < 20) throw new Error('empty response');
+      return text;
+    }catch(err){
+      renderPasteFallback(zoneEl, lang, url);
+      throw new Error('FETCH_BLOCKED:' + lang);
+    }
+  }
+
+  function renderPasteFallback(zoneEl, lang, url){
+    zoneEl.innerHTML = '';
+    const box = document.createElement('div');
+    box.className = 'paste-fallback';
+    box.innerHTML =
+      '<p><strong>Could not fetch the ' + (lang==='en'?'English':'French') + ' page directly</strong> — most sites block cross-origin requests from the browser. '
+      + 'Open <a class="src-link" href="'+escapeAttr(url)+'" target="_blank" rel="noopener">' + escapeHtml(url) + '</a>, view page source (Ctrl/Cmd+U), copy the full HTML, and paste it below.</p>'
+      + '<textarea placeholder="Paste full HTML source here…" data-lang="'+lang+'"></textarea>'
+      + '<button class="use-btn" data-lang="'+lang+'">Use pasted HTML</button>';
+    zoneEl.appendChild(box);
+    box.querySelector('.use-btn').addEventListener('click', () => {
+      const ta = box.querySelector('textarea');
+      if(ta.value.trim().length < 20){ setStatus('Paste the HTML source before continuing.'); return; }
+      pastedHtml[lang] = ta.value;
+      box.style.borderColor = 'var(--match)';
+      box.style.background = 'var(--match-bg)';
+      box.querySelector('p').innerHTML = '<strong>' + (lang==='en'?'English':'French') + ' HTML saved.</strong> Click "Compare pages" again to run the audit.';
+    });
+  }
+
+  function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function escapeAttr(s){ return escapeHtml(s); }
+
+  // ---------------- Extraction: H1 -> date modified ----------------
+  const DATE_RE = /(date\s*(modified|de\s*modification)|dernière\s*modification|last\s*updated|mis\s*à\s*jour)/i;
+
+  function findDateModifiedEl(doc){
+    let el = doc.getElementById('wb-dtmd');
+    if(el) return el;
+    const candidates = doc.body.querySelectorAll('dt,dd,p,span,div,time,li,small');
+    for(const node of candidates){
+      const own = Array.from(node.childNodes)
+        .filter(n => n.nodeType === 3)
+        .map(n => n.textContent).join(' ').trim();
+      if(DATE_RE.test(own) && own.length < 120) return node;
+    }
+    for(const node of candidates){
+      if(DATE_RE.test(node.textContent || '') && (node.textContent||'').length < 200) return node;
+    }
+    return null;
+  }
+
+  const BLOCK_SELECTOR = 'h1,h2,h3,h4,h5,h6,p,ul,ol,table,blockquote,figure,dl,pre';
+
+  function extractRange(htmlString){
+    const doc = new DOMParser().parseFromString(htmlString, 'text/html');
+    const h1 = doc.querySelector('h1');
+    if(!h1) return { error: 'No <h1> found on this page.' };
+    const dateEl = findDateModifiedEl(doc);
+
+    const range = doc.createRange();
+    range.setStartBefore(h1);
+    if(dateEl && dateEl.compareDocumentPosition(h1) & Node.DOCUMENT_POSITION_PRECEDING){
+      range.setEndBefore(dateEl);
+    } else {
+      range.setEndAfter(doc.body.lastChild);
+    }
+    const frag = range.cloneContents();
+    const container = doc.createElement('div');
+    container.appendChild(frag);
+
+    // top-level blocks only (skip ones nested inside another matched block)
+    const all = Array.from(container.querySelectorAll(BLOCK_SELECTOR));
+    const blocks = all.filter(node => {
+      let p = node.parentElement;
+      while(p && p !== container){
+        if(p.matches(BLOCK_SELECTOR)) return false;
+        p = p.parentElement;
+      }
+      return true;
+    }).map(node => classify(node));
+
+    const links = Array.from(container.querySelectorAll('a[href]')).map(a => ({
+      href: a.getAttribute('href') || '', text: (a.textContent||'').trim().slice(0,80)
+    }));
+    const images = Array.from(container.querySelectorAll('img')).map(img => ({
+      src: img.getAttribute('src') || '', alt: img.getAttribute('alt') || ''
+    }));
+    const embeds = Array.from(container.querySelectorAll('script,iframe,embed,object')).map(el => ({
+      tag: el.tagName.toLowerCase(),
+      src: el.getAttribute('src') || el.getAttribute('data') || '',
+      snippet: el.tagName.toLowerCase()==='script' && !el.getAttribute('src') ? (el.textContent||'').trim().slice(0,300) : ''
+    }));
+    const headings = blocks.filter(b => /^h[1-6]$/.test(b.tag)).map(b => ({
+      level: Number(b.tag[1]), text: b.text
+    }));
+
+    const skeleton = buildSkeleton(container);
+
+    return { doc, h1found:true, dateFound: !!dateEl, blocks, links, images, embeds, headings, skeleton, container };
+  }
+
+  function classify(node){
+    const tag = node.tagName.toLowerCase();
+    const text = (node.textContent || '').replace(/\s+/g,' ').trim();
+    const words = text.length ? text.split(/\s+/).length : 0;
+    let kind = 'p';
+    if(/^h[1-6]$/.test(tag)) kind = 'h';
+    else if(tag==='ul'||tag==='ol'||tag==='dl') kind = 'list';
+    else if(tag==='table') kind = 'tbl';
+    else if(tag==='figure') kind = 'media';
+    let itemCount = null;
+    if(tag==='ul'||tag==='ol') itemCount = node.querySelectorAll(':scope > li').length;
+    if(tag==='dl') itemCount = node.querySelectorAll(':scope > dt').length;
+    if(tag==='table') itemCount = node.querySelectorAll('tr').length;
+    return { tag, kind, text, words, itemCount };
+  }
+
+  // simplified tag+attr skeleton, text stripped, for a structural code diff
+  function buildSkeleton(container){
+    const lines = [];
+    const KEEP_ATTRS = ['id','class','href','src'];
+    function walk(node, depth){
+      for(const child of node.childNodes){
+        if(child.nodeType === 1){
+          const tag = child.tagName.toLowerCase();
+          if(tag === 'script' || tag === 'style') {
+            lines.push('  '.repeat(depth) + '<' + tag + (child.getAttribute('src') ? ' src="'+child.getAttribute('src')+'"' : ' inline') + '>');
+            continue;
+          }
+          const attrs = KEEP_ATTRS
+            .map(a => child.getAttribute(a) ? a+'="'+child.getAttribute(a)+'"' : null)
+            .filter(Boolean).join(' ');
+          lines.push('  '.repeat(depth) + '<' + tag + (attrs ? ' ' + attrs : '') + '>');
+          walk(child, depth+1);
+        }
+      }
+    }
+    walk(container, 0);
+    return lines;
+  }
+
+  // ---------------- LCS alignment (by tag/kind sequence) ----------------
+  function alignBlocks(a, b){
+    const n = a.length, m = b.length;
+    const dp = Array.from({length:n+1}, () => new Array(m+1).fill(0));
+    for(let i=n-1;i>=0;i--){
+      for(let j=m-1;j>=0;j--){
+        if(a[i].tag === b[j].tag) dp[i][j] = dp[i+1][j+1] + 1;
+        else dp[i][j] = Math.max(dp[i+1][j], dp[i][j+1]);
+      }
+    }
+    const rows = [];
+    let i=0,j=0;
+    while(i<n && j<m){
+      if(a[i].tag === b[j].tag){
+        rows.push({ en:a[i], fr:b[j], status:'match' });
+        i++; j++;
+      } else if(dp[i+1][j] >= dp[i][j+1]){
+        rows.push({ en:a[i], fr:null, status:'mismatch' });
+        i++;
+      } else {
+        rows.push({ en:null, fr:b[j], status:'mismatch' });
+        j++;
+      }
+    }
+    while(i<n){ rows.push({ en:a[i], fr:null, status:'mismatch' }); i++; }
+    while(j<m){ rows.push({ en:null, fr:b[j], status:'mismatch' }); j++; }
+    return rows;
+  }
+
+  // ---------------- Line diff for skeleton (LCS) ----------------
+  function diffLines(a, b){
+    const n=a.length, m=b.length;
+    const dp = Array.from({length:n+1}, () => new Array(m+1).fill(0));
+    for(let i=n-1;i>=0;i--) for(let j=m-1;j>=0;j--)
+      dp[i][j] = a[i]===b[j] ? dp[i+1][j+1]+1 : Math.max(dp[i+1][j], dp[i][j+1]);
+    const out = [];
+    let i=0,j=0;
+    while(i<n && j<m){
+      if(a[i]===b[j]){ out.push({t:'ctx', line:a[i]}); i++; j++; }
+      else if(dp[i+1][j] >= dp[i][j+1]){ out.push({t:'del', line:a[i]}); i++; }
+      else { out.push({t:'add', line:b[j]}); j++; }
+    }
+    while(i<n){ out.push({t:'del', line:a[i]}); i++; }
+    while(j<m){ out.push({t:'add', line:b[j]}); j++; }
+    return out;
+  }
+
+  // ---------------- Rendering ----------------
+  function tagChip(kind, label){
+    return '<span class="tag '+kind+'">'+label+'</span>';
+  }
+
+  function renderResults(en, fr){
+    const rows = alignBlocks(en.blocks, fr.blocks);
+    const matchedRows = rows.filter(r => r.status==='match').length;
+    const mismatchedRows = rows.length - matchedRows;
+
+    let lengthFlags = 0;
+    rows.forEach(r => {
+      if(r.status==='match' && r.en.kind==='p' && r.fr.kind==='p'){
+        const w1=r.en.words||0, w2=r.fr.words||0;
+        if(w1>3 && w2>3){
+          const ratio = Math.min(w1,w2)/Math.max(w1,w2);
+          if(ratio < 0.45) lengthFlags++;
+        }
+      }
+    });
+
+    const linkMismatch = Math.abs(en.links.length - fr.links.length);
+    const imgMismatch = Math.abs(en.images.length - fr.images.length);
+    const skeletonDiff = diffLines(en.skeleton, fr.skeleton);
+    const skeletonAdds = skeletonDiff.filter(d=>d.t==='add').length;
+    const skeletonDels = skeletonDiff.filter(d=>d.t==='del').length;
+    const codeMatches = (skeletonAdds + skeletonDels) === 0;
+
+    const embedDiff = diffLines(
+      en.embeds.map(e => e.tag+'|'+e.src+'|'+e.snippet),
+      fr.embeds.map(e => e.tag+'|'+e.src+'|'+e.snippet)
+    );
+    const embedIssues = embedDiff.filter(d=>d.t!=='ctx').length;
+
+    resultsEl.innerHTML = '';
+
+    // Scorecard
+    const score = document.createElement('div');
+    score.className = 'scorecard';
+    score.innerHTML = [
+      tile(rows.length, 'Aligned blocks', mismatchedRows===0 ? 'ok':'bad'),
+      tile(mismatchedRows, 'Structure gaps', mismatchedRows===0 ? 'ok':'bad'),
+      tile(lengthFlags, 'Length-ratio flags', lengthFlags===0 ? 'ok':'warn'),
+      tile(linkMismatch, 'Link count Δ', linkMismatch===0 ? 'ok':'warn'),
+      tile(imgMismatch, 'Image count Δ', imgMismatch===0 ? 'ok':'warn'),
+      tile(codeMatches ? 'Match' : (skeletonAdds+skeletonDels), 'Code skeleton', codeMatches ? 'ok':'bad'),
+    ].join('');
+    resultsEl.appendChild(score);
+
+    if(!en.dateFound || !fr.dateFound){
+      const warn = document.createElement('p');
+      warn.className = 'foot-note';
+      warn.innerHTML = ((!en.dateFound?'English':'') + (!en.dateFound && !fr.dateFound ? ' and ' : '') + (!fr.dateFound?'French':'')) +
+        ' page: no "date modified" marker was found, so content was captured from the &lt;h1&gt; to the end of the page body instead.';
+      resultsEl.appendChild(warn);
+    }
+
+    resultsEl.appendChild(section('Paragraph &amp; block visual compare',
+      rows.length + ' rows · ' + matchedRows + ' aligned, ' + mismatchedRows + ' unmatched',
+      renderLedger(rows)
+    ));
+
+    resultsEl.appendChild(section('Heading outline',
+      en.headings.length + ' EN / ' + fr.headings.length + ' FR headings',
+      renderOutline(en.headings, fr.headings)
+    ));
+
+    resultsEl.appendChild(section('Links &amp; media',
+      '', renderLinksMedia(en, fr)
+    ));
+
+    resultsEl.appendChild(section('Embedded code &amp; tracking',
+      en.embeds.length + ' EN / ' + fr.embeds.length + ' FR embeds' + (embedIssues ? ' · ' + embedIssues + ' difference(s)' : ' · identical'),
+      renderEmbedDiff(embedDiff, en.embeds, fr.embeds)
+    ));
+
+    resultsEl.appendChild(section('HTML structure diff (tag skeleton)',
+      skeletonAdds+skeletonDels===0 ? 'Structure is identical' : (skeletonDels+' removed · '+skeletonAdds+' added'),
+      renderSkeletonDiff(skeletonDiff)
+    ));
+  }
+
+  function tile(num, lbl, cls){
+    return '<div class="tile '+cls+'"><div class="num">'+num+'</div><div class="lbl">'+lbl+'</div></div>';
+  }
+
+  function section(title, count, innerNode){
+    const s = document.createElement('section');
+    s.className = 'block';
+    const head = document.createElement('div');
+    head.className = 'block-head';
+    head.innerHTML = '<h2>'+title+'</h2><span class="count">'+count+'</span>';
+    s.appendChild(head);
+    s.appendChild(innerNode);
+    return s;
+  }
+
+  function renderLedger(rows){
+    const wrap = document.createElement('div');
+    wrap.className = 'ledger';
+    const head = document.createElement('div');
+    head.className = 'ledger-head';
+    head.innerHTML = '<div class="en-h">English</div><div></div><div class="fr-h">Français</div>';
+    wrap.appendChild(head);
+
+    rows.forEach((r, idx) => {
+      const row = document.createElement('div');
+      row.className = 'ledger-row' + (idx % 2 ? ' dim':'');
+      row.appendChild(cellFor(r.en, 'en'));
+      const spine = document.createElement('div');
+      spine.className = 'spine';
+      let dotClass = 'match';
+      if(r.status === 'mismatch') dotClass = 'mismatch';
+      else if(r.en && r.fr && r.en.kind==='p'){
+        const w1=r.en.words||0, w2=r.fr.words||0;
+        if(w1>3 && w2>3 && Math.min(w1,w2)/Math.max(w1,w2) < 0.45) dotClass = 'flag';
+      }
+      spine.innerHTML = '<span class="dot '+dotClass+'"></span>';
+      row.appendChild(spine);
+      row.appendChild(cellFor(r.fr, 'fr'));
+      wrap.appendChild(row);
+    });
+    return wrap;
+  }
+
+  function cellFor(block, lang){
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    if(!block){
+      cell.classList.add('empty');
+      cell.textContent = '— missing —';
+      return cell;
+    }
+    const kindMap = {h:'h', p:'p', list:'list', tbl:'tbl', media:'media'};
+    const chip = tagChip(kindMap[block.kind] || 'p', block.tag.toUpperCase());
+    let meta = block.words + ' words';
+    if(block.itemCount !== null) meta += ' · ' + block.itemCount + ' items';
+    cell.innerHTML = chip + '<span class="txt">' + escapeHtml(block.text.slice(0,220)) + (block.text.length>220?'…':'') + '</span>' +
+      '<span class="meta">' + meta + '</span>';
+    return cell;
+  }
+
+  function renderOutline(enH, frH){
+    const wrap = document.createElement('div');
+    wrap.className = 'outline-grid';
+    const max = Math.max(enH.length, frH.length);
+    let enHtml = '<div class="outline-col en"><h3>English</h3>';
+    let frHtml = '<div class="outline-col fr"><h3>Français</h3>';
+    for(let i=0;i<max;i++){
+      const e = enH[i], f = frH[i];
+      const mismatch = !e || !f || e.level !== f.level;
+      enHtml += e ? '<div class="outline-item'+(mismatch?' mismatch':'')+'" style="--lvl:'+(e.level-1)+'"><span class="lv">H'+e.level+'</span>'+escapeHtml(e.text.slice(0,90))+'</div>' : '<div class="outline-item empty">—</div>';
+      frHtml += f ? '<div class="outline-item'+(mismatch?' mismatch':'')+'" style="--lvl:'+(f.level-1)+'"><span class="lv">H'+f.level+'</span>'+escapeHtml(f.text.slice(0,90))+'</div>' : '<div class="outline-item empty">—</div>';
+    }
+    enHtml += '</div>'; frHtml += '</div>';
+    wrap.innerHTML = enHtml + frHtml;
+    return wrap;
+  }
+
+  function renderLinksMedia(en, fr){
+    const wrap = document.createElement('div');
+    const enHrefs = new Set(en.links.map(l=>l.href));
+    const frHrefs = new Set(fr.links.map(l=>l.href));
+    const sameHrefCount = en.links.filter(l => frHrefs.has(l.href)).length;
+
+    const enSrcs = new Set(en.images.map(i=>i.src));
+    const frSrcs = new Set(fr.images.map(i=>i.src));
+    const sameSrcCount = en.images.filter(i => frSrcs.has(i.src)).length;
+    const noAltEn = en.images.filter(i=>!i.alt.trim()).length;
+    const noAltFr = fr.images.filter(i=>!i.alt.trim()).length;
+
+    wrap.innerHTML = ''
+      + '<table class="simple" style="margin-bottom:16px;">'
+      + '<tr><th>Metric</th><th>English</th><th>Français</th><th>Note</th></tr>'
+      + row3('Links found', en.links.length, fr.links.length)
+      + row3('Links with identical href on both pages', sameHrefCount, sameHrefCount, sameHrefCount>0 ? 'Same destination on both languages - confirm that is intended.' : '')
+      + row3('Images found', en.images.length, fr.images.length)
+      + row3('Images with identical src on both pages', sameSrcCount, sameSrcCount, '')
+      + row3('Images missing alt text', noAltEn, noAltFr, (noAltEn||noAltFr) ? 'Missing alt text found — flag for accessibility.' : '')
+      + '</table>';
+
+    return wrap;
+  }
+  function row3(label, a, b, note){
+    const bad = a !== b;
+    return '<tr><td>'+label+'</td><td class="mono">'+a+'</td><td class="mono">'+b+'</td><td>'+
+      (note ? '<span class="pill '+(bad?'bad':'ok')+'">'+escapeHtml(note)+'</span>' : (bad ? '<span class="pill bad">count differs</span>' : '<span class="pill ok">match</span>')) +
+      '</td></tr>';
+  }
+
+  function renderEmbedDiff(diff, enEmbeds, frEmbeds){
+    const wrap = document.createElement('div');
+    if(enEmbeds.length===0 && frEmbeds.length===0){
+      wrap.innerHTML = '<div class="empty-state">No scripts, iframes, or embeds found in the H1 → date-modified range on either page.</div>';
+      return wrap;
+    }
+    wrap.appendChild(diffBlock(diff));
+    return wrap;
+  }
+
+  function renderSkeletonDiff(diff){
+    const wrap = document.createElement('div');
+    if(diff.every(d=>d.t==='ctx')){
+      wrap.innerHTML = '<div class="empty-state"><b>Structure matches exactly</b>Every tag, id, class, href and src in the captured range lines up between languages.</div>';
+      return wrap;
+    }
+    wrap.appendChild(diffBlock(diff));
+    return wrap;
+  }
+
+  function diffBlock(diff){
+    const el = document.createElement('div');
+    el.className = 'diff-view';
+    let out = '';
+    diff.forEach(d => {
+      const sym = d.t==='add' ? '+' : d.t==='del' ? '−' : ' ';
+      out += '<div class="diff-line '+d.t+'"><span class="sym">'+sym+'</span><span class="txt">'+escapeHtml(d.line)+'</span></div>';
+    });
+    el.innerHTML = out;
+    return el;
+  }
+
+  // ---------------- Main flow ----------------
+  async function runCompare(){
+    const enUrl = enUrlInput.value.trim();
+    const frUrl = frUrlInput.value.trim();
+    if(!enUrl || !frUrl){ setStatus('Enter both the English and French URLs.'); return; }
+
+    compareBtn.disabled = true;
+    resultsEl.innerHTML = '';
+    try{
+      const enHtml = await getHtml(enUrl, 'en', enPasteZone);
+      const frHtml = await getHtml(frUrl, 'fr', frPasteZone);
+
+      setStatus('Parsing content…');
+      const en = extractRange(enHtml);
+      const fr = extractRange(frHtml);
+
+      if(en.error || fr.error){
+        resultsEl.innerHTML = '<div class="empty-state"><b>Could not extract content</b>' +
+          (en.error ? 'English: ' + en.error + ' ' : '') + (fr.error ? 'French: ' + fr.error : '') + '</div>';
+        setStatus('');
+        return;
+      }
+
+      enPasteZone.innerHTML = '';
+      frPasteZone.innerHTML = '';
+      setStatus('Compared ' + (new Date()).toLocaleTimeString() + ' · ' + en.blocks.length + ' EN blocks vs ' + fr.blocks.length + ' FR blocks.');
+      renderResults(en, fr);
+    }catch(err){
+      if(String(err.message||'').startsWith('FETCH_BLOCKED')){
+        setStatus('Direct fetch was blocked by the browser (CORS). Paste the HTML above, then click Compare again.');
+      } else {
+        setStatus('Something went wrong: ' + err.message);
+      }
+    }finally{
+      compareBtn.disabled = false;
+    }
+  }
+
+  compareBtn.addEventListener('click', runCompare);
+  [enUrlInput, frUrlInput].forEach(inp => inp.addEventListener('keydown', e => { if(e.key==='Enter') runCompare(); }));
+
+  resultsEl.innerHTML = '<div class="empty-state"><b>Nothing compared yet</b>Enter an English and French URL above and click "Compare pages" to run the audit.</div>';
+})();
+</script>
