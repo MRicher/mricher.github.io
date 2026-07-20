@@ -273,6 +273,7 @@
     <p class="eyebrow">Bilingual page parity</p>
     <h1>EN / FR Content Audit</h1>
     <p class="sub">Pulls everything from the &lt;h1&gt; down to the "date modified" line on each page, then checks that the structure, paragraphs, links, media, and embedded code line up between languages.</p>
+    <p class="foot-note">If a direct fetch is blocked, this falls back to the public proxy <code class="inline">api.allorigins.win</code> to retrieve the page server-side. That means the URLs you enter are sent to a third party - don't use this on private or internal pages.</p>
 
     <div class="field-row">
       <div class="field en">
@@ -310,8 +311,12 @@
   function setStatus(msg){ statusLine.textContent = msg; }
 
   // ---------------- Fetch with paste-fallback ----------------
+  const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
+
   async function getHtml(url, lang, zoneEl){
     if(pastedHtml[lang]) return pastedHtml[lang];
+
+    // 1) try a direct same-origin/CORS-enabled fetch first
     try{
       setStatus('Fetching ' + lang.toUpperCase() + ' page…');
       const res = await fetch(url, { mode:'cors' });
@@ -319,9 +324,20 @@
       const text = await res.text();
       if(!text || text.length < 20) throw new Error('empty response');
       return text;
-    }catch(err){
-      renderPasteFallback(zoneEl, lang, url);
-      throw new Error('FETCH_BLOCKED:' + lang);
+    }catch(directErr){
+      // 2) fall back to the allorigins.win proxy, which fetches server-side
+      try{
+        setStatus('Direct fetch blocked - retrying ' + lang.toUpperCase() + ' via proxy…');
+        const proxyUrl = CORS_PROXY + encodeURIComponent(url);
+        const res = await fetch(proxyUrl);
+        if(!res.ok) throw new Error('proxy HTTP ' + res.status);
+        const text = await res.text();
+        if(!text || text.length < 20) throw new Error('empty proxy response');
+        return text;
+      }catch(proxyErr){
+        renderPasteFallback(zoneEl, lang, url);
+        throw new Error('FETCH_BLOCKED:' + lang);
+      }
     }
   }
 
@@ -330,7 +346,7 @@
     const box = document.createElement('div');
     box.className = 'paste-fallback';
     box.innerHTML =
-      '<p><strong>Could not fetch the ' + (lang==='en'?'English':'French') + ' page directly</strong> — most sites block cross-origin requests from the browser. '
+      '<p><strong>Could not fetch the ' + (lang==='en'?'English':'French') + ' page</strong> — direct fetch and the allorigins.win proxy both failed (the site may block proxies too, or be down). '
       + 'Open <a class="src-link" href="'+escapeAttr(url)+'" target="_blank" rel="noopener">' + escapeHtml(url) + '</a>, view page source (Ctrl/Cmd+U), copy the full HTML, and paste it below.</p>'
       + '<textarea placeholder="Paste full HTML source here…" data-lang="'+lang+'"></textarea>'
       + '<button class="use-btn" data-lang="'+lang+'">Use pasted HTML</button>';
