@@ -87,30 +87,6 @@
         padding: 0 var(--spacing-md);
       }
 
-      .theme-toggle {
-        position: fixed;
-        top: var(--spacing-md);
-        right: var(--spacing-md);
-        width: 44px;
-        height: 44px;
-        background: var(--bg-primary);
-        border: 2px solid var(--border);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        color: var(--text-secondary);
-        transition: all 0.2s ease;
-        z-index: 1000;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-      }
-
-      .theme-toggle:hover {
-        border-color: var(--purple);
-        color: var(--purple);
-      }
-
       header {
         padding: var(--spacing-lg) 0;
         text-align: center;
@@ -126,13 +102,17 @@
 
       .header-bg-logo {
         position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 900px;
-        max-width: none;
-        height: auto;
-        transform: translate(-50%, -50%);
-        opacity: 0.06;
+        inset: 0;
+        background-color: var(--purple);
+        -webkit-mask-image: url("https://maruchinu.ca/tabatha/logo.png");
+        mask-image: url("https://maruchinu.ca/tabatha/logo.png");
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: bottom right;
+        mask-position: bottom right;
+        -webkit-mask-size: 50% 50%;
+        mask-size: 50% 50%;
+        opacity: 0.08;
         pointer-events: none;
         user-select: none;
         z-index: 0;
@@ -184,15 +164,6 @@
         font-size: 46px;
         font-weight: 700;
         color: var(--dark-purple);
-      }
-
-      h2.subtitle-heading {
-        font-family: "Oxygen", sans-serif;
-        font-size: 23px;
-        font-weight: 700;
-        color: var(--dark-grey);
-        margin-bottom: var(--spacing-sm);
-        letter-spacing: -0.02em;
       }
 
       .subtitle-body {
@@ -483,10 +454,6 @@
           font-size: 36px;
         }
 
-        h2.subtitle-heading {
-          font-size: 20px;
-        }
-
         h2 {
           font-size: 20px;
         }
@@ -503,11 +470,6 @@
         .contact-info {
           flex-direction: column;
           gap: var(--spacing-sm);
-        }
-
-        .theme-toggle {
-          top: var(--spacing-sm);
-          right: var(--spacing-sm);
         }
       }
 
@@ -652,16 +614,6 @@
         background: var(--lightest-grey);
       }
 
-      .carousel-slide-icon {
-        text-align: center;
-        margin-bottom: 0.75rem;
-      }
-
-      .carousel-slide-icon i {
-        font-size: 2rem;
-        color: var(--light-blue);
-      }
-
       .carousel-slide h3 {
         text-align: center;
         margin-bottom: 0.25rem;
@@ -732,12 +684,8 @@
     </style>
   </head>
   <body>
-    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
-      <i class="fas fa-sun"></i>
-    </button>
-
     <header>
-      <img src="https://maruchinu.ca/tabatha/logo.png" alt="" class="header-bg-logo" aria-hidden="true" />
+      <div class="header-bg-logo" aria-hidden="true"></div>
       <div class="container">
         <div class="logo-container">
           <img src="/tabatha/logo.png" alt="TabTalks Logo" />
@@ -999,9 +947,6 @@
         e.preventDefault();
         window.location.href = "mailto:" + email;
       });
-
-      const themeToggle = document.getElementById("themeToggle");
-      themeToggle.style.display = "none"; // Hide to maintain brand consistency
 
       const observerOptions = {
         threshold: 0.1,
