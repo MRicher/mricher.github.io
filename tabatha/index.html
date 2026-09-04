@@ -284,7 +284,7 @@
 
       .services-grid {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
         gap: var(--spacing-md);
         margin-top: var(--spacing-lg);
       }
@@ -389,15 +389,31 @@
         line-height: 1.8;
       }
 
+      .about-content {
+        overflow: hidden;
+      }
+
       .about-photo {
-        display: block;
-        width: 160px;
-        height: 160px;
+        float: left;
+        width: 220px;
+        height: 260px;
         object-fit: cover;
-        border-radius: 50%;
-        margin: 0 auto var(--spacing-md);
-        border: 3px solid var(--white);
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+        border-radius: 4px;
+        margin: 0.35rem var(--spacing-md) var(--spacing-sm) 0;
+        border: 6px solid var(--white);
+        outline: 2px solid var(--purple);
+        outline-offset: -2px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      }
+
+      @media (max-width: 600px) {
+        .about-photo {
+          float: none;
+          display: block;
+          width: 180px;
+          height: 210px;
+          margin: 0 auto var(--spacing-md);
+        }
       }
 
       .about-content h3 {
@@ -607,7 +623,7 @@
 
       .carousel-slide-img {
         width: 100%;
-        height: 180px;
+        height: 320px;
         object-fit: cover;
         border-radius: 6px;
         margin-bottom: var(--spacing-sm);
@@ -774,7 +790,8 @@
               <button class="games-btn" id="openGamesLightbox" aria-haspopup="dialog">Learn more about custom games</button>
             </div>
 
-            <!--<div class="service-card">
+            <!-- Third column commented out for now — Learning & Capacity Labs. Grid set to 2 columns above while this is disabled.
+            <div class="service-card">
               <i class="fas fa-flask"></i>
               <h3>Learning &amp; Capacity Labs</h3>
               <h4>Learning doesn't have to be boring. Let's make it unforgettable.</h4>
@@ -792,17 +809,19 @@
               <blockquote class="card-quote">
                 Knowledge sticks when it comes with a little mischief, a lot of meaning and a sprinkling of fun.
               </blockquote>
-            </div>-->
+            </div>
+            -->
           </div>
         </div>
       </section>
 
       <section id="about" class="about-section">
         <div class="container">
-          <h2>About Tabatha</h2>
+          <h2>About TabTalks</h2>
           <div class="about-content">
             <img src="/tabatha/tabatha.jpg" alt="Tabatha Soltay" class="about-photo" />
-            <h3>Chief Catalyst of Mischief, Connections &amp; Possibilities</h3>
+            <h3>Tabatha</h3>
+            <h4>Chief Catalyst of Mischief, Connections &amp; Possibilities</h4>
             <p>
               The status quo shouldn't be our default. I help people, teams, and organizations shake off the "supposed to" and step into something far
               more powerful: curiosity, courage, and a custom-built way of working, living, and connecting.
