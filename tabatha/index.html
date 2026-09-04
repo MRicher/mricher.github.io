@@ -102,17 +102,14 @@
 
       .header-bg-logo {
         position: absolute;
-        inset: 0;
-        background-color: var(--purple);
-        -webkit-mask-image: url("https://maruchinu.ca/tabatha/logo.png");
-        mask-image: url("https://maruchinu.ca/tabatha/logo.png");
-        -webkit-mask-repeat: no-repeat;
-        mask-repeat: no-repeat;
-        -webkit-mask-position: bottom right;
-        mask-position: bottom right;
-        -webkit-mask-size: 50% 50%;
-        mask-size: 50% 50%;
-        opacity: 0.08;
+        bottom: 0;
+        right: 0;
+        width: 50%;
+        height: 50%;
+        object-fit: contain;
+        object-position: bottom right;
+        filter: brightness(0) saturate(100%) invert(6%) sepia(100%) saturate(2000%) hue-rotate(273deg) brightness(200%) contrast(99%);
+        opacity: 0.1;
         pointer-events: none;
         user-select: none;
         z-index: 0;
@@ -685,7 +682,7 @@
   </head>
   <body>
     <header>
-      <div class="header-bg-logo" aria-hidden="true"></div>
+      <img src="https://maruchinu.ca/tabatha/logo.png" alt="" class="header-bg-logo" aria-hidden="true" />
       <div class="container">
         <div class="logo-container">
           <img src="/tabatha/logo.png" alt="TabTalks Logo" />
