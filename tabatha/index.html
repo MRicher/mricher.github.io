@@ -118,16 +118,8 @@
         height: 100%;
         object-fit: contain;
         object-position: bottom right;
-        filter: grayscale(1) contrast(1.1);
+        filter: brightness(0) saturate(100%) invert(6%) sepia(100%) saturate(2000%) hue-rotate(273deg) brightness(200%) contrast(99%);
         display: block;
-      }
-
-      .header-bg-logo::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background-color: var(--purple);
-        mix-blend-mode: color;
       }
 
       header .container {
