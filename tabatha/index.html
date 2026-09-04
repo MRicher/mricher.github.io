@@ -120,6 +120,27 @@
         justify-content: center;
         align-items: center;
         background: linear-gradient(to bottom, var(--bg-primary) 0%, var(--bg-accent) 100%);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .header-bg-logo {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 900px;
+        max-width: none;
+        height: auto;
+        transform: translate(-50%, -50%);
+        opacity: 0.06;
+        pointer-events: none;
+        user-select: none;
+        z-index: 0;
+      }
+
+      header .container {
+        position: relative;
+        z-index: 1;
       }
 
       .logo-container {
@@ -539,7 +560,7 @@
         background: var(--white);
         border-radius: 8px;
         padding: var(--spacing-md) var(--spacing-md) var(--spacing-md);
-        max-width: 600px;
+        max-width: 720px;
         width: 100%;
         max-height: 90vh;
         overflow-y: auto;
@@ -716,6 +737,7 @@
     </button>
 
     <header>
+      <img src="https://maruchinu.ca/tabatha/logo.png" alt="" class="header-bg-logo" aria-hidden="true" />
       <div class="container">
         <div class="logo-container">
           <img src="/tabatha/logo.png" alt="TabTalks Logo" />
@@ -817,10 +839,9 @@
 
       <section id="about" class="about-section">
         <div class="container">
-          <h2>About TabTalks</h2>
+          <h2>About Tabatha</h2>
           <div class="about-content">
             <img src="/tabatha/tabatha.jpg" alt="Tabatha Soltay" class="about-photo" />
-            <h3>Tabatha</h3>
             <h4>Chief Catalyst of Mischief, Connections &amp; Possibilities</h4>
             <p>
               The status quo shouldn't be our default. I help people, teams, and organizations shake off the "supposed to" and step into something far
