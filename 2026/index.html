@@ -68,6 +68,13 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-vi
     <div id="adminDyn"></div>
     <details class="card" id="addForm">
       <summary id="addSum"></summary>
+      <div class="card" style="display:grid;gap:8px;margin-top:10px">
+        <b>JSON</b>
+        <input type="file" id="jfile" accept=".json,application/json" aria-label="JSON file">
+        <label class="row"><input type="checkbox" id="jreplace" checked style="width:auto"> Replace existing questions / Remplacer les questions existantes</label>
+        <div class="row"><button class="p" id="jload">Load questions / Charger</button><button id="jdl">Download current / Télécharger</button><button id="jtpl">Template / Modèle</button></div>
+        <div id="jmsg" role="status" class="muted"></div>
+      </div>
       <div id="editor" style="margin-top:10px"></div>
     </details>
   </div>
@@ -185,6 +192,37 @@ $("adminDyn").addEventListener("click",e=>{
   else return;
   save(n);
 });
+const TPL=[{question:{en:"Name a popular pet",fr:"Nommez un animal de compagnie populaire"},answers:[{en:"Dog",fr:"Chien",points:40},{en:"Cat",fr:"Chat",points:33},{en:"Fish",fr:"Poisson",points:12}]}];
+function normQs(data){
+  const arr=Array.isArray(data)?data:data&&data.questions;
+  if(!Array.isArray(arr)||!arr.length)throw new Error("No questions found / Aucune question trouvée");
+  if(arr.length>200)throw new Error("Max 200 questions / 200 questions maximum");
+  return arr.map((it,i)=>{
+    const q=(it&&(it.question||it.q))||{},as=it&&(it.answers||it.a);
+    const en=String(q.en||"").trim().slice(0,200),fr=String(q.fr||"").trim().slice(0,200);
+    if(!en||!fr||!Array.isArray(as)||!as.length||as.length>8)throw new Error("Question "+(i+1)+": need en, fr and 1-8 answers / il faut en, fr et 1 à 8 réponses");
+    return {q:{en,fr},a:as.map((a,j)=>{
+      const pts=Math.round(Number(a&&(a.points!==undefined?a.points:a.pts)));
+      const ae=String(a&&a.en||"").trim().slice(0,100),af=String(a&&a.fr||"").trim().slice(0,100);
+      if(!ae||!af||!(pts>=0))throw new Error("Question "+(i+1)+", answer/réponse "+(j+1)+": need en, fr, points / il faut en, fr, points");
+      return {en:ae,fr:af,pts};})};
+  });
+}
+function dl(name,obj){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(obj,null,2)],{type:"application/json"}));a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);}
+$("jtpl").onclick=()=>dl("questions-template.json",TPL);
+$("jdl").onclick=()=>{if(S)dl("questions.json",S.qs.map(q=>({question:q.q,answers:q.a.map(a=>({en:a.en,fr:a.fr,points:a.pts}))})));};
+$("jload").onclick=async()=>{
+  const m=$("jmsg"),f=$("jfile").files[0];
+  if(!S||!canEdit)return;
+  if(!f){m.textContent="Choose a .json file first / Choisissez d’abord un fichier .json";return;}
+  try{
+    const qs=normQs(JSON.parse(await f.text()));
+    const n=clone();
+    if($("jreplace").checked){n.qs=qs;newRound(n,0);}else n.qs=n.qs.concat(qs);
+    armed=-1;save(n);renderEditor();
+    m.textContent="Loaded / Chargé: "+qs.length+" question(s)";
+  }catch(e){m.textContent=(e instanceof SyntaxError?"Invalid JSON file / Fichier JSON invalide":e.message);}
+};
 let armed=-1;
 function renderEditor(){
   const el=$("editor");if(!S){el.innerHTML="";return;}

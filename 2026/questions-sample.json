@@ -1,0 +1,68 @@
+[
+  {
+    "question": {
+      "en": "Name something you find in a kitchen",
+      "fr": "Nommez quelque chose qu’on trouve dans une cuisine"
+    },
+    "answers": [
+      {
+        "en": "Fridge",
+        "fr": "Réfrigérateur",
+        "points": 35
+      },
+      {
+        "en": "Stove",
+        "fr": "Cuisinière",
+        "points": 25
+      },
+      {
+        "en": "Sink",
+        "fr": "Évier",
+        "points": 20
+      },
+      {
+        "en": "Table",
+        "fr": "Table",
+        "points": 12
+      },
+      {
+        "en": "Microwave",
+        "fr": "Micro-ondes",
+        "points": 8
+      }
+    ]
+  },
+  {
+    "question": {
+      "en": "Name a winter activity",
+      "fr": "Nommez une activité d’hiver"
+    },
+    "answers": [
+      {
+        "en": "Skiing",
+        "fr": "Ski",
+        "points": 34
+      },
+      {
+        "en": "Skating",
+        "fr": "Patinage",
+        "points": 28
+      },
+      {
+        "en": "Snowman",
+        "fr": "Bonhomme de neige",
+        "points": 18
+      },
+      {
+        "en": "Sledding",
+        "fr": "Glissade",
+        "points": 12
+      },
+      {
+        "en": "Hockey",
+        "fr": "Hockey",
+        "points": 8
+      }
+    ]
+  }
+]
