@@ -66,7 +66,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-vi
     </div>
     <div class="row" style="margin-bottom:12px"><button id="logout" hidden>Sign out / Déconnexion</button></div>
     <div id="adminDyn"></div>
-    <details class="card" id="addForm">
+    <details class="card" id="addForm" open>
       <summary id="addSum"></summary>
       <div class="card" style="display:grid;gap:8px;margin-top:10px">
         <b>JSON</b>
@@ -75,7 +75,6 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-vi
         <div class="row"><button class="p" id="jload">Load questions / Charger</button><button id="jdl">Download current / Télécharger</button><button id="jtpl">Template / Modèle</button></div>
         <div id="jmsg" role="status" class="muted"></div>
       </div>
-      <div id="editor" style="margin-top:10px"></div>
     </details>
   </div>
 </div>
@@ -85,22 +84,17 @@ en:{title:"Family Feud",home:"Home",hello:"Choose your screen",adminBtn:"Host (a
 wait:"Waiting for the host to start the game…",noacc:"Host sign-in required to use the admin screen.",
 start:"Create the game",round:"Round",of:"of",team:"Team",bank:"Bank",mult:"Multiplier",strike:"Strike ✖",reveal:"Reveal",hide:"Hide",
 award:"Give bank to",next:"Next question",prev:"Previous",resetScores:"Reset scores",resetRound:"Reset round",control:"In control",
-showQ:"Show question",hideQ:"Hide question",add:"Edit questions and answers",addQ:"Add a question",addAns:"Add an answer",del:"Delete",sure:"Sure? Click again",
+showQ:"Show question",hideQ:"Hide question",noq:"No questions loaded yet.",upl:"Upload a JSON file below.",add:"Questions (JSON upload)",addQ:"Add a question",addAns:"Add an answer",del:"Delete",sure:"Sure? Click again",
 conn:"Connecting…",nodb:"Live sync is unavailable. Check the Firebase settings at the top of the script.",
 hint:"Share this page's link with players: they just open “Players screen”.",wins:"Final scores"},
 fr:{title:"Querelle de famille",home:"Accueil",hello:"Choisissez votre écran",adminBtn:"Animateur (admin)",playerBtn:"Écran des joueurs",
 wait:"En attente de l’animateur…",noacc:"Connexion de l’animateur requise pour l’écran admin.",
 start:"Créer la partie",round:"Manche",of:"sur",team:"Équipe",bank:"Cagnotte",mult:"Multiplicateur",strike:"Erreur ✖",reveal:"Révéler",hide:"Cacher",
 award:"Donner la cagnotte à",next:"Question suivante",prev:"Précédente",resetScores:"Remettre les scores à zéro",resetRound:"Réinitialiser la manche",control:"Contrôle",
-showQ:"Afficher la question",hideQ:"Cacher la question",add:"Modifier les questions et réponses",addQ:"Ajouter une question",addAns:"Ajouter une réponse",del:"Supprimer",sure:"Sûr ? Cliquez encore",
+showQ:"Afficher la question",hideQ:"Cacher la question",noq:"Aucune question chargée.",upl:"Téléversez un fichier JSON ci-dessous.",add:"Questions (téléversement JSON)",addQ:"Ajouter une question",addAns:"Ajouter une réponse",del:"Supprimer",sure:"Sûr ? Cliquez encore",
 conn:"Connexion…",nodb:"La synchronisation en direct n’est pas disponible. Vérifiez les paramètres Firebase au début du script.",
 hint:"Partagez le lien de cette page : les joueurs ouvrent « Écran des joueurs ».",wins:"Scores"}};
-const DEF=[
-{q:{en:"Name something you find in a kitchen",fr:"Nommez quelque chose qu’on trouve dans une cuisine"},a:[["Fridge","Réfrigérateur",35],["Stove","Cuisinière",25],["Sink","Évier",20],["Table","Table",12],["Microwave","Micro-ondes",8]]},
-{q:{en:"Name a popular pet",fr:"Nommez un animal de compagnie populaire"},a:[["Dog","Chien",40],["Cat","Chat",33],["Fish","Poisson",12],["Bird","Oiseau",8],["Rabbit","Lapin",7]]},
-{q:{en:"Something you bring on vacation",fr:"Quelque chose qu’on apporte en vacances"},a:[["Sunscreen","Crème solaire",30],["Swimsuit","Maillot de bain",25],["Camera","Appareil photo",18],["Sunglasses","Lunettes de soleil",15],["Book","Livre",12]]},
-{q:{en:"Name a winter activity",fr:"Nommez une activité d’hiver"},a:[["Skiing","Ski",34],["Skating","Patinage",28],["Snowman","Bonhomme de neige",18],["Sledding","Glissade",12],["Hockey","Hockey",8]]}];
-const newState=()=>({qs:DEF.map(d=>({q:d.q,a:d.a.map(x=>({en:x[0],fr:x[1],pts:x[2]}))})),qi:0,rev:[],strikes:0,sk:0,bank:0,mult:1,ctl:"",A:{n:"",s:0},B:{n:"",s:0}});
+const newState=()=>({qs:[],qi:0,rev:[],strikes:0,sk:0,bank:0,mult:1,ctl:"",A:{n:"",s:0},B:{n:"",s:0}});
 let lang=(navigator.language||"en").toLowerCase().startsWith("fr")?"fr":"en";
 let S=null,ref=null,canEdit=false,status="conn",lastSk=0;
 const $=id=>document.getElementById(id);
@@ -124,6 +118,7 @@ function shell(){
 function msg(k){return `<div class="card muted">${t(k)}</div>`;}
 
 function boardHTML(){
+  if(!S.qs.length)return `<div class="board"><div class="q">${t("noq")}</div></div>`;
   const c=cur();
   const tiles=c.a.map((a,i)=>{const r=S.rev[i];
     return `<div class="tile ${r?"":"hid"}"><div class="n">${r?bi(a.en,a.fr):(i+1)}</div><div class="pt">${r?a.pts*1:""}</div></div>`}).join("");
@@ -145,6 +140,7 @@ function renderAdmin(){
   if(status==="nodb"){el.innerHTML=msg("nodb");return;}
   if(!canEdit){el.innerHTML=msg("noacc");return;}
   if(!S){el.innerHTML=msg("conn");return;}
+  if(!S.qs.length){el.innerHTML=`<div class="card muted">${t("noq")}<br>${t("upl")}</div>`;return;}
   const c=cur();
   const ans=c.a.map((a,i)=>`<div class="ans"><div><b>${i+1}.</b> ${esc(a.en)} <span class="muted">/ ${esc(a.fr)}</span> · <b>${a.pts}</b></div>
    <button data-rv="${i}" class="${S.rev[i]?"on":"p"}">${S.rev[i]?t("hide"):t("reveal")}</button></div>`).join("");
@@ -219,53 +215,11 @@ $("jload").onclick=async()=>{
     const qs=normQs(JSON.parse(await f.text()));
     const n=clone();
     if($("jreplace").checked){n.qs=qs;newRound(n,0);}else n.qs=n.qs.concat(qs);
-    armed=-1;save(n);renderEditor();
+    save(n);
     m.textContent="Loaded / Chargé: "+qs.length+" question(s)";
   }catch(e){m.textContent=(e instanceof SyntaxError?"Invalid JSON file / Fichier JSON invalide":e.message);}
 };
-let armed=-1;
-function renderEditor(){
-  const el=$("editor");if(!S){el.innerHTML="";return;}
-  el.innerHTML=S.qs.map((q,qi)=>`<div class="card" data-q="${qi}">
-   <div class="row"><b>#${qi+1}</b>
-    <button data-e="up" aria-label="Up" ${qi===0?"disabled":""}>▲</button><button data-e="dn" aria-label="Down" ${qi===S.qs.length-1?"disabled":""}>▼</button>
-    <button class="d" data-e="delq" ${S.qs.length<=1?"disabled":""}>${armed===qi?t("sure"):t("del")}</button></div>
-   <input data-f="qen" value="${esc(q.q.en)}" placeholder="Question (EN)" aria-label="Question (EN)" style="margin-top:8px">
-   <input data-f="qfr" value="${esc(q.q.fr)}" placeholder="Question (FR)" aria-label="Question (FR)" style="margin-top:6px">
-   ${q.a.map((a,ai)=>`<div class="row" data-a="${ai}" style="margin-top:6px">
-     <input data-f="en" value="${esc(a.en)}" placeholder="EN" aria-label="Answer ${ai+1} (EN)" style="flex:2;min-width:110px;width:auto">
-     <input data-f="fr" value="${esc(a.fr)}" placeholder="FR" aria-label="Answer ${ai+1} (FR)" style="flex:2;min-width:110px;width:auto">
-     <input data-f="pts" type="number" min="0" value="${a.pts}" aria-label="Points ${ai+1}" style="width:80px">
-     <button class="d" data-e="dela" aria-label="${t("del")}" ${q.a.length<=1?"disabled":""}>✖</button></div>`).join("")}
-   <button data-e="adda" style="margin-top:8px" ${q.a.length>=8?"disabled":""}>+ ${t("addAns")}</button></div>`).join("")
-   +`<button class="p" data-e="addq">+ ${t("addQ")}</button>`;
-}
-$("addForm").addEventListener("toggle",()=>{if($("addForm").open){armed=-1;renderEditor();}});
-$("editor").addEventListener("change",e=>{
-  const f=e.target.dataset.f;if(!f||!S||!canEdit)return;
-  const n=clone(),q=n.qs[+e.target.closest("[data-q]").dataset.q];
-  if(f==="qen")q.q.en=e.target.value.trim();
-  else if(f==="qfr")q.q.fr=e.target.value.trim();
-  else{const a=q.a[+e.target.closest("[data-a]").dataset.a];
-    if(f==="pts"){const v=Math.max(0,Math.round(+e.target.value||0));a.pts=v;e.target.value=v;}else a[f]=e.target.value.trim();}
-  save(n);
-});
-$("editor").addEventListener("click",e=>{
-  const b=e.target.closest("button");if(!b||!S||!canEdit)return;
-  const act=b.dataset.e,qel=b.closest("[data-q]"),qi=qel?+qel.dataset.q:-1,n=clone(),was=n.qi,curQ=n.qs[n.qi];
-  if(act==="delq"&&armed!==qi){armed=qi;renderEditor();return;}
-  armed=-1;
-  if(act==="addq")n.qs.push({q:{en:"",fr:""},a:[{en:"",fr:"",pts:10}]});
-  else if(act==="adda"){if(n.qs[qi].a.length>=8)return;n.qs[qi].a.push({en:"",fr:"",pts:5});}
-  else if(act==="dela"){const q=n.qs[qi];if(q.a.length<=1)return;const ai=+b.closest("[data-a]").dataset.a;q.a.splice(ai,1);if(q===curQ)n.rev.splice(ai,1);}
-  else if(act==="up"&&qi>0){const x=n.qs.splice(qi,1)[0];n.qs.splice(qi-1,0,x);}
-  else if(act==="dn"&&qi<n.qs.length-1){const x=n.qs.splice(qi,1)[0];n.qs.splice(qi+1,0,x);}
-  else if(act==="delq"){if(n.qs.length<=1)return;n.qs.splice(qi,1);}
-  else return;
-  const ni=n.qs.indexOf(curQ);
-  if(ni>=0)n.qi=ni;else newRound(n,Math.min(was,n.qs.length-1));
-  save(n);renderEditor();
-});
+
 addEventListener("hashchange",render);
 
 function applySnap(snap){

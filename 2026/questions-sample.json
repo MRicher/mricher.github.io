@@ -1,67 +1,193 @@
 [
   {
     "question": {
-      "en": "Name something you find in a kitchen",
-      "fr": "Nommez quelque chose qu’on trouve dans une cuisine"
+      "en": "Name a popular Canadian musician or music artist",
+      "fr": "Nommez un musicien ou un artiste canadien populaire"
     },
     "answers": [
       {
-        "en": "Fridge",
-        "fr": "Réfrigérateur",
-        "points": 35
+        "en": "Drake",
+        "fr": "Drake",
+        "points": 30
       },
       {
-        "en": "Stove",
-        "fr": "Cuisinière",
+        "en": "The Weeknd",
+        "fr": "The Weeknd",
         "points": 25
       },
       {
-        "en": "Sink",
-        "fr": "Évier",
-        "points": 20
+        "en": "Justin Bieber",
+        "fr": "Justin Bieber",
+        "points": 15
       },
       {
-        "en": "Table",
-        "fr": "Table",
+        "en": "Tate McRae",
+        "fr": "Tate McRae",
         "points": 12
       },
       {
-        "en": "Microwave",
-        "fr": "Micro-ondes",
+        "en": "Céline Dion",
+        "fr": "Céline Dion",
         "points": 8
+      },
+      {
+        "en": "Shawn Mendes",
+        "fr": "Shawn Mendes",
+        "points": 5
+      },
+      {
+        "en": "Michael Bublé",
+        "fr": "Michael Bublé",
+        "points": 3
+      },
+      {
+        "en": "Nickelback",
+        "fr": "Nickelback",
+        "points": 2
       }
     ]
   },
   {
     "question": {
-      "en": "Name a winter activity",
-      "fr": "Nommez une activité d’hiver"
+      "en": "Name a Canadian's favourite type of sandwich",
+      "fr": "Nommez un type de sandwich préféré des Canadiens"
     },
     "answers": [
       {
-        "en": "Skiing",
-        "fr": "Ski",
-        "points": 34
+        "en": "Chicken sandwich",
+        "fr": "Sandwich au poulet",
+        "points": 30
       },
       {
-        "en": "Skating",
-        "fr": "Patinage",
-        "points": 28
+        "en": "Grilled cheese",
+        "fr": "Sandwich au fromage fondu",
+        "points": 22
       },
       {
-        "en": "Snowman",
-        "fr": "Bonhomme de neige",
-        "points": 18
+        "en": "Lobster roll",
+        "fr": "Guédille au homard",
+        "points": 15
       },
       {
-        "en": "Sledding",
-        "fr": "Glissade",
+        "en": "Smoked salmon sandwich",
+        "fr": "Sandwich au saumon fumé",
         "points": 12
       },
       {
-        "en": "Hockey",
-        "fr": "Hockey",
+        "en": "Peameal bacon sandwich",
+        "fr": "Sandwich au bacon de dos",
+        "points": 9
+      },
+      {
+        "en": "Beef bologna sandwich",
+        "fr": "Sandwich à la mortadelle de bœuf",
+        "points": 6
+      },
+      {
+        "en": "Halifax donair",
+        "fr": "Donair d'Halifax",
+        "points": 4
+      },
+      {
+        "en": "Kubie burger",
+        "fr": "Burger kubie",
+        "points": 2
+      }
+    ]
+  },
+  {
+    "question": {
+      "en": "Name a popular car brand in Canada",
+      "fr": "Nommez une marque de voitures populaire au Canada"
+    },
+    "answers": [
+      {
+        "en": "Ford",
+        "fr": "Ford",
+        "points": 30
+      },
+      {
+        "en": "Toyota",
+        "fr": "Toyota",
+        "points": 25
+      },
+      {
+        "en": "Chevrolet",
+        "fr": "Chevrolet",
+        "points": 15
+      },
+      {
+        "en": "Honda",
+        "fr": "Honda",
+        "points": 10
+      },
+      {
+        "en": "Hyundai",
+        "fr": "Hyundai",
         "points": 8
+      },
+      {
+        "en": "Kia",
+        "fr": "Kia",
+        "points": 5
+      },
+      {
+        "en": "Nissan",
+        "fr": "Nissan",
+        "points": 4
+      },
+      {
+        "en": "Mazda",
+        "fr": "Mazda",
+        "points": 3
+      }
+    ]
+  },
+  {
+    "question": {
+      "en": "Name one of Canada's most popular dog breeds",
+      "fr": "Nommez l'une des races de chiens les plus populaires au Canada"
+    },
+    "answers": [
+      {
+        "en": "Labrador Retriever",
+        "fr": "Labrador retriever",
+        "points": 30
+      },
+      {
+        "en": "Golden Retriever",
+        "fr": "Golden retriever",
+        "points": 22
+      },
+      {
+        "en": "German Shepherd",
+        "fr": "Berger allemand",
+        "points": 15
+      },
+      {
+        "en": "French Bulldog",
+        "fr": "Bouledogue français",
+        "points": 12
+      },
+      {
+        "en": "Poodle",
+        "fr": "Caniche",
+        "points": 9
+      },
+      {
+        "en": "Australian Shepherd",
+        "fr": "Berger australien",
+        "points": 6
+      },
+      {
+        "en": "Havanese",
+        "fr": "Bichon havanais",
+        "points": 4
+      },
+      {
+        "en": "Bernese Mountain Dog",
+        "fr": "Bouvier bernois",
+        "points": 2
       }
     ]
   }
