@@ -2,39 +2,48 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>News list to Outlook</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>10-4 Studio</title>
 <style>
   body { font-family: Calibri, Arial, sans-serif; margin: 2rem; max-width: 960px; }
   h2 { margin-top: 1.5rem; }
-  table.editor { width: 100%; border-collapse: collapse; }
-  .editor th, .editor td { padding: 4px; text-align: left; }
-  .editor input { padding: .35rem; width: 100%; box-sizing: border-box; }
-  .editor input.w { width: 70px; }
   button { padding: .4rem .8rem; cursor: pointer; }
   .bar { margin: .75rem 0; display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
   .bar input { padding: .4rem; }
+  .hint { color: #595959; font-size: .9rem; margin: .25rem 0; }
   #content { border: 1px solid #ccc; padding: 1rem; border-radius: 6px; }
+  #content img { max-width: 100%; height: auto; }
+
+  fieldset.item { border: 1px solid #ccc; border-radius: 6px; margin: 0 0 1rem 0; padding: .75rem 1rem 1rem; }
+  fieldset.item legend { font-weight: bold; padding: 0 .4rem; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem 1rem; }
+  .grid label { display: flex; flex-direction: column; font-size: .9rem; gap: 2px; }
+  .grid input, .grid textarea { padding: .4rem; font: inherit; box-sizing: border-box; width: 100%; }
+  .grid textarea { min-height: 4.5rem; resize: vertical; }
+  .meta { display: flex; gap: 1rem; align-items: flex-end; margin-top: .75rem; flex-wrap: wrap; }
+  .meta label { display: flex; flex-direction: column; font-size: .9rem; gap: 2px; }
+  .meta input { padding: .4rem; font: inherit; }
+  .meta input.w { width: 80px; }
+  @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
 
-<h1>News list</h1>
+<h1>10-4 Studio</h1>
 <div class="bar">
   <label>Banner image: <input type="file" id="bannerFile" accept="image/png,image/jpeg,image/gif"></label>
   <label>Banner alt text: <input id="bannerAlt" size="40" placeholder="Describe the banner (leave empty if decorative)"></label>
   <button id="bannerRemove">Remove banner</button>
 </div>
-<p>Items are ordered by <b>weight</b> (higher = first), then by newest date.</p>
+<p class="hint">Banner size: 1200 × 300 px, JPEG at 80% quality, 72 PPI.</p>
+<p>Items are ordered by <b>weight</b> (higher = first), then by newest date. Each item has English and French text, with one shared date and weight.</p>
 
-<table class="editor">
-  <thead><tr><th>Headline</th><th>URL</th><th>Date</th><th>Weight</th><th></th></tr></thead>
-  <tbody id="rows"></tbody>
-</table>
+<div id="items"></div>
+<div class="bar"><button id="addBtn">+ Add item</button></div>
 
 <div class="bar">
-  <button id="addBtn">+ Add item</button>
-  <input id="subject" aria-label="Subject" placeholder="Subject" value="News digest">
-  <input id="lang" aria-label="Language code" size="5" value="en" title="Language code, e.g. en, fr">
+  <input id="subject" aria-label="Subject" placeholder="Subject" value="10-4 Newsletter">
+  <input id="lang" aria-label="Language code" size="5" value="en" title="Language code for the English section, e.g. en">
   <button id="saveBtn">Save for Outlook (.eml → .oft)</button>
 </div>
 
@@ -42,93 +51,175 @@
 <div id="content"></div>
 
 <script>
-const KEY = "newsItems";
+const BANNER_W = 1200, BANNER_H = 300, BANNER_PPI = 72, BANNER_QUALITY = 0.8;
+const KEY = "newsItemsV2";
+const today = () => new Date().toISOString().slice(0,10);
+const blank = () => ({ headlineEn: "", headlineFr: "", urlEn: "", urlFr: "",
+  summaryEn: "", summaryFr: "", date: today(), weight: 1 });
+
 let items = [];
 try { items = JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) {}
-if (!items.length) items = [
-  { headline: "Example headline", url: "https://example.com", date: new Date().toISOString().slice(0,10), weight: 5 }
-];
+if (!items.length) {
+  try {
+    const old = JSON.parse(localStorage.getItem("newsItems") || "[]");
+    items = old.map(o => Object.assign(blank(), {
+      headlineEn: o.headline || "", urlEn: o.url || "", date: o.date || today(), weight: o.weight || 1 }));
+  } catch (e) {}
+}
+if (!items.length) items = [Object.assign(blank(), {
+  headlineEn: "Example headline", headlineFr: "Exemple de titre",
+  urlEn: "https://example.com", urlFr: "https://example.com",
+  summaryEn: "One or two sentences that summarize the story.",
+  summaryFr: "Une ou deux phrases qui résument l’article.", weight: 5 })];
 
 const $ = id => document.getElementById(id);
-const esc = s => String(s).replace(/[&<>"']/g, c =>
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c =>
   ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
 const safeUrl = u => /^https?:\/\//i.test(u) ? u : "https://" + u;
 
 function persist() { try { localStorage.setItem(KEY, JSON.stringify(items)); } catch (e) {} }
 
-function sorted() {
-  return [...items].sort((a, b) =>
+function sorted(arr) {
+  return [...arr].sort((a, b) =>
     (b.weight - a.weight) || String(b.date).localeCompare(String(a.date)));
 }
 
+const FIELD_DEFS = [
+  ["headlineEn", "Headline (English)", "input"],
+  ["headlineFr", "Titre (français)", "input"],
+  ["urlEn", "URL (English)", "input"],
+  ["urlFr", "URL (français)", "input"],
+  ["summaryEn", "Summary (English)", "textarea"],
+  ["summaryFr", "Résumé (français)", "textarea"]
+];
+
 function renderEditor() {
-  const tbody = $("rows");
-  tbody.innerHTML = "";
+  const host = $("items");
+  host.innerHTML = "";
   items.forEach((it, i) => {
-    const tr = document.createElement("tr");
-    tr.innerHTML =
-      `<td><input data-f="headline" value="${esc(it.headline)}"></td>
-       <td><input data-f="url" value="${esc(it.url)}"></td>
-       <td><input data-f="date" type="date" value="${esc(it.date)}"></td>
-       <td><input data-f="weight" class="w" type="number" value="${esc(it.weight)}"></td>
-       <td><button data-del>Delete</button></td>`;
-    tr.querySelectorAll("input").forEach(inp =>
-      inp.setAttribute("aria-label", `${inp.dataset.f} of item ${i + 1}`));
-    tr.querySelector("[data-del]").setAttribute("aria-label", `Delete item ${i + 1}`);
-    tr.querySelectorAll("input").forEach(inp => inp.addEventListener("input", () => {
-      const f = inp.dataset.f;
-      items[i][f] = f === "weight" ? Number(inp.value) || 0 : inp.value;
-      persist(); renderPreview();
-    }));
-    // Re-order the editor rows once a weight/date edit is committed (on blur/Enter)
-    tr.querySelectorAll('input[data-f="weight"], input[data-f="date"]').forEach(inp =>
-      inp.addEventListener("change", () => {
-        items = sorted(); persist(); renderEditor(); renderPreview();
-      }));
-    tr.querySelector("[data-del]").addEventListener("click", () => {
+    const fs = document.createElement("fieldset");
+    fs.className = "item";
+    const fields = FIELD_DEFS.map(([f, label, tag]) =>
+      tag === "textarea"
+        ? `<label>${label}<textarea data-f="${f}">${esc(it[f])}</textarea></label>`
+        : `<label>${label}<input data-f="${f}" value="${esc(it[f])}"></label>`).join("");
+    fs.innerHTML =
+      `<legend>Item ${i + 1}</legend>
+       <div class="grid">${fields}</div>
+       <p class="hint">Summary allows: &lt;strong&gt;, &lt;em&gt;, &lt;ul&gt;, &lt;ol&gt;, &lt;li&gt; and &lt;a href="https://..."&gt;. Anything else is removed.</p>
+       <div class="meta">
+         <label>Date<input data-f="date" type="date" value="${esc(it.date)}"></label>
+         <label>Weight<input data-f="weight" class="w" type="number" value="${esc(it.weight)}"></label>
+         <button data-del type="button">Delete item ${i + 1}</button>
+       </div>`;
+    fs.querySelectorAll("[data-f]").forEach(el => {
+      el.addEventListener("input", () => {
+        const f = el.dataset.f;
+        items[i][f] = f === "weight" ? Number(el.value) || 0 : el.value;
+        persist(); renderPreview();
+      });
+      if (el.dataset.f === "weight" || el.dataset.f === "date")
+        el.addEventListener("change", () => {
+          items = sorted(items); persist(); renderEditor(); renderPreview();
+        });
+    });
+    fs.querySelector("[data-del]").addEventListener("click", () => {
       items.splice(i, 1); persist(); renderEditor(); renderPreview();
     });
-    tbody.appendChild(tr);
+    host.appendChild(fs);
   });
 }
 
 let banner = null;
 try { banner = JSON.parse(localStorage.getItem("newsBanner") || "null"); } catch (e) {}
 
-// forExport=true swaps the embedded image for a cid: reference (works in Outlook)
-// Markup targets WCAG 2.2 AA: language, title, headings, alt text, contrast >= 4.5:1,
-// underlined links, readable sizes, and a layout table marked role="presentation".
-function fmtDate(d) {
+function fmtDate(d, locale) {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d || "");
-  if (!m) return d || "";
-  return new Date(+m[1], m[2] - 1, +m[3]).toLocaleDateString(
-    $("lang").value.trim() || "en", { year: "numeric", month: "long", day: "numeric" });
+  if (!m) return esc(d || "");
+  const fr = /^fr/i.test(locale || "");
+  const [y, mo, day] = [+m[1], +m[2], +m[3]];
+  const month = new Date(y, mo - 1, day).toLocaleDateString(fr ? "fr-CA" : "en-CA", { month: "long" });
+  const NB = "\u00A0";
+  if (fr) return (day === 1 ? "1<sup>er</sup>" : String(day)) + NB + month + NB + y;
+  return month.charAt(0).toUpperCase() + month.slice(1) + NB + day + ", " + y;
+}
+
+const FONT = "font-family:Calibri,Arial,sans-serif;";
+
+const LIST_STYLE = () => `margin:8px 0 0 0;padding-left:22px;${FONT}font-size:15px;line-height:1.5;color:#1a1a1a;`;
+const ITEM_STYLE = () => `margin:0 0 4px 0;${FONT}font-size:15px;line-height:1.5;color:#1a1a1a;`;
+const DROP_TAGS = new Set(["script", "style", "iframe", "object", "embed", "template", "noscript"]);
+
+function sanitizeSummary(input) {
+  const doc = new DOMParser().parseFromString("<body>" + input, "text/html");
+  const walk = (node, parentTag) => {
+    let out = "";
+    node.childNodes.forEach(child => {
+      if (child.nodeType === 3) {
+        const t = child.textContent;
+        if ((parentTag === "ul" || parentTag === "ol") && !t.trim()) return;
+        out += esc(t).replace(/\r?\n/g, "<br>");
+        return;
+      }
+      if (child.nodeType !== 1) return;
+      const tag = child.tagName.toLowerCase();
+      if (DROP_TAGS.has(tag)) return;
+      const inner = walk(child, tag);
+      if (tag === "strong" || tag === "em") out += `<${tag}>${inner}</${tag}>`;
+      else if (tag === "ul" || tag === "ol") out += `<${tag} style="${LIST_STYLE()}">${inner}</${tag}>`;
+      else if (tag === "li" && (parentTag === "ul" || parentTag === "ol")) out += `<li style="${ITEM_STYLE()}">${inner}</li>`;
+      else if (tag === "a") {
+        const href = (child.getAttribute("href") || "").trim();
+        out += /^(https:\/\/|mailto:)/i.test(href)
+          ? `<a href="${esc(href)}" style="color:#0b4fb3;text-decoration:underline;">${inner}</a>`
+          : inner;
+      } else out += inner;
+    });
+    return out;
+  };
+  return walk(doc.body, "body").trim();
+}
+
+function rowsHtml(lang, locale, emptyText) {
+  return sorted(items).filter(it => String(it["headline" + lang]).trim()).map(it => {
+    const headline = it["headline" + lang];
+    const url = (it["url" + lang] || it.urlEn || it.urlFr || "").trim();
+    const summary = String(it["summary" + lang] || "").trim();
+    const h = url
+      ? `<a href="${esc(safeUrl(url))}" style="color:#0b4fb3;text-decoration:underline;">${esc(headline)}</a>`
+      : esc(headline);
+    const cleaned = summary ? sanitizeSummary(summary) : "";
+    const sum = cleaned
+      ? `<div style="margin:8px 0 0 0;${FONT}font-size:15px;line-height:1.5;color:#1a1a1a;">${cleaned}</div>`
+      : "";
+    return `<tr><td style="padding:0 0 20px 0;">` +
+      `<h2 style="margin:0 0 4px 0;${FONT}font-size:18px;line-height:1.4;color:#1a1a1a;">${h}</h2>` +
+      `<p style="margin:0;${FONT}font-size:14px;line-height:1.5;color:#595959;">${fmtDate(it.date, locale)}</p>` +
+      sum + `</td></tr>`;
+  }).join("") || `<tr><td style="${FONT}font-size:16px;color:#1a1a1a;">${emptyText}</td></tr>`;
 }
 
 function contentHtml(forExport) {
-  const font = "font-family:Calibri,Arial,sans-serif;";
   const alt = $("bannerAlt").value.trim();
+  const enLocale = $("lang").value.trim() || "en";
+  const jump = `<tr><td style="padding:0 0 12px 0;"><p lang="fr" style="margin:0;${FONT}font-size:14px;line-height:1.5;"><a href="#french" style="color:#0b4fb3;text-decoration:underline;">Le fran\u00e7ais suit</a></p></td></tr>`;
   const img = banner
-    ? `<tr><td style="padding:0 0 16px 0;"><img src="${forExport ? "cid:banner" : banner.dataUrl}" alt="${esc(alt)}" width="600" style="display:block;width:100%;max-width:600px;height:auto;border:0;"></td></tr>`
+    ? `<tr><td style="padding:0 0 16px 0;"><img src="${forExport ? "cid:banner" : banner.dataUrl}" alt="${esc(alt)}" width="600" height="150" style="display:block;width:100%;max-width:600px;height:auto;border:0;-ms-interpolation-mode:bicubic;"></td></tr>`
     : "";
-  const title = `<tr><td style="padding:0 0 16px 0;"><h1 style="margin:0;${font}font-size:24px;line-height:1.3;color:#1a1a1a;">${esc($("subject").value)}</h1></td></tr>`;
-  const rows = sorted().filter(it => it.headline.trim()).map(it => {
-    const url = it.url.trim();
-    const h = url
-      ? `<a href="${esc(safeUrl(url))}" style="color:#0b4fb3;text-decoration:underline;">${esc(it.headline)}</a>`
-      : esc(it.headline);
-    return `<tr><td style="padding:0 0 20px 0;">` +
-      `<h2 style="margin:0 0 4px 0;${font}font-size:18px;line-height:1.4;color:#1a1a1a;">${h}</h2>` +
-      `<p style="margin:0;${font}font-size:14px;line-height:1.5;color:#595959;">${esc(fmtDate(it.date))}</p>` +
-      `</td></tr>`;
-  }).join("") || `<tr><td style="${font}font-size:16px;color:#1a1a1a;">No items.</td></tr>`;
-  return `<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;">${img}${title}${rows}</table>`;
+  const title = `<tr><td style="padding:0 0 16px 0;"><h1 style="margin:0;${FONT}font-size:24px;line-height:1.3;color:#1a1a1a;">${esc($("subject").value)}</h1></td></tr>`;
+  const frTitle = `<tr><td style="padding:16px 0 16px 0;border-top:1px solid #d9d9d9;"><h1 lang="fr" style="margin:0;${FONT}font-size:24px;line-height:1.3;color:#1a1a1a;"><a name="french" id="french"></a>Bulletin 10-4</h1></td></tr>`;
+  return `<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;">` +
+    jump + img + title +
+    rowsHtml("En", enLocale, "No items.") +
+    frTitle +
+    rowsHtml("Fr", "fr", "Aucun \u00e9l\u00e9ment.") +
+    `</table>`;
 }
 
 function renderPreview() { $("content").innerHTML = contentHtml(false); }
 
 $("addBtn").addEventListener("click", () => {
-  items.push({ headline: "", url: "", date: new Date().toISOString().slice(0,10), weight: 1 });
+  items.push(blank());
   persist(); renderEditor(); renderPreview();
 });
 
@@ -155,14 +246,14 @@ function buildEml(subject, html, img) {
     "Content-Type: " + m[1],
     "Content-Transfer-Encoding: base64",
     "Content-ID: <banner>",
-    'Content-Disposition: inline; filename="banner"', "",
+    'Content-Disposition: inline; filename="banner.jpg"', "",
     m[2].replace(/.{1,76}/g, "$&\r\n"),
     "--" + b + "--", ""
   ]).join("\r\n");
 }
 
 $("saveBtn").addEventListener("click", () => {
-  const subject = $("subject").value || "News digest";
+  const subject = $("subject").value || "10-4 Newsletter";
   const lang = esc($("lang").value.trim() || "en");
   const html = `<!DOCTYPE html><html lang="${lang}" xml:lang="${lang}"><head><meta charset="utf-8"><title>${esc(subject)}</title></head><body>` +
                contentHtml(true) + "</body></html>";
@@ -174,12 +265,54 @@ $("saveBtn").addEventListener("click", () => {
   URL.revokeObjectURL(a.href);
 });
 
+function setJpegPpi(dataUrl, ppi) {
+  const bin = atob(dataUrl.split(",")[1]);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  const isJfif = bytes[0] === 0xFF && bytes[1] === 0xD8 && bytes[2] === 0xFF && bytes[3] === 0xE0 &&
+                 bytes[6] === 0x4A && bytes[7] === 0x46 && bytes[8] === 0x49 && bytes[9] === 0x46;
+  if (isJfif) {
+    bytes[13] = 1;
+    bytes[14] = ppi >> 8; bytes[15] = ppi & 255;
+    bytes[16] = ppi >> 8; bytes[17] = ppi & 255;
+  }
+  let out = "";
+  for (let i = 0; i < bytes.length; i += 0x8000)
+    out += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  return "data:image/jpeg;base64," + btoa(out);
+}
+
+function processBanner(srcUrl) {
+  return new Promise((resolve, reject) => {
+    const im = new Image();
+    im.onload = () => {
+      const c = document.createElement("canvas");
+      c.width = BANNER_W; c.height = BANNER_H;
+      const ctx = c.getContext("2d");
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(0, 0, BANNER_W, BANNER_H);
+      ctx.imageSmoothingQuality = "high";
+      const scale = Math.max(BANNER_W / im.width, BANNER_H / im.height);
+      const w = im.width * scale, h = im.height * scale;
+      ctx.drawImage(im, (BANNER_W - w) / 2, (BANNER_H - h) / 2, w, h);
+      resolve(setJpegPpi(c.toDataURL("image/jpeg", BANNER_QUALITY), BANNER_PPI));
+    };
+    im.onerror = reject;
+    im.src = srcUrl;
+  });
+}
+
 $("bannerFile").addEventListener("change", e => {
   const f = e.target.files[0];
   if (!f) return;
   const r = new FileReader();
-  r.onload = () => {
-    banner = { dataUrl: r.result };
+  r.onload = async () => {
+    try {
+      banner = { dataUrl: await processBanner(r.result) };
+    } catch (err) {
+      alert("Could not read that image.");
+      return;
+    }
     try { localStorage.setItem("newsBanner", JSON.stringify(banner)); } catch (err) {}
     renderPreview();
   };
@@ -194,7 +327,7 @@ $("bannerRemove").addEventListener("click", () => {
 
 ["subject", "bannerAlt", "lang"].forEach(id => $(id).addEventListener("input", renderPreview));
 
-items = sorted();
+items = sorted(items);
 renderEditor(); renderPreview();
 </script>
 </body>
