@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-CA">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -53,16 +53,6 @@
 <div class="bar"><button id="addBtn">+ Add item</button></div>
 
 <div class="bar">
-  <input id="subject" aria-label="Subject" placeholder="Subject" value="10-4 Newsletter">
-  <input id="lang" aria-label="Language code" size="5" value="en" title="Language code for the English section, e.g. en">
-  <label>Divider between items:
-    <select id="divider">
-      <option value="line">Line</option>
-      <option value="dotted">Dotted line</option>
-      <option value="thick">Thick line</option>
-      <option value="none">None</option>
-    </select>
-  </label>
   <button id="saveBtn">Save for Outlook (.eml → .oft)</button>
 </div>
 </div>
@@ -180,11 +170,26 @@ function fmtDate(d, locale) {
 
 const FONT = "font-family:Calibri,Arial,sans-serif;";
 
+function frTypo(t) {
+  const NB = "\u00A0";
+  return t
+    .replace(/\s+([?!;])/g, "$1")
+    .replace(/\s+:/g, NB + ":")
+    .replace(/«\s*/g, "«" + NB)
+    .replace(/\s*»/g, NB + "»")
+    .replace(/(\d)\s+([%$])/g, "$1" + NB + "$2");
+}
+
+function cleanHeadline(text, fr) {
+  const t = String(text).trim().replace(/[\s.!;,:…]+$/, "");
+  return fr ? frTypo(t) : t;
+}
+
 const LIST_STYLE = () => `margin:8px 0 0 0;padding-left:22px;${FONT}font-size:15px;line-height:1.5;color:#1a1a1a;`;
 const ITEM_STYLE = () => `margin:0 0 4px 0;${FONT}font-size:15px;line-height:1.5;color:#1a1a1a;`;
 const DROP_TAGS = new Set(["script", "style", "iframe", "object", "embed", "template", "noscript"]);
 
-function sanitizeSummary(input) {
+function sanitizeSummary(input, fr) {
   const doc = new DOMParser().parseFromString("<body>" + input, "text/html");
   const walk = (node, parentTag) => {
     let out = "";
@@ -192,7 +197,7 @@ function sanitizeSummary(input) {
       if (child.nodeType === 3) {
         const t = child.textContent;
         if ((parentTag === "ul" || parentTag === "ol") && !t.trim()) return;
-        out += esc(t).replace(/\r?\n/g, "<br>");
+        out += esc(fr ? frTypo(t) : t).replace(/\r?\n/g, "<br>");
         return;
       }
       if (child.nodeType !== 1) return;
@@ -214,30 +219,37 @@ function sanitizeSummary(input) {
   return walk(doc.body, "body").trim();
 }
 
-const DIVIDERS = {
-  line: "border-bottom:1px solid #d9d9d9;",
-  dotted: "border-bottom:2px dotted #8c8c8c;",
-  thick: "border-bottom:3px solid #1a1a1a;",
-  none: ""
-};
+const SUBJECT = "10-4 Newsletter";
+const LANG_EN = "en-CA";
+const LANG_FR = "fr-CA";
+const ITEM_DIVIDER = "border-bottom:2px dotted #8c8c8c;";
+const SECTION_DIVIDER = "border-top:3px solid #1a1a1a;";
+
+function fileBaseName(now) {
+  const t = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
+  t.setUTCDate(t.getUTCDate() + 4 - (t.getUTCDay() || 7));
+  const yearStart = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
+  const week = Math.ceil(((t - yearStart) / 86400000 + 1) / 7);
+  return "10-4-" + String(week).padStart(2, "0") + "-" + t.getUTCFullYear();
+}
 
 function rowsHtml(lang, locale, emptyText) {
   const list = sorted(items).filter(it => String(it["headline" + lang]).trim());
-  const divider = DIVIDERS[$("divider").value] || "";
   return list.map((it, idx) => {
     const first = idx === 0, last = idx === list.length - 1;
-    const headline = it["headline" + lang];
+    const fr = lang === "Fr";
+    const headline = cleanHeadline(it["headline" + lang], fr);
     const url = (it["url" + lang] || it.urlEn || it.urlFr || "").trim();
     const summary = String(it["summary" + lang] || "").trim();
     const h = url
       ? `<a href="${esc(safeUrl(url))}" style="color:#0b4fb3;text-decoration:underline;">${esc(headline)}</a>`
       : esc(headline);
-    const cleaned = summary ? sanitizeSummary(summary) : "";
+    const cleaned = summary ? sanitizeSummary(summary, fr) : "";
     const sum = cleaned
       ? `<div style="margin:8px 0 0 0;${FONT}font-size:15px;line-height:1.5;color:#1a1a1a;">${cleaned}</div>`
       : "";
     const pad = `padding:${first ? 0 : 20}px 0 20px 0;`;
-    return `<tr><td style="${pad}${last ? "" : divider}">` +
+    return `<tr><td${fr ? ` lang="${LANG_FR}"` : ""} style="${pad}${last ? "" : ITEM_DIVIDER}">` +
       `<h2 style="margin:0 0 4px 0;${FONT}font-size:18px;line-height:1.4;color:#1a1a1a;">${h}</h2>` +
       `<p style="margin:0;${FONT}font-size:14px;line-height:1.5;color:#595959;">${fmtDate(it.date, locale)}</p>` +
       sum + `</td></tr>`;
@@ -246,18 +258,17 @@ function rowsHtml(lang, locale, emptyText) {
 
 function contentHtml(forExport) {
   const alt = $("bannerAlt").value.trim();
-  const enLocale = $("lang").value.trim() || "en";
-  const jump = `<tr><td style="padding:0 0 12px 0;"><p lang="fr" style="margin:0;${FONT}font-size:14px;line-height:1.5;"><a href="#french" style="color:#0b4fb3;text-decoration:underline;">Le fran\u00e7ais suit</a></p></td></tr>`;
+  const jump = `<tr><td style="padding:0 0 12px 0;"><p lang="${LANG_FR}" style="margin:0;${FONT}font-size:14px;line-height:1.5;"><a href="#french" style="color:#0b4fb3;text-decoration:underline;">Le fran\u00e7ais suit</a></p></td></tr>`;
   const img = banner
     ? `<tr><td style="padding:0 0 16px 0;"><img src="${forExport ? "cid:banner" : banner.dataUrl}" alt="${esc(alt)}" width="600" height="150" style="display:block;width:100%;max-width:600px;height:auto;border:0;-ms-interpolation-mode:bicubic;"></td></tr>`
     : "";
-  const title = `<tr><td style="padding:0 0 16px 0;"><h1 style="margin:0;${FONT}font-size:24px;line-height:1.3;color:#1a1a1a;">${esc($("subject").value)}</h1></td></tr>`;
-  const frTitle = `<tr><td style="padding:16px 0 16px 0;border-top:1px solid #d9d9d9;"><h1 lang="fr" style="margin:0;${FONT}font-size:24px;line-height:1.3;color:#1a1a1a;"><a name="french" id="french"></a>Bulletin 10-4</h1></td></tr>`;
+  const title = `<tr><td style="padding:0 0 16px 0;"><h1 style="margin:0;${FONT}font-size:24px;line-height:1.3;color:#1a1a1a;">${esc(SUBJECT)}</h1></td></tr>`;
+  const frTitle = `<tr><td style="padding:16px 0 16px 0;${SECTION_DIVIDER}"><h1 lang="${LANG_FR}" style="margin:0;${FONT}font-size:24px;line-height:1.3;color:#1a1a1a;"><a name="french" id="french"></a>Bulletin 10-4</h1></td></tr>`;
   return `<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;">` +
     jump + img + title +
-    rowsHtml("En", enLocale, "No items.") +
+    rowsHtml("En", LANG_EN, "No items.") +
     frTitle +
-    rowsHtml("Fr", "fr", "Aucun \u00e9l\u00e9ment.") +
+    rowsHtml("Fr", LANG_FR, "Aucun \u00e9l\u00e9ment.") +
     `</table>`;
 }
 
@@ -300,14 +311,14 @@ function buildEml(subject, html, img) {
 }
 
 $("saveBtn").addEventListener("click", () => {
-  const subject = $("subject").value || "10-4 Newsletter";
-  const lang = esc($("lang").value.trim() || "en");
+  const subject = SUBJECT;
+  const lang = LANG_EN;
   const html = `<!DOCTYPE html><html lang="${lang}" xml:lang="${lang}"><head><meta charset="utf-8"><title>${esc(subject)}</title></head><body>` +
                contentHtml(true) + "</body></html>";
   const blob = new Blob([buildEml(subject, html, banner)], { type: "message/rfc822" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = subject.replace(/[\\/:*?"<>|]+/g, "_") + ".eml";
+  a.download = fileBaseName(new Date()) + ".eml";
   document.body.appendChild(a); a.click(); a.remove();
   URL.revokeObjectURL(a.href);
 });
@@ -372,7 +383,7 @@ $("bannerRemove").addEventListener("click", () => {
   renderPreview();
 });
 
-["subject", "bannerAlt", "lang", "divider"].forEach(id => $(id).addEventListener("input", renderPreview));
+["bannerAlt"].forEach(id => $(id).addEventListener("input", renderPreview));
 
 const SAMPLE_ITEMS = [
   { headlineEn: "Autobot convoy reaches the Iacon outpost",
@@ -385,7 +396,7 @@ const SAMPLE_ITEMS = [
     headlineFr: "Un raid décepticon sur un dépôt d’énergon est déjoué",
     urlEn: "https://example.com/en/depot-raid", urlFr: "https://example.com/fr/raid-depot",
     summaryEn: "Autobot patrols stopped the raid before any cargo was lost. What happens next:<ul><li>Two depots are now secured</li><li>Patrols are <strong>doubled</strong> this week</li><li>Repairs finish by December 1</li></ul>",
-    summaryFr: "Les patrouilles autobots ont arrêté le raid avant toute perte de cargaison. La suite :<ul><li>Deux dépôts sont maintenant sécurisés</li><li>Les patrouilles sont <strong>doublées</strong> cette semaine</li><li>Les réparations se terminent d’ici le 1er décembre</li></ul>",
+    summaryFr: "Les patrouilles autobots ont arrêté le raid avant toute perte de cargaison. La suite :<ul><li>deux dépôts sont maintenant sécurisés;</li><li>les patrouilles sont <strong>doublées</strong> cette semaine;</li><li>les réparations se terminent d’ici le 1er décembre.</li></ul>",
     date: "2026-11-20", weight: 5 },
   { headlineEn: "New energon cube standards take effect",
     headlineFr: "De nouvelles normes pour les cubes d’énergon entrent en vigueur",
@@ -397,7 +408,7 @@ const SAMPLE_ITEMS = [
     headlineFr: "Journée d’entraînement : exercices de transformation pour les nouvelles recrues",
     urlEn: "https://example.com/en/training-day", urlFr: "https://example.com/fr/journee-entrainement",
     summaryEn: "New recruits practise safe transformation in three steps:<ol><li>Check your joints and armour</li><li>Transform at half speed</li><li>Report any stiffness to the medic</li></ol>Questions? Write to <a href=\"mailto:training@example.com\">training@example.com</a>.",
-    summaryFr: "Les nouvelles recrues pratiquent la transformation sécuritaire en trois étapes :<ol><li>Vérifier les articulations et le blindage</li><li>Se transformer à demi-vitesse</li><li>Signaler toute raideur au médecin</li></ol>Des questions? Écrivez à <a href=\"mailto:training@example.com\">training@example.com</a>.",
+    summaryFr: "Les nouvelles recrues pratiquent la transformation sécuritaire en trois étapes :<ol><li>vérifiez vos articulations et votre blindage;</li><li>transformez-vous à demi-vitesse;</li><li>signalez toute raideur au médecin.</li></ol>Des questions? Écrivez à <a href=\"mailto:training@example.com\">training@example.com</a>.",
     date: "2026-10-28", weight: 2 },
   { headlineEn: "Reminder: sign up for maintenance week",
     headlineFr: "Rappel : inscrivez-vous à la semaine d’entretien",
