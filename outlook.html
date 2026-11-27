@@ -14,6 +14,9 @@
   .editor-pane h1, .preview-pane h2 { margin-top: 0; }
   .bar { margin: .75rem 0; display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
   .bar input, .bar select { padding: .4rem; font: inherit; }
+  .check { border: 1px solid #ccc; border-radius: 6px; padding: .6rem .9rem; margin: .75rem 0; background: #fff; }
+  .check ul { margin: .4rem 0; padding-left: 1.2rem; }
+  .check p { margin: .4rem 0 0; }
   .hint { color: #595959; font-size: .9rem; margin: .25rem 0; }
   #content { background: #fff; border: 1px solid #ccc; padding: 1rem; border-radius: 6px; }
   #content img { max-width: 100%; height: auto; }
@@ -51,6 +54,8 @@
 
 <div id="items"></div>
 <div class="bar"><button id="addBtn">+ Add item</button></div>
+
+<div id="a11yCheck" class="check" role="status" aria-live="polite"></div>
 
 <div class="bar">
   <button id="saveBtn">Save for Outlook (.eml → .oft)</button>
@@ -164,11 +169,13 @@ function fmtDate(d, locale) {
   const [y, mo, day] = [+m[1], +m[2], +m[3]];
   const month = new Date(y, mo - 1, day).toLocaleDateString(fr ? "fr-CA" : "en-CA", { month: "long" });
   const NB = "\u00A0";
-  if (fr) return (day === 1 ? "1<sup>er</sup>" : String(day)) + NB + month + NB + y;
+  if (fr) return (day === 1 ? "1er" : String(day)) + NB + month + NB + y;
   return month.charAt(0).toUpperCase() + month.slice(1) + NB + day + ", " + y;
 }
 
 const FONT = "font-family:Calibri,Arial,sans-serif;";
+const BASE = `${FONT}font-size:16px;line-height:1.5;color:#1a1a1a;`;
+const LINK = "color:#0b4fb3;text-decoration:underline;";
 
 function frTypo(t) {
   const NB = "\u00A0";
@@ -185,8 +192,8 @@ function cleanHeadline(text, fr) {
   return fr ? frTypo(t) : t;
 }
 
-const LIST_STYLE = () => `margin:8px 0 0 0;padding-left:22px;${FONT}font-size:15px;line-height:1.5;color:#1a1a1a;`;
-const ITEM_STYLE = () => `margin:0 0 4px 0;${FONT}font-size:15px;line-height:1.5;color:#1a1a1a;`;
+const LIST_STYLE = () => `margin:8px 0 0 0;padding-left:22px;${BASE}`;
+const ITEM_STYLE = () => `margin:0 0 4px 0;${BASE}`;
 const DROP_TAGS = new Set(["script", "style", "iframe", "object", "embed", "template", "noscript"]);
 
 function sanitizeSummary(input, fr) {
@@ -236,43 +243,82 @@ function fileBaseName(now) {
 function rowsHtml(lang, locale, emptyText) {
   const list = sorted(items).filter(it => String(it["headline" + lang]).trim());
   return list.map((it, idx) => {
-    const first = idx === 0, last = idx === list.length - 1;
+    const last = idx === list.length - 1;
     const fr = lang === "Fr";
     const headline = cleanHeadline(it["headline" + lang], fr);
     const url = (it["url" + lang] || it.urlEn || it.urlFr || "").trim();
     const summary = String(it["summary" + lang] || "").trim();
     const h = url
-      ? `<a href="${esc(safeUrl(url))}" style="color:#0b4fb3;text-decoration:underline;">${esc(headline)}</a>`
+      ? `<a href="${esc(safeUrl(url))}" style="${LINK}">${esc(headline)}</a>`
       : esc(headline);
     const cleaned = summary ? sanitizeSummary(summary, fr) : "";
-    const sum = cleaned
-      ? `<div style="margin:8px 0 0 0;${FONT}font-size:15px;line-height:1.5;color:#1a1a1a;">${cleaned}</div>`
-      : "";
-    const pad = `padding:${first ? 0 : 20}px 0 20px 0;`;
-    return `<tr><td${fr ? ` lang="${LANG_FR}"` : ""} style="${pad}${last ? "" : ITEM_DIVIDER}">` +
-      `<h2 style="margin:0 0 4px 0;${FONT}font-size:18px;line-height:1.4;color:#1a1a1a;">${h}</h2>` +
-      `<p style="margin:0;${FONT}font-size:14px;line-height:1.5;color:#595959;">${fmtDate(it.date, locale)}</p>` +
-      sum + `</td></tr>`;
-  }).join("") || `<tr><td style="${FONT}font-size:16px;color:#1a1a1a;">${emptyText}</td></tr>`;
+    const sum = cleaned ? `<div style="margin:8px 0 0 0;${BASE}">${cleaned}</div>` : "";
+    return `<div${fr ? ` lang="${LANG_FR}"` : ""} style="margin:0 0 20px 0;padding:0 0 ${last ? 0 : 20}px 0;${last ? "" : ITEM_DIVIDER}">` +
+      `<h2 style="margin:0 0 4px 0;${FONT}font-size:20px;line-height:1.4;color:#1a1a1a;">${h}</h2>` +
+      `<p style="margin:0;${BASE}">${fmtDate(it.date, locale)}</p>` +
+      sum + `</div>`;
+  }).join("") || `<p style="margin:0 0 20px 0;${BASE}">${emptyText}</p>`;
 }
 
 function contentHtml(forExport) {
   const alt = $("bannerAlt").value.trim();
-  const jump = `<tr><td style="padding:0 0 12px 0;"><p lang="${LANG_FR}" style="margin:0;${FONT}font-size:14px;line-height:1.5;"><a href="#french" style="color:#0b4fb3;text-decoration:underline;">Le fran\u00e7ais suit</a></p></td></tr>`;
+  const jump = `<p lang="${LANG_FR}" style="margin:0 0 12px 0;${BASE}"><a href="#French_section" style="${LINK}">Le fran\u00e7ais suit l\u2019anglais</a></p>`;
   const img = banner
-    ? `<tr><td style="padding:0 0 16px 0;"><img src="${forExport ? "cid:banner" : banner.dataUrl}" alt="${esc(alt)}" width="600" height="150" style="display:block;width:100%;max-width:600px;height:auto;border:0;-ms-interpolation-mode:bicubic;"></td></tr>`
+    ? `<div style="margin:0 0 16px 0;"><img src="${forExport ? "cid:banner" : banner.dataUrl}" alt="${esc(alt)}" width="600" height="150" style="display:block;width:100%;max-width:600px;height:auto;border:0;-ms-interpolation-mode:bicubic;"></div>`
     : "";
-  const title = `<tr><td style="padding:0 0 16px 0;"><h1 style="margin:0;${FONT}font-size:24px;line-height:1.3;color:#1a1a1a;">${esc(SUBJECT)}</h1></td></tr>`;
-  const frTitle = `<tr><td style="padding:16px 0 16px 0;${SECTION_DIVIDER}"><h1 lang="${LANG_FR}" style="margin:0;${FONT}font-size:24px;line-height:1.3;color:#1a1a1a;"><a name="french" id="french"></a>Bulletin 10-4</h1></td></tr>`;
-  return `<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;">` +
+  const title = `<h1 style="margin:0 0 16px 0;${FONT}font-size:28px;line-height:1.3;color:#1a1a1a;">${esc(SUBJECT)}</h1>`;
+  const frTitle = `<div style="${SECTION_DIVIDER}padding:20px 0 0 0;margin:0 0 16px 0;"><h1 lang="${LANG_FR}" style="margin:0;${FONT}font-size:28px;line-height:1.3;color:#1a1a1a;"><a name="French_section" id="French_section"></a>Bulletin 10-4</h1></div>`;
+  return `<div style="width:100%;max-width:600px;">` +
     jump + img + title +
     rowsHtml("En", LANG_EN, "No items.") +
     frTitle +
     rowsHtml("Fr", LANG_FR, "Aucun \u00e9l\u00e9ment.") +
-    `</table>`;
+    `</div>`;
 }
 
-function renderPreview() { $("content").innerHTML = contentHtml(false); }
+const AMBIGUOUS_LINKS = /^(click here|here|read more|more|continue|learn more|cliquez ici|ici|en savoir plus|lire la suite|continuer|suite|plus)$/i;
+
+function checkIssues() {
+  const out = [];
+  const alt = $("bannerAlt").value.trim();
+  if (banner && /^(image|photo|picture|graphic|illustration)\s+(of|de)\b/i.test(alt))
+    out.push("Banner alt text should not start with \u201cimage of\u201d or \u201cphoto of\u201d.");
+  if (banner && alt.length > 140) out.push("Banner alt text is longer than 140 characters.");
+  items.forEach((it, i) => {
+    const name = String(it.headlineEn).trim() || `Item ${i + 1}`;
+    [["En", "English"], ["Fr", "French"]].forEach(([lang, label]) => {
+      const html = String(it["summary" + lang] || "");
+      if (!html.trim()) return;
+      const where = `${name} (${label})`;
+      const text = new DOMParser()
+        .parseFromString("<body>" + html.replace(/<\/li>|<br\s*\/?>|<\/ul>|<\/ol>/gi, ". "), "text/html")
+        .body.textContent;
+      const long = text.split(/[.!?]+\s+|\n+/).some(sen => (sen.match(/\S+/g) || []).length > 20);
+      if (long) out.push(`${where}: a sentence has more than 20 words.`);
+      const doc = new DOMParser().parseFromString("<body>" + html, "text/html");
+      doc.querySelectorAll("a").forEach(a => {
+        if (AMBIGUOUS_LINKS.test(a.textContent.trim()))
+          out.push(`${where}: link text \u201c${a.textContent.trim()}\u201d is not meaningful.`);
+      });
+      doc.querySelectorAll("em").forEach(em => {
+        if ((em.textContent.match(/\S+/g) || []).length > 5)
+          out.push(`${where}: italic text is longer than a few words.`);
+      });
+    });
+  });
+  return out;
+}
+
+function renderCheck() {
+  const issues = checkIssues();
+  $("a11yCheck").innerHTML = "<strong>Accessibility check</strong>" +
+    (issues.length
+      ? "<ul>" + issues.map(t => `<li>${esc(t)}</li>`).join("") + "</ul>"
+      : "<p>No issues found.</p>") +
+    "<p class=\"hint\">This check covers only some rules. Also run Outlook\u2019s Accessibility Checker.</p>";
+}
+
+function renderPreview() { $("content").innerHTML = contentHtml(false); renderCheck(); }
 
 $("addBtn").addEventListener("click", () => {
   const item = blank();
