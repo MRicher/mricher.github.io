@@ -5,31 +5,42 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>10-4 Studio</title>
 <style>
-  body { font-family: Calibri, Arial, sans-serif; margin: 2rem; max-width: 960px; }
-  h2 { margin-top: 1.5rem; }
+  html, body { height: 100%; margin: 0; }
+  body { font-family: Calibri, Arial, sans-serif; }
   button { padding: .4rem .8rem; cursor: pointer; }
+  .app { display: grid; grid-template-columns: minmax(520px, 1fr) 680px; height: 100vh; }
+  .editor-pane { overflow: auto; padding: 1.5rem; }
+  .preview-pane { overflow: auto; padding: 1.5rem; background: #f3f3f3; border-left: 1px solid #ccc; }
+  .editor-pane h1, .preview-pane h2 { margin-top: 0; }
   .bar { margin: .75rem 0; display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
-  .bar input { padding: .4rem; }
+  .bar input, .bar select { padding: .4rem; font: inherit; }
   .hint { color: #595959; font-size: .9rem; margin: .25rem 0; }
-  #content { border: 1px solid #ccc; padding: 1rem; border-radius: 6px; }
+  #content { background: #fff; border: 1px solid #ccc; padding: 1rem; border-radius: 6px; }
   #content img { max-width: 100%; height: auto; }
 
-  fieldset.item { border: 1px solid #ccc; border-radius: 6px; margin: 0 0 1rem 0; padding: .75rem 1rem 1rem; }
-  fieldset.item legend { font-weight: bold; padding: 0 .4rem; }
+  details.item { border: 1px solid #ccc; border-radius: 6px; margin: 0 0 .5rem 0; background: #fff; }
+  details.item > summary { cursor: pointer; padding: .65rem .9rem; font-weight: bold; list-style: none; display: flex; align-items: center; gap: .5rem; }
+  details.item > summary::-webkit-details-marker { display: none; }
+  details.item > summary::before { content: "\25B8"; }
+  details.item[open] > summary::before { content: "\25BE"; }
+  details.item > summary .title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  details.item > .body { padding: .75rem 1rem 1rem; border-top: 1px solid #e5e5e5; }
   .grid { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem 1rem; }
   .grid label { display: flex; flex-direction: column; font-size: .9rem; gap: 2px; }
   .grid input, .grid textarea { padding: .4rem; font: inherit; box-sizing: border-box; width: 100%; }
   .grid textarea { min-height: 4.5rem; resize: vertical; }
-  .meta { display: flex; gap: 1rem; align-items: flex-end; margin-top: .75rem; flex-wrap: wrap; }
+  .meta { display: flex; gap: 1rem; align-items: flex-end; margin-top: .75rem; }
   .meta label { display: flex; flex-direction: column; font-size: .9rem; gap: 2px; }
   .meta input { padding: .4rem; font: inherit; }
   .meta input.w { width: 80px; }
-  @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
 
+<div class="app">
+<div class="editor-pane">
 <h1>10-4 Studio</h1>
+<div class="bar"><button id="sampleBtn" type="button">Load sample data (temp)</button></div>
 <div class="bar">
   <label>Banner image: <input type="file" id="bannerFile" accept="image/png,image/jpeg,image/gif"></label>
   <label>Banner alt text: <input id="bannerAlt" size="40" placeholder="Describe the banner (leave empty if decorative)"></label>
@@ -44,11 +55,23 @@
 <div class="bar">
   <input id="subject" aria-label="Subject" placeholder="Subject" value="10-4 Newsletter">
   <input id="lang" aria-label="Language code" size="5" value="en" title="Language code for the English section, e.g. en">
+  <label>Divider between items:
+    <select id="divider">
+      <option value="line">Line</option>
+      <option value="dotted">Dotted line</option>
+      <option value="thick">Thick line</option>
+      <option value="none">None</option>
+    </select>
+  </label>
   <button id="saveBtn">Save for Outlook (.eml → .oft)</button>
 </div>
+</div>
 
+<div class="preview-pane">
 <h2>Preview</h2>
 <div id="content"></div>
+</div>
+</div>
 
 <script>
 const BANNER_W = 1200, BANNER_H = 300, BANNER_PPI = 72, BANNER_QUALITY = 0.8;
@@ -84,6 +107,8 @@ function sorted(arr) {
     (b.weight - a.weight) || String(b.date).localeCompare(String(a.date)));
 }
 
+const openItems = new Set();
+
 const FIELD_DEFS = [
   ["headlineEn", "Headline (English)", "input"],
   ["headlineFr", "Titre (français)", "input"],
@@ -97,25 +122,33 @@ function renderEditor() {
   const host = $("items");
   host.innerHTML = "";
   items.forEach((it, i) => {
-    const fs = document.createElement("fieldset");
-    fs.className = "item";
+    const d = document.createElement("details");
+    d.className = "item";
+    d.open = openItems.has(it);
     const fields = FIELD_DEFS.map(([f, label, tag]) =>
       tag === "textarea"
         ? `<label>${label}<textarea data-f="${f}">${esc(it[f])}</textarea></label>`
         : `<label>${label}<input data-f="${f}" value="${esc(it[f])}"></label>`).join("");
-    fs.innerHTML =
-      `<legend>Item ${i + 1}</legend>
-       <div class="grid">${fields}</div>
-       <p class="hint">Summary allows: &lt;strong&gt;, &lt;em&gt;, &lt;ul&gt;, &lt;ol&gt;, &lt;li&gt; and &lt;a href="https://..."&gt;. Anything else is removed.</p>
-       <div class="meta">
-         <label>Date<input data-f="date" type="date" value="${esc(it.date)}"></label>
-         <label>Weight<input data-f="weight" class="w" type="number" value="${esc(it.weight)}"></label>
-         <button data-del type="button">Delete item ${i + 1}</button>
+    d.innerHTML =
+      `<summary><span class="title"></span></summary>
+       <div class="body">
+         <div class="grid">${fields}</div>
+         <p class="hint">Summary allows: &lt;strong&gt;, &lt;em&gt;, &lt;ul&gt;, &lt;ol&gt;, &lt;li&gt; and &lt;a href="https://..."&gt;. Anything else is removed.</p>
+         <div class="meta">
+           <label>Date<input data-f="date" type="date" value="${esc(it.date)}"></label>
+           <label>Weight<input data-f="weight" class="w" type="number" value="${esc(it.weight)}"></label>
+           <button data-del type="button">Delete item</button>
+         </div>
        </div>`;
-    fs.querySelectorAll("[data-f]").forEach(el => {
+    const title = d.querySelector(".title");
+    const setTitle = () => { title.textContent = String(it.headlineEn).trim() || `Item ${i + 1}`; };
+    setTitle();
+    d.addEventListener("toggle", () => { d.open ? openItems.add(it) : openItems.delete(it); });
+    d.querySelectorAll("[data-f]").forEach(el => {
       el.addEventListener("input", () => {
         const f = el.dataset.f;
-        items[i][f] = f === "weight" ? Number(el.value) || 0 : el.value;
+        it[f] = f === "weight" ? Number(el.value) || 0 : el.value;
+        if (f === "headlineEn") setTitle();
         persist(); renderPreview();
       });
       if (el.dataset.f === "weight" || el.dataset.f === "date")
@@ -123,10 +156,11 @@ function renderEditor() {
           items = sorted(items); persist(); renderEditor(); renderPreview();
         });
     });
-    fs.querySelector("[data-del]").addEventListener("click", () => {
-      items.splice(i, 1); persist(); renderEditor(); renderPreview();
+    d.querySelector("[data-del]").addEventListener("click", () => {
+      items.splice(items.indexOf(it), 1); openItems.delete(it);
+      persist(); renderEditor(); renderPreview();
     });
-    host.appendChild(fs);
+    host.appendChild(d);
   });
 }
 
@@ -180,8 +214,18 @@ function sanitizeSummary(input) {
   return walk(doc.body, "body").trim();
 }
 
+const DIVIDERS = {
+  line: "border-bottom:1px solid #d9d9d9;",
+  dotted: "border-bottom:2px dotted #8c8c8c;",
+  thick: "border-bottom:3px solid #1a1a1a;",
+  none: ""
+};
+
 function rowsHtml(lang, locale, emptyText) {
-  return sorted(items).filter(it => String(it["headline" + lang]).trim()).map(it => {
+  const list = sorted(items).filter(it => String(it["headline" + lang]).trim());
+  const divider = DIVIDERS[$("divider").value] || "";
+  return list.map((it, idx) => {
+    const first = idx === 0, last = idx === list.length - 1;
     const headline = it["headline" + lang];
     const url = (it["url" + lang] || it.urlEn || it.urlFr || "").trim();
     const summary = String(it["summary" + lang] || "").trim();
@@ -192,7 +236,8 @@ function rowsHtml(lang, locale, emptyText) {
     const sum = cleaned
       ? `<div style="margin:8px 0 0 0;${FONT}font-size:15px;line-height:1.5;color:#1a1a1a;">${cleaned}</div>`
       : "";
-    return `<tr><td style="padding:0 0 20px 0;">` +
+    const pad = `padding:${first ? 0 : 20}px 0 20px 0;`;
+    return `<tr><td style="${pad}${last ? "" : divider}">` +
       `<h2 style="margin:0 0 4px 0;${FONT}font-size:18px;line-height:1.4;color:#1a1a1a;">${h}</h2>` +
       `<p style="margin:0;${FONT}font-size:14px;line-height:1.5;color:#595959;">${fmtDate(it.date, locale)}</p>` +
       sum + `</td></tr>`;
@@ -219,8 +264,10 @@ function contentHtml(forExport) {
 function renderPreview() { $("content").innerHTML = contentHtml(false); }
 
 $("addBtn").addEventListener("click", () => {
-  items.push(blank());
+  const item = blank();
+  items.push(item); openItems.add(item);
   persist(); renderEditor(); renderPreview();
+  $("items").lastElementChild.scrollIntoView({ block: "nearest" });
 });
 
 function toBase64Utf8(str) {
@@ -325,9 +372,50 @@ $("bannerRemove").addEventListener("click", () => {
   renderPreview();
 });
 
-["subject", "bannerAlt", "lang"].forEach(id => $(id).addEventListener("input", renderPreview));
+["subject", "bannerAlt", "lang", "divider"].forEach(id => $(id).addEventListener("input", renderPreview));
+
+const SAMPLE_ITEMS = [
+  { headlineEn: "Autobot convoy reaches the Iacon outpost",
+    headlineFr: "Le convoi autobot atteint l’avant-poste d’Iacon",
+    urlEn: "https://example.com/en/convoy-iacon", urlFr: "https://example.com/fr/convoi-iacon",
+    summaryEn: "The <strong>Autobot convoy</strong> arrived after a three-day run across the Cybertron plains. Crews report <em>no delays</em> and full energon reserves.",
+    summaryFr: "Le <strong>convoi autobot</strong> est arrivé après trois jours de route dans les plaines de Cybertron. Les équipes ne signalent <em>aucun retard</em> et des réserves d’énergon pleines.",
+    date: "2026-11-24", weight: 5 },
+  { headlineEn: "Decepticon raid on energon depot foiled",
+    headlineFr: "Un raid décepticon sur un dépôt d’énergon est déjoué",
+    urlEn: "https://example.com/en/depot-raid", urlFr: "https://example.com/fr/raid-depot",
+    summaryEn: "Autobot patrols stopped the raid before any cargo was lost. What happens next:<ul><li>Two depots are now secured</li><li>Patrols are <strong>doubled</strong> this week</li><li>Repairs finish by December 1</li></ul>",
+    summaryFr: "Les patrouilles autobots ont arrêté le raid avant toute perte de cargaison. La suite :<ul><li>Deux dépôts sont maintenant sécurisés</li><li>Les patrouilles sont <strong>doublées</strong> cette semaine</li><li>Les réparations se terminent d’ici le 1er décembre</li></ul>",
+    date: "2026-11-20", weight: 5 },
+  { headlineEn: "New energon cube standards take effect",
+    headlineFr: "De nouvelles normes pour les cubes d’énergon entrent en vigueur",
+    urlEn: "https://example.com/en/energon-standards", urlFr: "https://example.com/fr/normes-energon",
+    summaryEn: "Every cube must now carry a <em>stability label</em>. Read the <a href=\"https://example.com/en/energon-guide\">full guide for handlers</a> before your next shift.",
+    summaryFr: "Chaque cube doit maintenant porter une <em>étiquette de stabilité</em>. Lisez le <a href=\"https://example.com/fr/guide-energon\">guide complet pour les manutentionnaires</a> avant votre prochain quart.",
+    date: "2026-11-01", weight: 3 },
+  { headlineEn: "Training day: transformation drills for new recruits",
+    headlineFr: "Journée d’entraînement : exercices de transformation pour les nouvelles recrues",
+    urlEn: "https://example.com/en/training-day", urlFr: "https://example.com/fr/journee-entrainement",
+    summaryEn: "New recruits practise safe transformation in three steps:<ol><li>Check your joints and armour</li><li>Transform at half speed</li><li>Report any stiffness to the medic</li></ol>Questions? Write to <a href=\"mailto:training@example.com\">training@example.com</a>.",
+    summaryFr: "Les nouvelles recrues pratiquent la transformation sécuritaire en trois étapes :<ol><li>Vérifier les articulations et le blindage</li><li>Se transformer à demi-vitesse</li><li>Signaler toute raideur au médecin</li></ol>Des questions? Écrivez à <a href=\"mailto:training@example.com\">training@example.com</a>.",
+    date: "2026-10-28", weight: 2 },
+  { headlineEn: "Reminder: sign up for maintenance week",
+    headlineFr: "Rappel : inscrivez-vous à la semaine d’entretien",
+    urlEn: "https://example.com/en/maintenance-week", urlFr: "https://example.com/fr/semaine-entretien",
+    summaryEn: "Spots fill fast. <strong>Sign up by December 5</strong> to book your time slot.",
+    summaryFr: "Les places partent vite. <strong>Inscrivez-vous avant le 5 décembre</strong> pour réserver votre plage horaire.",
+    date: "2026-10-15", weight: 1 }
+];
+
+$("sampleBtn").addEventListener("click", () => {
+  items = sorted(SAMPLE_ITEMS.map(o => Object.assign({}, o)));
+  $("bannerAlt").value = "10-4 Studio sample banner";
+  openItems.clear(); openItems.add(items[0]);
+  persist(); renderEditor(); renderPreview();
+});
 
 items = sorted(items);
+if (items.length) openItems.add(items[0]);
 renderEditor(); renderPreview();
 </script>
 </body>
